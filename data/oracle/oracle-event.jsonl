@@ -1,0 +1,27 @@
+{
+  "event_id": "event_012",
+  "user_id": "i_am_maya",
+  "event_type": "goal_change",
+  "description": "Maya decided to continue in product design instead of moving into product management.",
+  "valid_time": {
+    "start": "2026-06-15T00:00:00+05:30",
+    "end": null,
+    "precision": "day"
+  },
+  "facts": [
+    {
+      "fact_id": "fact_031",
+      "subject_id": "i_am_maya",
+      "predicate": "career_goal",
+      "object": {
+        "type": "concept",
+        "value": "product_designer"
+      },
+      "polarity": "positive",
+      "truth_status": "true"
+    }
+  ],
+  "caused_by": ["event_009"],
+  "supersedes": ["event_004"],
+  "disclosed_in": ["conv_018", "email_007"]
+}

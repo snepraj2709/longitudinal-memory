@@ -1,0 +1,32 @@
+{
+  "source_id": "conv_001",
+  "source_type": "calendar",
+  "user_id": "i_am_maya",
+  "created_at": "2026-01-14T10:30:00+05:30",
+  "ingested_at": "2026-01-14T10:35:00+05:30",
+  "participants": [
+    {
+      "participant_id": "i_am_maya",
+      "display_name": "Maya",
+      "role": "attendee"
+    }
+  ],
+  "payload": {
+    "event_uid": "cal-event-011",
+    "title": "PM course orientation",
+    "description": "Introductory orientation for the product management course.",
+    "start_at": "2026-04-10T18:00:00+05:30",
+    "end_at": "2026-04-10T19:00:00+05:30",
+    "timezone": "Asia/Kolkata",
+    "organizer_id": "person_course_admin",
+    "attendee_ids": ["i_am_maya"],
+    "location": "Online",
+    "status": "confirmed",
+    "recurrence_rule": null
+  },
+  "metadata": {
+    "event": "calendar"
+  },
+  "content":""
+}
+

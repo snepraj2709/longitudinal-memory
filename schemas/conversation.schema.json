@@ -1,0 +1,50 @@
+{
+  "source_id": "conv_018",
+  "source_type": "conversation",
+  "user_id": "i_am_maya",
+  "created_at": "2026-06-16T20:00:00+05:30",
+  "ingested_at": "2026-06-16T20:05:00+05:30",
+  "participants": [
+    {
+      "participant_id": "i_am_maya",
+      "display_name": "Maya",
+      "role": "user"
+    },
+    {
+      "participant_id": "assistant_01",
+      "display_name": "Assistant",
+      "role": "assistant"
+    }
+  ],
+  "payload": {
+    "session_id": "session_018",
+    "channel": "chat",
+    "messages": [
+      {
+        "message_id": "msg_018_001",
+        "sequence": 1,
+        "speaker_id": "i_am_maya",
+        "sent_at": "2026-06-16T20:00:00+05:30",
+        "content": "I turned down the PM offer yesterday."
+      },
+      {
+        "message_id": "msg_018_002",
+        "sequence": 2,
+        "speaker_id": "assistant_01",
+        "sent_at": "2026-06-16T20:00:30+05:30",
+        "content": "What made you decide against it?"
+      },
+      {
+        "message_id": "msg_018_003",
+        "sequence": 3,
+        "speaker_id": "i_am_maya",
+        "sent_at": "2026-06-16T20:01:10+05:30",
+        "content": "I realised I want to stay in product design."
+      }
+    ]
+  },
+  "metadata": {
+    "language": "en"
+  },
+  "content":""
+}

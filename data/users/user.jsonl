@@ -1,0 +1,13 @@
+{"user_id":"i_am_maya","participant_id":"maya100","display_name":"Maya", "role": "user"}
+
+// Possible roles
+// user
+// assistant
+// friend
+// manager
+// colleague
+// family
+// sender
+// recipient
+// organizer
+// attendee
