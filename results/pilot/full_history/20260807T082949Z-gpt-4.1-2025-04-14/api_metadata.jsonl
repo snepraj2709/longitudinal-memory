@@ -1,0 +1,5 @@
+{"case_id":"extraction_001","response_id":"resp_0008ddd01a0bc3d5016a759790f2048196a8022e5db86e4637","returned_model":"gpt-4.1-2025-04-14","input_tokens":7007,"output_tokens":152,"total_tokens":7159}
+{"case_id":"temporal_003","response_id":"resp_06d38627b15c8471016a759795042081938fd5d598031226ed","returned_model":"gpt-4.1-2025-04-14","input_tokens":7012,"output_tokens":116,"total_tokens":7128}
+{"case_id":"conflict_004","response_id":"resp_0cfa30f3a1d058d1016a7597b4617481958899ae3605ab5abd","returned_model":"gpt-4.1-2025-04-14","input_tokens":7013,"output_tokens":159,"total_tokens":7172}
+{"case_id":"user_modeling_001","response_id":"resp_0a93f8e30d5bcfe4016a7597b712548193a5b081aa3c3ddda9","returned_model":"gpt-4.1-2025-04-14","input_tokens":7015,"output_tokens":342,"total_tokens":7357}
+{"case_id":"abstention_001","response_id":"resp_045c3e6ef6c952c4016a7597ba7144819095da20cd234d9000","returned_model":"gpt-4.1-2025-04-14","input_tokens":7007,"output_tokens":69,"total_tokens":7076}

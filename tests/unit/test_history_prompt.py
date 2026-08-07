@@ -202,6 +202,7 @@ class PilotHistoryTests(unittest.TestCase):
             "Copy each quote exactly from the cited history record's text.",
             "calendar evidence uses message_id: null",
             "case_id, status, answer, confidence, evidence, abstention_reason",
+            "requires a non-empty answer that states what the history does not establish",
             "Return no Markdown, code fences, or text outside the JSON object.",
         )
         for text in required_text:
