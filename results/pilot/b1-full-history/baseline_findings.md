@@ -5,8 +5,8 @@
 - Provider: OpenAI
 - Model: gpt-4.1-2025-04-14
 - Prompt: full-history-v1
-- Dataset hash: `726a9dcc4d569a9f0ada749dc8e48630cb9ee4f1aa9fc0dc5131a34b245a98e6`
-- Configuration hash: `0081c3057e3f00634664b373d0f981d0f9164a711f21e7df6cf17b064902119e`
+- Dataset hash: `82a9d32719704b1cf6ce44d66ae146b34589d89cd90a7e54b650e6d5d720439b`
+- Configuration hash: `3228dd4eb6b1031232e0bba902a46db8f702e1dc2ae79a367d0b5673ea7f9906`
 
 ## Baseline result
 

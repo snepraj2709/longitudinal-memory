@@ -50,7 +50,7 @@
     "used_stale_information": 0,
     "wrong_date": 1
   },
-  "dataset_hash": "726a9dcc4d569a9f0ada749dc8e48630cb9ee4f1aa9fc0dc5131a34b245a98e6",
+  "dataset_hash": "82a9d32719704b1cf6ce44d66ae146b34589d89cd90a7e54b650e6d5d720439b",
   "execution_failure_case_ids": [],
   "execution_failures": 0,
   "failed_cases": 12,
@@ -108,20 +108,20 @@
     "wrong_date": 0
   },
   "protected_artifact_hashes": {
-    "configs/full_history_baseline_v1.json": "26962c112b96000882e901bcd9cdf385a84f047e89d72af376301d3941672816",
+    "configs/full_history_baseline_v1.json": "9ac8881719153f09369e195e1c81eb55cc5f2f50e591f87b4fe2664c16bf6d76",
     "data/pilot/evaluation/eval_answer.jsonl": "2cf6ec828aecf832aaa497af4d80a194ad45f713af14cb104f23ddb4a57d67be",
     "data/pilot/evaluation/eval_questions.jsonl": "bed228c6ada33bf515bd0eff9cdb35942c4c72aad71960e5dc0acdd9378f2789",
     "data/pilot/oracle-event.jsonl": "921431679979037657e8737c412e8b633a772e0fb1d7a5cda5a5f64425bc1136",
-    "data/pilot/sources/calendar.jsonl": "5c07ff7631fa1da709df5313be47f64e948a333674326a7f1b16961ba89dd16a",
-    "data/pilot/sources/conversations.jsonl": "5fe889cc0f8f51e4d45919ef5e4c4fdf8d4d1c6b7c5474d4747c5cd0613b9cd3",
-    "data/pilot/sources/emails.jsonl": "eb8da661fd0b7908ab7462f099488acedb69ba410b2cdd22b9d539e425d3a4d1",
-    "data/pilot/user.jsonl": "de58d8ba4b482e4fc885c7177d169b6271141a75d536fa4209a1d95f883843a3",
+    "data/pilot/sources/calendar.jsonl": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+    "data/pilot/sources/conversations.jsonl": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+    "data/pilot/sources/emails.jsonl": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed",
+    "data/pilot/user.jsonl": "ec951239b54197c76c3fd048564b18494c2d97a3d632a63b985e3c2c9c247140",
     "results/pilot/b1-full-history/case_scores.jsonl": "07a0db890fef5b1fa203edcf642b1cbaeef8602d147aac22c6c660f377da4ab8",
     "results/pilot/b1-full-history/failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "results/pilot/b1-full-history/manual_review.jsonl": "9e9a74331a9af4f608b780a23fce5e936e0964f06edac874424d127188fbe2c0",
     "results/pilot/b1-full-history/predictions.jsonl": "63e5b1061c98edbec8a2c77c2260bd364bb3362d876fe22a02e3a10a2f5187b0",
-    "results/pilot/b1-full-history/run.json": "05ddbce5f29f10becb874a899b235fb768d75bbcd3bb2bcc4864bdbae1691e88",
-    "results/pilot/b1-full-history/scores.json": "a83afc47fa402335cb9b46fe2b3eb9d4d0e5b8a6e7901827519f53ed90067294"
+    "results/pilot/b1-full-history/run.json": "b8f7b38fac1d28b70de219a96a567e98052a86764513da01d692019b87926507",
+    "results/pilot/b1-full-history/scores.json": "3187cedbabb60fbec2d6aca1dfd517d09cd37a404f7cd00e04d9065155b91f3d"
   },
   "protected_artifacts_unchanged": true,
   "reasoning_failures": 12,
@@ -131,8 +131,8 @@
     "extraction_002",
     "extraction_004"
   ],
-  "run_configuration_hash": "0081c3057e3f00634664b373d0f981d0f9164a711f21e7df6cf17b064902119e",
-  "scores_hash": "a83afc47fa402335cb9b46fe2b3eb9d4d0e5b8a6e7901827519f53ed90067294",
+  "run_configuration_hash": "3228dd4eb6b1031232e0bba902a46db8f702e1dc2ae79a367d0b5673ea7f9906",
+  "scores_hash": "3187cedbabb60fbec2d6aca1dfd517d09cd37a404f7cd00e04d9065155b91f3d",
   "step6_answer_results": {
     "correct": 23,
     "incorrect": 0,
