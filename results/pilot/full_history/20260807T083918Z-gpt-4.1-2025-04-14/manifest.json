@@ -1,0 +1,18 @@
+{
+  "dataset_files_dirty": false,
+  "frozen_configuration_path": "configs/full_history_baseline_v1.json",
+  "frozen_configuration_sha256": "0081c3057e3f00634664b373d0f981d0f9164a711f21e7df6cf17b064902119e",
+  "manifest_version": "1",
+  "output_artifacts": {
+    "api_metadata": "results/pilot/full_history/20260807T083918Z-gpt-4.1-2025-04-14/api_metadata.jsonl",
+    "diagnostics": "results/pilot/full_history/20260807T083918Z-gpt-4.1-2025-04-14/diagnostics.jsonl",
+    "predictions": "results/pilot/full_history/20260807T083918Z-gpt-4.1-2025-04-14/predictions.jsonl",
+    "report": "results/pilot/full_history/20260807T083918Z-gpt-4.1-2025-04-14/report.md"
+  },
+  "prompt_files_dirty": false,
+  "repository_commit": "54414b4006214285fb404975d5a8b4fa59a49a76",
+  "returned_model": "gpt-4.1-2025-04-14",
+  "run_date": "2026-08-07T08:39:18Z",
+  "run_id": "20260807T083918Z-gpt-4.1-2025-04-14",
+  "step3_exit_status": 0
+}
