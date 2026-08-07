@@ -79,12 +79,18 @@ class AtomicExtractionScoringTests(unittest.TestCase):
             "claim_precision",
             "claim_recall",
             "claim_f1",
+            "subject_accuracy",
+            "predicate_accuracy",
+            "object_accuracy",
+            "polarity_accuracy",
             "speaker_accuracy",
             "epistemic_status_accuracy",
             "valid_time_accuracy",
-            "provenance_accuracy",
+            "provenance_span_precision",
+            "provenance_span_recall",
         ):
             self.assertEqual(case_result[metric]["value"], 1.0)
+        self.assertEqual(case_result["unsupported_memory_rate"]["value"], 0.0)
         self.assertEqual(aggregate["micro_claim_f1"]["value"], 1.0)
         self.assertEqual(aggregate["speaker_accuracy"]["value"], 1.0)
         json.dumps(aggregate)
@@ -116,6 +122,7 @@ class AtomicExtractionScoringTests(unittest.TestCase):
         self.assertEqual(result["claim_f1"]["value"], 0.5)
         self.assertEqual(result["unsupported_claim_count"], 1)
         self.assertEqual(result["unsupported_claim_ids"], ["unsupported_claim"])
+        self.assertEqual(result["unsupported_memory_rate"]["value"], 0.5)
 
     def test_secondary_accuracy_scores_only_content_matches(self) -> None:
         speaker_gold = self.claim("speaker_gold", predicate="speaker_test")
@@ -135,9 +142,10 @@ class AtomicExtractionScoringTests(unittest.TestCase):
         self.assertEqual(result["speaker_accuracy"]["value"], 0.666667)
         self.assertEqual(result["epistemic_status_accuracy"]["value"], 0.666667)
         self.assertEqual(result["valid_time_accuracy"]["value"], 0.666667)
-        self.assertEqual(result["provenance_accuracy"]["value"], 1.0)
+        self.assertEqual(result["provenance_span_precision"]["value"], 1.0)
+        self.assertEqual(result["provenance_span_recall"]["value"], 1.0)
 
-    def test_provenance_requires_the_exact_complete_evidence_set(self) -> None:
+    def test_provenance_scores_exact_spans_with_precision_and_recall(self) -> None:
         first_span = self.evidence("First exact quote.", "msg_001")
         second_span = self.evidence("Second exact quote.", "msg_002")
         first_gold = self.claim(
@@ -166,9 +174,48 @@ class AtomicExtractionScoringTests(unittest.TestCase):
         )
 
         self.assertEqual(result["true_positives"], 2)
-        self.assertEqual(result["provenance_accuracy"]["numerator"], 0)
-        self.assertEqual(result["provenance_accuracy"]["denominator"], 2)
-        self.assertEqual(result["provenance_accuracy"]["value"], 0.0)
+        self.assertEqual(result["provenance_span_precision"]["numerator"], 1)
+        self.assertEqual(result["provenance_span_precision"]["denominator"], 2)
+        self.assertEqual(result["provenance_span_precision"]["value"], 0.5)
+        self.assertEqual(result["provenance_span_recall"]["numerator"], 1)
+        self.assertEqual(result["provenance_span_recall"]["denominator"], 3)
+        self.assertEqual(result["provenance_span_recall"]["value"], 0.333333)
+
+    def test_field_accuracy_uses_evidence_alignment_for_inexact_claims(self) -> None:
+        gold = self.claim("gold")
+        prediction = replace(
+            gold,
+            claim_id="prediction",
+            subject_id="person_asha",
+            predicate="job_role",
+            object="marketing associate",
+        )
+
+        result = score_atomic_case(self.case(claims=(gold,)), [prediction])
+
+        self.assertEqual(result["true_positives"], 0)
+        self.assertEqual(result["aligned_claim_count"], 1)
+        self.assertEqual(result["subject_accuracy"]["value"], 0.0)
+        self.assertEqual(result["predicate_accuracy"]["value"], 0.0)
+        self.assertEqual(result["object_accuracy"]["value"], 0.0)
+        self.assertEqual(result["polarity_accuracy"]["value"], 1.0)
+        self.assertEqual(result["unsupported_memory_rate"]["value"], 1.0)
+
+    def test_object_mismatch_is_not_mislabeled_as_unsupported(self) -> None:
+        gold = self.claim("gold")
+        prediction = replace(
+            gold,
+            claim_id="prediction",
+            object="Infinity Learning",
+        )
+
+        result = score_atomic_case(self.case(claims=(gold,)), [prediction])
+
+        self.assertEqual(result["true_positives"], 0)
+        self.assertEqual(result["false_positives"], 1)
+        self.assertEqual(result["object_accuracy"]["value"], 0.0)
+        self.assertEqual(result["unsupported_claim_count"], 0)
+        self.assertEqual(result["unsupported_memory_rate"]["value"], 0.0)
 
     def test_expected_no_claim_case_accepts_present_empty_predictions(self) -> None:
         no_claim_case = self.case("no_claim")
@@ -188,8 +235,9 @@ class AtomicExtractionScoringTests(unittest.TestCase):
         self.assertIsNone(result["speaker_accuracy"]["value"])
         self.assertEqual(
             result["speaker_accuracy"]["null_reason"],
-            "no content-matched claims across evaluated cases",
+            "no aligned claims",
         )
+        self.assertIsNone(result["unsupported_memory_rate"]["value"])
 
     def test_duplicate_predictions_use_one_to_one_matching(self) -> None:
         gold_a = self.claim("gold_a", speaker_id="speaker_a")
@@ -269,6 +317,7 @@ class AtomicExtractionScoringTests(unittest.TestCase):
         self.assertEqual(result["total_predicted_claims"], 1)
         self.assertEqual(result["total_unsupported_claims"], 1)
         self.assertEqual(result["case_ids_with_unsupported_claims"], ["case_a"])
+        self.assertEqual(result["unsupported_memory_rate"]["value"], 1.0)
 
     def test_scoring_does_not_mutate_inputs_and_repeats_deterministically(self) -> None:
         gold_claim = self.claim("gold")

@@ -3,6 +3,7 @@
 from .contracts import (
     ALLOWED_EPISTEMIC_STATUSES,
     ALLOWED_POLARITIES,
+    ALLOWED_PREDICATES,
     AtomicClaimV1,
     AtomicClaimValidationError,
     EvidenceSpanV1,
@@ -12,6 +13,7 @@ from .contracts import (
 __all__ = [
     "ALLOWED_EPISTEMIC_STATUSES",
     "ALLOWED_POLARITIES",
+    "ALLOWED_PREDICATES",
     "AtomicClaimV1",
     "AtomicClaimValidationError",
     "EvidenceSpanV1",

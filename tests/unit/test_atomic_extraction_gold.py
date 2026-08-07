@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError
+import hashlib
 import json
 from pathlib import Path
 import tempfile
@@ -61,7 +62,7 @@ class AtomicExtractionGoldTests(unittest.TestCase):
         )
         self.assertEqual(
             [len(case.expected_claims) for case in cases],
-            [1, 10, 10, 1, 9, 1, 0, 8, 4, 1],
+            [1, 9, 10, 1, 9, 1, 4, 8, 4, 1],
         )
         with self.assertRaises(FrozenInstanceError):
             cases[0].case_id = "changed"
@@ -95,8 +96,11 @@ class AtomicExtractionGoldTests(unittest.TestCase):
             claims["conv_003_aryan_job_start_report"].valid_from,
             "2026-05-11",
         )
-        no_claim_case = next(case for case in cases if case.source_id == "email_003")
-        self.assertEqual(no_claim_case.expected_claims, ())
+        email_case = next(case for case in cases if case.source_id == "email_003")
+        self.assertEqual(
+            {claim.predicate for claim in email_case.expected_claims},
+            {"assigned_task", "offered_help"},
+        )
 
     def test_rejects_duplicate_case_and_source_ids(self) -> None:
         duplicate_case = self._copy_record()
@@ -185,6 +189,21 @@ class AtomicExtractionGoldTests(unittest.TestCase):
         )
 
         verify_frozen_content(config, self.repo_root)
+
+    def test_gold_review_covers_the_frozen_file(self) -> None:
+        review = json.loads(
+            (self.repo_root / "data/phase3/atomic_extraction_gold_review.json").read_text()
+        )
+
+        self.assertEqual(review["review_status"], "completed")
+        self.assertEqual(
+            review["reviewed_case_ids"],
+            [record["case_id"] for record in self.records],
+        )
+        self.assertEqual(
+            review["gold_file_sha256"],
+            hashlib.sha256(self.gold_path.read_bytes()).hexdigest(),
+        )
 
 
 if __name__ == "__main__":

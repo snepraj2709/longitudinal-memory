@@ -21,16 +21,15 @@ from .atomic import (
 )
 from .gold import ATOMIC_GOLD_PATH, AtomicGoldCase, load_atomic_gold
 from .prompt import ATOMIC_EXTRACTION_PROMPT_VERSION, build_atomic_extraction_prompt
-from .scoring import score_atomic_extraction
+from .scoring import ATOMIC_SCORING_VERSION, score_atomic_extraction
 from .source import PILOT_SOURCE_DIR, ExtractionSource, load_pilot_sources
 
 
-DEFAULT_OUTPUT_DIR = Path("results/phase3/atomic-extraction")
+DEFAULT_OUTPUT_DIR = Path("results/phase3/atomic-extraction-v2")
 TEMPERATURE = 0.0
 MAX_OUTPUT_TOKENS = 4_000
-MAX_ATTEMPTS_PER_CASE = 2
 FROZEN_ATOMIC_GOLD_SHA256 = (
-    "e6cb100e27d1612d9b3502a3f792a9a4701bf74bc12876ad40254bd73b365cca"
+    "e802835dcb3e4278ec68e45474d094896dcad9a780c4115a01e0f0bc44f07f63"
 )
 ATOMIC_CASE_REFS = (
     ("atomic_cal_001", "cal_001"),
@@ -143,22 +142,11 @@ def execute_atomic_pipeline(
     calls_attempted = 0
 
     for (case_id, _), source in zip(plan.case_refs, plan.selected_sources):
-        result: AtomicExtractionResult | None = None
-        failure_stage = "provider"
-        failure_message = "The extraction request failed twice."
-        for _ in range(MAX_ATTEMPTS_PER_CASE):
-            calls_attempted += 1
-            try:
-                result = extract_atomic_claims(source, client)
-                break
-            except AtomicExtractionValidationError:
-                failure_stage = "validation"
-                failure_message = "The extracted claims failed validation twice."
-            except Exception:
-                failure_stage = "provider"
-                failure_message = "The extraction request failed twice."
-
-        if result is None:
+        calls_attempted += 1
+        try:
+            result = extract_atomic_claims(source, client)
+        except Exception as error:
+            validation_failure = isinstance(error, AtomicExtractionValidationError)
             return _write_failed_run(
                 output_path=output_path,
                 plan=plan,
@@ -167,8 +155,12 @@ def execute_atomic_pipeline(
                 calls_attempted=calls_attempted,
                 case_id=case_id,
                 source_id=source.source_id,
-                failure_stage=failure_stage,
-                failure_message=failure_message,
+                failure_stage="validation" if validation_failure else "provider",
+                failure_message=(
+                    "The extracted claims failed validation."
+                    if validation_failure
+                    else "The extraction request failed."
+                ),
                 started_at=started_at,
                 completed_at=_utc_text(clock()),
             )
@@ -285,6 +277,7 @@ def _run_record(
     return {
         "run_status": status,
         "prompt_version": ATOMIC_EXTRACTION_PROMPT_VERSION,
+        "scoring_version": ATOMIC_SCORING_VERSION,
         "requested_model": requested_model,
         "resolved_model": returned_models[0] if len(returned_models) == 1 else None,
         "temperature": TEMPERATURE,

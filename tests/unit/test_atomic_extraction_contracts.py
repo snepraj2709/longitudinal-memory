@@ -12,7 +12,7 @@ class AtomicExtractionContractTests(unittest.TestCase):
             "claim_id": "claim_001",
             "subject_id": "i_am_maya",
             "speaker_id": "maya100",
-            "predicate": "primary_role",
+            "predicate": "will_have_job_role",
             "object": {"type": "role", "value": "marketing_associate"},
             "polarity": "positive",
             "epistemic_status": "asserted",
@@ -95,6 +95,7 @@ class AtomicExtractionContractTests(unittest.TestCase):
         record = self.claim_record()
         record["polarity"] = "neutral"
         record["epistemic_status"] = "known"
+        record["predicate"] = "free_form_predicate"
 
         error = self.assert_invalid(
             record, "polarity must be one of: negative, positive"
@@ -103,6 +104,9 @@ class AtomicExtractionContractTests(unittest.TestCase):
             "epistemic_status must be one of: asserted, corrected, denied, "
             "hypothetical, inferred, reported_by_other, uncertain",
             error.errors,
+        )
+        self.assertTrue(
+            any(error.startswith("predicate must be one of:") for error in error.errors)
         )
 
     def test_invalid_confidence_is_rejected(self) -> None:

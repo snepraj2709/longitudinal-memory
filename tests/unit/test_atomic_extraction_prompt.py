@@ -5,13 +5,17 @@ import json
 import unittest
 
 from evaluation.history import HistoryObservation
-from extraction.contracts import ALLOWED_EPISTEMIC_STATUSES, ALLOWED_POLARITIES
+from extraction.contracts import (
+    ALLOWED_EPISTEMIC_STATUSES,
+    ALLOWED_POLARITIES,
+    ALLOWED_PREDICATES,
+)
 from extraction.prompt import (
     ATOMIC_EXTRACTION_PROMPT_VERSION,
     ATOMIC_EXTRACTION_SYSTEM_PROMPT,
     build_atomic_extraction_prompt,
 )
-from extraction.source import ExtractionSource
+from extraction.source import ExtractionSource, KnownEntity
 
 
 class AtomicExtractionPromptTests(unittest.TestCase):
@@ -41,6 +45,15 @@ class AtomicExtractionPromptTests(unittest.TestCase):
     def source_json(self, prompt: str) -> dict[str, object]:
         return json.loads(prompt.split("\n", 1)[1])
 
+    def source(self, source_id: str, source_type: str, *observations: HistoryObservation) -> ExtractionSource:
+        entities = tuple(
+            KnownEntity(author_id, author_name)
+            for author_id, author_name in sorted(
+                {(item.author_id, item.author_name) for item in observations}
+            )
+        )
+        return ExtractionSource(source_id, source_type, observations, entities)
+
     def test_prompt_version_and_output_are_deterministic(self) -> None:
         observation = self.observation(
             observed_at="2026-04-05T19:30:38+05:30",
@@ -51,16 +64,20 @@ class AtomicExtractionPromptTests(unittest.TestCase):
             author_name="Maya",
             text='She said "wait".\nThen we left.',
         )
-        source = ExtractionSource("conv_001", "conversation", (observation,))
+        source = self.source("conv_001", "conversation", observation)
 
         first = build_atomic_extraction_prompt(source)
         second = build_atomic_extraction_prompt(source)
 
-        self.assertEqual(ATOMIC_EXTRACTION_PROMPT_VERSION, "atomic-extraction-v1")
+        self.assertEqual(ATOMIC_EXTRACTION_PROMPT_VERSION, "atomic-extraction-v2")
         self.assertEqual(first, second)
         self.assertEqual(
             self.source_json(first)["observations"][0]["text"],
             observation.text,
+        )
+        self.assertEqual(
+            self.source_json(first)["known_entities"],
+            [{"entity_id": "i_am_maya", "display_name": "Maya"}],
         )
 
     def test_preserves_source_and_observation_order(self) -> None:
@@ -85,7 +102,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
 
         payload = self.source_json(
             build_atomic_extraction_prompt(
-                ExtractionSource("conv_001", "conversation", (first, second))
+                self.source("conv_001", "conversation", first, second)
             )
         )
 
@@ -116,7 +133,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
 
                 payload = self.source_json(
                     build_atomic_extraction_prompt(
-                        ExtractionSource(source_id, source_type, (observation,))
+                        self.source(source_id, source_type, observation)
                     )
                 )
                 item = payload["observations"][0]
@@ -147,7 +164,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
 
         payload = self.source_json(
             build_atomic_extraction_prompt(
-                ExtractionSource("cal_001", "calendar", (observation,))
+                self.source("cal_001", "calendar", observation)
             )
         )
         item = payload["observations"][0]
@@ -180,6 +197,9 @@ class AtomicExtractionPromptTests(unittest.TestCase):
         for value in ALLOWED_POLARITIES | ALLOWED_EPISTEMIC_STATUSES:
             with self.subTest(value=value):
                 self.assertIn(value, ATOMIC_EXTRACTION_SYSTEM_PROMPT)
+        for predicate in ALLOWED_PREDICATES:
+            with self.subTest(predicate=predicate):
+                self.assertIn(predicate, ATOMIC_EXTRACTION_SYSTEM_PROMPT)
         self.assertIn("exactly one JSON object", ATOMIC_EXTRACTION_SYSTEM_PROMPT)
         self.assertIn("claims must be a list", ATOMIC_EXTRACTION_SYSTEM_PROMPT)
         self.assertIn(
@@ -198,6 +218,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
             "Calendar evidence must use message_id: null",
             "speaker_id is who made the statement",
             "subject_id is who or what the claim describes",
+            "subject_id must be an entity_id from known_entities",
             "Record only what the source supports",
         )
         for text in required_text:
@@ -239,7 +260,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
             text="I started a new role.",
         )
         prompt = ATOMIC_EXTRACTION_SYSTEM_PROMPT + build_atomic_extraction_prompt(
-            ExtractionSource("conv_001", "conversation", (observation,))
+            self.source("conv_001", "conversation", observation)
         )
 
         for forbidden in ("oracle", "gold", "evaluation", "b1"):

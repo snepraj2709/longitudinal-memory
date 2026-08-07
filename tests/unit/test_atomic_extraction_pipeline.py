@@ -186,6 +186,7 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
                 {
                     "run_status",
                     "prompt_version",
+                    "scoring_version",
                     "requested_model",
                     "resolved_model",
                     "temperature",
@@ -201,34 +202,33 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
                 },
             )
             self.assertEqual(run["run_status"], "completed")
+            self.assertEqual(run["scoring_version"], "atomic-scoring-v2")
             self.assertEqual(run["calls_attempted"], 10)
             self.assertEqual(run["successful_cases"], 10)
             self.assertEqual(run["failed_cases"], 0)
 
         self.assertEqual(self.hash_tree(B1_RESULT_DIR), before_b1)
 
-    def test_transient_failure_retries_only_the_failed_source(self) -> None:
+    def test_failure_stops_without_retrying_or_scoring(self) -> None:
         client = FakeAtomicPipelineClient(provider_failures_at={4})
         with tempfile.TemporaryDirectory() as directory:
-            run = self.execute(Path(directory) / "results", client)
+            output_dir = Path(directory) / "results"
+            run = self.execute(output_dir, client)
 
         prompted_sources = [
             json.loads(user_prompt.split("\n", 1)[1])["source_id"]
             for _, user_prompt in client.calls
         ]
         expected_sources = [source_id for _, source_id in ATOMIC_CASE_REFS]
-        self.assertEqual(
-            prompted_sources,
-            expected_sources[:3] + [expected_sources[3]] + expected_sources[3:],
-        )
-        self.assertEqual(run["run_status"], "completed")
-        self.assertEqual(run["calls_attempted"], 11)
-        self.assertEqual(run["successful_cases"], 10)
+        self.assertEqual(prompted_sources, expected_sources[:4])
+        self.assertEqual(run["run_status"], "failed")
+        self.assertEqual(run["calls_attempted"], 4)
+        self.assertEqual(run["successful_cases"], 3)
 
-    def test_repeated_failures_are_sanitized_and_not_scored(self) -> None:
+    def test_failures_are_sanitized_and_not_scored(self) -> None:
         for failure_kind in ("provider", "validation"):
             with self.subTest(failure_kind=failure_kind):
-                options = {f"{failure_kind}_failures_at": {4, 5}}
+                options = {f"{failure_kind}_failures_at": {4}}
                 client = FakeAtomicPipelineClient(**options)
                 with tempfile.TemporaryDirectory() as directory:
                     output_dir = Path(directory) / "results"
@@ -236,9 +236,9 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
                         run = self.execute(output_dir, client)
 
                     loader.assert_not_called()
-                    self.assertEqual(len(client.calls), 5)
+                    self.assertEqual(len(client.calls), 4)
                     self.assertEqual(run["run_status"], "failed")
-                    self.assertEqual(run["calls_attempted"], 5)
+                    self.assertEqual(run["calls_attempted"], 4)
                     self.assertEqual(run["successful_cases"], 3)
                     self.assertEqual(run["failed_cases"], 1)
                     self.assertFalse((output_dir / "scores.json").exists())

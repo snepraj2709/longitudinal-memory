@@ -21,6 +21,46 @@ ALLOWED_EPISTEMIC_STATUSES = frozenset(
         "uncertain",
     }
 )
+ALLOWED_PREDICATES = frozenset(
+    {
+        "accepted_offer",
+        "assigned_task",
+        "believes_aryans_move_signals_relationship_change",
+        "believes_marketing_is_right_fit",
+        "campaign_launch_date",
+        "can_continue_marketing_and_product_work_this_way",
+        "explains_work_supportively",
+        "feels_exhausted",
+        "feels_lonely_in_bengaluru",
+        "finds_returning_to_empty_flat_difficult",
+        "found_onboarding_useful",
+        "has_difficulty_focusing_at_work",
+        "has_handoff_cover",
+        "has_scheduled_event",
+        "hoped_aryans_move_signaled_relationship_change",
+        "job_location",
+        "job_start_date",
+        "leave_approved",
+        "leave_denial_reason",
+        "likes",
+        "misses",
+        "needs_to_finish_college",
+        "offered_help",
+        "plans_to_decide_marketing_fit_after_work_experience",
+        "plans_to_finish_campaign_draft_before_leave",
+        "plans_to_share_kids_spark_notes_with",
+        "plans_to_try_marketing_work",
+        "rated_first_work_week",
+        "relationship_would_change_if_living_same_city",
+        "requested_leave",
+        "wants_to_restart_relationship_with",
+        "wants_to_talk_to",
+        "will_have_job_role",
+        "will_run_marketing_team",
+        "will_work_for",
+        "works_on_product_backlog_after_marketing_work",
+    }
+)
 
 _CLAIM_FIELDS = (
     "claim_id",
@@ -82,9 +122,12 @@ def validate_atomic_claim(record: object) -> AtomicClaimV1:
     errors: list[str] = []
     _validate_field_set(record, _CLAIM_FIELDS, "claim", errors)
 
-    for field in ("claim_id", "subject_id", "speaker_id", "predicate"):
+    for field in ("claim_id", "subject_id", "speaker_id"):
         if field in record:
             _validate_non_empty_string(record[field], field, errors)
+
+    if "predicate" in record:
+        _validate_choice(record["predicate"], "predicate", ALLOWED_PREDICATES, errors)
 
     if "object" in record and not _is_json_value(record["object"]):
         errors.append("object must be a JSON value")

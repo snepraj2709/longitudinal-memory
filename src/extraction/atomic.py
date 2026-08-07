@@ -99,6 +99,7 @@ def _validate_claim_records(
     source_speakers = {
         observation.author_id for observation in source_group.observations
     }
+    known_entity_ids = {entity.entity_id for entity in source_group.known_entities}
 
     for index, record in enumerate(records):
         try:
@@ -119,6 +120,7 @@ def _validate_claim_records(
                 source_group,
                 observations,
                 source_speakers,
+                known_entity_ids,
             )
         )
         claims.append(claim)
@@ -144,6 +146,7 @@ def _evidence_errors(
     source_group: ExtractionSource,
     observations: dict[tuple[str, str | None], HistoryObservation],
     source_speakers: set[str],
+    known_entity_ids: set[str],
 ) -> list[str]:
     errors: list[str] = []
     cited: list[HistoryObservation] = []
@@ -186,6 +189,11 @@ def _evidence_errors(
         errors.append(
             f"claims[{claim_index}].speaker_id {claim.speaker_id!r} "
             "does not match any cited observation"
+        )
+    if claim.subject_id not in known_entity_ids:
+        errors.append(
+            f"claims[{claim_index}].subject_id {claim.subject_id!r} "
+            "does not exist in known_entities"
         )
 
     return errors

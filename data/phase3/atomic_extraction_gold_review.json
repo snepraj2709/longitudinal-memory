@@ -1,0 +1,19 @@
+{
+  "review_status": "completed",
+  "reviewed_on": "2026-08-08",
+  "review_method": "source-by-source agent review",
+  "gold_file_sha256": "e802835dcb3e4278ec68e45474d094896dcad9a780c4115a01e0f0bc44f07f63",
+  "reviewed_case_ids": [
+    "atomic_cal_001",
+    "atomic_conv_002",
+    "atomic_conv_003",
+    "atomic_cal_002",
+    "atomic_conv_004",
+    "atomic_cal_003",
+    "atomic_email_003",
+    "atomic_email_005",
+    "atomic_conv_010",
+    "atomic_cal_006"
+  ],
+  "finding": "All claims are source-backed. email_003 contains four assignment and help claims."
+}

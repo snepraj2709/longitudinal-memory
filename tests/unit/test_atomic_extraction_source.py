@@ -14,6 +14,7 @@ from evaluation.history import (
 from extraction.source import (
     PILOT_SOURCE_DIR,
     ExtractionSource,
+    KnownEntity,
     group_source_observations,
     load_pilot_sources,
 )
@@ -59,7 +60,14 @@ class AtomicExtractionSourceTests(unittest.TestCase):
 
         self.assertEqual(
             sources,
-            (ExtractionSource("conv_001", "conversation", (first, second)),),
+            (
+                ExtractionSource(
+                    "conv_001",
+                    "conversation",
+                    (first, second),
+                    (KnownEntity("person_001", "Maya"),),
+                ),
+            ),
         )
         with self.assertRaises(FrozenInstanceError):
             sources[0].source_id = "conv_002"
@@ -186,6 +194,43 @@ class AtomicExtractionSourceTests(unittest.TestCase):
 
         with self.assertRaisesRegex(HistoryDataError, "duplicate evidence reference"):
             group_source_observations((first, duplicate))
+
+    def test_shares_known_entities_and_rejects_conflicting_names(self) -> None:
+        maya = self.observation(
+            observed_at="2026-01-01T09:00:00+00:00",
+            source_type="conversation",
+            source_id="conv_001",
+            message_id="msg_001",
+            author_id="i_am_maya",
+            author_name="Maya",
+        )
+        asha = self.observation(
+            observed_at="2026-01-02T09:00:00+00:00",
+            source_type="email",
+            source_id="email_001",
+            message_id="msg_002",
+            author_id="person_asha",
+            author_name="Asha",
+        )
+
+        sources = group_source_observations((asha, maya))
+
+        expected = (
+            KnownEntity("i_am_maya", "Maya"),
+            KnownEntity("person_asha", "Asha"),
+        )
+        self.assertTrue(all(source.known_entities == expected for source in sources))
+
+        conflicting = self.observation(
+            observed_at="2026-01-03T09:00:00+00:00",
+            source_type="conversation",
+            source_id="conv_002",
+            message_id="msg_003",
+            author_id="i_am_maya",
+            author_name="Maya Rao",
+        )
+        with self.assertRaisesRegex(HistoryDataError, "conflicting names"):
+            group_source_observations((maya, conflicting))
 
     def test_loads_only_current_pilot_source_directory(self) -> None:
         with patch(

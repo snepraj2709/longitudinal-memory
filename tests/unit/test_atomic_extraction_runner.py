@@ -18,7 +18,7 @@ from extraction.prompt import (
     ATOMIC_EXTRACTION_SYSTEM_PROMPT,
     build_atomic_extraction_prompt,
 )
-from extraction.source import ExtractionSource
+from extraction.source import ExtractionSource, KnownEntity
 
 
 class FakeAtomicClient:
@@ -66,6 +66,10 @@ class AtomicExtractionRunnerTests(unittest.TestCase):
             source_id="conv_001",
             source_type="conversation",
             observations=(self.first, self.second),
+            known_entities=(
+                KnownEntity("i_am_maya", "Maya"),
+                KnownEntity("person_asha", "Asha"),
+            ),
         )
 
     def claim(
@@ -81,8 +85,8 @@ class AtomicExtractionRunnerTests(unittest.TestCase):
             "claim_id": claim_id,
             "subject_id": "i_am_maya",
             "speaker_id": speaker_id,
-            "predicate": "accepted_role",
-            "object": "Marketing Associate",
+            "predicate": "accepted_offer",
+            "object": "Marketing Associate role",
             "polarity": "positive",
             "epistemic_status": "asserted",
             "valid_from": None,
@@ -217,7 +221,12 @@ class AtomicExtractionRunnerTests(unittest.TestCase):
             author_name="Maya",
             text="Final semester examinations.",
         )
-        source = ExtractionSource("cal_001", "calendar", (observation,))
+        source = ExtractionSource(
+            "cal_001",
+            "calendar",
+            (observation,),
+            (KnownEntity("i_am_maya", "Maya"),),
+        )
         valid = self.claim(
             source_id="cal_001",
             message_id=None,
@@ -260,6 +269,15 @@ class AtomicExtractionRunnerTests(unittest.TestCase):
                 ]
             ),
             "speaker_id 'person_asha' does not match any cited observation",
+        )
+
+    def test_rejects_unknown_subject_id(self) -> None:
+        claim = self.claim()
+        claim["subject_id"] = "person_unknown"
+
+        self.assert_invalid(
+            self.response([claim]),
+            "subject_id 'person_unknown' does not exist in known_entities",
         )
 
     def test_provider_failures_propagate(self) -> None:
