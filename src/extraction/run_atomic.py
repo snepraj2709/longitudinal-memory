@@ -14,7 +14,11 @@ from typing import Callable, Mapping, Sequence, TextIO
 from evaluation.openai_client import OpenAIResponsesClient, load_env_value
 from evaluation.run_config import assert_no_secrets
 
-from .atomic import AtomicExtractionResult, AtomicExtractionValidationError, extract_atomic_claims
+from .atomic import (
+    AtomicExtractionResult,
+    AtomicExtractionValidationError,
+    extract_atomic_claims,
+)
 from .gold import ATOMIC_GOLD_PATH, AtomicGoldCase, load_atomic_gold
 from .prompt import ATOMIC_EXTRACTION_PROMPT_VERSION, build_atomic_extraction_prompt
 from .scoring import score_atomic_extraction
@@ -24,6 +28,7 @@ from .source import PILOT_SOURCE_DIR, ExtractionSource, load_pilot_sources
 DEFAULT_OUTPUT_DIR = Path("results/phase3/atomic-extraction")
 TEMPERATURE = 0.0
 MAX_OUTPUT_TOKENS = 4_000
+MAX_ATTEMPTS_PER_CASE = 2
 FROZEN_ATOMIC_GOLD_SHA256 = (
     "e6cb100e27d1612d9b3502a3f792a9a4701bf74bc12876ad40254bd73b365cca"
 )
@@ -135,33 +140,35 @@ def execute_atomic_pipeline(
     clock = now or (lambda: datetime.now(timezone.utc))
     started_at = _utc_text(clock())
     completed: list[tuple[str, AtomicExtractionResult]] = []
+    calls_attempted = 0
 
     for (case_id, _), source in zip(plan.case_refs, plan.selected_sources):
-        try:
-            result = extract_atomic_claims(source, client)
-        except AtomicExtractionValidationError:
+        result: AtomicExtractionResult | None = None
+        failure_stage = "provider"
+        failure_message = "The extraction request failed twice."
+        for _ in range(MAX_ATTEMPTS_PER_CASE):
+            calls_attempted += 1
+            try:
+                result = extract_atomic_claims(source, client)
+                break
+            except AtomicExtractionValidationError:
+                failure_stage = "validation"
+                failure_message = "The extracted claims failed validation twice."
+            except Exception:
+                failure_stage = "provider"
+                failure_message = "The extraction request failed twice."
+
+        if result is None:
             return _write_failed_run(
                 output_path=output_path,
                 plan=plan,
                 requested_model=requested_model,
                 completed=completed,
+                calls_attempted=calls_attempted,
                 case_id=case_id,
                 source_id=source.source_id,
-                failure_stage="validation",
-                failure_message="The extracted claims failed validation.",
-                started_at=started_at,
-                completed_at=_utc_text(clock()),
-            )
-        except Exception:
-            return _write_failed_run(
-                output_path=output_path,
-                plan=plan,
-                requested_model=requested_model,
-                completed=completed,
-                case_id=case_id,
-                source_id=source.source_id,
-                failure_stage="provider",
-                failure_message="The extraction request failed.",
+                failure_stage=failure_stage,
+                failure_message=failure_message,
                 started_at=started_at,
                 completed_at=_utc_text(clock()),
             )
@@ -199,6 +206,7 @@ def execute_atomic_pipeline(
         plan=plan,
         requested_model=requested_model,
         completed=completed,
+        calls_attempted=calls_attempted,
         started_at=started_at,
         completed_at=_utc_text(clock()),
         failed_cases=0,
@@ -214,6 +222,7 @@ def _write_failed_run(
     plan: AtomicRunPlan,
     requested_model: str,
     completed: Sequence[tuple[str, AtomicExtractionResult]],
+    calls_attempted: int,
     case_id: str,
     source_id: str,
     failure_stage: str,
@@ -248,6 +257,7 @@ def _write_failed_run(
         plan=plan,
         requested_model=requested_model,
         completed=completed,
+        calls_attempted=calls_attempted,
         started_at=started_at,
         completed_at=completed_at,
         failed_cases=1,
@@ -263,6 +273,7 @@ def _run_record(
     plan: AtomicRunPlan,
     requested_model: str,
     completed: Sequence[tuple[str, AtomicExtractionResult]],
+    calls_attempted: int,
     started_at: str,
     completed_at: str,
     failed_cases: int,
@@ -282,7 +293,7 @@ def _run_record(
         "started_at": started_at,
         "completed_at": completed_at,
         "total_cases": len(plan.case_refs),
-        "calls_attempted": len(completed) + failed_cases,
+        "calls_attempted": calls_attempted,
         "successful_cases": len(completed),
         "failed_cases": failed_cases,
         "output_file_sha256": dict(output_hashes),
@@ -364,7 +375,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None) -> int:
-    """Validate the dry run or execute ten approved paid calls."""
+    """Validate the dry run or execute the approved pilot."""
 
     stdout = stdout or sys.stdout
     parser = _build_parser()

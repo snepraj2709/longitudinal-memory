@@ -1,0 +1,25 @@
+{
+  "calls_attempted": 10,
+  "completed_at": "2026-08-07T19:53:53.577658Z",
+  "failed_cases": 0,
+  "gold_file_sha256": "e6cb100e27d1612d9b3502a3f792a9a4701bf74bc12876ad40254bd73b365cca",
+  "output_file_sha256": {
+    "case_scores.jsonl": "97e76efeb6bfdb3935b1edb51d27d73e6601136cbc995870576248e9bcb4ad58",
+    "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "predictions.jsonl": "d757387db14a76cc7f6de5e3f6cfa46487e5e481516f66a6f64771eaa536627b",
+    "scores.json": "30447f6e673d49e32451e619da4ac405a287f6d072c1c759ec00b68c8f1235bd"
+  },
+  "prompt_version": "atomic-extraction-v1",
+  "requested_model": "gpt-4.1-2025-04-14",
+  "resolved_model": "gpt-4.1-2025-04-14",
+  "run_status": "completed",
+  "source_file_sha256": {
+    "data/pilot/sources/calendar.jsonl": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+    "data/pilot/sources/conversations.jsonl": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+    "data/pilot/sources/emails.jsonl": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed"
+  },
+  "started_at": "2026-08-07T19:50:42.917649Z",
+  "successful_cases": 10,
+  "temperature": 0.0,
+  "total_cases": 10
+}
