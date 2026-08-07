@@ -1,0 +1,267 @@
+{
+  "abstention_accuracy": {
+    "denominator": 25,
+    "numerator": 25,
+    "value": 1.0
+  },
+  "abstention_confusion": {
+    "evaluated_valid_predictions": 25,
+    "false_negative": 0,
+    "false_positive": 0,
+    "true_negative": 20,
+    "true_positive": 5
+  },
+  "abstention_precision": {
+    "denominator": 5,
+    "numerator": 5,
+    "value": 1.0
+  },
+  "abstention_recall": {
+    "denominator": 5,
+    "numerator": 5,
+    "value": 1.0
+  },
+  "answered_coverage": {
+    "denominator": 25,
+    "numerator": 20,
+    "value": 0.8
+  },
+  "cases_requiring_manual_semantic_review": [
+    "extraction_001",
+    "extraction_002",
+    "extraction_003",
+    "extraction_004",
+    "extraction_005",
+    "temporal_001",
+    "temporal_002",
+    "temporal_003",
+    "temporal_004",
+    "temporal_005",
+    "conflict_001",
+    "conflict_002",
+    "conflict_003",
+    "conflict_004",
+    "conflict_005",
+    "user_modeling_001",
+    "user_modeling_002",
+    "user_modeling_003",
+    "user_modeling_004",
+    "user_modeling_005",
+    "abstention_001",
+    "abstention_002",
+    "abstention_003",
+    "abstention_004",
+    "abstention_005"
+  ],
+  "evidence_reference_counts": {
+    "evaluated_valid_predictions": 25,
+    "gold_references": 54,
+    "matching_references": 27,
+    "predicted_references": 43
+  },
+  "evidence_reference_precision": {
+    "denominator": 43,
+    "numerator": 27,
+    "value": 0.627907
+  },
+  "evidence_reference_recall": {
+    "denominator": 54,
+    "numerator": 27,
+    "value": 0.5
+  },
+  "exact_citation_valid_rate": {
+    "denominator": 25,
+    "numerator": 25,
+    "value": 1.0
+  },
+  "execution_failure_case_ids": [],
+  "failed_case_count": 0,
+  "json_valid_rate": {
+    "denominator": 25,
+    "numerator": 25,
+    "value": 1.0
+  },
+  "metric_scope": "Abstention and evidence-reference metrics use validated predictions only. Execution failures are reported separately.",
+  "prediction_contract_valid_rate": {
+    "denominator": 25,
+    "numerator": 25,
+    "value": 1.0
+  },
+  "results_by_capability": {
+    "abstention": {
+      "abstention_accuracy": {
+        "denominator": 5,
+        "numerator": 5,
+        "value": 1.0
+      },
+      "case_ids": [
+        "abstention_001",
+        "abstention_002",
+        "abstention_003",
+        "abstention_004",
+        "abstention_005"
+      ],
+      "evidence_reference_precision": {
+        "denominator": 0,
+        "numerator": 0,
+        "value": null
+      },
+      "evidence_reference_recall": {
+        "denominator": 0,
+        "numerator": 0,
+        "value": null
+      },
+      "failed_case_count": 0,
+      "status_counts": {
+        "abstained": 5,
+        "answered": 0,
+        "disputed": 0,
+        "partially_answered": 0
+      },
+      "total_cases": 5,
+      "valid_prediction_count": 5
+    },
+    "conflict_detection": {
+      "abstention_accuracy": {
+        "denominator": 5,
+        "numerator": 5,
+        "value": 1.0
+      },
+      "case_ids": [
+        "conflict_001",
+        "conflict_002",
+        "conflict_003",
+        "conflict_004",
+        "conflict_005"
+      ],
+      "evidence_reference_precision": {
+        "denominator": 7,
+        "numerator": 7,
+        "value": 1.0
+      },
+      "evidence_reference_recall": {
+        "denominator": 12,
+        "numerator": 7,
+        "value": 0.583333
+      },
+      "failed_case_count": 0,
+      "status_counts": {
+        "abstained": 0,
+        "answered": 5,
+        "disputed": 0,
+        "partially_answered": 0
+      },
+      "total_cases": 5,
+      "valid_prediction_count": 5
+    },
+    "extraction": {
+      "abstention_accuracy": {
+        "denominator": 5,
+        "numerator": 5,
+        "value": 1.0
+      },
+      "case_ids": [
+        "extraction_001",
+        "extraction_002",
+        "extraction_003",
+        "extraction_004",
+        "extraction_005"
+      ],
+      "evidence_reference_precision": {
+        "denominator": 12,
+        "numerator": 6,
+        "value": 0.5
+      },
+      "evidence_reference_recall": {
+        "denominator": 7,
+        "numerator": 6,
+        "value": 0.857143
+      },
+      "failed_case_count": 0,
+      "status_counts": {
+        "abstained": 0,
+        "answered": 5,
+        "disputed": 0,
+        "partially_answered": 0
+      },
+      "total_cases": 5,
+      "valid_prediction_count": 5
+    },
+    "temporal_reasoning": {
+      "abstention_accuracy": {
+        "denominator": 5,
+        "numerator": 5,
+        "value": 1.0
+      },
+      "case_ids": [
+        "temporal_001",
+        "temporal_002",
+        "temporal_003",
+        "temporal_004",
+        "temporal_005"
+      ],
+      "evidence_reference_precision": {
+        "denominator": 7,
+        "numerator": 7,
+        "value": 1.0
+      },
+      "evidence_reference_recall": {
+        "denominator": 11,
+        "numerator": 7,
+        "value": 0.636364
+      },
+      "failed_case_count": 0,
+      "status_counts": {
+        "abstained": 0,
+        "answered": 5,
+        "disputed": 0,
+        "partially_answered": 0
+      },
+      "total_cases": 5,
+      "valid_prediction_count": 5
+    },
+    "user_modeling": {
+      "abstention_accuracy": {
+        "denominator": 5,
+        "numerator": 5,
+        "value": 1.0
+      },
+      "case_ids": [
+        "user_modeling_001",
+        "user_modeling_002",
+        "user_modeling_003",
+        "user_modeling_004",
+        "user_modeling_005"
+      ],
+      "evidence_reference_precision": {
+        "denominator": 17,
+        "numerator": 7,
+        "value": 0.411765
+      },
+      "evidence_reference_recall": {
+        "denominator": 24,
+        "numerator": 7,
+        "value": 0.291667
+      },
+      "failed_case_count": 0,
+      "status_counts": {
+        "abstained": 0,
+        "answered": 5,
+        "disputed": 0,
+        "partially_answered": 0
+      },
+      "total_cases": 5,
+      "valid_prediction_count": 5
+    }
+  },
+  "semantic_answer_score": null,
+  "semantic_answer_score_reason": "No formal semantic answer grader is implemented. Review the listed cases manually.",
+  "status_counts": {
+    "abstained": 5,
+    "answered": 20,
+    "disputed": 0,
+    "partially_answered": 0
+  },
+  "total_cases": 25,
+  "valid_prediction_count": 25
+}

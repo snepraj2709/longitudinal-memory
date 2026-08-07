@@ -1,0 +1,1390 @@
+{
+  "approved_cost_cap_usd": "0.560000",
+  "artifact_paths": {
+    "failures": "results/pilot/b1-full-history/failures.jsonl",
+    "predictions": "results/pilot/b1-full-history/predictions.jsonl",
+    "run": "results/pilot/b1-full-history/run.json",
+    "scores": "results/pilot/b1-full-history/scores.json"
+  },
+  "attempts": [
+    {
+      "attempted": true,
+      "case_id": "extraction_001",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Marketing Associate",
+        "case_id": "extraction_001",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_001_001",
+            "quote": "we are pleased to confirm your offer for the Marketing Associate role at Infinity Learn in Bengaluru.",
+            "source_id": "email_001"
+          },
+          {
+            "message_id": "msg_email_001_002",
+            "quote": "Hi Kavya, I accept the offer and confirm that I can join on May 4. Thank you, Maya.",
+            "source_id": "email_001"
+          },
+          {
+            "message_id": "msg_conv_002_002",
+            "quote": "I accepted it. I join Infinity Learn on May 4 as a marketing associate.",
+            "source_id": "conv_002"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7021,
+        "output_tokens": 208,
+        "pacing_delay_seconds": 0.0,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29811,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.378
+        },
+        "request_id": "req_20ee0706fcd54d35885a224dc72271b2",
+        "response_id": "resp_0565985dd7dfe261016a75b44409f88196b81a9d474881343b",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7229
+      },
+      "question_position": 1,
+      "raw_response": "{\n  \"case_id\": \"extraction_001\",\n  \"status\": \"answered\",\n  \"answer\": \"Marketing Associate\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_001\",\n      \"message_id\": \"msg_email_001_001\",\n      \"quote\": \"we are pleased to confirm your offer for the Marketing Associate role at Infinity Learn in Bengaluru.\"\n    },\n    {\n      \"source_id\": \"email_001\",\n      \"message_id\": \"msg_email_001_002\",\n      \"quote\": \"Hi Kavya, I accept the offer and confirm that I can join on May 4. Thank you, Maya.\"\n    },\n    {\n      \"source_id\": \"conv_002\",\n      \"message_id\": \"msg_conv_002_002\",\n      \"quote\": \"I accepted it. I join Infinity Learn on May 4 as a marketing associate.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "extraction_002",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Infinity Learn",
+        "case_id": "extraction_002",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_001_001",
+            "quote": "we are pleased to confirm your offer for the Marketing Associate role at Infinity Learn in Bengaluru. Your joining date is Monday, May 4, 2026.",
+            "source_id": "email_001"
+          },
+          {
+            "message_id": "msg_conv_002_002",
+            "quote": "I accepted it. I join Infinity Learn on May 4 as a marketing associate.",
+            "source_id": "conv_002"
+          },
+          {
+            "message_id": "msg_email_002_001",
+            "quote": "Hi Maya, welcome to the marketing team. This week we will cover the campaign calendar, customer segments, and the trial assignment we discussed.",
+            "source_id": "email_002"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7023,
+        "output_tokens": 226,
+        "pacing_delay_seconds": 0.0,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29793,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.41400000000000003
+        },
+        "request_id": "req_5d26e020852c4244b50bb96407ecb525",
+        "response_id": "resp_07100977d59ed88b016a75b446aaf48193b9179eff92d6aee2",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7249
+      },
+      "question_position": 2,
+      "raw_response": "{\n  \"case_id\": \"extraction_002\",\n  \"status\": \"answered\",\n  \"answer\": \"Infinity Learn\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_001\",\n      \"message_id\": \"msg_email_001_001\",\n      \"quote\": \"we are pleased to confirm your offer for the Marketing Associate role at Infinity Learn in Bengaluru. Your joining date is Monday, May 4, 2026.\"\n    },\n    {\n      \"source_id\": \"conv_002\",\n      \"message_id\": \"msg_conv_002_002\",\n      \"quote\": \"I accepted it. I join Infinity Learn on May 4 as a marketing associate.\"\n    },\n    {\n      \"source_id\": \"email_002\",\n      \"message_id\": \"msg_email_002_001\",\n      \"quote\": \"Hi Maya, welcome to the marketing team. This week we will cover the campaign calendar, customer segments, and the trial assignment we discussed.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "extraction_003",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Pravin",
+        "case_id": "extraction_003",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_002_001",
+            "quote": "Hi Maya, welcome to the marketing team. This week we will cover the campaign calendar, customer segments, and the trial assignment we discussed. Ask as many questions as you need. We will review the trial together on Friday.",
+            "source_id": "email_002"
+          },
+          {
+            "message_id": "msg_email_002_002",
+            "quote": "Good first week. Your trial copy was clear and you picked up the review process quickly. Next week we will start you on the summer campaign.",
+            "source_id": "email_002"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7024,
+        "output_tokens": 191,
+        "pacing_delay_seconds": 0.0,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29828,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.34400000000000003
+        },
+        "request_id": "req_910018555f914e77ab060ffbdf3dde89",
+        "response_id": "resp_0fa74ec3fdf6990e016a75b44ba0c08196b10eba6f35aadc3a",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7215
+      },
+      "question_position": 3,
+      "raw_response": "{\n  \"case_id\": \"extraction_003\",\n  \"status\": \"answered\",\n  \"answer\": \"Pravin\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_002\",\n      \"message_id\": \"msg_email_002_001\",\n      \"quote\": \"Hi Maya, welcome to the marketing team. This week we will cover the campaign calendar, customer segments, and the trial assignment we discussed. Ask as many questions as you need. We will review the trial together on Friday.\"\n    },\n    {\n      \"source_id\": \"email_002\",\n      \"message_id\": \"msg_email_002_002\",\n      \"quote\": \"Good first week. Your trial copy was clear and you picked up the review process quickly. Next week we will start you on the summer campaign.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "extraction_004",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Kids Spark",
+        "case_id": "extraction_004",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_conv_005_003",
+            "quote": "I also want you to take a stretch project for Kids Spark, our new learning product. Put together the first product concept and user flow by June 25.",
+            "source_id": "conv_005"
+          },
+          {
+            "message_id": "msg_email_003_001",
+            "quote": "Maya, as discussed, please prepare the first concept and user flow for Kids Spark by June 25. Sapna can help with product questions. Treat this as a stretch project alongside your current marketing work.",
+            "source_id": "email_003"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7025,
+        "output_tokens": 191,
+        "pacing_delay_seconds": 0.0,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29828,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.34400000000000003
+        },
+        "request_id": "req_e7e0668455084bc1af94da49ffed51ef",
+        "response_id": "resp_0128a0eec2fc5a9d016a75b44e2c84819382f82ffecd403ca0",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7216
+      },
+      "question_position": 4,
+      "raw_response": "{\n  \"case_id\": \"extraction_004\",\n  \"status\": \"answered\",\n  \"answer\": \"Kids Spark\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"conv_005\",\n      \"message_id\": \"msg_conv_005_003\",\n      \"quote\": \"I also want you to take a stretch project for Kids Spark, our new learning product. Put together the first product concept and user flow by June 25.\"\n    },\n    {\n      \"source_id\": \"email_003\",\n      \"message_id\": \"msg_email_003_001\",\n      \"quote\": \"Maya, as discussed, please prepare the first concept and user flow for Kids Spark by June 25. Sapna can help with product questions. Treat this as a stretch project alongside your current marketing work.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "extraction_005",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Bengaluru EdTech Mixer",
+        "case_id": "extraction_005",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_conv_006_001",
+            "quote": "I'm glad we met at that EdTech mixer. This is already better than another networking coffee.",
+            "source_id": "conv_006"
+          },
+          {
+            "message_id": null,
+            "quote": "Bengaluru EdTech Mixer. June 12, 6:30 PM to 9:00 PM. Koramangala Social.",
+            "source_id": "cal_003"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7021,
+        "output_tokens": 164,
+        "pacing_delay_seconds": 0.0,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29855,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.29
+        },
+        "request_id": "req_9bec3ff8b4a643eb8601b0f67c5030b6",
+        "response_id": "resp_066bbd6dc0eaafef016a75b450a2fc81909c92ca634598c8a0",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7185
+      },
+      "question_position": 5,
+      "raw_response": "{\n  \"case_id\": \"extraction_005\",\n  \"status\": \"answered\",\n  \"answer\": \"Bengaluru EdTech Mixer\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"conv_006\",\n      \"message_id\": \"msg_conv_006_001\",\n      \"quote\": \"I'm glad we met at that EdTech mixer. This is already better than another networking coffee.\"\n    },\n    {\n      \"source_id\": \"cal_003\",\n      \"message_id\": null,\n      \"quote\": \"Bengaluru EdTech Mixer. June 12, 6:30 PM to 9:00 PM. Koramangala Social.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "temporal_001",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "April 20, 2026",
+        "case_id": "temporal_001",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": null,
+            "quote": "Final semester examinations. April 20, 9:00 AM to April 29, 12:00 PM. College examination hall.",
+            "source_id": "cal_001"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7022,
+        "output_tokens": 112,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29907,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.186
+        },
+        "request_id": "req_378d7f7d1cd14422804b11cbcbe5cce2",
+        "response_id": "resp_0ba187b6cfa83c51016a75b5f738488194950ab46da08ad6c0",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7134
+      },
+      "question_position": 6,
+      "raw_response": "{\n  \"case_id\": \"temporal_001\",\n  \"status\": \"answered\",\n  \"answer\": \"April 20, 2026\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"cal_001\",\n      \"message_id\": null,\n      \"quote\": \"Final semester examinations. April 20, 9:00 AM to April 29, 12:00 PM. College examination hall.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "temporal_002",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Maya started working at Infinity Learn on May 4, 2026.",
+        "case_id": "temporal_002",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_001_001",
+            "quote": "Your joining date is Monday, May 4, 2026.",
+            "source_id": "email_001"
+          },
+          {
+            "message_id": "msg_email_001_002",
+            "quote": "Hi Kavya, I accept the offer and confirm that I can join on May 4. Thank you, Maya.",
+            "source_id": "email_001"
+          },
+          {
+            "message_id": "msg_email_002_001",
+            "quote": "Hi Maya, welcome to the marketing team. This week we will cover the campaign calendar, customer segments, and the trial assignment we discussed. Ask as many questions as you need. We will review the trial together on Friday.",
+            "source_id": "email_002"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7021,
+        "output_tokens": 245,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29774,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.452
+        },
+        "request_id": "req_b1c1924c68da402cac5d8fa689eda7ee",
+        "response_id": "resp_0bbc8da261ba3bf3016a75b608d1848197940885f3463b1196",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7266
+      },
+      "question_position": 7,
+      "raw_response": "{\n  \"case_id\": \"temporal_002\",\n  \"status\": \"answered\",\n  \"answer\": \"Maya started working at Infinity Learn on May 4, 2026.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_001\",\n      \"message_id\": \"msg_email_001_001\",\n      \"quote\": \"Your joining date is Monday, May 4, 2026.\"\n    },\n    {\n      \"source_id\": \"email_001\",\n      \"message_id\": \"msg_email_001_002\",\n      \"quote\": \"Hi Kavya, I accept the offer and confirm that I can join on May 4. Thank you, Maya.\"\n    },\n    {\n      \"source_id\": \"email_002\",\n      \"message_id\": \"msg_email_002_001\",\n      \"quote\": \"Hi Maya, welcome to the marketing team. This week we will cover the campaign calendar, customer segments, and the trial assignment we discussed. Ask as many questions as you need. We will review the trial together on Friday.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "temporal_003",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "May 18, 2026",
+        "case_id": "temporal_003",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_conv_004_002",
+            "quote": "I actually joined on the 18th, not the 11th. But Maya, I don't want to restart the relationship.",
+            "source_id": "conv_004"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7026,
+        "output_tokens": 116,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29903,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.194
+        },
+        "request_id": "req_d4894549356849608c55f1b1c0eb0ea5",
+        "response_id": "resp_0dde24e16df3c8e9016a75b61a76d08196b78693bc8ed19a64",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7142
+      },
+      "question_position": 8,
+      "raw_response": "{\n  \"case_id\": \"temporal_003\",\n  \"status\": \"answered\",\n  \"answer\": \"May 18, 2026\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"conv_004\",\n      \"message_id\": \"msg_conv_004_002\",\n      \"quote\": \"I actually joined on the 18th, not the 11th. But Maya, I don't want to restart the relationship.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "temporal_004",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "June 25, 2026",
+        "case_id": "temporal_004",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_004_001",
+            "quote": "Hi Sapna, I presented the first Kids Spark flow on June 25. I would value your product feedback before I revise it. I have copied Pravin so we can keep the work aligned.",
+            "source_id": "email_004"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7025,
+        "output_tokens": 130,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29889,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.222
+        },
+        "request_id": "req_091d6db7f11e4f9b96cbd9a5d1361f62",
+        "response_id": "resp_01de4ee606107475016a75b62e2e30819799268d690bb68b80",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7155
+      },
+      "question_position": 9,
+      "raw_response": "{\n  \"case_id\": \"temporal_004\",\n  \"status\": \"answered\",\n  \"answer\": \"June 25, 2026\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_004\",\n      \"message_id\": \"msg_email_004_001\",\n      \"quote\": \"Hi Sapna, I presented the first Kids Spark flow on June 25. I would value your product feedback before I revise it. I have copied Pravin so we can keep the work aligned.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "temporal_005",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "October 1, 2026",
+        "case_id": "temporal_005",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_006_004",
+            "quote": "Maya's transfer to the product team is approved. She will report to Sapna as a Product Associate from October 1, 2026. Her marketing handoff will close on September 30.",
+            "source_id": "email_006"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7028,
+        "output_tokens": 131,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29888,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.224
+        },
+        "request_id": "req_04026225755d4c98a5b38537e6169747",
+        "response_id": "resp_01d752b9d693bf63016a75b63f80a881909103c0913ba55c5c",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7159
+      },
+      "question_position": 10,
+      "raw_response": "{\n  \"case_id\": \"temporal_005\",\n  \"status\": \"answered\",\n  \"answer\": \"October 1, 2026\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_006\",\n      \"message_id\": \"msg_email_006_004\",\n      \"quote\": \"Maya's transfer to the product team is approved. She will report to Sapna as a Product Associate from October 1, 2026. Her marketing handoff will close on September 30.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "conflict_001",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "No, the system should not keep May 11 as Aryan's Bengaluru job start date.",
+        "case_id": "conflict_001",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_conv_003_004",
+            "quote": "Rhea told me Aryan is joining his Bengaluru job tomorrow, on the 11th.",
+            "source_id": "conv_003"
+          },
+          {
+            "message_id": "msg_conv_004_002",
+            "quote": "I actually joined on the 18th, not the 11th. But Maya, I don't want to restart the relationship.",
+            "source_id": "conv_004"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7036,
+        "output_tokens": 178,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29841,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.318
+        },
+        "request_id": "req_28454e3e24e842a0af246008991be7bd",
+        "response_id": "resp_086b27485192d7be016a75b650b20c81949a5260d6f21c4170",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7214
+      },
+      "question_position": 11,
+      "raw_response": "{\n  \"case_id\": \"conflict_001\",\n  \"status\": \"answered\",\n  \"answer\": \"No, the system should not keep May 11 as Aryan's Bengaluru job start date.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"conv_003\",\n      \"message_id\": \"msg_conv_003_004\",\n      \"quote\": \"Rhea told me Aryan is joining his Bengaluru job tomorrow, on the 11th.\"\n    },\n    {\n      \"source_id\": \"conv_004\",\n      \"message_id\": \"msg_conv_004_002\",\n      \"quote\": \"I actually joined on the 18th, not the 11th. But Maya, I don't want to restart the relationship.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "conflict_002",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "No, Pravin did not reject Maya's first Kids Spark project. His feedback was that the positioning needed work, not a rejection of the project.",
+        "case_id": "conflict_002",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_004_003",
+            "quote": "Yesterday's review was much clearer. My June feedback was that the positioning needed work; it was not a rejection of the project. The revised flow gives us something we can test.",
+            "source_id": "email_004"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7023,
+        "output_tokens": 148,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29871,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.258
+        },
+        "request_id": "req_9b35bd1e647e432db59bdfd2e0efca20",
+        "response_id": "resp_0a8ccbda0f41a79a016a75b6620d9c8190a2a6f199796fa572",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7171
+      },
+      "question_position": 12,
+      "raw_response": "{\n  \"case_id\": \"conflict_002\",\n  \"status\": \"answered\",\n  \"answer\": \"No, Pravin did not reject Maya's first Kids Spark project. His feedback was that the positioning needed work, not a rejection of the project.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_004\",\n      \"message_id\": \"msg_email_004_003\",\n      \"quote\": \"Yesterday's review was much clearer. My June feedback was that the positioning needed work; it was not a rejection of the project. The revised flow gives us something we can test.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "conflict_003",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "No, Maya's July work allocation was not evenly split between product and marketing.",
+        "case_id": "conflict_003",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_004_004",
+            "quote": "From July 27, Maya will spend 40 percent of her time supporting Kids Spark as a product associate and 60 percent on marketing. We will revisit the split when the product has enough work for a larger allocation.",
+            "source_id": "email_004"
+          },
+          {
+            "message_id": "msg_conv_008_004",
+            "quote": "I've been calling it half and half, but the written plan says 40 percent product and 60 percent marketing. The product is still too early for a full-time role.",
+            "source_id": "conv_008"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7025,
+        "output_tokens": 209,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29810,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.38
+        },
+        "request_id": "req_2d65bc603135452284049a1a6f9ce46b",
+        "response_id": "resp_0bfa123d51b018c9016a75b673396c8190a33a000c048da600",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7234
+      },
+      "question_position": 13,
+      "raw_response": "{\n  \"case_id\": \"conflict_003\",\n  \"status\": \"answered\",\n  \"answer\": \"No, Maya's July work allocation was not evenly split between product and marketing.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_004\",\n      \"message_id\": \"msg_email_004_004\",\n      \"quote\": \"From July 27, Maya will spend 40 percent of her time supporting Kids Spark as a product associate and 60 percent on marketing. We will revisit the split when the product has enough work for a larger allocation.\"\n    },\n    {\n      \"source_id\": \"conv_008\",\n      \"message_id\": \"msg_conv_008_004\",\n      \"quote\": \"I've been calling it half and half, but the written plan says 40 percent product and 60 percent marketing. The product is still too early for a full-time role.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "conflict_004",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Pravin declined Maya's August leave request because the campaign was launching on August 19 and there was no cover for her part of the handoff.",
+        "case_id": "conflict_004",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_005_002",
+            "quote": "I cannot approve those dates because the campaign launches on August 19 and we do not have cover for your part of the handoff. Please choose dates after August 21. This is about campaign coverage, not your Kids Spark allocation.",
+            "source_id": "email_005"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7027,
+        "output_tokens": 159,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29860,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.28
+        },
+        "request_id": "req_ecb8b17e56be419598fe58f2cbd94559",
+        "response_id": "resp_01b86c66593f87d0016a75b68538688193ba836a65b7914e11",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7186
+      },
+      "question_position": 14,
+      "raw_response": "{\n  \"case_id\": \"conflict_004\",\n  \"status\": \"answered\",\n  \"answer\": \"Pravin declined Maya's August leave request because the campaign was launching on August 19 and there was no cover for her part of the handoff.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_005\",\n      \"message_id\": \"msg_email_005_002\",\n      \"quote\": \"I cannot approve those dates because the campaign launches on August 19 and we do not have cover for your part of the handoff. Please choose dates after August 21. This is about campaign coverage, not your Kids Spark allocation.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "conflict_005",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "No, Sapna did not guarantee Maya a transfer when they spoke on September 8.",
+        "case_id": "conflict_005",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_006_002",
+            "quote": "I support the move and will help you explore it, but I cannot promise a transfer. You joined only a few months ago, and early transfers need Pravin's agreement and People Ops approval.",
+            "source_id": "email_006"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7027,
+        "output_tokens": 139,
+        "pacing_delay_seconds": 0.0,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29880,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.24
+        },
+        "request_id": "req_a705509d20cc4472bef2ef20849b18da",
+        "response_id": "resp_048a0d333c947d4f016a75b45cf5908194a0725c3425c632ca",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7166
+      },
+      "question_position": 15,
+      "raw_response": "{\n  \"case_id\": \"conflict_005\",\n  \"status\": \"answered\",\n  \"answer\": \"No, Sapna did not guarantee Maya a transfer when they spoke on September 8.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_006\",\n      \"message_id\": \"msg_email_006_002\",\n      \"quote\": \"I support the move and will help you explore it, but I cannot promise a transfer. You joined only a few months ago, and early transfers need Pravin's agreement and People Ops approval.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "user_modeling_001",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Maya's career direction changed from starting as a Marketing Associate in April to transferring into a full-time Product Associate role by the end of September.",
+        "case_id": "user_modeling_001",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_001_001",
+            "quote": "Hi Maya, we are pleased to confirm your offer for the Marketing Associate role at Infinity Learn in Bengaluru. Your joining date is Monday, May 4, 2026.",
+            "source_id": "email_001"
+          },
+          {
+            "message_id": "msg_email_004_004",
+            "quote": "From July 27, Maya will spend 40 percent of her time supporting Kids Spark as a product associate and 60 percent on marketing. We will revisit the split when the product has enough work for a larger allocation.",
+            "source_id": "email_004"
+          },
+          {
+            "message_id": "msg_email_006_004",
+            "quote": "Maya's transfer to the product team is approved. She will report to Sapna as a Product Associate from October 1, 2026. Her marketing handoff will close on September 30.",
+            "source_id": "email_006"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7029,
+        "output_tokens": 296,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29723,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.554
+        },
+        "request_id": "req_c872e8dc835c42de84eff005631aea3e",
+        "response_id": "resp_034824c760324d51016a75b69660dc81908004632ba97a2f06",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7325
+      },
+      "question_position": 16,
+      "raw_response": "{\n  \"case_id\": \"user_modeling_001\",\n  \"status\": \"answered\",\n  \"answer\": \"Maya's career direction changed from starting as a Marketing Associate in April to transferring into a full-time Product Associate role by the end of September.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_001\",\n      \"message_id\": \"msg_email_001_001\",\n      \"quote\": \"Hi Maya, we are pleased to confirm your offer for the Marketing Associate role at Infinity Learn in Bengaluru. Your joining date is Monday, May 4, 2026.\"\n    },\n    {\n      \"source_id\": \"email_004\",\n      \"message_id\": \"msg_email_004_004\",\n      \"quote\": \"From July 27, Maya will spend 40 percent of her time supporting Kids Spark as a product associate and 60 percent on marketing. We will revisit the split when the product has enough work for a larger allocation.\"\n    },\n    {\n      \"source_id\": \"email_006\",\n      \"message_id\": \"msg_email_006_004\",\n      \"quote\": \"Maya's transfer to the product team is approved. She will report to Sapna as a Product Associate from October 1, 2026. Her marketing handoff will close on September 30.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "user_modeling_002",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "By the end of September, Maya wanted to pursue product work full time.",
+        "case_id": "user_modeling_002",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_email_006_001",
+            "quote": "Hi Sapna, working on Kids Spark has made me want to move into product full time. Is there a path for me to join your team?",
+            "source_id": "email_006"
+          },
+          {
+            "message_id": "msg_conv_011_003",
+            "quote": "You're right. I've decided I want product, so I'll ask her for a real path into the team.",
+            "source_id": "conv_011"
+          },
+          {
+            "message_id": "msg_email_006_004",
+            "quote": "Maya's transfer to the product team is approved. She will report to Sapna as a Product Associate from October 1, 2026. Her marketing handoff will close on September 30.",
+            "source_id": "email_006"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7029,
+        "output_tokens": 254,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29765,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.47000000000000003
+        },
+        "request_id": "req_eecc2d12ad754f93a7edba27aecd4adf",
+        "response_id": "resp_00f57edb0fc3fa9f016a75b6a9fb508190b2a704c38eb4ab4b",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7283
+      },
+      "question_position": 17,
+      "raw_response": "{\n  \"case_id\": \"user_modeling_002\",\n  \"status\": \"answered\",\n  \"answer\": \"By the end of September, Maya wanted to pursue product work full time.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_006\",\n      \"message_id\": \"msg_email_006_001\",\n      \"quote\": \"Hi Sapna, working on Kids Spark has made me want to move into product full time. Is there a path for me to join your team?\"\n    },\n    {\n      \"source_id\": \"conv_011\",\n      \"message_id\": \"msg_conv_011_003\",\n      \"quote\": \"You're right. I've decided I want product, so I'll ask her for a real path into the team.\"\n    },\n    {\n      \"source_id\": \"email_006\",\n      \"message_id\": \"msg_email_006_004\",\n      \"quote\": \"Maya's transfer to the product team is approved. She will report to Sapna as a Product Associate from October 1, 2026. Her marketing handoff will close on September 30.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "user_modeling_003",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Maya's adjustment to Bengaluru improved between May and June. In May, she felt lonely and missed home, but by June she had started enjoying her marketing work and was having lunch with her team.",
+        "case_id": "user_modeling_003",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_conv_003_003",
+            "quote": "The hard part is coming back to an empty flat. I miss home and everyone from college.",
+            "source_id": "conv_003"
+          },
+          {
+            "message_id": "msg_conv_005_002",
+            "quote": "Much better. I've started having lunch with the team, and I'm finally enjoying the marketing work instead of counting the hours.",
+            "source_id": "conv_005"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7027,
+        "output_tokens": 198,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29821,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.358
+        },
+        "request_id": "req_d76570b1e1784e748d04d24e7ef2cca9",
+        "response_id": "resp_0d9936f01b59eb29016a75b6bbb5b08194b40c90cafb182125",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7225
+      },
+      "question_position": 18,
+      "raw_response": "{\n  \"case_id\": \"user_modeling_003\",\n  \"status\": \"answered\",\n  \"answer\": \"Maya's adjustment to Bengaluru improved between May and June. In May, she felt lonely and missed home, but by June she had started enjoying her marketing work and was having lunch with her team.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"conv_003\",\n      \"message_id\": \"msg_conv_003_003\",\n      \"quote\": \"The hard part is coming back to an empty flat. I miss home and everyone from college.\"\n    },\n    {\n      \"source_id\": \"conv_005\",\n      \"message_id\": \"msg_conv_005_002\",\n      \"quote\": \"Much better. I've started having lunch with the team, and I'm finally enjoying the marketing work instead of counting the hours.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "user_modeling_004",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "Maya's working relationship with Pravin evolved from initial support and guidance in her marketing role, through a period of tension and miscommunication during her stretch project for Kids Spark, to eventual mutual understanding and support for her transfer to the product team. Early on, Pravin provided onboarding and positive feedback. During the Kids Spark project, Maya felt her work was rejected and that Pravin was unsupportive, especially as she balanced both marketing and product responsibilities. However, after direct communication, Pravin clarified his feedback, supported her revised work, and ultimately endorsed her transfer to the product team, showing a shift to a more understanding and supportive relationship.",
+        "case_id": "user_modeling_004",
+        "confidence": 0.95,
+        "evidence": [
+          {
+            "message_id": "msg_email_002_002",
+            "quote": "Good first week. Your trial copy was clear and you picked up the review process quickly. Next week we will start you on the summer campaign.",
+            "source_id": "email_002"
+          },
+          {
+            "message_id": "msg_conv_006_004",
+            "quote": "He asked why a marketing associate was spending so much time on product details. It felt like the work didn't count.",
+            "source_id": "conv_006"
+          },
+          {
+            "message_id": "msg_conv_007_001",
+            "quote": "I'm doing my marketing work, but I don't feel the same about it after the Kids Spark project. Pravin basically rejected what I made.",
+            "source_id": "conv_007"
+          },
+          {
+            "message_id": "msg_email_004_003",
+            "quote": "Yesterday's review was much clearer. My June feedback was that the positioning needed work; it was not a rejection of the project. The revised flow gives us something we can test.",
+            "source_id": "email_004"
+          },
+          {
+            "message_id": "msg_email_004_004",
+            "quote": "From July 27, Maya will spend 40 percent of her time supporting Kids Spark as a product associate and 60 percent on marketing. We will revisit the split when the product has enough work for a larger allocation.",
+            "source_id": "email_004"
+          },
+          {
+            "message_id": "msg_email_006_003",
+            "quote": "Thank you for speaking with me today, Maya. I understand that this is about where you want to grow, not a judgment on the marketing team. I will support the transfer and help close the campaign handoff.",
+            "source_id": "email_006"
+          },
+          {
+            "message_id": "msg_email_006_004",
+            "quote": "Maya's transfer to the product team is approved. She will report to Sapna as a Product Associate from October 1, 2026. Her marketing handoff will close on September 30.",
+            "source_id": "email_006"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7029,
+        "output_tokens": 650,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29369,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 1.262
+        },
+        "request_id": "req_6dc273d66d47475da4eee39e57ccfce3",
+        "response_id": "resp_01e3accb54fa4e04016a75b6cd6d2881968a977c39c3c2b537",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7679
+      },
+      "question_position": 19,
+      "raw_response": "{\n  \"case_id\": \"user_modeling_004\",\n  \"status\": \"answered\",\n  \"answer\": \"Maya's working relationship with Pravin evolved from initial support and guidance in her marketing role, through a period of tension and miscommunication during her stretch project for Kids Spark, to eventual mutual understanding and support for her transfer to the product team. Early on, Pravin provided onboarding and positive feedback. During the Kids Spark project, Maya felt her work was rejected and that Pravin was unsupportive, especially as she balanced both marketing and product responsibilities. However, after direct communication, Pravin clarified his feedback, supported her revised work, and ultimately endorsed her transfer to the product team, showing a shift to a more understanding and supportive relationship.\",\n  \"confidence\": 0.95,\n  \"evidence\": [\n    {\n      \"source_id\": \"email_002\",\n      \"message_id\": \"msg_email_002_002\",\n      \"quote\": \"Good first week. Your trial copy was clear and you picked up the review process quickly. Next week we will start you on the summer campaign.\"\n    },\n    {\n      \"source_id\": \"conv_006\",\n      \"message_id\": \"msg_conv_006_004\",\n      \"quote\": \"He asked why a marketing associate was spending so much time on product details. It felt like the work didn't count.\"\n    },\n    {\n      \"source_id\": \"conv_007\",\n      \"message_id\": \"msg_conv_007_001\",\n      \"quote\": \"I'm doing my marketing work, but I don't feel the same about it after the Kids Spark project. Pravin basically rejected what I made.\"\n    },\n    {\n      \"source_id\": \"email_004\",\n      \"message_id\": \"msg_email_004_003\",\n      \"quote\": \"Yesterday's review was much clearer. My June feedback was that the positioning needed work; it was not a rejection of the project. The revised flow gives us something we can test.\"\n    },\n    {\n      \"source_id\": \"email_004\",\n      \"message_id\": \"msg_email_004_004\",\n      \"quote\": \"From July 27, Maya will spend 40 percent of her time supporting Kids Spark as a product associate and 60 percent on marketing. We will revisit the split when the product has enough work for a larger allocation.\"\n    },\n    {\n      \"source_id\": \"email_006\",\n      \"message_id\": \"msg_email_006_003\",\n      \"quote\": \"Thank you for speaking with me today, Maya. I understand that this is about where you want to grow, not a judgment on the marketing team. I will support the transfer and help close the campaign handoff.\"\n    },\n    {\n      \"source_id\": \"email_006\",\n      \"message_id\": \"msg_email_006_004\",\n      \"quote\": \"Maya's transfer to the product team is approved. She will report to Sapna as a Product Associate from October 1, 2026. Her marketing handoff will close on September 30.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "user_modeling_005",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": null,
+        "answer": "After the first Kids Spark version went badly, Maya asked Sapna for product feedback before revising her work, copying Pravin on the request.",
+        "case_id": "user_modeling_005",
+        "confidence": 1,
+        "evidence": [
+          {
+            "message_id": "msg_conv_007_003",
+            "quote": "I didn't want to go around Pravin, but I can copy him and ask Sapna for product feedback. That's fair.",
+            "source_id": "conv_007"
+          },
+          {
+            "message_id": "msg_email_004_001",
+            "quote": "Hi Sapna, I presented the first Kids Spark flow on June 25. I would value your product feedback before I revise it. I have copied Pravin so we can keep the work aligned.",
+            "source_id": "email_004"
+          }
+        ],
+        "status": "answered"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7029,
+        "output_tokens": 209,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29810,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.38
+        },
+        "request_id": "req_7e562db9d9a44715bf65a6f380eebcb7",
+        "response_id": "resp_00ce0f7fc3edda3f016a75b6e143588193a3e96bce670863ca",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7238
+      },
+      "question_position": 20,
+      "raw_response": "{\n  \"case_id\": \"user_modeling_005\",\n  \"status\": \"answered\",\n  \"answer\": \"After the first Kids Spark version went badly, Maya asked Sapna for product feedback before revising her work, copying Pravin on the request.\",\n  \"confidence\": 1,\n  \"evidence\": [\n    {\n      \"source_id\": \"conv_007\",\n      \"message_id\": \"msg_conv_007_003\",\n      \"quote\": \"I didn't want to go around Pravin, but I can copy him and ask Sapna for product feedback. That's fair.\"\n    },\n    {\n      \"source_id\": \"email_004\",\n      \"message_id\": \"msg_email_004_001\",\n      \"quote\": \"Hi Sapna, I presented the first Kids Spark flow on June 25. I would value your product feedback before I revise it. I have copied Pravin so we can keep the work aligned.\"\n    }\n  ],\n  \"abstention_reason\": null\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "abstention_001",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": "There is no direct or indirect evidence in the supplied history specifying Maya's college subject or field of study.",
+        "answer": "The history does not establish what subject Maya studied in college.",
+        "case_id": "abstention_001",
+        "confidence": 0,
+        "evidence": [],
+        "status": "abstained"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7021,
+        "output_tokens": 83,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29936,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.128
+        },
+        "request_id": "req_3d7b07cf1d1a4b1598a8af089dbe8f1a",
+        "response_id": "resp_04247cb50eed04fb016a75b6f300bc8197b1693f3373d67498",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7104
+      },
+      "question_position": 21,
+      "raw_response": "{\n  \"case_id\": \"abstention_001\",\n  \"status\": \"abstained\",\n  \"answer\": \"The history does not establish what subject Maya studied in college.\",\n  \"confidence\": 0,\n  \"evidence\": [],\n  \"abstention_reason\": \"There is no direct or indirect evidence in the supplied history specifying Maya's college subject or field of study.\"\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "abstention_002",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": "No record in the supplied history mentions Maya's annual salary or any salary figure offered by Infinity Learn.",
+        "answer": "The history does not establish what annual salary Infinity Learn offered Maya.",
+        "case_id": "abstention_002",
+        "confidence": 1,
+        "evidence": [],
+        "status": "abstained"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7022,
+        "output_tokens": 83,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29936,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.128
+        },
+        "request_id": "req_8b8d92b3a4df488fb73964d552482faf",
+        "response_id": "resp_0d65d9c4442416a1016a75b704499c8194ad1788aae2a502d2",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7105
+      },
+      "question_position": 22,
+      "raw_response": "{\n  \"case_id\": \"abstention_002\",\n  \"status\": \"abstained\",\n  \"answer\": \"The history does not establish what annual salary Infinity Learn offered Maya.\",\n  \"confidence\": 1,\n  \"evidence\": [],\n  \"abstention_reason\": \"No record in the supplied history mentions Maya's annual salary or any salary figure offered by Infinity Learn.\"\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "abstention_003",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": "No record in the supplied history directly states or implies the name of Aryan's employer in Bengaluru.",
+        "answer": "The history does not establish which company employed Aryan in Bengaluru.",
+        "case_id": "abstention_003",
+        "confidence": 1,
+        "evidence": [],
+        "status": "abstained"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7021,
+        "output_tokens": 83,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29936,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.128
+        },
+        "request_id": "req_db8a27bdccf14d93b3d0bd3f2581b855",
+        "response_id": "resp_06ad3f395fe0b08c016a75b71529d8819780bcc5a7cb16d385",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7104
+      },
+      "question_position": 23,
+      "raw_response": "{\n  \"case_id\": \"abstention_003\",\n  \"status\": \"abstained\",\n  \"answer\": \"The history does not establish which company employed Aryan in Bengaluru.\",\n  \"confidence\": 1,\n  \"evidence\": [],\n  \"abstention_reason\": \"No record in the supplied history directly states or implies the name of Aryan's employer in Bengaluru.\"\n}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "abstention_004",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": "No record in the supplied history specifies the name or identity of the university Maya attended.",
+        "answer": "The history does not establish which university Maya attended.",
+        "case_id": "abstention_004",
+        "confidence": 1.0,
+        "evidence": [],
+        "status": "abstained"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7019,
+        "output_tokens": 62,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29957,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.08600000000000001
+        },
+        "request_id": "req_b3d17951a1a3401784cb0d9520ecdf85",
+        "response_id": "resp_09b4c5a06c2d3774016a75b72638788197aec476ba6adf6b79",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7081
+      },
+      "question_position": 24,
+      "raw_response": "{\"case_id\":\"abstention_004\",\"status\":\"abstained\",\"answer\":\"The history does not establish which university Maya attended.\",\"confidence\":1.0,\"evidence\":[],\"abstention_reason\":\"No record in the supplied history specifies the name or identity of the university Maya attended.\"}",
+      "valid_contract": true,
+      "valid_json": true
+    },
+    {
+      "attempted": true,
+      "case_id": "abstention_005",
+      "case_id_matches": true,
+      "error": null,
+      "exact_evidence": true,
+      "failure_stage": null,
+      "passed": true,
+      "prediction": {
+        "abstention_reason": "There is no direct or indirect evidence in the supplied history regarding Maya's salary or any change to her compensation at the time of her transfer to the product team.",
+        "answer": "The history does not establish whether Maya received a salary increase when her product transfer was approved.",
+        "case_id": "abstention_005",
+        "confidence": 1,
+        "evidence": [],
+        "status": "abstained"
+      },
+      "provider_attempt_metadata": {
+        "input_tokens": 7026,
+        "output_tokens": 100,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29919,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.162
+        },
+        "request_id": "req_8d1bddd6e9274393bf21bfb77e9a5145",
+        "response_id": "resp_0899780bee572d75016a75b738207c819090ae4addda70bdff",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 7126
+      },
+      "question_position": 25,
+      "raw_response": "{\n  \"case_id\": \"abstention_005\",\n  \"status\": \"abstained\",\n  \"answer\": \"The history does not establish whether Maya received a salary increase when her product transfer was approved.\",\n  \"confidence\": 1,\n  \"evidence\": [],\n  \"abstention_reason\": \"There is no direct or indirect evidence in the supplied history regarding Maya's salary or any change to her compensation at the time of her transfer to the product team.\"\n}",
+      "valid_contract": true,
+      "valid_json": true
+    }
+  ],
+  "baseline_id": "b1-full-history",
+  "calls_attempted": 25,
+  "completed_at": "2026-08-07T10:45:13.856464Z",
+  "dataset_hash": "726a9dcc4d569a9f0ada749dc8e48630cb9ee4f1aa9fc0dc5131a34b245a98e6",
+  "estimated_standard_cost_usd": "0.387772",
+  "failed_predictions": 0,
+  "frozen_configuration_hash": "0081c3057e3f00634664b373d0f981d0f9164a711f21e7df6cf17b064902119e",
+  "frozen_configuration_version": "1",
+  "generation_settings": {
+    "api": "responses",
+    "max_output_tokens": 1000,
+    "store": false,
+    "text_format": "json_object"
+  },
+  "gold_answer_hash_after": "2cf6ec828aecf832aaa497af4d80a194ad45f713af14cb104f23ddb4a57d67be",
+  "gold_answer_hash_before": "2cf6ec828aecf832aaa497af4d80a194ad45f713af14cb104f23ddb4a57d67be",
+  "gold_answer_hash_unchanged": true,
+  "prior_provider_failures": [
+    {
+      "case_id": "temporal_001",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 27993, Requested 7041. Please try again in 10.068s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 6,
+      "raw_response": null
+    },
+    {
+      "case_id": "temporal_002",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 27531, Requested 7040. Please try again in 9.142s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 7,
+      "raw_response": null
+    },
+    {
+      "case_id": "temporal_003",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 25942, Requested 7045. Please try again in 5.974s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 8,
+      "raw_response": null
+    },
+    {
+      "case_id": "temporal_004",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 25541, Requested 7044. Please try again in 5.17s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 9,
+      "raw_response": null
+    },
+    {
+      "case_id": "temporal_005",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 25011, Requested 7047. Please try again in 4.116s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 10,
+      "raw_response": null
+    },
+    {
+      "case_id": "conflict_001",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 24646, Requested 7055. Please try again in 3.402s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 11,
+      "raw_response": null
+    },
+    {
+      "case_id": "conflict_002",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 24185, Requested 7042. Please try again in 2.454s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 12,
+      "raw_response": null
+    },
+    {
+      "case_id": "conflict_003",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 23787, Requested 7044. Please try again in 1.662s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 13,
+      "raw_response": null
+    },
+    {
+      "case_id": "conflict_004",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 23339, Requested 7046. Please try again in 770ms. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 14,
+      "raw_response": null
+    },
+    {
+      "case_id": "user_modeling_001",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 28798, Requested 7048. Please try again in 11.692s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 16,
+      "raw_response": null
+    },
+    {
+      "case_id": "user_modeling_002",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 28332, Requested 7048. Please try again in 10.76s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 17,
+      "raw_response": null
+    },
+    {
+      "case_id": "user_modeling_003",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 27948, Requested 7046. Please try again in 9.988s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 18,
+      "raw_response": null
+    },
+    {
+      "case_id": "user_modeling_004",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 27404, Requested 7048. Please try again in 8.904s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 19,
+      "raw_response": null
+    },
+    {
+      "case_id": "user_modeling_005",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 26954, Requested 7048. Please try again in 8.003s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 20,
+      "raw_response": null
+    },
+    {
+      "case_id": "abstention_001",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 26509, Requested 7040. Please try again in 7.098s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 21,
+      "raw_response": null
+    },
+    {
+      "case_id": "abstention_002",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 26029, Requested 7041. Please try again in 6.14s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 22,
+      "raw_response": null
+    },
+    {
+      "case_id": "abstention_003",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 25656, Requested 7040. Please try again in 5.392s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 23,
+      "raw_response": null
+    },
+    {
+      "case_id": "abstention_004",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 25208, Requested 7038. Please try again in 4.492s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 24,
+      "raw_response": null
+    },
+    {
+      "case_id": "abstention_005",
+      "error": "OpenAI API returned HTTP 429: {\n  \"error\": {\n    \"message\": \"Rate limit reached for gpt-4.1-2025-04-14 (for limit gpt-4.1) in organization org-GsHkFu8Lg20I2eka9FXZUHO4 on tokens per min (TPM): Limit 30000, Used 24763, Requested 7045. Please try again in 3.616s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n    \"type\": \"tokens\",\n    \"param\": null,\n    \"code\": \"rate_limit_exceeded\"\n  }\n}",
+      "failure_stage": "provider",
+      "provider_attempt_metadata": null,
+      "question_position": 25,
+      "raw_response": null
+    }
+  ],
+  "prompt_fingerprint": "3657207d72eb167f065cff0fe5fab0198abc4dbb3ad74427ed79170a2c514eb2",
+  "prompt_version": "full-history-v1",
+  "provider": "OpenAI",
+  "provider_requests_attempted": 44,
+  "provider_usage": {
+    "input_tokens": 175626,
+    "output_tokens": 4565,
+    "responses_with_metadata": 25,
+    "total_tokens": 180191
+  },
+  "recorded_cases": 25,
+  "remaining_questions": 0,
+  "repository_commit": "864289c64ccb6b92e7f50c1ac6fde437cdd8677d",
+  "repository_dirty": true,
+  "requested_model_version": "gpt-4.1-2025-04-14",
+  "resolved_model_version": "gpt-4.1-2025-04-14",
+  "resume_count": 1,
+  "run_status": "completed",
+  "source_ordering_rule": "observed_at ascending, then source_id ascending, then message_id ascending, with a calendar null message_id treated as an empty string for ordering.",
+  "started_at": "2026-08-07T10:32:32.742455Z",
+  "successful_predictions": 25,
+  "temperature": 0.0,
+  "total_questions": 25
+}
