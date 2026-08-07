@@ -20,6 +20,7 @@ from .history import (
 from .prediction import (
     BaselinePrediction,
     PredictionValidationError,
+    prediction_to_record,
     validate_prediction,
 )
 
@@ -311,7 +312,7 @@ def write_smoke_test_artifacts(
 
     prediction_lines = [
         json.dumps(
-            _prediction_record(result.prediction),
+            prediction_to_record(result.prediction),
             ensure_ascii=False,
             separators=(",", ":"),
         )
@@ -350,24 +351,6 @@ def write_smoke_test_artifacts(
         diagnostics_path=diagnostics_path,
         report_path=report_path,
     )
-
-
-def _prediction_record(prediction: BaselinePrediction) -> dict[str, object]:
-    return {
-        "case_id": prediction.case_id,
-        "status": prediction.status,
-        "answer": prediction.answer,
-        "confidence": prediction.confidence,
-        "evidence": [
-            {
-                "source_id": evidence.source_id,
-                "message_id": evidence.message_id,
-                "quote": evidence.quote,
-            }
-            for evidence in prediction.evidence
-        ],
-        "abstention_reason": prediction.abstention_reason,
-    }
 
 
 def _render_report(

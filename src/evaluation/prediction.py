@@ -118,6 +118,26 @@ def validate_prediction(record: object) -> BaselinePrediction:
     )
 
 
+def prediction_to_record(prediction: BaselinePrediction) -> dict[str, object]:
+    """Serialize a validated prediction without adding diagnostic fields."""
+
+    return {
+        "case_id": prediction.case_id,
+        "status": prediction.status,
+        "answer": prediction.answer,
+        "confidence": prediction.confidence,
+        "evidence": [
+            {
+                "source_id": evidence.source_id,
+                "message_id": evidence.message_id,
+                "quote": evidence.quote,
+            }
+            for evidence in prediction.evidence
+        ],
+        "abstention_reason": prediction.abstention_reason,
+    }
+
+
 def _validate_field_set(
     record: dict[Any, Any],
     expected_fields: tuple[str, ...],

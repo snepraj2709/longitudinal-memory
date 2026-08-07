@@ -20,6 +20,7 @@ from .prediction import (
     BaselinePrediction,
     EvidenceReference,
     PredictionValidationError,
+    prediction_to_record,
     validate_prediction,
 )
 
@@ -41,5 +42,6 @@ __all__ = [
     "load_evaluation_questions",
     "load_history_observations",
     "render_history_jsonl",
+    "prediction_to_record",
     "validate_prediction",
 ]

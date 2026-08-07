@@ -664,6 +664,15 @@ def verify_manifest_artifacts(manifest: RunManifest, repo_root: str | Path) -> N
         raise RunConfigurationError(errors)
 
 
+def assert_no_secrets(value: object, location: str = "artifact") -> None:
+    """Reject secret-bearing field names or credential-shaped values."""
+
+    errors: list[str] = []
+    _reject_secrets(value, location, errors)
+    if errors:
+        raise RunConfigurationError(errors)
+
+
 def _config_record(config: FrozenBaselineConfig | Mapping[str, object]) -> dict[str, object]:
     if isinstance(config, FrozenBaselineConfig):
         record = asdict(config)
