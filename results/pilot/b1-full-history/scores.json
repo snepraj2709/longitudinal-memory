@@ -1,267 +1,246 @@
 {
-  "abstention_accuracy": {
-    "denominator": 25,
-    "numerator": 25,
-    "value": 1.0
-  },
-  "abstention_confusion": {
-    "evaluated_valid_predictions": 25,
-    "false_negative": 0,
-    "false_positive": 0,
-    "true_negative": 20,
-    "true_positive": 5
-  },
-  "abstention_precision": {
-    "denominator": 5,
-    "numerator": 5,
-    "value": 1.0
-  },
-  "abstention_recall": {
-    "denominator": 5,
-    "numerator": 5,
-    "value": 1.0
-  },
-  "answered_coverage": {
-    "denominator": 25,
-    "numerator": 20,
-    "value": 0.8
-  },
-  "cases_requiring_manual_semantic_review": [
-    "extraction_001",
-    "extraction_002",
-    "extraction_003",
-    "extraction_004",
-    "extraction_005",
-    "temporal_001",
-    "temporal_002",
-    "temporal_003",
-    "temporal_004",
-    "temporal_005",
-    "conflict_001",
-    "conflict_002",
-    "conflict_003",
-    "conflict_004",
-    "conflict_005",
-    "user_modeling_001",
-    "user_modeling_002",
-    "user_modeling_003",
-    "user_modeling_004",
-    "user_modeling_005",
-    "abstention_001",
-    "abstention_002",
-    "abstention_003",
-    "abstention_004",
-    "abstention_005"
-  ],
-  "evidence_reference_counts": {
-    "evaluated_valid_predictions": 25,
-    "gold_references": 54,
-    "matching_references": 27,
-    "predicted_references": 43
-  },
-  "evidence_reference_precision": {
-    "denominator": 43,
-    "numerator": 27,
-    "value": 0.627907
-  },
-  "evidence_reference_recall": {
-    "denominator": 54,
-    "numerator": 27,
-    "value": 0.5
-  },
-  "exact_citation_valid_rate": {
-    "denominator": 25,
-    "numerator": 25,
-    "value": 1.0
-  },
-  "execution_failure_case_ids": [],
-  "failed_case_count": 0,
-  "json_valid_rate": {
-    "denominator": 25,
-    "numerator": 25,
-    "value": 1.0
-  },
-  "metric_scope": "Abstention and evidence-reference metrics use validated predictions only. Execution failures are reported separately.",
-  "prediction_contract_valid_rate": {
-    "denominator": 25,
-    "numerator": 25,
-    "value": 1.0
-  },
-  "results_by_capability": {
-    "abstention": {
-      "abstention_accuracy": {
-        "denominator": 5,
-        "numerator": 5,
-        "value": 1.0
-      },
-      "case_ids": [
-        "abstention_001",
-        "abstention_002",
-        "abstention_003",
-        "abstention_004",
-        "abstention_005"
-      ],
-      "evidence_reference_precision": {
-        "denominator": 0,
-        "numerator": 0,
-        "value": null
-      },
-      "evidence_reference_recall": {
-        "denominator": 0,
-        "numerator": 0,
-        "value": null
-      },
-      "failed_case_count": 0,
-      "status_counts": {
-        "abstained": 5,
-        "answered": 0,
-        "disputed": 0,
-        "partially_answered": 0
-      },
-      "total_cases": 5,
-      "valid_prediction_count": 5
+  "abstention": {
+    "accuracy": {
+      "denominator": 25,
+      "null_reason": null,
+      "numerator": 25,
+      "value": 1.0
     },
-    "conflict_detection": {
-      "abstention_accuracy": {
-        "denominator": 5,
-        "numerator": 5,
-        "value": 1.0
-      },
-      "case_ids": [
-        "conflict_001",
-        "conflict_002",
-        "conflict_003",
-        "conflict_004",
-        "conflict_005"
-      ],
-      "evidence_reference_precision": {
-        "denominator": 7,
-        "numerator": 7,
-        "value": 1.0
-      },
-      "evidence_reference_recall": {
-        "denominator": 12,
-        "numerator": 7,
-        "value": 0.583333
-      },
-      "failed_case_count": 0,
-      "status_counts": {
-        "abstained": 0,
-        "answered": 5,
-        "disputed": 0,
-        "partially_answered": 0
-      },
-      "total_cases": 5,
-      "valid_prediction_count": 5
+    "confusion_matrix": {
+      "false_negative": 0,
+      "false_positive": 0,
+      "true_negative": 20,
+      "true_positive": 5
     },
-    "extraction": {
-      "abstention_accuracy": {
-        "denominator": 5,
-        "numerator": 5,
-        "value": 1.0
-      },
-      "case_ids": [
-        "extraction_001",
-        "extraction_002",
-        "extraction_003",
-        "extraction_004",
-        "extraction_005"
-      ],
-      "evidence_reference_precision": {
-        "denominator": 12,
-        "numerator": 6,
-        "value": 0.5
-      },
-      "evidence_reference_recall": {
-        "denominator": 7,
-        "numerator": 6,
-        "value": 0.857143
-      },
-      "failed_case_count": 0,
-      "status_counts": {
-        "abstained": 0,
-        "answered": 5,
-        "disputed": 0,
-        "partially_answered": 0
-      },
-      "total_cases": 5,
-      "valid_prediction_count": 5
+    "precision": {
+      "denominator": 5,
+      "null_reason": null,
+      "numerator": 5,
+      "value": 1.0
     },
-    "temporal_reasoning": {
-      "abstention_accuracy": {
-        "denominator": 5,
-        "numerator": 5,
-        "value": 1.0
-      },
-      "case_ids": [
-        "temporal_001",
-        "temporal_002",
-        "temporal_003",
-        "temporal_004",
-        "temporal_005"
-      ],
-      "evidence_reference_precision": {
-        "denominator": 7,
-        "numerator": 7,
-        "value": 1.0
-      },
-      "evidence_reference_recall": {
-        "denominator": 11,
-        "numerator": 7,
-        "value": 0.636364
-      },
-      "failed_case_count": 0,
-      "status_counts": {
-        "abstained": 0,
-        "answered": 5,
-        "disputed": 0,
-        "partially_answered": 0
-      },
-      "total_cases": 5,
-      "valid_prediction_count": 5
-    },
-    "user_modeling": {
-      "abstention_accuracy": {
-        "denominator": 5,
-        "numerator": 5,
-        "value": 1.0
-      },
-      "case_ids": [
-        "user_modeling_001",
-        "user_modeling_002",
-        "user_modeling_003",
-        "user_modeling_004",
-        "user_modeling_005"
-      ],
-      "evidence_reference_precision": {
-        "denominator": 17,
-        "numerator": 7,
-        "value": 0.411765
-      },
-      "evidence_reference_recall": {
-        "denominator": 24,
-        "numerator": 7,
-        "value": 0.291667
-      },
-      "failed_case_count": 0,
-      "status_counts": {
-        "abstained": 0,
-        "answered": 5,
-        "disputed": 0,
-        "partially_answered": 0
-      },
-      "total_cases": 5,
-      "valid_prediction_count": 5
+    "recall": {
+      "denominator": 5,
+      "null_reason": null,
+      "numerator": 5,
+      "value": 1.0
     }
   },
-  "semantic_answer_score": null,
-  "semantic_answer_score_reason": "No formal semantic answer grader is implemented. Review the listed cases manually.",
-  "status_counts": {
-    "abstained": 5,
-    "answered": 20,
-    "disputed": 0,
-    "partially_answered": 0
+  "answer_correctness": {
+    "fully_correct": 23,
+    "incorrect": 0,
+    "lenient_accuracy": {
+      "denominator": 25,
+      "null_reason": null,
+      "numerator": 24.0,
+      "value": 0.96
+    },
+    "partial_credit_value": 0.5,
+    "partially_correct": 2,
+    "reviewed_accuracy": {
+      "denominator": 25,
+      "null_reason": null,
+      "numerator": 23,
+      "value": 0.92
+    },
+    "strict_accuracy": {
+      "denominator": 25,
+      "null_reason": null,
+      "numerator": 23,
+      "value": 0.92
+    },
+    "unresolved": 0
   },
-  "total_cases": 25,
-  "valid_prediction_count": 25
+  "baseline_id": "b1-full-history",
+  "capability_accuracy": {
+    "abstention": {
+      "correct": 5,
+      "execution_failures": 0,
+      "incorrect": 0,
+      "partially_correct": 0,
+      "strict_accuracy": {
+        "denominator": 5,
+        "null_reason": null,
+        "numerator": 5,
+        "value": 1.0
+      },
+      "total_cases": 5,
+      "unresolved_manual_reviews": 0
+    },
+    "conflict_detection": {
+      "correct": 5,
+      "execution_failures": 0,
+      "incorrect": 0,
+      "partially_correct": 0,
+      "strict_accuracy": {
+        "denominator": 5,
+        "null_reason": null,
+        "numerator": 5,
+        "value": 1.0
+      },
+      "total_cases": 5,
+      "unresolved_manual_reviews": 0
+    },
+    "extraction": {
+      "correct": 5,
+      "execution_failures": 0,
+      "incorrect": 0,
+      "partially_correct": 0,
+      "strict_accuracy": {
+        "denominator": 5,
+        "null_reason": null,
+        "numerator": 5,
+        "value": 1.0
+      },
+      "total_cases": 5,
+      "unresolved_manual_reviews": 0
+    },
+    "temporal_reasoning": {
+      "correct": 5,
+      "execution_failures": 0,
+      "incorrect": 0,
+      "partially_correct": 0,
+      "strict_accuracy": {
+        "denominator": 5,
+        "null_reason": null,
+        "numerator": 5,
+        "value": 1.0
+      },
+      "total_cases": 5,
+      "unresolved_manual_reviews": 0
+    },
+    "user_modeling": {
+      "correct": 3,
+      "execution_failures": 0,
+      "incorrect": 0,
+      "partially_correct": 2,
+      "strict_accuracy": {
+        "denominator": 5,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 0.6
+      },
+      "total_cases": 5,
+      "unresolved_manual_reviews": 0
+    }
+  },
+  "current_vs_outdated_facts": {
+    "affected_case_ids": [],
+    "applicable_cases": 5,
+    "error_rate": {
+      "denominator": 5,
+      "null_reason": null,
+      "numerator": 0,
+      "value": 0.0
+    },
+    "errors": 0,
+    "findings": []
+  },
+  "dataset_hash": "726a9dcc4d569a9f0ada749dc8e48630cb9ee4f1aa9fc0dc5131a34b245a98e6",
+  "denominator_rules": "A zero denominator returns null and a reason. Macro evidence metrics average only cases whose per-case metric is defined. Execution failures count as incorrect answers and contribute missing gold evidence as false negatives.",
+  "evidence_message": {
+    "counts": {
+      "false_negatives": 27,
+      "false_positives": 16,
+      "true_positives": 27
+    },
+    "macro_precision": {
+      "denominator": 20,
+      "null_reason": null,
+      "numerator": 15.309523,
+      "value": 0.765476
+    },
+    "macro_recall": {
+      "denominator": 20,
+      "null_reason": null,
+      "numerator": 13.092858,
+      "value": 0.654643
+    },
+    "micro_precision": {
+      "denominator": 43,
+      "null_reason": null,
+      "numerator": 27,
+      "value": 0.627907
+    },
+    "micro_recall": {
+      "denominator": 54,
+      "null_reason": null,
+      "numerator": 27,
+      "value": 0.5
+    }
+  },
+  "evidence_source": {
+    "counts": {
+      "false_negatives": 13,
+      "false_positives": 10,
+      "true_positives": 27
+    },
+    "macro_precision": {
+      "denominator": 20,
+      "null_reason": null,
+      "numerator": 16.866666,
+      "value": 0.843333
+    },
+    "macro_recall": {
+      "denominator": 20,
+      "null_reason": null,
+      "numerator": 15.2,
+      "value": 0.76
+    },
+    "micro_precision": {
+      "denominator": 37,
+      "null_reason": null,
+      "numerator": 27,
+      "value": 0.72973
+    },
+    "micro_recall": {
+      "denominator": 40,
+      "null_reason": null,
+      "numerator": 27,
+      "value": 0.675
+    }
+  },
+  "execution_failure_case_ids": [],
+  "execution_failure_count": 0,
+  "gold_answer_sha256": "2cf6ec828aecf832aaa497af4d80a194ad45f713af14cb104f23ddb4a57d67be",
+  "gold_answer_sha256_after": "2cf6ec828aecf832aaa497af4d80a194ad45f713af14cb104f23ddb4a57d67be",
+  "gold_answer_unchanged": true,
+  "metric_formulas": {
+    "abstention_accuracy": "(TP + TN) / all evaluation cases",
+    "lenient_answer_accuracy": "(fully correct + 0.5 * partially correct) / all evaluation cases",
+    "outdated_fact_error_rate": "outdated fact errors / applicable cases",
+    "precision": "TP / (TP + FP)",
+    "recall": "TP / (TP + FN)",
+    "reviewed_answer_accuracy": "fully correct / cases with completed judgments",
+    "strict_answer_accuracy": "fully correct / all evaluation cases",
+    "unsupported_claim_rate": "unsupported factual claims / total factual claims"
+  },
+  "predictions_sha256": "63e5b1061c98edbec8a2c77c2260bd364bb3362d876fe22a02e3a10a2f5187b0",
+  "predictions_sha256_after": "63e5b1061c98edbec8a2c77c2260bd364bb3362d876fe22a02e3a10a2f5187b0",
+  "predictions_unchanged": true,
+  "result_status": "final",
+  "run_configuration_hash": "0081c3057e3f00634664b373d0f981d0f9164a711f21e7df6cf17b064902119e",
+  "scored_at_utc": "2026-08-07T13:52:22.458901Z",
+  "scorer_version": "b1-scorer-v1",
+  "unresolved_case_ids": [],
+  "unresolved_manual_review_count": 0,
+  "unsupported_claims": {
+    "affected_case_ids": [
+      "user_modeling_001"
+    ],
+    "findings": [
+      {
+        "case_id": "user_modeling_001",
+        "claim": "Maya started as a Marketing Associate in April.",
+        "reason": "The cited offer states that her joining date was May 4, 2026."
+      }
+    ],
+    "rate": {
+      "denominator": 32,
+      "null_reason": null,
+      "numerator": 1,
+      "value": 0.03125
+    },
+    "total_claims": 32,
+    "unsupported_claims": 1
+  }
 }
