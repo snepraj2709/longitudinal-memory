@@ -117,7 +117,7 @@ class PilotHistoryTests(unittest.TestCase):
                 source_type="conversation",
                 source_id=source_id,
                 message_id=message_id,
-                author_id="maya100",
+                author_id="i_am_maya",
                 author_name="Maya",
                 text=message_id,
             )
@@ -158,7 +158,7 @@ class PilotHistoryTests(unittest.TestCase):
 
         self.assertEqual(conversation["source_type"], "conversation")
         self.assertEqual(conversation["source_id"], "conv_001")
-        self.assertEqual(conversation["speaker_id"], "maya100")
+        self.assertEqual(conversation["speaker_id"], "i_am_maya")
         self.assertEqual(conversation["speaker_name"], "Maya")
         self.assertIn("I should be studying", conversation["text"])
         self.assertEqual(email["source_type"], "email")
@@ -218,7 +218,7 @@ class PilotHistoryTests(unittest.TestCase):
             source_type="conversation",
             source_id="conv_before",
             message_id="msg_before",
-            author_id="maya100",
+            author_id="i_am_maya",
             author_name="Maya",
             text="This is available.",
         )
@@ -227,7 +227,7 @@ class PilotHistoryTests(unittest.TestCase):
             source_type="calendar",
             source_id="cal_at_cutoff",
             message_id=None,
-            author_id="maya100",
+            author_id="i_am_maya",
             author_name="Maya",
             text="This is available at the cutoff.",
         )
@@ -236,7 +236,7 @@ class PilotHistoryTests(unittest.TestCase):
             source_type="email",
             source_id="email_after",
             message_id="msg_after",
-            author_id="maya100",
+            author_id="i_am_maya",
             author_name="Maya",
             text="This arrived too late.",
         )

@@ -1,6 +1,6 @@
 # Rules for synthetic data generation
 
-user schema - {"user_id":"i_am_maya","participant_id":"maya100","display_name":"Maya", "role": "user"}
+user schema - {"user_id":"i_am_maya","participant_id":"i_am_maya","display_name":"Maya", "role": "user"}
 
 Possible roles - user, assistant, friend, manager, colleague, family, sender, recipient, organizer, attendee
 
