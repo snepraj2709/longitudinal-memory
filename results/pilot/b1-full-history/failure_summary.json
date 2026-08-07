@@ -1,0 +1,146 @@
+{
+  "analysis_date_utc": "2026-08-07T15:15:02.812995Z",
+  "analyzer_version": "b1-failure-analysis-v1",
+  "baseline_id": "b1-full-history",
+  "category_case_ids": {
+    "abstained_despite_sufficient_evidence": [],
+    "failed_to_apply_correction": [],
+    "invalid_citation": [],
+    "missed_evidence": [
+      "extraction_003",
+      "temporal_001",
+      "temporal_003",
+      "temporal_004",
+      "conflict_002",
+      "conflict_003",
+      "conflict_004",
+      "user_modeling_001",
+      "user_modeling_002",
+      "user_modeling_003",
+      "user_modeling_004",
+      "user_modeling_005"
+    ],
+    "should_have_abstained": [],
+    "treated_assumption_as_fact": [],
+    "unsupported_user_inference": [],
+    "used_stale_information": [],
+    "wrong_date": [
+      "user_modeling_001"
+    ]
+  },
+  "category_counts": {
+    "abstained_despite_sufficient_evidence": 0,
+    "failed_to_apply_correction": 0,
+    "invalid_citation": 0,
+    "missed_evidence": 12,
+    "should_have_abstained": 0,
+    "treated_assumption_as_fact": 0,
+    "unsupported_user_inference": 0,
+    "used_stale_information": 0,
+    "wrong_date": 1
+  },
+  "contributing_category_counts": {
+    "abstained_despite_sufficient_evidence": 0,
+    "failed_to_apply_correction": 0,
+    "invalid_citation": 0,
+    "missed_evidence": 0,
+    "should_have_abstained": 0,
+    "treated_assumption_as_fact": 0,
+    "unsupported_user_inference": 0,
+    "used_stale_information": 0,
+    "wrong_date": 1
+  },
+  "dataset_hash": "726a9dcc4d569a9f0ada749dc8e48630cb9ee4f1aa9fc0dc5131a34b245a98e6",
+  "execution_failure_case_ids": [],
+  "execution_failures": 0,
+  "failed_cases": 12,
+  "failures_by_capability": {
+    "abstention": {
+      "case_ids": [],
+      "count": 0
+    },
+    "conflict_detection": {
+      "case_ids": [
+        "conflict_002",
+        "conflict_003",
+        "conflict_004"
+      ],
+      "count": 3
+    },
+    "extraction": {
+      "case_ids": [
+        "extraction_003"
+      ],
+      "count": 1
+    },
+    "temporal_reasoning": {
+      "case_ids": [
+        "temporal_001",
+        "temporal_003",
+        "temporal_004"
+      ],
+      "count": 3
+    },
+    "user_modeling": {
+      "case_ids": [
+        "user_modeling_001",
+        "user_modeling_002",
+        "user_modeling_003",
+        "user_modeling_004",
+        "user_modeling_005"
+      ],
+      "count": 5
+    }
+  },
+  "multi_category_cases": [
+    "user_modeling_001"
+  ],
+  "predictions_hash": "63e5b1061c98edbec8a2c77c2260bd364bb3362d876fe22a02e3a10a2f5187b0",
+  "primary_category_counts": {
+    "abstained_despite_sufficient_evidence": 0,
+    "failed_to_apply_correction": 0,
+    "invalid_citation": 0,
+    "missed_evidence": 12,
+    "should_have_abstained": 0,
+    "treated_assumption_as_fact": 0,
+    "unsupported_user_inference": 0,
+    "used_stale_information": 0,
+    "wrong_date": 0
+  },
+  "protected_artifact_hashes": {
+    "configs/full_history_baseline_v1.json": "26962c112b96000882e901bcd9cdf385a84f047e89d72af376301d3941672816",
+    "data/pilot/evaluation/eval_answer.jsonl": "2cf6ec828aecf832aaa497af4d80a194ad45f713af14cb104f23ddb4a57d67be",
+    "data/pilot/evaluation/eval_questions.jsonl": "bed228c6ada33bf515bd0eff9cdb35942c4c72aad71960e5dc0acdd9378f2789",
+    "data/pilot/oracle-event.jsonl": "921431679979037657e8737c412e8b633a772e0fb1d7a5cda5a5f64425bc1136",
+    "data/pilot/sources/calendar.jsonl": "5c07ff7631fa1da709df5313be47f64e948a333674326a7f1b16961ba89dd16a",
+    "data/pilot/sources/conversations.jsonl": "5fe889cc0f8f51e4d45919ef5e4c4fdf8d4d1c6b7c5474d4747c5cd0613b9cd3",
+    "data/pilot/sources/emails.jsonl": "eb8da661fd0b7908ab7462f099488acedb69ba410b2cdd22b9d539e425d3a4d1",
+    "data/pilot/user.jsonl": "de58d8ba4b482e4fc885c7177d169b6271141a75d536fa4209a1d95f883843a3",
+    "results/pilot/b1-full-history/case_scores.jsonl": "07a0db890fef5b1fa203edcf642b1cbaeef8602d147aac22c6c660f377da4ab8",
+    "results/pilot/b1-full-history/failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "results/pilot/b1-full-history/manual_review.jsonl": "9e9a74331a9af4f608b780a23fce5e936e0964f06edac874424d127188fbe2c0",
+    "results/pilot/b1-full-history/predictions.jsonl": "63e5b1061c98edbec8a2c77c2260bd364bb3362d876fe22a02e3a10a2f5187b0",
+    "results/pilot/b1-full-history/run.json": "05ddbce5f29f10becb874a899b235fb768d75bbcd3bb2bcc4864bdbae1691e88",
+    "results/pilot/b1-full-history/scores.json": "a83afc47fa402335cb9b46fe2b3eb9d4d0e5b8a6e7901827519f53ed90067294"
+  },
+  "protected_artifacts_unchanged": true,
+  "reasoning_failures": 12,
+  "report_status": "final",
+  "reviewed_non_failure_evidence_case_ids": [
+    "extraction_001",
+    "extraction_002",
+    "extraction_004"
+  ],
+  "run_configuration_hash": "0081c3057e3f00634664b373d0f981d0f9164a711f21e7df6cf17b064902119e",
+  "scores_hash": "a83afc47fa402335cb9b46fe2b3eb9d4d0e5b8a6e7901827519f53ed90067294",
+  "step6_answer_results": {
+    "correct": 23,
+    "incorrect": 0,
+    "partially_correct": 2,
+    "unresolved": 0
+  },
+  "successful_cases": 13,
+  "total_questions": 25,
+  "unresolved_case_ids": [],
+  "unresolved_reviews": 0
+}
