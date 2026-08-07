@@ -33,7 +33,7 @@ class PredictionValidationError(ValueError):
         super().__init__(f"Invalid baseline prediction:\n{details}")
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class EvidenceReference:
     """A verbatim source reference supporting a generated answer."""
 
@@ -42,7 +42,7 @@ class EvidenceReference:
     quote: str
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class BaselinePrediction:
     """A validated prediction produced by a memory baseline."""
 
