@@ -1,5 +1,7 @@
 # The entire pipeline is this
 
+This is the compact execution view. Use the [benchmark contract](benchmark.md) for release scope and scoring, the [memory ontology](memory-ontology.md) for memory meanings, and the [implementation roadmap](memory-evaluation-steps.md) for full phase details.
+
 1. Invent a fake person
         ↓
 2. Write their true life history
@@ -31,12 +33,6 @@
 15. Score the system
 
 
-## first version needs:
+## Release scope
 
-1 fake person
-10 life events
-8 conversations
-2 emails
-2 calendar events
-20 questions
-20 correct answers
+Use the [benchmark release table](benchmark.md#releases-and-splits) for current counts and status. This short checklist does not set release size.

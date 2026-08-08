@@ -12,6 +12,8 @@ This project is building a longitudinal memory evaluation benchmark for an AI no
 
 Read [docs/memory-evaluation-steps.md](docs/memory-evaluation-steps.md) to understand how the project and repository are being built from scratch.
 
+Use [docs/benchmark.md](docs/benchmark.md) as the evaluation contract for releases, tasks, cases, baselines and scoring. Use [docs/memory-ontology.md](docs/memory-ontology.md) as the semantic contract for claims, evidence, time, lifecycle and provenance.
+
 ## Reference material
 
 The project draws conceptual inspiration from the paper [ES-MemEval: Benchmarking Conversational Agents on Personalized Long-Term Emotional Support](https://arxiv.org/html/2602.01885v1) and its corresponding [GitHub repository](https://github.com/slptongji/ES-MemEval).

@@ -1,5 +1,7 @@
 # Rules for synthetic data generation
 
+This file supplies Maya's narrative seed. Use the [benchmark contract](../docs/benchmark.md) for construction, review and release rules. Use the [memory ontology](../docs/memory-ontology.md) for claim, evidence, time and provenance labels. The contracts take precedence if this narrative conflicts with them.
+
 user schema - {"user_id":"i_am_maya","participant_id":"i_am_maya","display_name":"Maya", "role": "user"}
 
 Possible roles - user, assistant, friend, manager, colleague, family, sender, recipient, organizer, attendee

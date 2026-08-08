@@ -22,6 +22,10 @@ Ablations and evaluation
 
 Follow a benchmark-first structure: user profiles expand to temporally and causally connected event timelines, which are then rendered in multi-session conversations. 
 
+## Contract documents
+
+This file is the implementation roadmap. Use the [benchmark contract](benchmark.md) for releases, tasks, cases, baselines and scoring. Use the [memory ontology](memory-ontology.md) for claims, evidence, time, lifecycle and provenance. These contracts take precedence if an older example in this roadmap differs from them.
+
 ---
 
 # 1. Hidden “oracle history”
@@ -934,18 +938,17 @@ Aim for at least one regression test per real bug you find.
 
 # 16. Recommended implementation order
 
-## Phase 1 — Benchmark contract
+## Phase 1 — Benchmark contract (complete)
 
-Deliver:
+Delivered:
 
-```
-docs/benchmark.md
-docs/memory-ontology.md
-data/pilot/oracle.json
-data/pilot/questions.json
-```
+- [Benchmark contract](benchmark.md)
+- [Memory ontology](memory-ontology.md)
+- [Pilot oracle](../data/pilot/oracle-event.jsonl)
+- [Pilot questions](../data/pilot/evaluation/eval_questions.jsonl)
+- [Pilot answers](../data/pilot/evaluation/eval_answer.jsonl)
 
-Define all labels and metrics before writing the memory system.
+These files define the labels and metrics used by later phases.
 
 ## Phase 2 — Full-history baseline
 

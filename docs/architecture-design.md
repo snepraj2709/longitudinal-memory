@@ -5,6 +5,7 @@ a backend memory system for a personal AI that continuously receives noisy infor
 ## 
 Start with the benchmark, not the memory architecture
 
+Use the [benchmark contract](benchmark.md) for releases, tasks, cases, baselines and scoring. Use the [memory ontology](memory-ontology.md) for claims, evidence, time, lifecycle and provenance.
 
 ## Requirement
 The system must determine:
@@ -285,15 +286,17 @@ conclude that Sneha dislikes her manager.”
 
 ## 5. Evaluation harness
 
-Create a benchmark containing at least 500 questions across six categories.
+The scaled release contains 500 QA cases across five capabilities. Provenance is required and scored across every capability rather than treated as a sixth category. The [benchmark contract](benchmark.md) is authoritative for release sizes, splits, evaluation tracks and metrics.
 
-Category	Example
-Information extraction	What did the user promise during Friday’s meeting?
-Temporal reasoning	When did the user begin considering AI startups?
-Conflict resolution	Which resignation date is currently authoritative?
-User modelling	Is entrepreneurship a stable interest or recent curiosity?
-Abstention	Why does the user dislike their manager?
-Provenance	Which events support the current career goal?
+| Capability | Example |
+| --- | --- |
+| Information extraction | What did the user promise during Friday’s meeting? |
+| Temporal reasoning | When did the user begin considering AI startups? |
+| Conflict resolution | Which resignation date is currently authoritative? |
+| User modelling | Is entrepreneurship a stable interest or recent curiosity? |
+| Abstention | Why does the user dislike their manager? |
+
+Each case also identifies the evidence needed to support or abstain from an answer.
 
 Measure:
 
@@ -328,7 +331,7 @@ One year per user
 Approximately 500,000 events
 Manually inspectable ground truth
 
-Target initial performance:
+The following values are [research targets](benchmark.md#research-targets) for the scaled system. They are not claims about current performance:
 
 Ingestion acknowledgement p95: below 250 ms
 Retrieval p95: below 1.5 seconds
