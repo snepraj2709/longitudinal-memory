@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 import hashlib
 import json
+import math
 from pathlib import Path
 import subprocess
 import sys
@@ -62,6 +63,26 @@ ATOMIC_CASE_REFS = (
 )
 _SOURCE_FILENAMES = ("calendar.jsonl", "conversations.jsonl", "emails.jsonl")
 _CHECKPOINT_FILES = {"run.json", "predictions.jsonl", "failures.jsonl"}
+_RUN_RECORD_FIELDS = {
+    "run_format_version", "run_status", "started_at", "completed_at",
+    "repository_commit", "repository_dirty", "resume_count",
+    "configuration_version", "configuration_sha256", "provider",
+    "dataset_version", "dataset_split", "runtime_dataset_sha256",
+    "requested_model", "resolved_model", "temperature", "generation_settings",
+    "prompt_version", "prompt_sha256", "scoring_version",
+    "predicate_registry_version", "predicate_registry_sha256", "case_order",
+    "source_file_sha256", "gold_file_sha256", "planned_request_count",
+    "maximum_request_attempts", "maximum_retry_requests",
+    "provider_requests_attempted", "successful_cases", "failed_cases",
+    "remaining_cases", "budget_input_tokens", "budget_output_tokens",
+    "estimated_cost_usd", "hard_cost_cap_usd", "prior_provider_failures",
+    "attempts", "output_file_sha256",
+}
+_RATE_LIMIT_FIELDS = {
+    "remaining_requests", "remaining_tokens", "reset_requests_seconds",
+    "reset_tokens_seconds", "remaining_project_tokens",
+    "reset_project_tokens_seconds",
+}
 
 
 class AtomicPipelineError(RuntimeError):
@@ -308,7 +329,7 @@ def execute_atomic_pipeline(
         if position in completed_positions:
             continue
         stop_reason = _request_limit_failure(
-            plan, executions, prior_provider_failures, prompt_upper, cap
+            plan, executions, prior_provider_failures, position, prompt_upper, cap
         )
         if stop_reason is not None:
             executions.append(AtomicCaseExecution(
@@ -321,6 +342,17 @@ def execute_atomic_pipeline(
                 repository_commit, repository_dirty,
             )
 
+        pending = AtomicCaseExecution(
+            position, case_id, source_id, True, False, (), None,
+            "provider_pending",
+            "No usable provider response has been checkpointed for this case.",
+            prompt_upper, MAX_OUTPUT_TOKENS,
+        )
+        executions.append(pending)
+        _write_checkpoint(
+            output_path, plan, executions, prior_provider_failures, started_at,
+            None, "running", cap, resume_count, repository_commit, repository_dirty,
+        )
         try:
             raw_response, metadata = getattr(client, "complete_with_metadata")(
                 system_prompt=ATOMIC_EXTRACTION_SYSTEM_PROMPT,
@@ -333,6 +365,7 @@ def execute_atomic_pipeline(
                 if stage == "provider_model_mismatch"
                 else "The provider request failed."
             )
+            executions.pop()
             execution = AtomicCaseExecution(
                 position, case_id, source_id, True, False, (), None, stage, message,
                 prompt_upper, MAX_OUTPUT_TOKENS,
@@ -348,6 +381,7 @@ def execute_atomic_pipeline(
         try:
             _validate_metadata(metadata, config)
         except AtomicPipelineError:
+            executions.pop()
             safe_metadata = metadata if isinstance(metadata, OpenAIResponseMetadata) else None
             executions.append(AtomicCaseExecution(
                 position, case_id, source_id, True, False, (), safe_metadata,
@@ -372,6 +406,7 @@ def execute_atomic_pipeline(
         try:
             result = validate_atomic_response(source, raw_response, metadata)
         except AtomicExtractionValidationError:
+            executions.pop()
             executions.append(AtomicCaseExecution(
                 position, case_id, source_id, True, False, (), metadata,
                 "validation", "The extracted claims failed validation.",
@@ -383,6 +418,7 @@ def execute_atomic_pipeline(
                 _utc_text(clock()), "failed_validation", cap, resume_count,
                 repository_commit, repository_dirty,
             )
+        executions.pop()
         executions.append(_successful_execution(position, case_id, result, prompt_upper))
         _write_checkpoint(
             output_path, plan, executions, prior_provider_failures, started_at,
@@ -393,12 +429,17 @@ def execute_atomic_pipeline(
         raise AtomicPipelineError("runtime predictions are incomplete")
 
     # Gold remains hash-only until every source-only prediction is complete.
-    gold_cases = load_atomic_gold(root / ATOMIC_GOLD_PATH, plan.all_sources)
+    gold_path = root / ATOMIC_GOLD_PATH
+    if _file_sha256(gold_path) != plan.gold_file_sha256:
+        raise AtomicPipelineError("the atomic gold file changed before scoring")
+    gold_cases = load_atomic_gold(gold_path, plan.all_sources)
     _require_frozen_case_order(gold_cases)
     predictions_by_case = {
         item.case_id: item.claims for item in executions if item.passed
     }
     scores = score_atomic_extraction(gold_cases, predictions_by_case)
+    if _file_sha256(gold_path) != plan.gold_file_sha256:
+        raise AtomicPipelineError("the atomic gold file changed during scoring")
     _write_jsonl(output_path / "case_scores.jsonl", scores["case_results"])
     _write_json(output_path / "scores.json", scores)
     return _write_checkpoint(
@@ -422,9 +463,14 @@ def _successful_execution(
 
 def _request_limit_failure(
     plan: AtomicRunPlan, executions: Sequence[AtomicCaseExecution],
-    prior_failures: Sequence[Mapping[str, object]], next_input: int, cap: Decimal,
+    prior_failures: Sequence[Mapping[str, object]], next_position: int,
+    next_input: int, cap: Decimal,
 ) -> str | None:
     attempts = sum(item.attempted for item in executions) + len(prior_failures)
+    attempted_positions = {
+        item.position for item in executions if item.attempted
+    } | {int(item["position"]) for item in prior_failures}
+    retries = attempts - len(attempted_positions)
     used_input = sum(item.budget_input_tokens for item in executions) + sum(
         int(item["budget_input_tokens"]) for item in prior_failures
     )
@@ -433,6 +479,11 @@ def _request_limit_failure(
     )
     if attempts + 1 > plan.config.maximum_request_attempts:
         return "The request-count ceiling was reached before this case."
+    if (
+        next_position in attempted_positions
+        and retries + 1 > plan.config.maximum_retry_requests
+    ):
+        return "The retry allowance was reached before this case."
     if used_input + next_input > plan.config.maximum_input_tokens:
         return "The input-token ceiling was reached before this case."
     if used_output + MAX_OUTPUT_TOKENS > plan.config.maximum_output_tokens:
@@ -482,6 +533,7 @@ def _write_checkpoint(
         "dataset_version": plan.config.dataset_version,
         "dataset_split": plan.config.dataset_split,
         "runtime_dataset_sha256": plan.config.runtime_dataset_sha256,
+        "provider": plan.config.provider,
         "requested_model": plan.config.requested_model,
         "resolved_model": returned_models[0] if len(returned_models) == 1 else None,
         "temperature": plan.config.temperature,
@@ -530,6 +582,8 @@ def _load_resume_checkpoint(
         raise AtomicPipelineError("the resume checkpoint is unreadable") from error
     if not isinstance(record, dict):
         raise AtomicPipelineError("the resume checkpoint must be an object")
+    if set(record) != _RUN_RECORD_FIELDS:
+        raise AtomicPipelineError("resume checkpoint fields changed")
     expected = {
         "run_format_version": plan.config.run_format_version,
         "configuration_version": plan.config.configuration_version,
@@ -548,6 +602,9 @@ def _load_resume_checkpoint(
         "case_order": [{"case_id": a, "source_id": b} for a, b in plan.case_refs],
         "source_file_sha256": dict(plan.source_file_sha256),
         "gold_file_sha256": plan.gold_file_sha256,
+        "planned_request_count": plan.config.planned_request_count,
+        "maximum_request_attempts": plan.config.maximum_request_attempts,
+        "maximum_retry_requests": plan.config.maximum_retry_requests,
         "hard_cost_cap_usd": cost_text(cap),
     }
     mismatches = [name for name, value in expected.items() if record.get(name) != value]
@@ -555,6 +612,14 @@ def _load_resume_checkpoint(
         raise AtomicPipelineError("resume checkpoint is incompatible: " + ", ".join(mismatches))
     if record.get("run_status") not in {"running", "completed_with_provider_failures"}:
         raise AtomicPipelineError("resume requires an incomplete provider-failed checkpoint")
+    hashes = record.get("output_file_sha256")
+    if not isinstance(hashes, dict) or set(hashes) != {
+        "predictions.jsonl", "failures.jsonl"
+    }:
+        raise AtomicPipelineError("resume checkpoint output hashes are malformed")
+    for filename, expected_hash in hashes.items():
+        if not isinstance(expected_hash, str) or _file_sha256(output_path / filename) != expected_hash:
+            raise AtomicPipelineError("resume checkpoint output hash mismatch")
     attempts_raw = record.get("attempts")
     prior_raw = record.get("prior_provider_failures")
     if not isinstance(attempts_raw, list) or not isinstance(prior_raw, list):
@@ -565,10 +630,19 @@ def _load_resume_checkpoint(
         raise AtomicPipelineError("resume checkpoint cases are duplicated or reordered")
     failures = [item for item in executions if not item.passed]
     for item in failures:
-        if item.failure_stage != "provider" or item.provider_metadata is not None:
+        if (
+            item.failure_stage not in {"provider", "provider_pending"}
+            or item.provider_metadata is not None
+        ):
             raise AtomicPipelineError("resume may retry only provider failures with no usable output")
     prior = [_validated_prior_failure(item, plan) for item in prior_raw]
     prior.extend(_failure_budget_record(item) for item in failures)
+    saved_attempts = sum(item.attempted for item in executions) + len(prior_raw)
+    saved_positions = {
+        item.position for item in executions if item.attempted
+    } | {int(item["position"]) for item in prior_raw}
+    if saved_attempts - len(saved_positions) > plan.config.maximum_retry_requests:
+        raise AtomicPipelineError("resume checkpoint exceeds the retry allowance")
     successful = [item for item in executions if item.passed]
     started_at = record.get("started_at")
     resume_count = record.get("resume_count")
@@ -576,10 +650,74 @@ def _load_resume_checkpoint(
         raise AtomicPipelineError("resume checkpoint start time is invalid")
     if not isinstance(resume_count, int) or isinstance(resume_count, bool) or resume_count < 0:
         raise AtomicPipelineError("resume count is invalid")
+    _validate_checkpoint_summary(record, executions, prior_raw, plan)
     return {
         "started_at": started_at, "resume_count": resume_count,
         "executions": tuple(successful), "prior_provider_failures": tuple(prior),
     }
+
+
+def _validate_checkpoint_summary(
+    record: Mapping[str, object],
+    executions: Sequence[AtomicCaseExecution],
+    prior_failures: Sequence[Mapping[str, object]],
+    plan: AtomicRunPlan,
+) -> None:
+    status = record["run_status"]
+    current_failures = [item for item in executions if not item.passed]
+    if status == "running" and (
+        len(current_failures) > 1
+        or any(item.failure_stage != "provider_pending" for item in current_failures)
+    ):
+        raise AtomicPipelineError("running checkpoint contains an invalid pending request")
+    if status == "completed_with_provider_failures" and len(current_failures) != 1:
+        raise AtomicPipelineError("provider-failed checkpoint has invalid failure state")
+    if status == "completed_with_provider_failures" and any(
+        item.failure_stage != "provider" for item in current_failures
+    ):
+        raise AtomicPipelineError("provider-failed checkpoint has invalid failure stage")
+    completed_at = record["completed_at"]
+    if status == "running":
+        if completed_at is not None:
+            raise AtomicPipelineError("running checkpoint has a completion time")
+    elif not isinstance(completed_at, str) or not completed_at.endswith("Z"):
+        raise AtomicPipelineError("provider-failed checkpoint completion time is invalid")
+    if not isinstance(record["repository_commit"], str) or not record["repository_commit"]:
+        raise AtomicPipelineError("resume repository commit is invalid")
+    if not isinstance(record["repository_dirty"], bool):
+        raise AtomicPipelineError("resume worktree state is invalid")
+
+    attempted = sum(item.attempted for item in executions) + len(prior_failures)
+    successful = sum(item.passed for item in executions)
+    failed = sum(item.attempted and not item.passed for item in executions)
+    input_tokens = sum(item.budget_input_tokens for item in executions) + sum(
+        int(item["budget_input_tokens"]) for item in prior_failures
+    )
+    output_tokens = sum(item.budget_output_tokens for item in executions) + sum(
+        int(item["budget_output_tokens"]) for item in prior_failures
+    )
+    returned_models = sorted({
+        item.provider_metadata.returned_model
+        for item in executions
+        if item.provider_metadata is not None
+    })
+    expected = {
+        "provider_requests_attempted": attempted,
+        "successful_cases": successful,
+        "failed_cases": failed,
+        "remaining_cases": len(plan.case_refs) - successful,
+        "budget_input_tokens": input_tokens,
+        "budget_output_tokens": output_tokens,
+        "estimated_cost_usd": cost_text(
+            token_cost(plan.config, input_tokens, output_tokens)
+        ),
+        "resolved_model": returned_models[0] if len(returned_models) == 1 else None,
+    }
+    mismatches = [name for name, value in expected.items() if record.get(name) != value]
+    if mismatches:
+        raise AtomicPipelineError(
+            "resume checkpoint summary is inconsistent: " + ", ".join(mismatches)
+        )
 
 
 def _execution_from_record(item: object, plan: AtomicRunPlan) -> AtomicCaseExecution:
@@ -602,6 +740,8 @@ def _execution_from_record(item: object, plan: AtomicRunPlan) -> AtomicCaseExecu
     )
     if not all(isinstance(item[name], bool) for name in ("attempted", "passed")):
         raise AtomicPipelineError("resume attempt flags are invalid")
+    if item["passed"] and not item["attempted"]:
+        raise AtomicPipelineError("successful resume attempt was not marked attempted")
     if not isinstance(item["claims"], list):
         raise AtomicPipelineError("resume claims are malformed")
     if item["passed"]:
@@ -619,6 +759,8 @@ def _execution_from_record(item: object, plan: AtomicRunPlan) -> AtomicCaseExecu
         claims = ()
         if item["claims"]:
             raise AtomicPipelineError("failed resume attempt contains claims")
+        if item["failure_stage"] in {"provider", "provider_pending"} and not item["attempted"]:
+            raise AtomicPipelineError("provider failure was not marked attempted")
     budgets = []
     for name in ("budget_input_tokens", "budget_output_tokens"):
         value = item[name]
@@ -721,6 +863,8 @@ def _metadata_from_record(
     limits_raw = value["rate_limits"]
     limits = None
     if limits_raw is not None:
+        if not isinstance(limits_raw, dict) or set(limits_raw) != _RATE_LIMIT_FIELDS:
+            raise AtomicPipelineError("resume rate-limit metadata is malformed")
         try:
             limits = OpenAIRateLimitMetadata(**limits_raw)
         except (TypeError, ValueError):
@@ -748,11 +892,42 @@ def _validate_metadata_shape(metadata: OpenAIResponseMetadata) -> None:
         raise AtomicPipelineError("provider response ID is missing")
     if not isinstance(metadata.returned_model, str) or not metadata.returned_model:
         raise AtomicPipelineError("returned model metadata is missing")
+    if metadata.request_id is not None and (
+        not isinstance(metadata.request_id, str) or not metadata.request_id
+    ):
+        raise AtomicPipelineError("provider request ID is invalid")
     for value in (metadata.input_tokens, metadata.output_tokens, metadata.total_tokens):
         if value is not None and (not isinstance(value, int) or isinstance(value, bool) or value < 0):
             raise AtomicPipelineError("provider token metadata is invalid")
-    if not isinstance(metadata.pacing_delay_seconds, (int, float)) or metadata.pacing_delay_seconds < 0:
+    if (
+        not isinstance(metadata.pacing_delay_seconds, (int, float))
+        or isinstance(metadata.pacing_delay_seconds, bool)
+        or not math.isfinite(metadata.pacing_delay_seconds)
+        or metadata.pacing_delay_seconds < 0
+    ):
         raise AtomicPipelineError("provider pacing metadata is invalid")
+    if metadata.rate_limits is not None:
+        for value in (
+            metadata.rate_limits.remaining_requests,
+            metadata.rate_limits.remaining_tokens,
+            metadata.rate_limits.remaining_project_tokens,
+        ):
+            if value is not None and (
+                not isinstance(value, int) or isinstance(value, bool) or value < 0
+            ):
+                raise AtomicPipelineError("provider rate-limit metadata is invalid")
+        for value in (
+            metadata.rate_limits.reset_requests_seconds,
+            metadata.rate_limits.reset_tokens_seconds,
+            metadata.rate_limits.reset_project_tokens_seconds,
+        ):
+            if value is not None and (
+                not isinstance(value, (int, float))
+                or isinstance(value, bool)
+                or not math.isfinite(value)
+                or value < 0
+            ):
+                raise AtomicPipelineError("provider rate-limit metadata is invalid")
 
 
 def _assert_source_only_prompts(prompts: Sequence[str]) -> None:
@@ -778,8 +953,7 @@ def _require_output_directory(path: Path, *, resume: bool) -> None:
         if not path.is_dir() or not (path / "run.json").is_file():
             raise AtomicPipelineError("no resume checkpoint exists")
         names = {item.name for item in path.iterdir()}
-        allowed = _CHECKPOINT_FILES | {"scores.json", "case_scores.jsonl"}
-        if not _CHECKPOINT_FILES.issubset(names) or not names <= allowed:
+        if names != _CHECKPOINT_FILES:
             raise AtomicPipelineError("resume directory contains unexpected files")
     elif path.exists() and (not path.is_dir() or any(path.iterdir())):
         raise AtomicPipelineError(f"refusing to overwrite non-empty output: {path}")
@@ -871,8 +1045,15 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None) -> int
     if not isinstance(args.model, str) or not args.model.strip():
         parser.error("--execute requires --model")
     try:
-        api_key = load_env_value(args.env_file, "OPENAI_API_KEY")
         config = load_atomic_run_config(".", args.config)
+        prepare_atomic_run(config_path=args.config, validate_gold=False)
+        if args.model != config.requested_model:
+            raise AtomicPipelineError(
+                "requested model does not match the frozen snapshot"
+            )
+        _runtime_cost_cap(args.cost_cap_usd, config)
+        _require_output_directory(args.output_dir, resume=args.resume)
+        api_key = load_env_value(args.env_file, "OPENAI_API_KEY")
         client = OpenAIResponsesClient(
             api_key=api_key, model=args.model, temperature=config.temperature,
             max_output_tokens=int(config.generation_settings["max_output_tokens"]),
