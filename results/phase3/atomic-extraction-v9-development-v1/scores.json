@@ -1,0 +1,991 @@
+{
+  "case_ids_with_unsupported_claims": [
+    "atomic_cal_001",
+    "atomic_conv_002",
+    "atomic_conv_003",
+    "atomic_cal_006"
+  ],
+  "case_results": [
+    {
+      "aligned_claim_count": 1,
+      "case_id": "atomic_cal_001",
+      "claim_f1": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 2,
+        "value": 0.666667
+      },
+      "claim_precision": {
+        "denominator": 2,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 0.5
+      },
+      "claim_recall": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "false_negatives": 0,
+      "false_positives": 1,
+      "gold_claim_count": 1,
+      "object_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "polarity_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "predicted_claim_count": 2,
+      "provenance_span_precision": {
+        "denominator": 2,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 0.5
+      },
+      "provenance_span_recall": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "speaker_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "true_positives": 1,
+      "unsupported_claim_count": 1,
+      "unsupported_claim_ids": [
+        "claim_cal_001_2"
+      ],
+      "unsupported_memory_rate": {
+        "denominator": 2,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 0.5
+      },
+      "valid_time_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      }
+    },
+    {
+      "aligned_claim_count": 8,
+      "case_id": "atomic_conv_002",
+      "claim_f1": {
+        "denominator": 18,
+        "null_reason": null,
+        "numerator": 10,
+        "value": 0.555556
+      },
+      "claim_precision": {
+        "denominator": 9,
+        "null_reason": null,
+        "numerator": 5,
+        "value": 0.555556
+      },
+      "claim_recall": {
+        "denominator": 9,
+        "null_reason": null,
+        "numerator": 5,
+        "value": 0.555556
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 8,
+        "null_reason": null,
+        "numerator": 8,
+        "value": 1.0
+      },
+      "false_negatives": 4,
+      "false_positives": 4,
+      "gold_claim_count": 9,
+      "object_accuracy": {
+        "denominator": 8,
+        "null_reason": null,
+        "numerator": 7,
+        "value": 0.875
+      },
+      "polarity_accuracy": {
+        "denominator": 8,
+        "null_reason": null,
+        "numerator": 8,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 8,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 0.75
+      },
+      "predicted_claim_count": 9,
+      "provenance_span_precision": {
+        "denominator": 9,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "provenance_span_recall": {
+        "denominator": 10,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "speaker_accuracy": {
+        "denominator": 8,
+        "null_reason": null,
+        "numerator": 8,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 8,
+        "null_reason": null,
+        "numerator": 8,
+        "value": 1.0
+      },
+      "true_positives": 5,
+      "unsupported_claim_count": 3,
+      "unsupported_claim_ids": [
+        "claim_conv_002_002",
+        "claim_conv_002_003",
+        "claim_conv_002_005"
+      ],
+      "unsupported_memory_rate": {
+        "denominator": 9,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 0.333333
+      },
+      "valid_time_accuracy": {
+        "denominator": 8,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 0.75
+      }
+    },
+    {
+      "aligned_claim_count": 7,
+      "case_id": "atomic_conv_003",
+      "claim_f1": {
+        "denominator": 17,
+        "null_reason": null,
+        "numerator": 12,
+        "value": 0.705882
+      },
+      "claim_precision": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 0.857143
+      },
+      "claim_recall": {
+        "denominator": 10,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 0.6
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 7,
+        "value": 1.0
+      },
+      "false_negatives": 4,
+      "false_positives": 1,
+      "gold_claim_count": 10,
+      "object_accuracy": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 0.857143
+      },
+      "polarity_accuracy": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 7,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 0.857143
+      },
+      "predicted_claim_count": 7,
+      "provenance_span_precision": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 0.428571
+      },
+      "provenance_span_recall": {
+        "denominator": 11,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 0.272727
+      },
+      "speaker_accuracy": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 7,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 7,
+        "value": 1.0
+      },
+      "true_positives": 6,
+      "unsupported_claim_count": 1,
+      "unsupported_claim_ids": [
+        "claim_conv_003_006"
+      ],
+      "unsupported_memory_rate": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 0.142857
+      },
+      "valid_time_accuracy": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 7,
+        "value": 1.0
+      }
+    },
+    {
+      "aligned_claim_count": 1,
+      "case_id": "atomic_cal_002",
+      "claim_f1": {
+        "denominator": 2,
+        "null_reason": null,
+        "numerator": 2,
+        "value": 1.0
+      },
+      "claim_precision": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "claim_recall": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "false_negatives": 0,
+      "false_positives": 0,
+      "gold_claim_count": 1,
+      "object_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "polarity_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "predicted_claim_count": 1,
+      "provenance_span_precision": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "provenance_span_recall": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "speaker_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "true_positives": 1,
+      "unsupported_claim_count": 0,
+      "unsupported_claim_ids": [],
+      "unsupported_memory_rate": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "valid_time_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      }
+    },
+    {
+      "aligned_claim_count": 6,
+      "case_id": "atomic_conv_004",
+      "claim_f1": {
+        "denominator": 15,
+        "null_reason": null,
+        "numerator": 12,
+        "value": 0.8
+      },
+      "claim_precision": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 1.0
+      },
+      "claim_recall": {
+        "denominator": 9,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 0.666667
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 4,
+        "value": 0.666667
+      },
+      "false_negatives": 3,
+      "false_positives": 0,
+      "gold_claim_count": 9,
+      "object_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 1.0
+      },
+      "polarity_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 1.0
+      },
+      "predicted_claim_count": 6,
+      "provenance_span_precision": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 0.5
+      },
+      "provenance_span_recall": {
+        "denominator": 9,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 0.333333
+      },
+      "speaker_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 1.0
+      },
+      "true_positives": 6,
+      "unsupported_claim_count": 0,
+      "unsupported_claim_ids": [],
+      "unsupported_memory_rate": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "valid_time_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 4,
+        "value": 0.666667
+      }
+    },
+    {
+      "aligned_claim_count": 1,
+      "case_id": "atomic_cal_003",
+      "claim_f1": {
+        "denominator": 2,
+        "null_reason": null,
+        "numerator": 2,
+        "value": 1.0
+      },
+      "claim_precision": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "claim_recall": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "false_negatives": 0,
+      "false_positives": 0,
+      "gold_claim_count": 1,
+      "object_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "polarity_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "predicted_claim_count": 1,
+      "provenance_span_precision": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "provenance_span_recall": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "speaker_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "true_positives": 1,
+      "unsupported_claim_count": 0,
+      "unsupported_claim_ids": [],
+      "unsupported_memory_rate": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "valid_time_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      }
+    },
+    {
+      "aligned_claim_count": 3,
+      "case_id": "atomic_email_003",
+      "claim_f1": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "claim_precision": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "claim_recall": {
+        "denominator": 4,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "false_negatives": 4,
+      "false_positives": 3,
+      "gold_claim_count": 4,
+      "object_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "polarity_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "predicted_claim_count": 3,
+      "provenance_span_precision": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 0.333333
+      },
+      "provenance_span_recall": {
+        "denominator": 4,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 0.25
+      },
+      "speaker_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "true_positives": 0,
+      "unsupported_claim_count": 0,
+      "unsupported_claim_ids": [],
+      "unsupported_memory_rate": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "valid_time_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      }
+    },
+    {
+      "aligned_claim_count": 6,
+      "case_id": "atomic_email_005",
+      "claim_f1": {
+        "denominator": 14,
+        "null_reason": null,
+        "numerator": 8,
+        "value": 0.571429
+      },
+      "claim_precision": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 4,
+        "value": 0.666667
+      },
+      "claim_recall": {
+        "denominator": 8,
+        "null_reason": null,
+        "numerator": 4,
+        "value": 0.5
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 5,
+        "value": 0.833333
+      },
+      "false_negatives": 4,
+      "false_positives": 2,
+      "gold_claim_count": 8,
+      "object_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 4,
+        "value": 0.666667
+      },
+      "polarity_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 5,
+        "value": 0.833333
+      },
+      "predicted_claim_count": 6,
+      "provenance_span_precision": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 0.5
+      },
+      "provenance_span_recall": {
+        "denominator": 8,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 0.375
+      },
+      "speaker_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 1.0
+      },
+      "true_positives": 4,
+      "unsupported_claim_count": 0,
+      "unsupported_claim_ids": [],
+      "unsupported_memory_rate": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "valid_time_accuracy": {
+        "denominator": 6,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 0.166667
+      }
+    },
+    {
+      "aligned_claim_count": 3,
+      "case_id": "atomic_conv_010",
+      "claim_f1": {
+        "denominator": 7,
+        "null_reason": null,
+        "numerator": 6,
+        "value": 0.857143
+      },
+      "claim_precision": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "claim_recall": {
+        "denominator": 4,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 0.75
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "false_negatives": 1,
+      "false_positives": 0,
+      "gold_claim_count": 4,
+      "object_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "polarity_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "predicted_claim_count": 3,
+      "provenance_span_precision": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "provenance_span_recall": {
+        "denominator": 4,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "speaker_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      },
+      "true_positives": 3,
+      "unsupported_claim_count": 0,
+      "unsupported_claim_ids": [],
+      "unsupported_memory_rate": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "valid_time_accuracy": {
+        "denominator": 3,
+        "null_reason": null,
+        "numerator": 3,
+        "value": 1.0
+      }
+    },
+    {
+      "aligned_claim_count": 1,
+      "case_id": "atomic_cal_006",
+      "claim_f1": {
+        "denominator": 2,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "claim_precision": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "claim_recall": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "epistemic_status_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "false_negatives": 1,
+      "false_positives": 1,
+      "gold_claim_count": 1,
+      "object_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "polarity_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "predicate_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "predicted_claim_count": 1,
+      "provenance_span_precision": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "provenance_span_recall": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "speaker_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "subject_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 0,
+        "value": 0.0
+      },
+      "true_positives": 0,
+      "unsupported_claim_count": 1,
+      "unsupported_claim_ids": [
+        "cal_006_1"
+      ],
+      "unsupported_memory_rate": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      },
+      "valid_time_accuracy": {
+        "denominator": 1,
+        "null_reason": null,
+        "numerator": 1,
+        "value": 1.0
+      }
+    }
+  ],
+  "epistemic_status_accuracy": {
+    "denominator": 37,
+    "null_reason": null,
+    "numerator": 34,
+    "value": 0.918919
+  },
+  "micro_claim_f1": {
+    "denominator": 87,
+    "null_reason": null,
+    "numerator": 54,
+    "value": 0.62069
+  },
+  "micro_claim_precision": {
+    "denominator": 39,
+    "null_reason": null,
+    "numerator": 27,
+    "value": 0.692308
+  },
+  "micro_claim_recall": {
+    "denominator": 48,
+    "null_reason": null,
+    "numerator": 27,
+    "value": 0.5625
+  },
+  "object_accuracy": {
+    "denominator": 37,
+    "null_reason": null,
+    "numerator": 30,
+    "value": 0.810811
+  },
+  "polarity_accuracy": {
+    "denominator": 37,
+    "null_reason": null,
+    "numerator": 37,
+    "value": 1.0
+  },
+  "predicate_accuracy": {
+    "denominator": 37,
+    "null_reason": null,
+    "numerator": 33,
+    "value": 0.891892
+  },
+  "provenance_span_precision": {
+    "denominator": 39,
+    "null_reason": null,
+    "numerator": 14,
+    "value": 0.358974
+  },
+  "provenance_span_recall": {
+    "denominator": 50,
+    "null_reason": null,
+    "numerator": 14,
+    "value": 0.28
+  },
+  "speaker_accuracy": {
+    "denominator": 37,
+    "null_reason": null,
+    "numerator": 37,
+    "value": 1.0
+  },
+  "subject_accuracy": {
+    "denominator": 37,
+    "null_reason": null,
+    "numerator": 36,
+    "value": 0.972973
+  },
+  "total_gold_claims": 48,
+  "total_predicted_claims": 39,
+  "total_unsupported_claims": 6,
+  "unsupported_memory_rate": {
+    "denominator": 39,
+    "null_reason": null,
+    "numerator": 6,
+    "value": 0.153846
+  },
+  "valid_time_accuracy": {
+    "denominator": 37,
+    "null_reason": null,
+    "numerator": 28,
+    "value": 0.756757
+  }
+}
