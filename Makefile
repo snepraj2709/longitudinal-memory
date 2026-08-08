@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: test validate-benchmark-v1 validate-scaled-benchmark
+.PHONY: test validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -9,3 +9,6 @@ validate-benchmark-v1:
 
 validate-scaled-benchmark:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m evaluation.scaled_release --repo-root .
+
+validate-load-corpus:
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m load_testing.corpus --repo-root .
