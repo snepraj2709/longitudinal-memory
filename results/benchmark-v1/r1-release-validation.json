@@ -1,0 +1,55 @@
+{
+  "phase_and_step": "Benchmark release work, Step R1",
+  "repository_commit": "d584670094a1c70da7413251749e25e7b7e0e35c",
+  "repository_worktree_state": "dirty with uncommitted Step R1 changes",
+  "inputs_and_hashes": {
+    "pilot_user_sha256": "ec951239b54197c76c3fd048564b18494c2d97a3d632a63b985e3c2c9c247140",
+    "pilot_sources_sha256": {
+      "calendar": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+      "conversations": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+      "emails": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed"
+    },
+    "pilot_oracle_sha256": "921431679979037657e8737c412e8b633a772e0fb1d7a5cda5a5f64425bc1136"
+  },
+  "implementation_changed": [
+    "Added separate runtime and gold files for Benchmark v1.",
+    "Added a fixed-path runtime loader that does not read oracle or gold files.",
+    "Added deterministic release, reference, evidence, timestamp, leakage, count, ID, split, review, and hash validation.",
+    "Added protected hashes for the existing Pilot v0 data and result artifacts."
+  ],
+  "tests_run_and_results": {
+    "focused_release_tests": "6 passed",
+    "release_validator": "passed",
+    "make_test": "219 passed",
+    "git_diff_check": "passed",
+    "sensitive_value_scan": "passed"
+  },
+  "metrics_run_and_results": {
+    "qa_cases": 50,
+    "qa_cases_per_capability": 10,
+    "summary_cases": 5,
+    "interactive_scenarios": 2,
+    "gold_claims": 30
+  },
+  "failures_and_limitations": [
+    "No execution failures occurred.",
+    "Sneha has not yet reviewed the candidate release.",
+    "Summary and interactive cases are release data only; their runtime phases remain out of scope."
+  ],
+  "contract_checks": {
+    "benchmark": "passed",
+    "memory_ontology": "passed",
+    "architecture_design": "passed",
+    "memory_evaluation_steps": "passed",
+    "pilot_v0_preserved": true,
+    "runtime_gold_leakage": false,
+    "llm_or_api_calls": 0
+  },
+  "artifacts_and_hashes": {
+    "release_manifest": "data/benchmark-v1/manifest.json",
+    "release_manifest_sha256": "9a5a51c3b8d5714f898f3dcb04a455edbb0992dcb05c957a853ef8fcbc283c82",
+    "dataset_sha256": "1a0c6db251dc43d793662a919be18b0c7d32f01aad2fb52a086c2ba8fb1f18de"
+  },
+  "next_step_input": "The candidate Benchmark v1 release and its manifest.",
+  "approval_still_required": "Sneha must review and approve the candidate release before it is frozen or any later step begins."
+}

@@ -1,0 +1,119 @@
+{
+  "manifest_version": "1",
+  "benchmark_version": "benchmark_v1",
+  "release_status": "candidate",
+  "dataset_sha256": "1a0c6db251dc43d793662a919be18b0c7d32f01aad2fb52a086c2ba8fb1f18de",
+  "files": [
+    {
+      "path": "data/pilot/user.jsonl",
+      "layer": "runtime",
+      "sha256": "ec951239b54197c76c3fd048564b18494c2d97a3d632a63b985e3c2c9c247140",
+      "records": 1
+    },
+    {
+      "path": "data/pilot/sources/calendar.jsonl",
+      "layer": "runtime",
+      "sha256": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+      "records": 6
+    },
+    {
+      "path": "data/pilot/sources/conversations.jsonl",
+      "layer": "runtime",
+      "sha256": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+      "records": 12
+    },
+    {
+      "path": "data/pilot/sources/emails.jsonl",
+      "layer": "runtime",
+      "sha256": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed",
+      "records": 6
+    },
+    {
+      "path": "data/benchmark-v1/runtime/qa.jsonl",
+      "layer": "runtime",
+      "sha256": "7bb488563763207ea0db6225bd638b4415acf5aa3bac0739da0bec58b294c422",
+      "records": 50
+    },
+    {
+      "path": "data/benchmark-v1/runtime/summaries.jsonl",
+      "layer": "runtime",
+      "sha256": "ede4b9b34ad479a8cc227e0ba129cc66b0ac9d97284da12bd515e4b3776d2835",
+      "records": 5
+    },
+    {
+      "path": "data/benchmark-v1/runtime/interactive.jsonl",
+      "layer": "runtime",
+      "sha256": "c8d2cbae708708bbeb92671e869edf0f032b801c26c6a1b0c1a4968678ab12ab",
+      "records": 2
+    },
+    {
+      "path": "data/pilot/oracle-event.jsonl",
+      "layer": "oracle",
+      "sha256": "921431679979037657e8737c412e8b633a772e0fb1d7a5cda5a5f64425bc1136",
+      "records": 29
+    },
+    {
+      "path": "data/benchmark-v1/gold/claims.jsonl",
+      "layer": "gold",
+      "sha256": "888fdc5e99353bab91e64e548043cd23fa59bf0216152cfd949d17fa8bdc1d9d",
+      "records": 30
+    },
+    {
+      "path": "data/benchmark-v1/gold/qa.jsonl",
+      "layer": "gold",
+      "sha256": "f83ba29c0fdb95bb00164bb1da9ea249a3266f0dfa2f7acf3eb7d23650458a1b",
+      "records": 50
+    },
+    {
+      "path": "data/benchmark-v1/gold/summaries.jsonl",
+      "layer": "gold",
+      "sha256": "f39bd9146e44351fc4088c5385962211392e29386c1b925c11f78104aec0877e",
+      "records": 5
+    },
+    {
+      "path": "data/benchmark-v1/gold/interactive.jsonl",
+      "layer": "gold",
+      "sha256": "e02deb165a846c38f99ff86609c7f2539163c0a2604f633f6f54a2f0dc54c420",
+      "records": 2
+    }
+  ],
+  "counts": {
+    "users": 1,
+    "oracle_events": 29,
+    "qa": 50,
+    "summaries": 5,
+    "interactive_scenarios": 2,
+    "gold_claims": 30
+  },
+  "capability_counts": {
+    "qa": {
+      "extraction": 10,
+      "temporal_reasoning": 10,
+      "conflict_detection": 10,
+      "user_modeling": 10,
+      "abstention": 10
+    }
+  },
+  "splits": {
+    "strategy": "whole_user",
+    "development": {
+      "user_ids": [
+        "i_am_maya"
+      ],
+      "qa": 50,
+      "summaries": 5,
+      "interactive_scenarios": 2
+    },
+    "test": {
+      "user_ids": [],
+      "qa": 0,
+      "summaries": 0,
+      "interactive_scenarios": 0
+    }
+  },
+  "review": {
+    "implementation_review_status": "complete",
+    "automated_validation_status": "passed",
+    "human_review_status": "pending_sneha_review"
+  }
+}
