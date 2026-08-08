@@ -1,0 +1,342 @@
+{
+  "attempts": [
+    {
+      "attempted": true,
+      "budget_input_tokens": 3672,
+      "budget_output_tokens": 221,
+      "case_id": "atomic_cal_001",
+      "claims": [
+        {
+          "claim_id": "cal_001_1",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": null,
+              "quote": "Final semester examinations. April 20, 9:00 AM to April 29, 12:00 PM. College examination hall.",
+              "source_id": "cal_001"
+            }
+          ],
+          "object": {
+            "location": "College examination hall",
+            "title": "Final semester examinations"
+          },
+          "polarity": "positive",
+          "predicate": "has_scheduled_event",
+          "speaker_id": "person_university_exam_office",
+          "subject_id": "i_am_maya",
+          "valid_from": "2026-04-20T09:00:00+05:30",
+          "valid_to": "2026-04-29T12:00:00+05:30"
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "passed": true,
+      "position": 1,
+      "provider_metadata": {
+        "input_tokens": 3672,
+        "output_tokens": 221,
+        "pacing_delay_seconds": 0.0,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29798,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.404
+        },
+        "request_id": "req_5b54ecf3a85d4af8aca513a9c7463421",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_0b014e399f3df944016a7757cb355081948fc0f502a90c899b",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 3893
+      },
+      "source_id": "cal_001"
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 3859,
+      "budget_output_tokens": 1059,
+      "case_id": "atomic_conv_002",
+      "claims": [
+        {
+          "claim_id": "claim_conv_002_001",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_002",
+              "quote": "I accepted it.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": "Bengaluru offer",
+          "polarity": "positive",
+          "predicate": "accepted_offer",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_002",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_002",
+              "quote": "I join Infinity Learn on May 4 as a marketing associate.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": "Infinity Learn",
+          "polarity": "positive",
+          "predicate": "employer",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_003",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_002",
+              "quote": "I join Infinity Learn on May 4 as a marketing associate.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": "marketing associate",
+          "polarity": "positive",
+          "predicate": "accepted_role",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_004",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_002",
+              "quote": "I join Infinity Learn on May 4 as a marketing associate.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": "2026-05-04",
+          "polarity": "positive",
+          "predicate": "job_start_date",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": "2026-05-04",
+          "valid_to": "2026-05-04"
+        },
+        {
+          "claim_id": "claim_conv_002_005",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_003",
+              "quote": "I'll give it a proper try",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "plans_to_try_marketing_work",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_006",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_003",
+              "quote": "I'll give it a proper try and decide after I've actually done the work.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "plans_to_decide_marketing_fit_after_work_experience",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_007",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_005",
+              "quote": "Right now I just need to finish college",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "needs_to_finish_college",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "passed": true,
+      "position": 2,
+      "provider_metadata": {
+        "input_tokens": 3859,
+        "output_tokens": 1059,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 28960,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 2.08
+        },
+        "request_id": "req_997be3d13c1a4c8689cf5e5951ec3aec",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_0f9c93e887e6d529016a7757dcc19081908ce401ca0c5cd17f",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 4918
+      },
+      "source_id": "conv_002"
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 3870,
+      "budget_output_tokens": 742,
+      "case_id": "atomic_conv_003",
+      "claims": [],
+      "error": "The extracted claims failed validation.",
+      "failure_stage": "validation",
+      "passed": false,
+      "position": 3,
+      "provider_metadata": {
+        "input_tokens": 3870,
+        "output_tokens": 742,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29277,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 1.446
+        },
+        "request_id": "req_774c177dee4e44d2acf0f59efa09d790",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_02e3313774344aad016a7757f2d5148190b335b9e6156ba674",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 4612
+      },
+      "source_id": "conv_003"
+    }
+  ],
+  "budget_input_tokens": 11401,
+  "budget_output_tokens": 2022,
+  "case_order": [
+    {
+      "case_id": "atomic_cal_001",
+      "source_id": "cal_001"
+    },
+    {
+      "case_id": "atomic_conv_002",
+      "source_id": "conv_002"
+    },
+    {
+      "case_id": "atomic_conv_003",
+      "source_id": "conv_003"
+    },
+    {
+      "case_id": "atomic_cal_002",
+      "source_id": "cal_002"
+    },
+    {
+      "case_id": "atomic_conv_004",
+      "source_id": "conv_004"
+    },
+    {
+      "case_id": "atomic_cal_003",
+      "source_id": "cal_003"
+    },
+    {
+      "case_id": "atomic_email_003",
+      "source_id": "email_003"
+    },
+    {
+      "case_id": "atomic_email_005",
+      "source_id": "email_005"
+    },
+    {
+      "case_id": "atomic_conv_010",
+      "source_id": "conv_010"
+    },
+    {
+      "case_id": "atomic_cal_006",
+      "source_id": "cal_006"
+    }
+  ],
+  "completed_at": "2026-08-08T16:23:23.020950Z",
+  "configuration_sha256": "9f8ec0e73091d2ee610adfb88ea7f7830d1269c59bd648f7cc09bc0415de2325",
+  "configuration_version": "atomic-extraction-run-config-v3",
+  "dataset_split": "development",
+  "dataset_version": "pilot-v0-phase3-atomic-v4-development-v1",
+  "estimated_cost_usd": "0.038978",
+  "failed_cases": 1,
+  "generation_settings": {
+    "api": "responses",
+    "max_output_tokens": 4000,
+    "store": false,
+    "text_format": "json_object"
+  },
+  "gold_file_sha256": "e802835dcb3e4278ec68e45474d094896dcad9a780c4115a01e0f0bc44f07f63",
+  "hard_cost_cap_usd": "1.000000",
+  "maximum_request_attempts": 20,
+  "maximum_retry_requests": 10,
+  "output_file_sha256": {
+    "failures.jsonl": "270c1d30558fc637babceff408c21d24fa321816c0ecd5b09ce510ca6210cc4e",
+    "predictions.jsonl": "287e3300770f90e04a627cb1e3e55419e559426f2068fb64669b79e227729ebe"
+  },
+  "planned_request_count": 10,
+  "predicate_registry_sha256": "64991ee0b9e52e61d5238b2c404447d22d633e3adf0fb858757dd2fa5c574b4d",
+  "predicate_registry_version": "predicate_registry_v1",
+  "prior_provider_failures": [],
+  "prompt_sha256": "23b6ec15ca6443482f5aea38ba1e99cd1e19781541bce6e25b6a053a80bf3378",
+  "prompt_version": "atomic-extraction-v4",
+  "provider": "openai",
+  "provider_requests_attempted": 3,
+  "remaining_cases": 8,
+  "repository_commit": "33e6aabaa9cfbc938a93db43e55deca734867501",
+  "repository_dirty": true,
+  "requested_model": "gpt-4.1-2025-04-14",
+  "resolved_model": "gpt-4.1-2025-04-14",
+  "resume_count": 0,
+  "run_format_version": "atomic-extraction-run-v3",
+  "run_status": "failed_validation",
+  "runtime_dataset_sha256": "c68f6229fb928aecea1af6fef4a5d368cf0d94eff844794f7c633dcbd67adc59",
+  "scoring_version": "atomic-scoring-v2",
+  "source_file_sha256": {
+    "data/pilot/sources/calendar.jsonl": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+    "data/pilot/sources/conversations.jsonl": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+    "data/pilot/sources/emails.jsonl": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed"
+  },
+  "started_at": "2026-08-08T16:22:34.470130Z",
+  "successful_cases": 2,
+  "temperature": 0.0
+}
