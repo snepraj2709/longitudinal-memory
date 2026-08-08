@@ -186,7 +186,7 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
             )
             self.assertEqual(run, json.loads((output_dir / "run.json").read_text()))
             self.assertEqual(run["run_status"], "completed")
-            self.assertEqual(run["prompt_version"], "atomic-extraction-v2")
+            self.assertEqual(run["prompt_version"], "atomic-extraction-v3")
             self.assertEqual(run["provider_requests_attempted"], 10)
             self.assertEqual(run["successful_cases"], 10)
             self.assertEqual(run["failed_cases"], 0)

@@ -108,10 +108,10 @@ class AtomicExtractionRunSafetyTests(unittest.TestCase):
         self.assertEqual(dry_run.record["output_writes"], 0)
         self.assertTrue(dry_run.record["source_only_inputs"])
         self.assertFalse(dry_run.record["oracle_or_gold_fields_in_prompts"])
-        self.assertEqual(dry_run.record["estimated_input_tokens_upper_bound"], 53_334)
+        self.assertEqual(dry_run.record["estimated_input_tokens_upper_bound"], 158_584)
         self.assertEqual(dry_run.record["expected_output_tokens"], 12_000)
-        self.assertEqual(dry_run.record["expected_cost_usd"], "0.202668")
-        self.assertEqual(dry_run.record["maximum_cost_usd"], "0.853336")
+        self.assertEqual(dry_run.record["expected_cost_usd"], "0.413168")
+        self.assertEqual(dry_run.record["maximum_cost_usd"], "1.274336")
 
     def test_prompt_leakage_guard_rejects_scorer_only_fields(self) -> None:
         from extraction.run_atomic import _assert_source_only_prompts
@@ -124,7 +124,7 @@ class AtomicExtractionRunSafetyTests(unittest.TestCase):
 
     def test_frozen_config_rejects_prompt_and_model_drift(self) -> None:
         original = json.loads(
-            (REPO_ROOT / "configs/extraction/atomic_extraction_run_v1.json").read_text()
+            (REPO_ROOT / "configs/extraction/atomic_extraction_run_v2.json").read_text()
         )
         for field, value in (("prompt_sha256", "0" * 64), ("requested_model", "gpt-4.1")):
             with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
@@ -367,6 +367,18 @@ class AtomicExtractionRunSafetyTests(unittest.TestCase):
                     with self.assertRaises(AtomicPipelineError):
                         self.execute(failed_dir, SafetyFakeClient(), resume=True)
                     run_path.write_text(json.dumps(base), encoding="utf-8")
+
+    def test_resume_rejects_predicate_registry_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output_dir = Path(directory) / "failed"
+            self.execute(output_dir, SafetyFakeClient(fail_positions={4}))
+            run_path = output_dir / "run.json"
+            checkpoint = json.loads(run_path.read_text())
+            checkpoint["predicate_registry_sha256"] = "0" * 64
+            run_path.write_text(json.dumps(checkpoint), encoding="utf-8")
+
+            with self.assertRaises(AtomicPipelineError):
+                self.execute(output_dir, SafetyFakeClient(), resume=True)
 
     def test_resume_rejects_stale_scores_hash_mismatch_and_bad_counters(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

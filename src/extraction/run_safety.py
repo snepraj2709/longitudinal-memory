@@ -11,7 +11,7 @@ from typing import Mapping
 from evaluation.run_config import canonical_sha256
 
 
-DEFAULT_CONFIG_PATH = Path("configs/extraction/atomic_extraction_run_v1.json")
+DEFAULT_CONFIG_PATH = Path("configs/extraction/atomic_extraction_run_v2.json")
 
 
 class AtomicRunConfigError(ValueError):

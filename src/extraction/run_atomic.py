@@ -24,7 +24,11 @@ from evaluation.openai_client import (
 from evaluation.run_config import assert_no_secrets, canonical_sha256
 
 from .atomic import AtomicExtractionResult, AtomicExtractionValidationError, validate_atomic_response
-from .contracts import ALLOWED_PREDICATES
+from .predicate_registry import (
+    DEFAULT_PREDICATE_REGISTRY_PATH,
+    PredicateRegistryError,
+    load_predicate_registry,
+)
 from .gold import ATOMIC_GOLD_PATH, AtomicGoldCase, load_atomic_gold
 from .prompt import (
     ATOMIC_EXTRACTION_PROMPT_VERSION,
@@ -144,9 +148,15 @@ def prepare_atomic_run(
         raise AtomicPipelineError("frozen case order is incompatible with the runner")
     if config.prompt_version != ATOMIC_EXTRACTION_PROMPT_VERSION:
         raise AtomicPipelineError("the extraction prompt version drifted")
-    if config.predicate_registry_version != "maya-atomic-predicates-v1":
+    try:
+        registry = load_predicate_registry(
+            root / DEFAULT_PREDICATE_REGISTRY_PATH
+        )
+    except PredicateRegistryError as error:
+        raise AtomicPipelineError(str(error)) from error
+    if config.predicate_registry_version != registry.registry_version:
         raise AtomicPipelineError("the predicate registry version drifted")
-    if canonical_sha256(sorted(ALLOWED_PREDICATES)) != config.predicate_registry_sha256:
+    if registry.content_sha256 != config.predicate_registry_sha256:
         raise AtomicPipelineError("the predicate registry changed")
 
     gold_hash = _file_sha256(root / ATOMIC_GOLD_PATH)

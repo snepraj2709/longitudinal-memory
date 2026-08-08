@@ -69,7 +69,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
         first = build_atomic_extraction_prompt(source)
         second = build_atomic_extraction_prompt(source)
 
-        self.assertEqual(ATOMIC_EXTRACTION_PROMPT_VERSION, "atomic-extraction-v2")
+        self.assertEqual(ATOMIC_EXTRACTION_PROMPT_VERSION, "atomic-extraction-v3")
         self.assertEqual(first, second)
         self.assertEqual(
             self.source_json(first)["observations"][0]["text"],

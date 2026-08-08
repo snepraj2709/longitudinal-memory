@@ -15,11 +15,7 @@ from typing import Callable, Iterable, Mapping, Sequence
 from .atomic import _validate_claim_records
 from .contracts import ALLOWED_PREDICATES, AtomicClaimV1
 from .gold import ATOMIC_GOLD_PATH, AtomicGoldCase, load_atomic_gold
-from .prompt import (
-    ATOMIC_EXTRACTION_PROMPT_VERSION,
-    ATOMIC_EXTRACTION_SYSTEM_PROMPT,
-    build_atomic_extraction_prompt,
-)
+from .predicate_registry import load_default_predicate_registry
 from .scoring import (
     ATOMIC_SCORING_VERSION,
     _evidence_counts,
@@ -31,6 +27,10 @@ from .source import ExtractionSource, load_pilot_sources
 
 
 ANALYSIS_VERSION = "atomic-extraction-failure-analysis-v1"
+FROZEN_SOURCE_PROMPT_VERSION = "atomic-extraction-v2"
+FROZEN_PREPARED_PROMPT_SHA256 = (
+    "92e18b33aa9ad96a895a275b1d0def8c481ba23995ed35312e6c4cba558798ba"
+)
 DEFAULT_INPUT_DIR = Path("results/phase3/atomic-extraction-v2")
 DEFAULT_OUTPUT_DIR = Path(
     "results/phase3/atomic-extraction-v2-failure-analysis-v1"
@@ -54,42 +54,8 @@ STABLE_CATEGORIES = (
 )
 
 PREDICATE_FAMILIES = {
-    "accepted_offer": "event",
-    "assigned_task": "task",
-    "believes_aryans_move_signals_relationship_change": "belief",
-    "believes_marketing_is_right_fit": "belief",
-    "campaign_launch_date": "schedule",
-    "can_continue_marketing_and_product_work_this_way": "state",
-    "explains_work_supportively": "relationship",
-    "feels_exhausted": "state",
-    "feels_lonely_in_bengaluru": "state",
-    "finds_returning_to_empty_flat_difficult": "state",
-    "found_onboarding_useful": "assessment",
-    "has_difficulty_focusing_at_work": "state",
-    "has_handoff_cover": "task",
-    "has_scheduled_event": "schedule",
-    "hoped_aryans_move_signaled_relationship_change": "belief",
-    "job_location": "role",
-    "job_start_date": "schedule",
-    "leave_approved": "commitment",
-    "leave_denial_reason": "commitment",
-    "likes": "preference",
-    "misses": "state",
-    "needs_to_finish_college": "goal",
-    "offered_help": "commitment",
-    "plans_to_decide_marketing_fit_after_work_experience": "goal",
-    "plans_to_finish_campaign_draft_before_leave": "task",
-    "plans_to_share_kids_spark_notes_with": "task",
-    "plans_to_try_marketing_work": "goal",
-    "rated_first_work_week": "assessment",
-    "relationship_would_change_if_living_same_city": "relationship",
-    "requested_leave": "commitment",
-    "wants_to_restart_relationship_with": "relationship",
-    "wants_to_talk_to": "relationship",
-    "will_have_job_role": "role",
-    "will_run_marketing_team": "role",
-    "will_work_for": "role",
-    "works_on_product_backlog_after_marketing_work": "task",
+    item.predicate: item.family
+    for item in load_default_predicate_registry().definitions
 }
 
 FROZEN_INPUT_SHA256 = {
@@ -182,20 +148,10 @@ def run_failure_analysis(
         name: _sha256(output_path / name)
         for name in ("case_failures.jsonl", "summary.json", "findings.md")
     }
-    prompt_hash = _canonical_sha256(
-        {
-            "prompt_version": ATOMIC_EXTRACTION_PROMPT_VERSION,
-            "system_prompt": ATOMIC_EXTRACTION_SYSTEM_PROMPT,
-            "user_prompts": [
-                build_atomic_extraction_prompt(sources_by_id[case.source_id])
-                for case in gold_cases
-            ],
-        }
-    )
     clock = now or (lambda: datetime.now(timezone.utc))
     manifest = {
         "analysis_version": ANALYSIS_VERSION,
-        "source_prompt_version": ATOMIC_EXTRACTION_PROMPT_VERSION,
+        "source_prompt_version": FROZEN_SOURCE_PROMPT_VERSION,
         "source_scoring_version": ATOMIC_SCORING_VERSION,
         "release_status": "approved",
         "human_review": {
@@ -218,7 +174,7 @@ def run_failure_analysis(
         },
         "input_file_sha256": input_hashes,
         "protected_b1_file_sha256": protected_hashes,
-        "prepared_prompt_sha256": prompt_hash,
+        "prepared_prompt_sha256": FROZEN_PREPARED_PROMPT_SHA256,
         "counts": summary["counts"],
         "denominator_rules": DENOMINATOR_RULES,
         "output_file_sha256": output_hashes,
@@ -593,7 +549,7 @@ def _build_summary(
 
     return {
         "analysis_version": ANALYSIS_VERSION,
-        "source_prompt_version": ATOMIC_EXTRACTION_PROMPT_VERSION,
+        "source_prompt_version": FROZEN_SOURCE_PROMPT_VERSION,
         "source_scoring_version": ATOMIC_SCORING_VERSION,
         "counts": counts,
         "published_metrics": {

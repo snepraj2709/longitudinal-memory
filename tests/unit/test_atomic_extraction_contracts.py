@@ -13,7 +13,7 @@ class AtomicExtractionContractTests(unittest.TestCase):
             "subject_id": "i_am_maya",
             "speaker_id": "maya100",
             "predicate": "will_have_job_role",
-            "object": {"type": "role", "value": "marketing_associate"},
+            "object": "marketing associate",
             "polarity": "positive",
             "epistemic_status": "asserted",
             "valid_from": "2026-05-04",
