@@ -1,0 +1,46 @@
+{
+  "$id": "https://longitudinal-memory.local/scaled-v1/manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_version": {
+      "type": "string"
+    },
+    "capability_counts": {
+      "type": "object"
+    },
+    "counts": {
+      "type": "object"
+    },
+    "dataset_sha256": {
+      "type": "string"
+    },
+    "files": {
+      "type": "array"
+    },
+    "manifest_version": {
+      "type": "string"
+    },
+    "release_status": {
+      "type": "string"
+    },
+    "review": {
+      "type": "object"
+    },
+    "splits": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "manifest_version",
+    "benchmark_version",
+    "release_status",
+    "dataset_sha256",
+    "files",
+    "counts",
+    "capability_counts",
+    "splits",
+    "review"
+  ],
+  "type": "object"
+}

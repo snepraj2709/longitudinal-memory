@@ -1,0 +1,56 @@
+{
+  "$id": "https://longitudinal-memory.local/scaled-v1/oracle_event.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_version": {
+      "type": "string"
+    },
+    "caused_by": {
+      "type": "array"
+    },
+    "disclosure_status": {
+      "type": "string"
+    },
+    "event_id": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string"
+    },
+    "facts": {
+      "type": "array"
+    },
+    "superseded_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "valid_from": {
+      "type": "string"
+    },
+    "valid_to": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "event_id",
+    "benchmark_version",
+    "user_id",
+    "event_type",
+    "valid_from",
+    "valid_to",
+    "facts",
+    "caused_by",
+    "superseded_by",
+    "disclosure_status"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,75 @@
+{
+  "$id": "https://longitudinal-memory.local/scaled-v1/gold_claim.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_version": {
+      "type": "string"
+    },
+    "claim_id": {
+      "type": "string"
+    },
+    "epistemic_status": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array"
+    },
+    "memory_kind": {
+      "type": "string"
+    },
+    "object": {},
+    "polarity": {
+      "type": "string"
+    },
+    "predicate": {
+      "type": "string"
+    },
+    "review_status": {
+      "type": "string"
+    },
+    "speaker_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "subject_id": {
+      "type": "string"
+    },
+    "time_precision": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "valid_from": {
+      "type": "string"
+    },
+    "valid_to": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "claim_id",
+    "benchmark_version",
+    "user_id",
+    "subject_id",
+    "speaker_id",
+    "predicate",
+    "object",
+    "polarity",
+    "epistemic_status",
+    "memory_kind",
+    "status",
+    "valid_from",
+    "valid_to",
+    "time_precision",
+    "evidence",
+    "review_status"
+  ],
+  "type": "object"
+}

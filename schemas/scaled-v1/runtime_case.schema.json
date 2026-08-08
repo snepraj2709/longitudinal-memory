@@ -1,0 +1,57 @@
+{
+  "$id": "https://longitudinal-memory.local/scaled-v1/runtime_case.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_turns": {
+      "type": "integer"
+    },
+    "as_of": {
+      "type": "string"
+    },
+    "benchmark_version": {
+      "type": "string"
+    },
+    "capability": {
+      "type": "string"
+    },
+    "case_id": {
+      "type": "string"
+    },
+    "difficulty": {
+      "type": "string"
+    },
+    "initial_user_message": {
+      "type": "string"
+    },
+    "instruction": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "scenario": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string"
+    },
+    "task": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "case_id",
+    "benchmark_version",
+    "split",
+    "user_id",
+    "task",
+    "capability",
+    "as_of",
+    "difficulty"
+  ],
+  "type": "object"
+}

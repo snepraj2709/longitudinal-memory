@@ -1,0 +1,30 @@
+{
+  "$id": "https://longitudinal-memory.local/scaled-v1/user.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "display_name": {
+      "type": "string"
+    },
+    "profile_note": {
+      "type": "string"
+    },
+    "split": {
+      "type": "string"
+    },
+    "timezone": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "display_name",
+    "timezone",
+    "split",
+    "profile_note"
+  ],
+  "type": "object"
+}

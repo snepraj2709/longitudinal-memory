@@ -1,0 +1,46 @@
+{
+  "$id": "https://longitudinal-memory.local/scaled-v1/source.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "ingested_at": {
+      "type": "string"
+    },
+    "messages": {
+      "type": "array"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "participants": {
+      "type": "array"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "source_type": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_id",
+    "source_type",
+    "user_id",
+    "created_at",
+    "ingested_at",
+    "participants",
+    "content",
+    "messages",
+    "metadata"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,46 @@
+{
+  "$id": "https://longitudinal-memory.local/scaled-v1/review_queue.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_version": {
+      "type": "string"
+    },
+    "checks": {
+      "type": "array"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "queue": {
+      "type": "string"
+    },
+    "review_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "target_id": {
+      "type": "string"
+    },
+    "target_type": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "review_id",
+    "benchmark_version",
+    "queue",
+    "user_id",
+    "target_type",
+    "target_id",
+    "status",
+    "checks",
+    "notes"
+  ],
+  "type": "object"
+}
