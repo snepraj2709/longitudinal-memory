@@ -1,0 +1,554 @@
+{
+  "analysis_version": "atomic-extraction-failure-analysis-v1",
+  "by_case": {
+    "atomic_cal_001": {
+      "category_counts": {
+        "epistemic_status_mismatch": 0,
+        "evidence_span_mismatch": 0,
+        "extra_source_backed_claim": 0,
+        "missed_gold_claim": 0,
+        "missing_valid_time": 0,
+        "object_mismatch": 0,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 0,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 0,
+      "false_positives": 0,
+      "issue_count": 0,
+      "source_id": "cal_001",
+      "source_type": "calendar"
+    },
+    "atomic_cal_002": {
+      "category_counts": {
+        "epistemic_status_mismatch": 0,
+        "evidence_span_mismatch": 0,
+        "extra_source_backed_claim": 0,
+        "missed_gold_claim": 0,
+        "missing_valid_time": 0,
+        "object_mismatch": 0,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 0,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 0,
+      "false_positives": 0,
+      "issue_count": 0,
+      "source_id": "cal_002",
+      "source_type": "calendar"
+    },
+    "atomic_cal_003": {
+      "category_counts": {
+        "epistemic_status_mismatch": 0,
+        "evidence_span_mismatch": 0,
+        "extra_source_backed_claim": 0,
+        "missed_gold_claim": 0,
+        "missing_valid_time": 0,
+        "object_mismatch": 0,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 0,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 0,
+      "false_positives": 0,
+      "issue_count": 0,
+      "source_id": "cal_003",
+      "source_type": "calendar"
+    },
+    "atomic_cal_006": {
+      "category_counts": {
+        "epistemic_status_mismatch": 0,
+        "evidence_span_mismatch": 0,
+        "extra_source_backed_claim": 0,
+        "missed_gold_claim": 0,
+        "missing_valid_time": 0,
+        "object_mismatch": 0,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 0,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 0,
+      "false_positives": 0,
+      "issue_count": 0,
+      "source_id": "cal_006",
+      "source_type": "calendar"
+    },
+    "atomic_conv_002": {
+      "category_counts": {
+        "epistemic_status_mismatch": 0,
+        "evidence_span_mismatch": 7,
+        "extra_source_backed_claim": 1,
+        "missed_gold_claim": 2,
+        "missing_valid_time": 3,
+        "object_mismatch": 1,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 0,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 3,
+      "false_positives": 1,
+      "issue_count": 14,
+      "source_id": "conv_002",
+      "source_type": "conversation"
+    },
+    "atomic_conv_003": {
+      "category_counts": {
+        "epistemic_status_mismatch": 0,
+        "evidence_span_mismatch": 7,
+        "extra_source_backed_claim": 0,
+        "missed_gold_claim": 2,
+        "missing_valid_time": 2,
+        "object_mismatch": 0,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 0,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 2,
+      "false_positives": 0,
+      "issue_count": 11,
+      "source_id": "conv_003",
+      "source_type": "conversation"
+    },
+    "atomic_conv_004": {
+      "category_counts": {
+        "epistemic_status_mismatch": 2,
+        "evidence_span_mismatch": 3,
+        "extra_source_backed_claim": 0,
+        "missed_gold_claim": 4,
+        "missing_valid_time": 2,
+        "object_mismatch": 0,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 0,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 4,
+      "false_positives": 0,
+      "issue_count": 11,
+      "source_id": "conv_004",
+      "source_type": "conversation"
+    },
+    "atomic_conv_010": {
+      "category_counts": {
+        "epistemic_status_mismatch": 0,
+        "evidence_span_mismatch": 2,
+        "extra_source_backed_claim": 1,
+        "missed_gold_claim": 2,
+        "missing_valid_time": 0,
+        "object_mismatch": 1,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 0,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 3,
+      "false_positives": 1,
+      "issue_count": 6,
+      "source_id": "conv_010",
+      "source_type": "conversation"
+    },
+    "atomic_email_003": {
+      "category_counts": {
+        "epistemic_status_mismatch": 0,
+        "evidence_span_mismatch": 2,
+        "extra_source_backed_claim": 3,
+        "missed_gold_claim": 1,
+        "missing_valid_time": 0,
+        "object_mismatch": 3,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 0,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 4,
+      "false_positives": 3,
+      "issue_count": 9,
+      "source_id": "email_003",
+      "source_type": "email"
+    },
+    "atomic_email_005": {
+      "category_counts": {
+        "epistemic_status_mismatch": 1,
+        "evidence_span_mismatch": 4,
+        "extra_source_backed_claim": 4,
+        "missed_gold_claim": 1,
+        "missing_valid_time": 5,
+        "object_mismatch": 4,
+        "over_broad_valid_time": 0,
+        "polarity_mismatch": 0,
+        "predicate_mismatch": 1,
+        "speaker_mismatch": 0,
+        "subject_mismatch": 0,
+        "unsupported_claim": 0,
+        "wrong_valid_time": 0
+      },
+      "false_negatives": 5,
+      "false_positives": 4,
+      "issue_count": 20,
+      "source_id": "email_005",
+      "source_type": "email"
+    }
+  },
+  "by_category": {
+    "epistemic_status_mismatch": {
+      "category_counts": {
+        "epistemic_status_mismatch": 3
+      },
+      "false_negatives_accounted": 0,
+      "false_positives_accounted": 0,
+      "issue_count": 3
+    },
+    "evidence_span_mismatch": {
+      "category_counts": {
+        "evidence_span_mismatch": 25
+      },
+      "false_negatives_accounted": 0,
+      "false_positives_accounted": 0,
+      "issue_count": 25
+    },
+    "extra_source_backed_claim": {
+      "category_counts": {
+        "extra_source_backed_claim": 9
+      },
+      "false_negatives_accounted": 9,
+      "false_positives_accounted": 9,
+      "issue_count": 9
+    },
+    "missed_gold_claim": {
+      "category_counts": {
+        "missed_gold_claim": 12
+      },
+      "false_negatives_accounted": 12,
+      "false_positives_accounted": 0,
+      "issue_count": 12
+    },
+    "missing_valid_time": {
+      "category_counts": {
+        "missing_valid_time": 12
+      },
+      "false_negatives_accounted": 0,
+      "false_positives_accounted": 0,
+      "issue_count": 12
+    },
+    "object_mismatch": {
+      "category_counts": {
+        "object_mismatch": 9
+      },
+      "false_negatives_accounted": 0,
+      "false_positives_accounted": 0,
+      "issue_count": 9
+    },
+    "predicate_mismatch": {
+      "category_counts": {
+        "predicate_mismatch": 1
+      },
+      "false_negatives_accounted": 0,
+      "false_positives_accounted": 0,
+      "issue_count": 1
+    }
+  },
+  "by_predicate_family": {
+    "assessment": {
+      "category_counts": {
+        "evidence_span_mismatch": 1,
+        "missed_gold_claim": 1
+      },
+      "false_negatives_accounted": 1,
+      "false_positives_accounted": 0,
+      "issue_count": 2
+    },
+    "belief": {
+      "category_counts": {
+        "evidence_span_mismatch": 1,
+        "missed_gold_claim": 3,
+        "missing_valid_time": 1
+      },
+      "false_negatives_accounted": 3,
+      "false_positives_accounted": 0,
+      "issue_count": 5
+    },
+    "commitment": {
+      "category_counts": {
+        "epistemic_status_mismatch": 1,
+        "evidence_span_mismatch": 4,
+        "extra_source_backed_claim": 5,
+        "missed_gold_claim": 1,
+        "missing_valid_time": 1,
+        "object_mismatch": 5,
+        "predicate_mismatch": 1
+      },
+      "false_negatives_accounted": 6,
+      "false_positives_accounted": 5,
+      "issue_count": 18
+    },
+    "event": {
+      "category_counts": {
+        "evidence_span_mismatch": 1,
+        "extra_source_backed_claim": 1,
+        "object_mismatch": 1
+      },
+      "false_negatives_accounted": 1,
+      "false_positives_accounted": 1,
+      "issue_count": 3
+    },
+    "goal": {
+      "category_counts": {
+        "evidence_span_mismatch": 3
+      },
+      "false_negatives_accounted": 0,
+      "false_positives_accounted": 0,
+      "issue_count": 3
+    },
+    "preference": {
+      "category_counts": {
+        "missed_gold_claim": 1
+      },
+      "false_negatives_accounted": 1,
+      "false_positives_accounted": 0,
+      "issue_count": 1
+    },
+    "relationship": {
+      "category_counts": {
+        "epistemic_status_mismatch": 1,
+        "evidence_span_mismatch": 3,
+        "missed_gold_claim": 1
+      },
+      "false_negatives_accounted": 1,
+      "false_positives_accounted": 0,
+      "issue_count": 5
+    },
+    "role": {
+      "category_counts": {
+        "evidence_span_mismatch": 3,
+        "missed_gold_claim": 1,
+        "missing_valid_time": 3
+      },
+      "false_negatives_accounted": 1,
+      "false_positives_accounted": 0,
+      "issue_count": 7
+    },
+    "schedule": {
+      "category_counts": {
+        "epistemic_status_mismatch": 1,
+        "evidence_span_mismatch": 1,
+        "missed_gold_claim": 2,
+        "missing_valid_time": 4
+      },
+      "false_negatives_accounted": 2,
+      "false_positives_accounted": 0,
+      "issue_count": 8
+    },
+    "state": {
+      "category_counts": {
+        "evidence_span_mismatch": 6,
+        "extra_source_backed_claim": 1,
+        "object_mismatch": 1
+      },
+      "false_negatives_accounted": 1,
+      "false_positives_accounted": 1,
+      "issue_count": 8
+    },
+    "task": {
+      "category_counts": {
+        "evidence_span_mismatch": 2,
+        "extra_source_backed_claim": 2,
+        "missed_gold_claim": 2,
+        "missing_valid_time": 3,
+        "object_mismatch": 2
+      },
+      "false_negatives_accounted": 4,
+      "false_positives_accounted": 2,
+      "issue_count": 11
+    }
+  },
+  "by_source_type": {
+    "calendar": {
+      "category_counts": {},
+      "false_negatives_accounted": 0,
+      "false_positives_accounted": 0,
+      "issue_count": 0
+    },
+    "conversation": {
+      "category_counts": {
+        "epistemic_status_mismatch": 2,
+        "evidence_span_mismatch": 19,
+        "extra_source_backed_claim": 2,
+        "missed_gold_claim": 10,
+        "missing_valid_time": 7,
+        "object_mismatch": 2
+      },
+      "false_negatives_accounted": 12,
+      "false_positives_accounted": 2,
+      "issue_count": 42
+    },
+    "email": {
+      "category_counts": {
+        "epistemic_status_mismatch": 1,
+        "evidence_span_mismatch": 6,
+        "extra_source_backed_claim": 7,
+        "missed_gold_claim": 2,
+        "missing_valid_time": 5,
+        "object_mismatch": 7,
+        "predicate_mismatch": 1
+      },
+      "false_negatives_accounted": 9,
+      "false_positives_accounted": 7,
+      "issue_count": 29
+    }
+  },
+  "category_counts": {
+    "epistemic_status_mismatch": 3,
+    "evidence_span_mismatch": 25,
+    "extra_source_backed_claim": 9,
+    "missed_gold_claim": 12,
+    "missing_valid_time": 12,
+    "object_mismatch": 9,
+    "over_broad_valid_time": 0,
+    "polarity_mismatch": 0,
+    "predicate_mismatch": 1,
+    "speaker_mismatch": 0,
+    "subject_mismatch": 0,
+    "unsupported_claim": 0,
+    "wrong_valid_time": 0
+  },
+  "counts": {
+    "aligned_claims": 36,
+    "cases": 10,
+    "evidence_exact_matches": 11,
+    "evidence_false_negatives": 39,
+    "evidence_false_positives": 25,
+    "evidence_gold_spans": 50,
+    "evidence_predicted_spans": 36,
+    "exact_matches": 27,
+    "execution_failures": 0,
+    "false_negatives": 21,
+    "false_positives": 9,
+    "gold_claims": 48,
+    "issues": 71,
+    "predicted_claims": 36,
+    "source_backed_representation_differences": 9,
+    "unsupported_claims": 0
+  },
+  "denominator_rules": {
+    "claim_errors": "False positives and false negatives use exact claim-content matching from atomic-scoring-v2.",
+    "evidence_errors": "Evidence precision uses predicted exact spans and evidence recall uses gold exact spans. A span is source_id, message_id, and exact quote.",
+    "execution_failures": "Execution failures are reported separately and excluded from semantic failure categories.",
+    "field_errors": "Field errors use the scorer's deterministic evidence alignment; each aligned pair is one field denominator.",
+    "issue_counts": "Category counts count classified issue records, not distinct claims. One representation pair can have several field or evidence issues."
+  },
+  "published_metrics": {
+    "epistemic_status_accuracy": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 33,
+      "value": 0.916667
+    },
+    "micro_claim_f1": {
+      "denominator": 84,
+      "null_reason": null,
+      "numerator": 54,
+      "value": 0.642857
+    },
+    "micro_claim_precision": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 27,
+      "value": 0.75
+    },
+    "micro_claim_recall": {
+      "denominator": 48,
+      "null_reason": null,
+      "numerator": 27,
+      "value": 0.5625
+    },
+    "object_accuracy": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 27,
+      "value": 0.75
+    },
+    "polarity_accuracy": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 36,
+      "value": 1.0
+    },
+    "predicate_accuracy": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 35,
+      "value": 0.972222
+    },
+    "provenance_span_precision": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 11,
+      "value": 0.305556
+    },
+    "provenance_span_recall": {
+      "denominator": 50,
+      "null_reason": null,
+      "numerator": 11,
+      "value": 0.22
+    },
+    "speaker_accuracy": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 36,
+      "value": 1.0
+    },
+    "subject_accuracy": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 36,
+      "value": 1.0
+    },
+    "unsupported_memory_rate": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 0,
+      "value": 0.0
+    },
+    "valid_time_accuracy": {
+      "denominator": 36,
+      "null_reason": null,
+      "numerator": 24,
+      "value": 0.666667
+    }
+  },
+  "source_prompt_version": "atomic-extraction-v2",
+  "source_scoring_version": "atomic-scoring-v2"
+}

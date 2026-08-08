@@ -1,0 +1,85 @@
+{
+  "analysis_scope": {
+    "case_count": 10,
+    "no_api_calls": true,
+    "source_types": [
+      "calendar",
+      "conversation",
+      "email"
+    ],
+    "split": "phase3_atomic_extraction_pilot"
+  },
+  "analysis_version": "atomic-extraction-failure-analysis-v1",
+  "counts": {
+    "aligned_claims": 36,
+    "cases": 10,
+    "evidence_exact_matches": 11,
+    "evidence_false_negatives": 39,
+    "evidence_false_positives": 25,
+    "evidence_gold_spans": 50,
+    "evidence_predicted_spans": 36,
+    "exact_matches": 27,
+    "execution_failures": 0,
+    "false_negatives": 21,
+    "false_positives": 9,
+    "gold_claims": 48,
+    "issues": 71,
+    "predicted_claims": 36,
+    "source_backed_representation_differences": 9,
+    "unsupported_claims": 0
+  },
+  "denominator_rules": {
+    "claim_errors": "False positives and false negatives use exact claim-content matching from atomic-scoring-v2.",
+    "evidence_errors": "Evidence precision uses predicted exact spans and evidence recall uses gold exact spans. A span is source_id, message_id, and exact quote.",
+    "execution_failures": "Execution failures are reported separately and excluded from semantic failure categories.",
+    "field_errors": "Field errors use the scorer's deterministic evidence alignment; each aligned pair is one field denominator.",
+    "issue_counts": "Category counts count classified issue records, not distinct claims. One representation pair can have several field or evidence issues."
+  },
+  "generated_at_utc": "2026-08-08T14:41:17.375535Z",
+  "human_review": {
+    "approved_on": "2026-08-08",
+    "note": "Sneha approved the Step 3.1 candidate against its manifest SHA-256.",
+    "reviewed_manifest_sha256": "d44a71d6da47d4fc970473db97c10432edf68a8282df9ecac7f4d4c40ef835a5",
+    "reviewer": "Sneha",
+    "status": "approved"
+  },
+  "input_file_sha256": {
+    "data/phase3/atomic_extraction_gold.jsonl": "e802835dcb3e4278ec68e45474d094896dcad9a780c4115a01e0f0bc44f07f63",
+    "data/phase3/atomic_extraction_gold_review.json": "9b98d6dcb093e804a46afab2d36c30b61d5be254a2730aacc72805ad7eeae9f7",
+    "data/pilot/sources/calendar.jsonl": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+    "data/pilot/sources/conversations.jsonl": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+    "data/pilot/sources/emails.jsonl": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed",
+    "results/phase3/atomic-extraction-v2/case_scores.jsonl": "4883eaec9d0de7c864c5b162c0bec6c7acb7cecacc8406a811e68886fa16f0a3",
+    "results/phase3/atomic-extraction-v2/failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "results/phase3/atomic-extraction-v2/predictions.jsonl": "f0dc940505d0d99874b055ddc1f0c8d0be3ac9d74d975018d88829405e6c65b5",
+    "results/phase3/atomic-extraction-v2/run.json": "7a22b863e8e6da796a308ea1553818a957189159807d8087917626cdd9524a6d",
+    "results/phase3/atomic-extraction-v2/scores.json": "d81cdedd2323f92c2c2ff6f94fc6c87e4d14c80fa3fb0e059f9fdcd70bc78b23"
+  },
+  "output_file_sha256": {
+    "case_failures.jsonl": "3fb1ddf0c820561a38a3d5ebdb7b0c53dc30ce4dde14038024bfc45cfa5e0ff4",
+    "findings.md": "810562f9ac9d2021bf5f6896f57d2d79ad4312f4c528cf05b0042938b0966014",
+    "summary.json": "2fb5046b5fff7347f0bc4bfbead1cfcc23d173ac84a9a5e0c7b974268311ea5d"
+  },
+  "prepared_prompt_sha256": "92e18b33aa9ad96a895a275b1d0def8c481ba23995ed35312e6c4cba558798ba",
+  "protected_b1_file_sha256": {
+    "configs/full_history_baseline_v1.json": "9ac8881719153f09369e195e1c81eb55cc5f2f50e591f87b4fe2664c16bf6d76",
+    "results/pilot/b1-full-history/baseline_findings.md": "62c8f0d1d64972b2fe031dd5aadd7efa7d1cb9f0d17ec5de9019879dcc2151f8",
+    "results/pilot/b1-full-history/case_scores.jsonl": "07a0db890fef5b1fa203edcf642b1cbaeef8602d147aac22c6c660f377da4ab8",
+    "results/pilot/b1-full-history/failure_analysis.jsonl": "8332084a3316e326074c767d45bf7fd5824a45f62e0bcae9e3f165b9cf053bf1",
+    "results/pilot/b1-full-history/failure_summary.json": "3c309527c10c9fc4344b7acb5994795e20e1f174557087e769d76a6b2b96bd0f",
+    "results/pilot/b1-full-history/failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "results/pilot/b1-full-history/manual_review.jsonl": "9e9a74331a9af4f608b780a23fce5e936e0964f06edac874424d127188fbe2c0",
+    "results/pilot/b1-full-history/predictions.jsonl": "63e5b1061c98edbec8a2c77c2260bd364bb3362d876fe22a02e3a10a2f5187b0",
+    "results/pilot/b1-full-history/run.json": "b8f7b38fac1d28b70de219a96a567e98052a86764513da01d692019b87926507",
+    "results/pilot/b1-full-history/scores.json": "3187cedbabb60fbec2d6aca1dfd517d09cd37a404f7cd00e04d9065155b91f3d"
+  },
+  "release_status": "approved",
+  "repeatability": {
+    "isolated_nondeterministic_field": "generated_at_utc",
+    "substantive_outputs_expected_byte_identical": true
+  },
+  "repository_commit": "f99610a3a03a93bcf585d1a82567bf738ccf7812",
+  "repository_worktree_state": "dirty",
+  "source_prompt_version": "atomic-extraction-v2",
+  "source_scoring_version": "atomic-scoring-v2"
+}
