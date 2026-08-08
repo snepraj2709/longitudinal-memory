@@ -253,6 +253,29 @@ class AtomicExtractionRunnerTests(unittest.TestCase):
             ],
         )
 
+    def test_normalizes_false_boolean_object_into_negative_polarity(self) -> None:
+        claim = self.claim()
+        claim.update(
+            {
+                "predicate": "has_handoff_cover",
+                "object": False,
+                "polarity": "positive",
+            }
+        )
+
+        result = extract_atomic_claims(
+            self.source,
+            FakeAtomicClient(self.response([claim])),
+            evidence_normalization_version="source_span_boolean_polarity_v2",
+        )
+
+        self.assertIs(result.claims[0].object, True)
+        self.assertEqual(result.claims[0].polarity, "negative")
+        self.assertEqual(
+            [(item.code, item.location) for item in result.normalization_diagnostics],
+            [("claim_boolean_polarity_normalized", "claims[0].object")],
+        )
+
     def test_rejects_malformed_json_without_exposing_raw_response(self) -> None:
         raw_response = "not-json-sensitive-provider-output"
 

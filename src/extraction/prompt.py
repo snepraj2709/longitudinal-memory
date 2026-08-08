@@ -21,7 +21,8 @@ ATOMIC_EXTRACTION_PROMPT_VERSION = "atomic-extraction-v3"
 ATOMIC_EXTRACTION_V4_PROMPT_VERSION = "atomic-extraction-v4"
 ATOMIC_EXTRACTION_V5_PROMPT_VERSION = "atomic-extraction-v5"
 ATOMIC_EXTRACTION_V6_PROMPT_VERSION = "atomic-extraction-v6"
-ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION = "atomic-extraction-v7"
+ATOMIC_EXTRACTION_V7_PROMPT_VERSION = "atomic-extraction-v7"
+ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION = "atomic-extraction-v8"
 
 _POLARITIES = ", ".join(sorted(ALLOWED_POLARITIES))
 _EPISTEMIC_STATUSES = ", ".join(sorted(ALLOWED_EPISTEMIC_STATUSES))
@@ -99,6 +100,15 @@ _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V7 = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V3.replac
     + f"Active predicate registry version: {_PREDICATE_REGISTRY.registry_version}",
 )
 
+_V8_INTERVENTION = """Before returning, apply these predicate checks. Do not use will_work_for when the source names only a job or location and does not name an employer. A request to prepare a deliverable is assigned_task even when the deliverable belongs to a named project; use assigned_project only for an explicit assignment to the project as a whole. Use job_start_date, not employment_start_date, for a date introduced by joined, join, starts, or started. For every boolean claim, verify that object is true and use polarity to carry direct negation.
+
+"""
+
+_ATOMIC_EXTRACTION_SYSTEM_PROMPT_V8 = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V7.replace(
+    _V7_INTERVENTION,
+    _V7_INTERVENTION + _V8_INTERVENTION,
+)
+
 ATOMIC_EXTRACTION_SYSTEM_PROMPT = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V3
 
 
@@ -110,7 +120,8 @@ def get_atomic_extraction_system_prompt(prompt_version: str) -> str:
         ATOMIC_EXTRACTION_V4_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V4,
         ATOMIC_EXTRACTION_V5_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V5,
         ATOMIC_EXTRACTION_V6_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V6,
-        ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V7,
+        ATOMIC_EXTRACTION_V7_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V7,
+        ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V8,
     }
     try:
         return prompts[prompt_version]

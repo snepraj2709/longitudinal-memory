@@ -122,7 +122,10 @@ def load_atomic_run_config(
         and generation["text_format"] == "json_schema"
         and generation["text_schema_version"] == "atomic_extraction_v1"
         and generation.get("normalization_version") in (
-            None, "unicode_punctuation_v1", "source_span_v1"
+            None,
+            "unicode_punctuation_v1",
+            "source_span_v1",
+            "source_span_boolean_polarity_v2",
         )
         and isinstance(generation["text_schema_sha256"], str)
     )

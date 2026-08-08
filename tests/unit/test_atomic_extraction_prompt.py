@@ -18,6 +18,7 @@ from extraction.prompt import (
     ATOMIC_EXTRACTION_V4_PROMPT_VERSION,
     ATOMIC_EXTRACTION_V5_PROMPT_VERSION,
     ATOMIC_EXTRACTION_V6_PROMPT_VERSION,
+    ATOMIC_EXTRACTION_V7_PROMPT_VERSION,
     ATOMIC_EXTRACTION_SYSTEM_PROMPT,
     build_atomic_extraction_prompt,
     get_atomic_extraction_system_prompt,
@@ -382,7 +383,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
 
     def test_v7_uses_registry_semantics_and_keeps_nonasserted_claims(self) -> None:
         candidate_prompt = get_atomic_extraction_system_prompt(
-            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+            ATOMIC_EXTRACTION_V7_PROMPT_VERSION
         )
         required_text = (
             "including temporal_behavior",
@@ -406,7 +407,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
         )
         self.assertNotIn("Scan every independent clause", candidate_prompt)
         self.assertEqual(
-            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION,
+            ATOMIC_EXTRACTION_V7_PROMPT_VERSION,
             "atomic-extraction-v7",
         )
 
@@ -419,7 +420,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )
         candidate_prompt = get_atomic_extraction_system_prompt(
-            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+            ATOMIC_EXTRACTION_V7_PROMPT_VERSION
         )
 
         self.assertEqual(snapshot["prompt_version"], "atomic-extraction-v7")
@@ -437,6 +438,67 @@ class AtomicExtractionPromptTests(unittest.TestCase):
                 config_path=repo_root / suite["config_path"],
             )
             self.assertEqual(plan.config.prompt_sha256, suite["prompt_sha256"])
+            self.assertEqual(
+                [case_id for case_id, _ in plan.case_refs], suite["case_ids"]
+            )
+
+    def test_v8_adds_final_predicate_and_boolean_checks(self) -> None:
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+        )
+        v7_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_V7_PROMPT_VERSION
+        )
+        required_text = (
+            "does not name an employer",
+            "request to prepare a deliverable is assigned_task",
+            "Use job_start_date, not employment_start_date",
+            "object is true and use polarity to carry direct negation",
+        )
+        for text in required_text:
+            with self.subTest(text=text):
+                self.assertIn(text, candidate_prompt)
+                self.assertNotIn(text, v7_prompt)
+        self.assertEqual(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION,
+            "atomic-extraction-v8",
+        )
+
+    def test_v8_prompt_schema_and_normalization_snapshot_matches_suites(self) -> None:
+        repo_root = Path(__file__).resolve().parents[2]
+        snapshot = json.loads(
+            (
+                repo_root
+                / "configs/extraction/atomic_extraction_prompt_v8_snapshot.json"
+            ).read_text(encoding="utf-8")
+        )
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+        )
+
+        self.assertEqual(snapshot["prompt_version"], "atomic-extraction-v8")
+        self.assertEqual(
+            snapshot["system_prompt_sha256"],
+            hashlib.sha256(candidate_prompt.encode("utf-8")).hexdigest(),
+        )
+        self.assertEqual(
+            snapshot["text_schema_sha256"],
+            canonical_sha256(atomic_extraction_text_format()),
+        )
+        self.assertEqual(
+            snapshot["normalization_version"],
+            "source_span_boolean_polarity_v2",
+        )
+        for suite in snapshot["suites"].values():
+            plan = prepare_atomic_run(
+                repo_root=repo_root,
+                config_path=repo_root / suite["config_path"],
+            )
+            self.assertEqual(plan.config.prompt_sha256, suite["prompt_sha256"])
+            self.assertEqual(
+                plan.config.generation_settings["normalization_version"],
+                snapshot["normalization_version"],
+            )
             self.assertEqual(
                 [case_id for case_id, _ in plan.case_refs], suite["case_ids"]
             )

@@ -20,6 +20,7 @@ from .prompt import (
     ATOMIC_EXTRACTION_SYSTEM_PROMPT,
     build_atomic_extraction_prompt,
 )
+from .predicate_registry import load_default_predicate_registry
 from .source import ExtractionSource
 
 
@@ -154,7 +155,7 @@ def validate_atomic_response(
     records = _parse_claim_records(raw_response, source_group.source_id)
     normalization_diagnostics: tuple[ValidationDiagnostic, ...] = ()
     if evidence_normalization_version is not None:
-        records, normalization_diagnostics = _normalize_evidence_quotes(
+        records, normalization_diagnostics = _normalize_claim_records(
             records, source_group, evidence_normalization_version
         )
     claims = _validate_claim_records(records, source_group)
@@ -178,17 +179,57 @@ _UNICODE_PUNCTUATION = str.maketrans(
     }
 )
 
+_BOOLEAN_PREDICATES = {
+    definition.predicate
+    for definition in load_default_predicate_registry().definitions
+    if definition.object_shape in {"boolean", "boolean_or_text"}
+}
+
+
+def _normalize_claim_records(
+    records: list[object],
+    source_group: ExtractionSource,
+    normalization_version: str,
+) -> tuple[list[object], tuple[ValidationDiagnostic, ...]]:
+    allowed = {
+        "unicode_punctuation_v1",
+        "source_span_v1",
+        "source_span_boolean_polarity_v2",
+    }
+    if normalization_version not in allowed:
+        raise ValueError("unknown evidence normalization version")
+    normalized = deepcopy(records)
+    diagnostics: list[ValidationDiagnostic] = []
+    if normalization_version == "source_span_boolean_polarity_v2":
+        for claim_index, record in enumerate(normalized):
+            if not isinstance(record, dict):
+                continue
+            if (
+                record.get("predicate") in _BOOLEAN_PREDICATES
+                and record.get("object") is False
+                and record.get("polarity") in {"positive", "negative"}
+            ):
+                record["object"] = True
+                record["polarity"] = (
+                    "negative" if record["polarity"] == "positive" else "positive"
+                )
+                diagnostics.append(
+                    ValidationDiagnostic(
+                        code="claim_boolean_polarity_normalized",
+                        location=f"claims[{claim_index}].object",
+                    )
+                )
+    normalized, evidence_diagnostics = _normalize_evidence_quotes(
+        normalized, source_group, normalization_version
+    )
+    return normalized, tuple([*diagnostics, *evidence_diagnostics])
+
 
 def _normalize_evidence_quotes(
     records: list[object],
     source_group: ExtractionSource,
     normalization_version: str,
 ) -> tuple[list[object], tuple[ValidationDiagnostic, ...]]:
-    if normalization_version not in (
-        "unicode_punctuation_v1",
-        "source_span_v1",
-    ):
-        raise ValueError("unknown evidence normalization version")
     normalized = deepcopy(records)
     observations = {
         (observation.source_id, observation.message_id): observation
@@ -218,7 +259,10 @@ def _normalize_evidence_quotes(
                 start = starts[0]
                 evidence["quote"] = observation.text[start : start + len(quote)]
                 code = "evidence_quote_unicode_punctuation_normalized"
-            elif normalization_version == "source_span_v1":
+            elif normalization_version in (
+                "source_span_v1",
+                "source_span_boolean_polarity_v2",
+            ):
                 evidence["quote"] = observation.text
                 code = "evidence_quote_replaced_with_cited_observation"
             else:
