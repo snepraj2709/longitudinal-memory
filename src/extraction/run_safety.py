@@ -101,11 +101,37 @@ def load_atomic_run_config(
         raise AtomicRunConfigError("temperature must be numeric")
 
     generation = raw["generation_settings"]
-    if not isinstance(generation, dict) or generation != {
+    legacy_generation = {
         "api": "responses", "max_output_tokens": 4000,
         "store": False, "text_format": "json_object",
-    }:
+    }
+    strict_generation_fields = {
+        "api", "max_output_tokens", "store", "text_format",
+        "text_schema_version", "text_schema_sha256",
+    }
+    strict_generation_field_sets = (
+        strict_generation_fields,
+        strict_generation_fields | {"normalization_version"},
+    )
+    strict_generation_valid = (
+        isinstance(generation, dict)
+        and set(generation) in strict_generation_field_sets
+        and generation["api"] == "responses"
+        and generation["max_output_tokens"] == 4000
+        and generation["store"] is False
+        and generation["text_format"] == "json_schema"
+        and generation["text_schema_version"] == "atomic_extraction_v1"
+        and generation.get("normalization_version") in (
+            None, "unicode_punctuation_v1", "source_span_v1"
+        )
+        and isinstance(generation["text_schema_sha256"], str)
+    )
+    if not isinstance(generation, dict) or not (
+        generation == legacy_generation or strict_generation_valid
+    ):
         raise AtomicRunConfigError("generation settings are incompatible")
+    if strict_generation_valid:
+        _require_sha256(generation["text_schema_sha256"], "text_schema_sha256")
 
     case_order_raw = raw["case_order"]
     if not isinstance(case_order_raw, list):

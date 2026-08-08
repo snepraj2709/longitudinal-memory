@@ -124,7 +124,7 @@ class AtomicExtractionRunSafetyTests(unittest.TestCase):
 
     def test_frozen_config_rejects_prompt_and_model_drift(self) -> None:
         original = json.loads(
-            (REPO_ROOT / "configs/extraction/atomic_extraction_run_v2.json").read_text()
+            (REPO_ROOT / "configs/extraction/atomic_extraction_run_v3.json").read_text()
         )
         for field, value in (("prompt_sha256", "0" * 64), ("requested_model", "gpt-4.1")):
             with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
@@ -133,6 +133,27 @@ class AtomicExtractionRunSafetyTests(unittest.TestCase):
                 path = Path(directory) / "config.json"
                 path.write_text(json.dumps(config), encoding="utf-8")
                 with self.assertRaises(AtomicPipelineError):
+                    dry_run_atomic(repo_root=REPO_ROOT, config_path=path)
+
+    def test_rejects_unknown_or_reordered_development_case_subsets(self) -> None:
+        original = json.loads(
+            (
+                REPO_ROOT / "configs/extraction/atomic_extraction_smoke_v1.json"
+            ).read_text()
+        )
+        for mutation in ("unknown", "reordered"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+                config = json.loads(json.dumps(original))
+                if mutation == "unknown":
+                    config["case_order"][0] = {
+                        "case_id": "atomic_test_user_003",
+                        "source_id": "test_user_003_source",
+                    }
+                else:
+                    config["case_order"].reverse()
+                path = Path(directory) / "config.json"
+                path.write_text(json.dumps(config), encoding="utf-8")
+                with self.assertRaisesRegex(AtomicPipelineError, "case order"):
                     dry_run_atomic(repo_root=REPO_ROOT, config_path=path)
 
     def test_execute_preflight_rejects_drift_before_reading_provider_access(self) -> None:

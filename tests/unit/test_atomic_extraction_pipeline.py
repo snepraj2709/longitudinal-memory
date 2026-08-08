@@ -195,6 +195,37 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
 
         self.assertEqual(self.hash_tree(B1_RESULT_DIR), before_b1)
 
+    def test_smoke_config_calls_only_three_frozen_development_cases(self) -> None:
+        client = FakeAtomicPipelineClient()
+        config_path = REPO_ROOT / "configs/extraction/atomic_extraction_smoke_v1.json"
+        times = iter(
+            (
+                datetime.fromisoformat("2026-08-08T10:00:00+00:00"),
+                datetime.fromisoformat("2026-08-08T10:01:00+00:00"),
+            )
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            output_dir = Path(directory) / "smoke"
+            run = execute_atomic_pipeline(
+                client=client,
+                requested_model=client.model,
+                output_dir=output_dir,
+                repo_root=REPO_ROOT,
+                now=lambda: next(times),
+                config_path=config_path,
+            )
+            scores = json.loads((output_dir / "scores.json").read_text())
+
+        expected = ["conv_002", "email_005", "conv_010"]
+        prompted = [
+            json.loads(user_prompt.split("\n", 1)[1])["source_id"]
+            for _, user_prompt in client.calls
+        ]
+        self.assertEqual(prompted, expected)
+        self.assertEqual(run["planned_request_count"], 3)
+        self.assertEqual(run["successful_cases"], 3)
+        self.assertEqual(len(scores["case_results"]), 3)
+
     def test_failure_stops_without_retrying_or_scoring(self) -> None:
         client = FakeAtomicPipelineClient(provider_failures_at={4})
         with tempfile.TemporaryDirectory() as directory:
@@ -243,6 +274,20 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
                     self.assertNotIn("raw_response", artifact_text)
                     failures = self.read_jsonl(output_dir / "failures.jsonl")
                     self.assertEqual(failures[0]["failure_stage"], failure_kind)
+                    expected_diagnostics = (
+                        []
+                        if failure_kind == "provider"
+                        else [
+                            {
+                                "code": "response_invalid_json",
+                                "location": "response",
+                            }
+                        ]
+                    )
+                    self.assertEqual(
+                        failures[0]["validation_diagnostics"],
+                        expected_diagnostics,
+                    )
 
     def test_non_empty_output_directory_is_not_overwritten(self) -> None:
         client = FakeAtomicPipelineClient()

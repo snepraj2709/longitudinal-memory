@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 from dataclasses import dataclass, replace
 import json
 import math
@@ -82,6 +83,7 @@ class OpenAIResponsesClient:
         sleep: Callable[[float], None] = time.sleep,
         pacing_safety_factor: float = 1.1,
         minimum_request_interval_seconds: float = 15.0,
+        text_format: Mapping[str, object] | None = None,
     ) -> None:
         if not api_key.strip():
             raise ValueError("api_key must be non-empty")
@@ -93,6 +95,8 @@ class OpenAIResponsesClient:
             raise ValueError("pacing_safety_factor must be at least 1")
         if minimum_request_interval_seconds < 0:
             raise ValueError("minimum_request_interval_seconds cannot be negative")
+        if text_format is not None and not isinstance(text_format, Mapping):
+            raise ValueError("text_format must be an object")
         self._api_key = api_key
         self.model = model
         self.temperature = temperature
@@ -102,6 +106,9 @@ class OpenAIResponsesClient:
         self._sleep = sleep
         self._pacing_safety_factor = pacing_safety_factor
         self._minimum_request_interval_seconds = minimum_request_interval_seconds
+        self._text_format = deepcopy(
+            dict(text_format) if text_format is not None else {"type": "json_object"}
+        )
         self._requests_started = 0
         self.response_metadata: list[OpenAIResponseMetadata] = []
         self._pacing_metadata: OpenAIResponseMetadata | None = None
@@ -127,7 +134,7 @@ class OpenAIResponsesClient:
             "temperature": self.temperature,
             "max_output_tokens": self.max_output_tokens,
             "store": False,
-            "text": {"format": {"type": "json_object"}},
+            "text": {"format": deepcopy(self._text_format)},
         }
         pacing_delay = self._pace_before_request()
         self._requests_started += 1

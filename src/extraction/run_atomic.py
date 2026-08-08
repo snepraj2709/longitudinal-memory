@@ -23,7 +23,13 @@ from evaluation.openai_client import (
 )
 from evaluation.run_config import assert_no_secrets, canonical_sha256
 
-from .atomic import AtomicExtractionResult, AtomicExtractionValidationError, validate_atomic_response
+from .atomic import (
+    AtomicExtractionResult,
+    AtomicExtractionValidationError,
+    ValidationDiagnostic,
+    sanitized_validation_diagnostics,
+    validate_atomic_response,
+)
 from .predicate_registry import (
     DEFAULT_PREDICATE_REGISTRY_PATH,
     PredicateRegistryError,
@@ -31,9 +37,8 @@ from .predicate_registry import (
 )
 from .gold import ATOMIC_GOLD_PATH, AtomicGoldCase, load_atomic_gold
 from .prompt import (
-    ATOMIC_EXTRACTION_PROMPT_VERSION,
-    ATOMIC_EXTRACTION_SYSTEM_PROMPT,
     build_atomic_extraction_prompt,
+    get_atomic_extraction_system_prompt,
 )
 from .run_safety import (
     DEFAULT_CONFIG_PATH,
@@ -44,6 +49,7 @@ from .run_safety import (
     token_cost,
 )
 from .scoring import ATOMIC_SCORING_VERSION, score_atomic_extraction
+from .schema import atomic_extraction_text_format
 from .source import PILOT_SOURCE_DIR, ExtractionSource, load_pilot_sources
 
 
@@ -101,6 +107,7 @@ class AtomicRunPlan:
     selected_sources: tuple[ExtractionSource, ...]
     all_sources: tuple[ExtractionSource, ...]
     prompts: tuple[str, ...]
+    system_prompt: str
     prompt_input_token_upper_bounds: tuple[int, ...]
     gold_file_sha256: str
     source_file_sha256: Mapping[str, str]
@@ -128,6 +135,8 @@ class AtomicCaseExecution:
     error: str | None
     budget_input_tokens: int
     budget_output_tokens: int
+    validation_diagnostics: tuple[ValidationDiagnostic, ...] = ()
+    normalization_diagnostics: tuple[ValidationDiagnostic, ...] = ()
 
 
 def prepare_atomic_run(
@@ -144,10 +153,11 @@ def prepare_atomic_run(
         config = load_atomic_run_config(root, config_path)
     except AtomicRunConfigError as error:
         raise AtomicPipelineError(str(error)) from error
-    if config.case_order != ATOMIC_CASE_REFS:
-        raise AtomicPipelineError("frozen case order is incompatible with the runner")
-    if config.prompt_version != ATOMIC_EXTRACTION_PROMPT_VERSION:
-        raise AtomicPipelineError("the extraction prompt version drifted")
+    _require_development_case_order(config.case_order)
+    try:
+        system_prompt = get_atomic_extraction_system_prompt(config.prompt_version)
+    except ValueError as error:
+        raise AtomicPipelineError(str(error)) from error
     try:
         registry = load_predicate_registry(
             root / DEFAULT_PREDICATE_REGISTRY_PATH
@@ -158,6 +168,10 @@ def prepare_atomic_run(
         raise AtomicPipelineError("the predicate registry version drifted")
     if registry.content_sha256 != config.predicate_registry_sha256:
         raise AtomicPipelineError("the predicate registry changed")
+    if config.generation_settings["text_format"] == "json_schema":
+        schema_hash = canonical_sha256(atomic_extraction_text_format())
+        if schema_hash != config.generation_settings["text_schema_sha256"]:
+            raise AtomicPipelineError("the structured-output schema changed")
 
     gold_hash = _file_sha256(root / ATOMIC_GOLD_PATH)
     if gold_hash != FROZEN_ATOMIC_GOLD_SHA256 or gold_hash != config.gold_file_sha256:
@@ -169,7 +183,7 @@ def prepare_atomic_run(
         "source_file_sha256": source_hashes,
         "case_order": [
             {"case_id": case_id, "source_id": source_id}
-            for case_id, source_id in ATOMIC_CASE_REFS
+            for case_id, source_id in config.case_order
         ],
     })
     if runtime_dataset_hash != config.runtime_dataset_sha256:
@@ -177,16 +191,20 @@ def prepare_atomic_run(
 
     all_sources = tuple(source_groups) if source_groups is not None else load_pilot_sources()
     sources_by_id = {source.source_id: source for source in all_sources}
-    missing = [source_id for _, source_id in ATOMIC_CASE_REFS if source_id not in sources_by_id]
+    missing = [
+        source_id
+        for _, source_id in config.case_order
+        if source_id not in sources_by_id
+    ]
     if missing:
         raise AtomicPipelineError("missing atomic source IDs: " + ", ".join(missing))
-    selected = tuple(sources_by_id[source_id] for _, source_id in ATOMIC_CASE_REFS)
+    selected = tuple(sources_by_id[source_id] for _, source_id in config.case_order)
     prompts = tuple(build_atomic_extraction_prompt(source) for source in selected)
     prompt_payload = {
-        "system_prompt": ATOMIC_EXTRACTION_SYSTEM_PROMPT,
+        "system_prompt": system_prompt,
         "cases": [
             {"case_id": case_id, "source_id": source_id, "prompt": prompt}
-            for (case_id, source_id), prompt in zip(ATOMIC_CASE_REFS, prompts)
+            for (case_id, source_id), prompt in zip(config.case_order, prompts)
         ],
     }
     if canonical_sha256(prompt_payload) != config.prompt_sha256:
@@ -195,19 +213,30 @@ def prepare_atomic_run(
 
     if validate_gold:
         gold_cases = load_atomic_gold(root / ATOMIC_GOLD_PATH, all_sources)
-        _require_frozen_case_order(gold_cases)
+        _select_gold_cases(gold_cases, config.case_order)
 
+    schema_input_upper_bound = 0
+    if config.generation_settings["text_format"] == "json_schema":
+        schema_input_upper_bound = len(
+            json.dumps(
+                atomic_extraction_text_format(),
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode("utf-8")
+        )
     upper_bounds = tuple(
-        len((ATOMIC_EXTRACTION_SYSTEM_PROMPT + prompt).encode("utf-8"))
+        len((system_prompt + prompt).encode("utf-8")) + schema_input_upper_bound
         for prompt in prompts
     )
     if sum(upper_bounds) * 2 != config.maximum_input_tokens:
         raise AtomicPipelineError("the frozen input-token ceiling no longer covers the prompts")
     return AtomicRunPlan(
-        case_refs=ATOMIC_CASE_REFS,
+        case_refs=config.case_order,
         selected_sources=selected,
         all_sources=all_sources,
         prompts=prompts,
+        system_prompt=system_prompt,
         prompt_input_token_upper_bounds=upper_bounds,
         gold_file_sha256=gold_hash,
         source_file_sha256=source_hashes,
@@ -365,7 +394,7 @@ def execute_atomic_pipeline(
         )
         try:
             raw_response, metadata = getattr(client, "complete_with_metadata")(
-                system_prompt=ATOMIC_EXTRACTION_SYSTEM_PROMPT,
+                system_prompt=plan.system_prompt,
                 user_prompt=prompt,
             )
         except Exception as error:
@@ -414,14 +443,22 @@ def execute_atomic_pipeline(
                 repository_commit, repository_dirty,
             )
         try:
-            result = validate_atomic_response(source, raw_response, metadata)
-        except AtomicExtractionValidationError:
+            result = validate_atomic_response(
+                source,
+                raw_response,
+                metadata,
+                evidence_normalization_version=config.generation_settings.get(
+                    "normalization_version"
+                ),
+            )
+        except AtomicExtractionValidationError as error:
             executions.pop()
             executions.append(AtomicCaseExecution(
                 position, case_id, source_id, True, False, (), metadata,
                 "validation", "The extracted claims failed validation.",
                 metadata.input_tokens if metadata.input_tokens is not None else prompt_upper,
                 metadata.output_tokens if metadata.output_tokens is not None else MAX_OUTPUT_TOKENS,
+                sanitized_validation_diagnostics(error),
             ))
             return _write_checkpoint(
                 output_path, plan, executions, prior_provider_failures, started_at,
@@ -442,8 +479,8 @@ def execute_atomic_pipeline(
     gold_path = root / ATOMIC_GOLD_PATH
     if _file_sha256(gold_path) != plan.gold_file_sha256:
         raise AtomicPipelineError("the atomic gold file changed before scoring")
-    gold_cases = load_atomic_gold(gold_path, plan.all_sources)
-    _require_frozen_case_order(gold_cases)
+    all_gold_cases = load_atomic_gold(gold_path, plan.all_sources)
+    gold_cases = _select_gold_cases(all_gold_cases, plan.case_refs)
     predictions_by_case = {
         item.case_id: item.claims for item in executions if item.passed
     }
@@ -468,6 +505,8 @@ def _successful_execution(
         None, None,
         metadata.input_tokens if metadata.input_tokens is not None else prompt_upper,
         metadata.output_tokens if metadata.output_tokens is not None else MAX_OUTPUT_TOKENS,
+        (),
+        result.normalization_diagnostics,
     )
 
 
@@ -738,7 +777,8 @@ def _execution_from_record(item: object, plan: AtomicRunPlan) -> AtomicCaseExecu
         "provider_metadata", "failure_stage", "error", "budget_input_tokens",
         "budget_output_tokens",
     }
-    if set(item) != required:
+    optional_diagnostics = {"validation_diagnostics", "normalization_diagnostics"}
+    if not required <= set(item) or set(item) - required - optional_diagnostics:
         raise AtomicPipelineError("resume attempt fields changed")
     position = item["position"]
     if not isinstance(position, int) or isinstance(position, bool) or not 1 <= position <= len(plan.case_refs):
@@ -777,10 +817,34 @@ def _execution_from_record(item: object, plan: AtomicRunPlan) -> AtomicCaseExecu
         if not isinstance(value, int) or isinstance(value, bool) or value < 0:
             raise AtomicPipelineError("resume token budget is invalid")
         budgets.append(value)
+    diagnostics = _validation_diagnostics_from_record(
+        item.get("validation_diagnostics", [])
+    )
+    normalizations = _validation_diagnostics_from_record(
+        item.get("normalization_diagnostics", [])
+    )
     return AtomicCaseExecution(
         position, item["case_id"], item["source_id"], item["attempted"], item["passed"],
         tuple(claims), metadata, item["failure_stage"], item["error"], budgets[0], budgets[1],
+        diagnostics, normalizations,
     )
+
+
+def _validation_diagnostics_from_record(
+    value: object,
+) -> tuple[ValidationDiagnostic, ...]:
+    if not isinstance(value, list):
+        raise AtomicPipelineError("resume validation diagnostics are malformed")
+    diagnostics: list[ValidationDiagnostic] = []
+    for item in value:
+        if (
+            not isinstance(item, dict)
+            or set(item) != {"code", "location"}
+            or not all(isinstance(item[field], str) and item[field] for field in item)
+        ):
+            raise AtomicPipelineError("resume validation diagnostics are malformed")
+        diagnostics.append(ValidationDiagnostic(**item))
+    return tuple(diagnostics)
 
 
 def _attempt_record(
@@ -794,6 +858,12 @@ def _attempt_record(
         "failure_stage": item.failure_stage, "error": item.error,
         "budget_input_tokens": item.budget_input_tokens,
         "budget_output_tokens": item.budget_output_tokens,
+        "validation_diagnostics": [
+            asdict(diagnostic) for diagnostic in item.validation_diagnostics
+        ],
+        "normalization_diagnostics": [
+            asdict(diagnostic) for diagnostic in item.normalization_diagnostics
+        ],
     }
 
 
@@ -808,6 +878,9 @@ def _failure_record(item: AtomicCaseExecution) -> dict[str, object]:
     return {
         "case_id": item.case_id, "source_id": item.source_id,
         "failure_stage": item.failure_stage, "error": item.error,
+        "validation_diagnostics": [
+            asdict(diagnostic) for diagnostic in item.validation_diagnostics
+        ],
     }
 
 
@@ -974,6 +1047,30 @@ def _require_frozen_case_order(gold_cases: Sequence[AtomicGoldCase]) -> None:
         raise AtomicPipelineError("atomic gold case IDs or source order changed")
 
 
+def _require_development_case_order(
+    case_refs: Sequence[tuple[str, str]],
+) -> None:
+    """Allow only a non-empty ordered subset of the frozen Maya suite."""
+
+    if not case_refs:
+        raise AtomicPipelineError("the development case order is empty")
+    selected = set(case_refs)
+    ordered = tuple(case_ref for case_ref in ATOMIC_CASE_REFS if case_ref in selected)
+    if tuple(case_refs) != ordered:
+        raise AtomicPipelineError(
+            "frozen case order is incompatible with the runner"
+        )
+
+
+def _select_gold_cases(
+    gold_cases: Sequence[AtomicGoldCase],
+    case_refs: Sequence[tuple[str, str]],
+) -> tuple[AtomicGoldCase, ...]:
+    _require_frozen_case_order(gold_cases)
+    by_ref = {(case.case_id, case.source_id): case for case in gold_cases}
+    return tuple(by_ref[case_ref] for case_ref in case_refs)
+
+
 def _source_hashes(repo_root: Path) -> dict[str, str]:
     return {
         (PILOT_SOURCE_DIR / name).as_posix(): _file_sha256(repo_root / PILOT_SOURCE_DIR / name)
@@ -1028,7 +1125,9 @@ def _write_text(path: Path, content: str) -> None:
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run the ten-case atomic-extraction pilot safely.")
+    parser = argparse.ArgumentParser(
+        description="Run a frozen atomic-extraction development suite safely."
+    )
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--execute", action="store_true")
@@ -1067,6 +1166,11 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None) -> int
         client = OpenAIResponsesClient(
             api_key=api_key, model=args.model, temperature=config.temperature,
             max_output_tokens=int(config.generation_settings["max_output_tokens"]),
+            text_format=(
+                atomic_extraction_text_format()
+                if config.generation_settings["text_format"] == "json_schema"
+                else None
+            ),
         )
         run = execute_atomic_pipeline(
             client=client, requested_model=args.model, output_dir=args.output_dir,

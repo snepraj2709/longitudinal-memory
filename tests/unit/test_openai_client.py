@@ -69,6 +69,50 @@ class OpenAIResponsesClientTests(unittest.TestCase):
         self.assertEqual(client.response_metadata[0].response_id, "resp_test")
         self.assertEqual(client.response_metadata[0].total_tokens, 120)
 
+    def test_sends_a_frozen_strict_text_format_when_supplied(self) -> None:
+        payloads: list[dict[str, object]] = []
+        text_format = {
+            "type": "json_schema",
+            "name": "atomic_extraction_v1",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {"claims": {"type": "array"}},
+                "required": ["claims"],
+                "additionalProperties": False,
+            },
+        }
+        client = OpenAIResponsesClient(
+            api_key="test-key",
+            model="gpt-4.1-2025-04-14",
+            temperature=0,
+            max_output_tokens=1000,
+            text_format=text_format,
+            transport=lambda payload: (
+                payloads.append(dict(payload)) or self.completed_response()
+            ),
+        )
+
+        client.complete(system_prompt="system", user_prompt="user")
+        text_format["name"] = "mutated_after_construction"
+
+        self.assertEqual(
+            payloads[0]["text"],
+            {
+                "format": {
+                    "type": "json_schema",
+                    "name": "atomic_extraction_v1",
+                    "strict": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {"claims": {"type": "array"}},
+                        "required": ["claims"],
+                        "additionalProperties": False,
+                    },
+                }
+            },
+        )
+
     def test_rejects_a_different_returned_model(self) -> None:
         response = self.completed_response()
         response["model"] = "gpt-4.1"

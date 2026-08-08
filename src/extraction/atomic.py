@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import dataclass
 import json
+import re
 from typing import Sequence
 
 from evaluation.history import HistoryObservation
@@ -31,17 +33,100 @@ class AtomicExtractionValidationError(ValueError):
 
 
 @dataclass(frozen=True)
+class ValidationDiagnostic:
+    """A stable validation category and safe structural location."""
+
+    code: str
+    location: str
+
+
+@dataclass(frozen=True)
 class AtomicExtractionResult:
     """Validated claims and non-secret metadata from one provider response."""
 
     source_id: str
     claims: tuple[AtomicClaimV1, ...]
     response_metadata: OpenAIResponseMetadata
+    normalization_diagnostics: tuple[ValidationDiagnostic, ...]
+
+
+def sanitized_validation_diagnostics(
+    error: AtomicExtractionValidationError,
+) -> tuple[ValidationDiagnostic, ...]:
+    """Describe validation failures without retaining generated values or output."""
+
+    return tuple(
+        ValidationDiagnostic(
+            code=_validation_error_code(message),
+            location=_validation_error_location(message),
+        )
+        for message in error.errors
+    )
+
+
+def _validation_error_code(message: str) -> str:
+    patterns = (
+        ("response is not valid JSON", "response_invalid_json"),
+        ("response must be an object", "response_invalid_root"),
+        ("response is missing required field", "response_missing_field"),
+        ("response contains unknown field", "response_unknown_field"),
+        ("claims must be a list", "claims_invalid_type"),
+        ("claim must be an object", "claim_invalid_type"),
+        ("is missing required field", "claim_missing_field"),
+        ("contains unknown field", "claim_unknown_field"),
+        ("duplicates claim_id", "claim_duplicate_id"),
+        ("predicate must be one of", "claim_unknown_predicate"),
+        ("object must", "claim_invalid_object"),
+        ("object.", "claim_invalid_object"),
+        ("polarity must be one of", "claim_invalid_polarity"),
+        ("epistemic_status must be one of", "claim_invalid_epistemic_status"),
+        ("valid_to must not be before valid_from", "claim_reversed_valid_time"),
+        ("must be an ISO date", "claim_invalid_valid_time"),
+        ("confidence must", "claim_invalid_confidence"),
+        ("evidence must", "claim_invalid_evidence"),
+        ("duplicates evidence reference", "evidence_duplicate_reference"),
+        (".source_id must match source", "evidence_wrong_source"),
+        ("calendar evidence must use message_id", "evidence_invalid_message_id"),
+        ("non-calendar evidence must use a message_id", "evidence_invalid_message_id"),
+        (".message_id does not exist in source", "evidence_unknown_message_id"),
+        (".message_id must be", "evidence_invalid_message_id"),
+        (".quote is not an exact substring", "evidence_inexact_quote"),
+        ("speaker_id", "claim_invalid_speaker"),
+        ("subject_id", "claim_invalid_subject"),
+        ("must be a non-empty string", "claim_invalid_string"),
+    )
+    return next((code for fragment, code in patterns if fragment in message), "validation_unknown")
+
+
+def _validation_error_location(message: str) -> str:
+    nested = re.match(r"^(claims\[\d+\]): (.+)$", message)
+    if nested:
+        claim_location, detail = nested.groups()
+        evidence = re.match(r"^(evidence\[\d+\](?:\.[a-z_]+)?)", detail)
+        if evidence:
+            return f"{claim_location}.{evidence.group(1)}"
+        field = re.match(
+            r"^(claim_id|subject_id|speaker_id|predicate|object(?:\.[a-z_]+)?|"
+            r"polarity|epistemic_status|valid_from|valid_to|confidence|evidence)",
+            detail,
+        )
+        return f"{claim_location}.{field.group(1)}" if field else claim_location
+    direct = re.match(
+        r"^(claims\[\d+\](?:\.evidence\[\d+\])?(?:\.[a-z_]+)?)",
+        message,
+    )
+    if direct:
+        return direct.group(1)
+    if message.startswith("claims ") or message.startswith("claims must"):
+        return "claims"
+    return "response"
 
 
 def extract_atomic_claims(
     source_group: ExtractionSource,
     client: object,
+    *,
+    evidence_normalization_version: str | None = None,
 ) -> AtomicExtractionResult:
     """Make one model call and validate its claims against the supplied source."""
 
@@ -49,23 +134,117 @@ def extract_atomic_claims(
         system_prompt=ATOMIC_EXTRACTION_SYSTEM_PROMPT,
         user_prompt=build_atomic_extraction_prompt(source_group),
     )
-    return validate_atomic_response(source_group, raw_response, metadata)
+    return validate_atomic_response(
+        source_group,
+        raw_response,
+        metadata,
+        evidence_normalization_version=evidence_normalization_version,
+    )
 
 
 def validate_atomic_response(
     source_group: ExtractionSource,
     raw_response: object,
     metadata: OpenAIResponseMetadata,
+    *,
+    evidence_normalization_version: str | None = None,
 ) -> AtomicExtractionResult:
     """Validate one returned response without making another provider call."""
 
     records = _parse_claim_records(raw_response, source_group.source_id)
+    normalization_diagnostics: tuple[ValidationDiagnostic, ...] = ()
+    if evidence_normalization_version is not None:
+        records, normalization_diagnostics = _normalize_evidence_quotes(
+            records, source_group, evidence_normalization_version
+        )
     claims = _validate_claim_records(records, source_group)
     return AtomicExtractionResult(
         source_id=source_group.source_id,
         claims=claims,
         response_metadata=metadata,
+        normalization_diagnostics=normalization_diagnostics,
     )
+
+
+_UNICODE_PUNCTUATION = str.maketrans(
+    {
+        "‘": "'",
+        "’": "'",
+        "“": '"',
+        "”": '"',
+        "–": "-",
+        "—": "-",
+        "\u00a0": " ",
+    }
+)
+
+
+def _normalize_evidence_quotes(
+    records: list[object],
+    source_group: ExtractionSource,
+    normalization_version: str,
+) -> tuple[list[object], tuple[ValidationDiagnostic, ...]]:
+    if normalization_version not in (
+        "unicode_punctuation_v1",
+        "source_span_v1",
+    ):
+        raise ValueError("unknown evidence normalization version")
+    normalized = deepcopy(records)
+    observations = {
+        (observation.source_id, observation.message_id): observation
+        for observation in source_group.observations
+    }
+    diagnostics: list[ValidationDiagnostic] = []
+    for claim_index, record in enumerate(normalized):
+        if not isinstance(record, dict) or not isinstance(record.get("evidence"), list):
+            continue
+        for evidence_index, evidence in enumerate(record["evidence"]):
+            if not isinstance(evidence, dict):
+                continue
+            quote = evidence.get("quote")
+            if not isinstance(quote, str):
+                continue
+            observation = observations.get(
+                (evidence.get("source_id"), evidence.get("message_id"))
+            )
+            if observation is None or quote in observation.text:
+                continue
+            normalized_quote = quote.translate(_UNICODE_PUNCTUATION)
+            normalized_text = observation.text.translate(_UNICODE_PUNCTUATION)
+            starts = _substring_starts(normalized_text, normalized_quote)
+            if len(starts) > 1:
+                continue
+            if starts:
+                start = starts[0]
+                evidence["quote"] = observation.text[start : start + len(quote)]
+                code = "evidence_quote_unicode_punctuation_normalized"
+            elif normalization_version == "source_span_v1":
+                evidence["quote"] = observation.text
+                code = "evidence_quote_replaced_with_cited_observation"
+            else:
+                continue
+            diagnostics.append(
+                ValidationDiagnostic(
+                    code=code,
+                    location=(
+                        f"claims[{claim_index}].evidence[{evidence_index}].quote"
+                    ),
+                )
+            )
+    return normalized, tuple(diagnostics)
+
+
+def _substring_starts(text: str, substring: str) -> tuple[int, ...]:
+    if not substring:
+        return ()
+    starts: list[int] = []
+    cursor = 0
+    while True:
+        start = text.find(substring, cursor)
+        if start < 0:
+            return tuple(starts)
+        starts.append(start)
+        cursor = start + 1
 
 
 def _parse_claim_records(raw_response: object, source_id: str) -> list[object]:

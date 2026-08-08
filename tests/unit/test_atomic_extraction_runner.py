@@ -12,6 +12,7 @@ from evaluation.openai_client import OpenAIResponseMetadata
 from extraction.atomic import (
     AtomicExtractionValidationError,
     extract_atomic_claims,
+    sanitized_validation_diagnostics,
 )
 from extraction.contracts import AtomicClaimV1
 from extraction.prompt import (
@@ -165,6 +166,93 @@ class AtomicExtractionRunnerTests(unittest.TestCase):
 
         self.assertEqual(result.claims, ())
 
+    def test_normalizes_unicode_punctuation_to_the_unique_exact_source_span(self) -> None:
+        source = ExtractionSource(
+            source_id="conv_quoted",
+            source_type="conversation",
+            observations=(
+                HistoryObservation(
+                    observed_at=datetime.fromisoformat("2026-05-10T20:17:00+05:30"),
+                    source_type="conversation",
+                    source_id="conv_quoted",
+                    message_id="msg_quoted_001",
+                    author_id="i_am_maya",
+                    author_name="Maya",
+                    text="He's coming here? I want to talk to him.",
+                ),
+            ),
+            known_entities=(KnownEntity("i_am_maya", "Maya"),),
+        )
+        claim = self.claim(
+            source_id="conv_quoted",
+            message_id="msg_quoted_001",
+            quote="He’s coming here?",
+        )
+
+        result = extract_atomic_claims(
+            source,
+            FakeAtomicClient(self.response([claim])),
+            evidence_normalization_version="unicode_punctuation_v1",
+        )
+
+        self.assertEqual(result.claims[0].evidence[0].quote, "He's coming here?")
+        self.assertEqual(
+            [(item.code, item.location) for item in result.normalization_diagnostics],
+            [("evidence_quote_unicode_punctuation_normalized", "claims[0].evidence[0].quote")],
+        )
+
+    def test_does_not_normalize_an_ambiguous_unicode_quote(self) -> None:
+        repeated = HistoryObservation(
+            observed_at=datetime.fromisoformat("2026-05-10T20:17:00+05:30"),
+            source_type="conversation",
+            source_id="conv_repeated",
+            message_id="msg_repeated_001",
+            author_id="i_am_maya",
+            author_name="Maya",
+            text="He's ready. He's ready.",
+        )
+        source = ExtractionSource(
+            "conv_repeated",
+            "conversation",
+            (repeated,),
+            (KnownEntity("i_am_maya", "Maya"),),
+        )
+        claim = self.claim(
+            source_id="conv_repeated",
+            message_id="msg_repeated_001",
+            quote="He’s ready.",
+        )
+
+        with self.assertRaisesRegex(
+            AtomicExtractionValidationError,
+            "quote is not an exact substring",
+        ):
+            extract_atomic_claims(
+                source,
+                FakeAtomicClient(self.response([claim])),
+                evidence_normalization_version="unicode_punctuation_v1",
+            )
+
+    def test_source_span_fallback_uses_the_cited_observation_and_is_audited(self) -> None:
+        claim = self.claim(quote="A paraphrase that is not a source substring.")
+
+        result = extract_atomic_claims(
+            self.source,
+            FakeAtomicClient(self.response([claim])),
+            evidence_normalization_version="source_span_v1",
+        )
+
+        self.assertEqual(result.claims[0].evidence[0].quote, self.first.text)
+        self.assertEqual(
+            [(item.code, item.location) for item in result.normalization_diagnostics],
+            [
+                (
+                    "evidence_quote_replaced_with_cited_observation",
+                    "claims[0].evidence[0].quote",
+                )
+            ],
+        )
+
     def test_rejects_malformed_json_without_exposing_raw_response(self) -> None:
         raw_response = "not-json-sensitive-provider-output"
 
@@ -172,6 +260,29 @@ class AtomicExtractionRunnerTests(unittest.TestCase):
 
         self.assertNotIn(raw_response, str(error))
         self.assertTrue(error.__suppress_context__)
+
+    def test_validation_diagnostics_keep_only_codes_and_locations(self) -> None:
+        error = AtomicExtractionValidationError(
+            "conv_001",
+            [
+                "claims[0]: polarity must be one of: negative, positive",
+                "claims[0].evidence[0].quote is not an exact substring of the cited text",
+            ],
+        )
+
+        self.assertEqual(
+            [
+                {"code": item.code, "location": item.location}
+                for item in sanitized_validation_diagnostics(error)
+            ],
+            [
+                {"code": "claim_invalid_polarity", "location": "claims[0].polarity"},
+                {
+                    "code": "evidence_inexact_quote",
+                    "location": "claims[0].evidence[0].quote",
+                },
+            ],
+        )
 
     def test_rejects_non_object_response(self) -> None:
         self.assert_invalid("[]", "response must be an object")

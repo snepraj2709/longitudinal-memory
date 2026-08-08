@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from datetime import datetime
+import hashlib
 import json
+from pathlib import Path
 import unittest
 
 from evaluation.history import HistoryObservation
@@ -11,10 +13,16 @@ from extraction.contracts import (
     ALLOWED_PREDICATES,
 )
 from extraction.prompt import (
+    ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION,
     ATOMIC_EXTRACTION_PROMPT_VERSION,
+    ATOMIC_EXTRACTION_V4_PROMPT_VERSION,
     ATOMIC_EXTRACTION_SYSTEM_PROMPT,
     build_atomic_extraction_prompt,
+    get_atomic_extraction_system_prompt,
 )
+from extraction.run_atomic import prepare_atomic_run
+from extraction.schema import atomic_extraction_text_format
+from evaluation.run_config import canonical_sha256
 from extraction.source import ExtractionSource, KnownEntity
 
 
@@ -224,6 +232,93 @@ class AtomicExtractionPromptTests(unittest.TestCase):
         for text in required_text:
             with self.subTest(text=text):
                 self.assertIn(text, ATOMIC_EXTRACTION_SYSTEM_PROMPT)
+
+    def test_v4_intervention_is_clause_level_and_keeps_fields_separate(self) -> None:
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_V4_PROMPT_VERSION
+        )
+        required_text = (
+            "Scan every independent clause",
+            "shortest contiguous quote",
+            "do not flip a boolean object",
+            "Use denied when a speaker explicitly rejects",
+            "resolve it to ISO values in valid_from and valid_to",
+            "same date for both boundaries of a point event",
+        )
+        for text in required_text:
+            with self.subTest(text=text):
+                self.assertIn(text, candidate_prompt)
+                self.assertNotIn(text, ATOMIC_EXTRACTION_SYSTEM_PROMPT)
+
+    def test_v4_prompt_snapshot_matches_full_and_smoke_suites(self) -> None:
+        repo_root = Path(__file__).resolve().parents[2]
+        snapshot = json.loads(
+            (
+                repo_root
+                / "configs/extraction/atomic_extraction_prompt_v4_snapshot.json"
+            ).read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(
+            snapshot["prompt_version"],
+            ATOMIC_EXTRACTION_V4_PROMPT_VERSION,
+        )
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_V4_PROMPT_VERSION
+        )
+        self.assertEqual(
+            snapshot["system_prompt_sha256"],
+            hashlib.sha256(candidate_prompt.encode("utf-8")).hexdigest(),
+        )
+        for suite in snapshot["suites"].values():
+            plan = prepare_atomic_run(
+                repo_root=repo_root,
+                config_path=repo_root / suite["config_path"],
+            )
+            self.assertEqual(plan.config.prompt_sha256, suite["prompt_sha256"])
+            self.assertEqual(
+                [case_id for case_id, _ in plan.case_refs], suite["case_ids"]
+            )
+
+    def test_v5_rechecks_source_bound_identifiers_and_quotes(self) -> None:
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+        )
+
+        self.assertIn("speaker_id and subject_id appear in the supplied source", candidate_prompt)
+        self.assertIn("every evidence message_id exists in that source", candidate_prompt)
+        self.assertIn("every evidence quote is copied verbatim", candidate_prompt)
+
+    def test_v5_prompt_and_schema_snapshot_matches_all_suites(self) -> None:
+        repo_root = Path(__file__).resolve().parents[2]
+        snapshot = json.loads(
+            (
+                repo_root
+                / "configs/extraction/atomic_extraction_prompt_v5_snapshot.json"
+            ).read_text(encoding="utf-8")
+        )
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+        )
+
+        self.assertEqual(snapshot["prompt_version"], "atomic-extraction-v5")
+        self.assertEqual(
+            snapshot["system_prompt_sha256"],
+            hashlib.sha256(candidate_prompt.encode("utf-8")).hexdigest(),
+        )
+        self.assertEqual(
+            snapshot["text_schema_sha256"],
+            canonical_sha256(atomic_extraction_text_format()),
+        )
+        for suite in snapshot["suites"].values():
+            plan = prepare_atomic_run(
+                repo_root=repo_root,
+                config_path=repo_root / suite["config_path"],
+            )
+            self.assertEqual(plan.config.prompt_sha256, suite["prompt_sha256"])
+            self.assertEqual(
+                [case_id for case_id, _ in plan.case_refs], suite["case_ids"]
+            )
 
     def test_system_prompt_defines_time_and_epistemic_rules(self) -> None:
         required_text = (
