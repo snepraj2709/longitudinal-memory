@@ -68,7 +68,7 @@ class BenchmarkReleaseTests(unittest.TestCase):
             dict(report.capability_counts),
             {capability: 10 for capability in CAPABILITIES},
         )
-        self.assertEqual(report.human_review_status, "pending_sneha_review")
+        self.assertEqual(report.human_review_status, "approved")
 
     def test_runtime_loader_exposes_only_runtime_records(self) -> None:
         runtime = load_benchmark_v1_runtime(self.repo_root)

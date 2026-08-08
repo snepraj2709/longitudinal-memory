@@ -1,7 +1,7 @@
 {
   "manifest_version": "1",
   "benchmark_version": "benchmark_v1",
-  "release_status": "candidate",
+  "release_status": "frozen",
   "dataset_sha256": "1a0c6db251dc43d793662a919be18b0c7d32f01aad2fb52a086c2ba8fb1f18de",
   "files": [
     {
@@ -114,6 +114,9 @@
   "review": {
     "implementation_review_status": "complete",
     "automated_validation_status": "passed",
-    "human_review_status": "pending_sneha_review"
+    "human_review_status": "approved",
+    "reviewed_by": "Sneha",
+    "reviewed_dataset_sha256": "1a0c6db251dc43d793662a919be18b0c7d32f01aad2fb52a086c2ba8fb1f18de",
+    "approved_on": "2026-08-08"
   }
 }

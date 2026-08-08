@@ -33,7 +33,7 @@
   },
   "failures_and_limitations": [
     "No execution failures occurred.",
-    "Sneha has not yet reviewed the candidate release.",
+    "Sneha approved the release against its exact dataset hash on 2026-08-08.",
     "Summary and interactive cases are release data only; their runtime phases remain out of scope."
   ],
   "contract_checks": {
@@ -47,9 +47,9 @@
   },
   "artifacts_and_hashes": {
     "release_manifest": "data/benchmark-v1/manifest.json",
-    "release_manifest_sha256": "9a5a51c3b8d5714f898f3dcb04a455edbb0992dcb05c957a853ef8fcbc283c82",
+    "release_manifest_sha256": "a812da8b788b86eef59c5a1f08aeca5850fb840417ab3fbeea65e6c8ccf3d970",
     "dataset_sha256": "1a0c6db251dc43d793662a919be18b0c7d32f01aad2fb52a086c2ba8fb1f18de"
   },
-  "next_step_input": "The candidate Benchmark v1 release and its manifest.",
-  "approval_still_required": "Sneha must review and approve the candidate release before it is frozen or any later step begins."
+  "next_step_input": "The frozen Benchmark v1 release and its manifest.",
+  "approval_still_required": "No further approval is required for Step R1."
 }

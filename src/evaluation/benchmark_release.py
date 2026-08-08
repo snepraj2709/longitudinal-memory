@@ -706,8 +706,8 @@ def _validate_manifest(
         errors.append("manifest_version must be 1")
     if manifest.get("benchmark_version") != BENCHMARK_VERSION:
         errors.append(f"manifest benchmark_version must be {BENCHMARK_VERSION}")
-    if manifest.get("release_status") != "candidate":
-        errors.append("release_status must remain candidate until Sneha reviews it")
+    if manifest.get("release_status") != "frozen":
+        errors.append("release_status must be frozen after Sneha's approval")
     expected_hash = ""
     try:
         expected_hash = dataset_sha256(
@@ -791,7 +791,10 @@ def _validate_manifest(
     expected_review = {
         "implementation_review_status": "complete",
         "automated_validation_status": "passed",
-        "human_review_status": "pending_sneha_review",
+        "human_review_status": "approved",
+        "reviewed_by": "Sneha",
+        "reviewed_dataset_sha256": "1a0c6db251dc43d793662a919be18b0c7d32f01aad2fb52a086c2ba8fb1f18de",
+        "approved_on": "2026-08-08",
     }
     if review != expected_review:
         errors.append(f"manifest review state must be {expected_review}")
