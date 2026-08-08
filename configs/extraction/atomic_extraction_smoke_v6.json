@@ -1,0 +1,44 @@
+{
+  "configuration_version": "atomic-extraction-smoke-config-v6",
+  "run_format_version": "atomic-extraction-run-v3",
+  "provider": "openai",
+  "dataset_version": "pilot-v0-phase3-atomic-v9-smoke-v1",
+  "dataset_split": "development",
+  "runtime_dataset_sha256": "be6e2ae0d62e233db4a441fce296b8c3dcec60e995f977dca2c2e92d2d06b9a3",
+  "requested_model": "gpt-4.1-2025-04-14",
+  "resolved_model": "gpt-4.1-2025-04-14",
+  "prompt_version": "atomic-extraction-v9",
+  "prompt_sha256": "7c5b94caaf62c8e312e8a206af043c73a4b2b368755140f4584f5a45abfd10bb",
+  "predicate_registry_version": "predicate_registry_v1",
+  "predicate_registry_sha256": "64991ee0b9e52e61d5238b2c404447d22d633e3adf0fb858757dd2fa5c574b4d",
+  "temperature": 0.0,
+  "generation_settings": {
+    "api": "responses",
+    "max_output_tokens": 4000,
+    "store": false,
+    "text_format": "json_schema",
+    "text_schema_version": "atomic_extraction_v1",
+    "text_schema_sha256": "a6969fc404cbdb4a2f1d04f05550f8f9c6e4fdc5facb771e8274f46ce3d70422",
+    "normalization_version": "source_span_boolean_polarity_v2"
+  },
+  "case_order": [
+    {"case_id": "atomic_conv_003", "source_id": "conv_003"},
+    {"case_id": "atomic_email_003", "source_id": "email_003"},
+    {"case_id": "atomic_email_005", "source_id": "email_005"}
+  ],
+  "source_file_sha256": {
+    "data/pilot/sources/calendar.jsonl": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+    "data/pilot/sources/conversations.jsonl": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+    "data/pilot/sources/emails.jsonl": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed"
+  },
+  "gold_file_sha256": "e802835dcb3e4278ec68e45474d094896dcad9a780c4115a01e0f0bc44f07f63",
+  "planned_request_count": 3,
+  "maximum_retry_requests": 3,
+  "maximum_request_attempts": 6,
+  "maximum_input_tokens": 138460,
+  "maximum_output_tokens": 24000,
+  "expected_output_tokens": 3600,
+  "input_usd_per_million_tokens": "2.00",
+  "output_usd_per_million_tokens": "8.00",
+  "hard_cost_cap_usd": "0.47"
+}

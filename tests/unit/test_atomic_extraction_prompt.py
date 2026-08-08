@@ -19,6 +19,7 @@ from extraction.prompt import (
     ATOMIC_EXTRACTION_V5_PROMPT_VERSION,
     ATOMIC_EXTRACTION_V6_PROMPT_VERSION,
     ATOMIC_EXTRACTION_V7_PROMPT_VERSION,
+    ATOMIC_EXTRACTION_V8_PROMPT_VERSION,
     ATOMIC_EXTRACTION_SYSTEM_PROMPT,
     build_atomic_extraction_prompt,
     get_atomic_extraction_system_prompt,
@@ -444,7 +445,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
 
     def test_v8_adds_final_predicate_and_boolean_checks(self) -> None:
         candidate_prompt = get_atomic_extraction_system_prompt(
-            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+            ATOMIC_EXTRACTION_V8_PROMPT_VERSION
         )
         v7_prompt = get_atomic_extraction_system_prompt(
             ATOMIC_EXTRACTION_V7_PROMPT_VERSION
@@ -460,7 +461,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
                 self.assertIn(text, candidate_prompt)
                 self.assertNotIn(text, v7_prompt)
         self.assertEqual(
-            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION,
+            ATOMIC_EXTRACTION_V8_PROMPT_VERSION,
             "atomic-extraction-v8",
         )
 
@@ -473,7 +474,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )
         candidate_prompt = get_atomic_extraction_system_prompt(
-            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+            ATOMIC_EXTRACTION_V8_PROMPT_VERSION
         )
 
         self.assertEqual(snapshot["prompt_version"], "atomic-extraction-v8")
@@ -499,6 +500,61 @@ class AtomicExtractionPromptTests(unittest.TestCase):
                 plan.config.generation_settings["normalization_version"],
                 snapshot["normalization_version"],
             )
+            self.assertEqual(
+                [case_id for case_id, _ in plan.case_refs], suite["case_ids"]
+            )
+
+    def test_v9_targets_helper_subject_task_and_employer_errors(self) -> None:
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+        )
+        v8_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_V8_PROMPT_VERSION
+        )
+        required_text = (
+            "subject_id is the person who can or will help",
+            "named person as subject_id",
+            "action verbs such as prepare, create, send, or review as assigned_task",
+            "does not create a separate assigned_project claim",
+            "require an explicitly named employer or organisation",
+            "city job or Bengaluru job names a location-qualified job",
+        )
+        for text in required_text:
+            with self.subTest(text=text):
+                self.assertIn(text, candidate_prompt)
+                self.assertNotIn(text, v8_prompt)
+        self.assertEqual(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION,
+            "atomic-extraction-v9",
+        )
+
+    def test_v9_snapshot_uses_targeted_smoke_and_full_suite(self) -> None:
+        repo_root = Path(__file__).resolve().parents[2]
+        snapshot = json.loads(
+            (
+                repo_root
+                / "configs/extraction/atomic_extraction_prompt_v9_snapshot.json"
+            ).read_text(encoding="utf-8")
+        )
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+        )
+
+        self.assertEqual(snapshot["prompt_version"], "atomic-extraction-v9")
+        self.assertEqual(
+            snapshot["system_prompt_sha256"],
+            hashlib.sha256(candidate_prompt.encode("utf-8")).hexdigest(),
+        )
+        self.assertEqual(
+            snapshot["suites"]["smoke"]["case_ids"],
+            ["atomic_conv_003", "atomic_email_003", "atomic_email_005"],
+        )
+        for suite in snapshot["suites"].values():
+            plan = prepare_atomic_run(
+                repo_root=repo_root,
+                config_path=repo_root / suite["config_path"],
+            )
+            self.assertEqual(plan.config.prompt_sha256, suite["prompt_sha256"])
             self.assertEqual(
                 [case_id for case_id, _ in plan.case_refs], suite["case_ids"]
             )

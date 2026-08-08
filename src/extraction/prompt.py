@@ -22,7 +22,8 @@ ATOMIC_EXTRACTION_V4_PROMPT_VERSION = "atomic-extraction-v4"
 ATOMIC_EXTRACTION_V5_PROMPT_VERSION = "atomic-extraction-v5"
 ATOMIC_EXTRACTION_V6_PROMPT_VERSION = "atomic-extraction-v6"
 ATOMIC_EXTRACTION_V7_PROMPT_VERSION = "atomic-extraction-v7"
-ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION = "atomic-extraction-v8"
+ATOMIC_EXTRACTION_V8_PROMPT_VERSION = "atomic-extraction-v8"
+ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION = "atomic-extraction-v9"
 
 _POLARITIES = ", ".join(sorted(ALLOWED_POLARITIES))
 _EPISTEMIC_STATUSES = ", ".join(sorted(ALLOWED_EPISTEMIC_STATUSES))
@@ -109,6 +110,19 @@ _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V8 = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V7.replac
     _V7_INTERVENTION + _V8_INTERVENTION,
 )
 
+_V9_INTERVENTION = """For offered_help, subject_id is the person who can or will help, never the recipient merely because the message addresses them. If a speaker says that another named person can help, use that named person as subject_id and keep the current speaker as speaker_id. If the speaker offers their own help, both IDs name the speaker. The object describes the help itself.
+
+Treat action verbs such as prepare, create, send, or review as assigned_task when somebody is asked to perform the action. A project name inside the task does not create a separate assigned_project claim. Emit assigned_project only when the source explicitly says that the person is assigned to the project as a whole.
+
+For will_work_for, require an explicitly named employer or organisation. A phrase such as a city job or Bengaluru job names a location-qualified job, not an employer. Extract a supported job_location or job_start_date instead and omit will_work_for when the employer is absent.
+
+"""
+
+_ATOMIC_EXTRACTION_SYSTEM_PROMPT_V9 = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V8.replace(
+    _V8_INTERVENTION,
+    _V8_INTERVENTION + _V9_INTERVENTION,
+)
+
 ATOMIC_EXTRACTION_SYSTEM_PROMPT = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V3
 
 
@@ -121,7 +135,8 @@ def get_atomic_extraction_system_prompt(prompt_version: str) -> str:
         ATOMIC_EXTRACTION_V5_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V5,
         ATOMIC_EXTRACTION_V6_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V6,
         ATOMIC_EXTRACTION_V7_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V7,
-        ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V8,
+        ATOMIC_EXTRACTION_V8_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V8,
+        ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V9,
     }
     try:
         return prompts[prompt_version]
