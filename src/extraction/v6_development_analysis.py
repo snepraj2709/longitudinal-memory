@@ -246,7 +246,9 @@ def run_v6_development_analysis(
     return manifest
 
 
-def _metric_records(scope, baseline_name, baseline, candidate):
+def _metric_records(
+    scope, baseline_name, baseline, candidate, candidate_name="v6"
+):
     records = []
     for metric in METRICS:
         baseline_value = baseline[metric]["value"]
@@ -263,7 +265,7 @@ def _metric_records(scope, baseline_name, baseline, candidate):
             "analysis_version": ANALYSIS_VERSION,
             "comparison_scope": scope,
             "baseline_prompt_version": baseline_name,
-            "candidate_prompt_version": "v6",
+            "candidate_prompt_version": candidate_name,
             "metric": metric,
             "preferred_direction": "lower" if lower_is_better else "higher",
             "baseline_value": baseline_value,
