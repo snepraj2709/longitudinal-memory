@@ -1,0 +1,1210 @@
+{
+  "attempts": [
+    {
+      "attempted": true,
+      "budget_input_tokens": 4359,
+      "budget_output_tokens": 160,
+      "case_id": "atomic_cal_001",
+      "claims": [
+        {
+          "claim_id": "cal_001_1",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": null,
+              "quote": "Final semester examinations. April 20, 9:00 AM to April 29, 12:00 PM. College examination hall.",
+              "source_id": "cal_001"
+            }
+          ],
+          "object": {
+            "location": "College examination hall",
+            "title": "Final semester examinations"
+          },
+          "polarity": "positive",
+          "predicate": "has_scheduled_event",
+          "speaker_id": "person_university_exam_office",
+          "subject_id": "i_am_maya",
+          "valid_from": "2026-04-20T09:00:00+05:30",
+          "valid_to": "2026-04-29T12:00:00+05:30"
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [],
+      "passed": true,
+      "position": 1,
+      "provider_metadata": {
+        "input_tokens": 4359,
+        "output_tokens": 160,
+        "pacing_delay_seconds": 0.0,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29859,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.28200000000000003
+        },
+        "request_id": "req_48bf2bb65ecd4f82abfda7507a409585",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_06a6a5493dfb58e9016a77702e73d08190a3db0e0b876f0049",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 4519
+      },
+      "source_id": "cal_001",
+      "validation_diagnostics": []
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 4546,
+      "budget_output_tokens": 1127,
+      "case_id": "atomic_conv_002",
+      "claims": [
+        {
+          "claim_id": "claim_conv_002_001",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_002",
+              "quote": "I accepted it.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": "Bengaluru offer",
+          "polarity": "positive",
+          "predicate": "accepted_offer",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_002",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_002",
+              "quote": "I join Infinity Learn on May 4 as a marketing associate.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": "Infinity Learn",
+          "polarity": "positive",
+          "predicate": "employer",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_003",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_002",
+              "quote": "I join Infinity Learn on May 4 as a marketing associate.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": "marketing associate",
+          "polarity": "positive",
+          "predicate": "accepted_role",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_004",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_002",
+              "quote": "I join Infinity Learn on May 4 as a marketing associate.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": "2026-05-04",
+          "polarity": "positive",
+          "predicate": "job_start_date",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": "2026-05-04",
+          "valid_to": "2026-05-04"
+        },
+        {
+          "claim_id": "claim_conv_002_005",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_003",
+              "quote": "I still don't know if marketing is for me.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": false,
+          "polarity": "negative",
+          "predicate": "believes_marketing_is_right_fit",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_006",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_003",
+              "quote": "I'll give it a proper try",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "plans_to_try_marketing_work",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_007",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_003",
+              "quote": "decide after I've actually done the work.",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "plans_to_decide_marketing_fit_after_work_experience",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_002_008",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_002_005",
+              "quote": "Right now I just need to finish college",
+              "source_id": "conv_002"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "needs_to_finish_college",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [],
+      "passed": true,
+      "position": 2,
+      "provider_metadata": {
+        "input_tokens": 4546,
+        "output_tokens": 1127,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 28892,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 2.216
+        },
+        "request_id": "req_ec467d6b22404550a86f0b68bdf212f2",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_022aa40de8e44fd5016a777040ffb881959fdc821f0c4ae20f",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 5673
+      },
+      "source_id": "conv_002",
+      "validation_diagnostics": []
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 4557,
+      "budget_output_tokens": 825,
+      "case_id": "atomic_conv_003",
+      "claims": [
+        {
+          "claim_id": "claim_conv_003_001",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_002",
+              "quote": "The onboarding was useful",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "found_onboarding_useful",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_002",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_002",
+              "quote": "Pravin explains the work without making me feel silly for asking questions.",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "explains_work_supportively",
+          "speaker_id": "i_am_maya",
+          "subject_id": "person_pravin",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_003",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_003",
+              "quote": "The hard part is coming back to an empty flat.",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "finds_returning_to_empty_flat_difficult",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_004",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_003",
+              "quote": "I miss home",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": "home",
+          "polarity": "positive",
+          "predicate": "misses",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_005",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_003",
+              "quote": "The hard part is coming back to an empty flat. I miss home and everyone from college.",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": "everyone from college",
+          "polarity": "positive",
+          "predicate": "misses",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_006",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_005",
+              "quote": "I want to talk to him.",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": "person_aryan",
+          "polarity": "positive",
+          "predicate": "wants_to_talk_to",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [
+        {
+          "code": "evidence_quote_replaced_with_cited_observation",
+          "location": "claims[4].evidence[0].quote"
+        }
+      ],
+      "passed": true,
+      "position": 3,
+      "provider_metadata": {
+        "input_tokens": 4557,
+        "output_tokens": 825,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29194,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 1.612
+        },
+        "request_id": "req_22986aad996c4387a0bc62156739511d",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_0588c3da5b000da6016a777057791c8196821cc48159c65883",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 5382
+      },
+      "source_id": "conv_003",
+      "validation_diagnostics": []
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 4355,
+      "budget_output_tokens": 160,
+      "case_id": "atomic_cal_002",
+      "claims": [
+        {
+          "claim_id": "cal_002_1",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": null,
+              "quote": "Coffee with Aryan. May 28, 6:00 PM to 7:00 PM. Indiranagar coffee shop.",
+              "source_id": "cal_002"
+            }
+          ],
+          "object": {
+            "location": "Indiranagar coffee shop",
+            "title": "Coffee with Aryan"
+          },
+          "polarity": "positive",
+          "predicate": "has_scheduled_event",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": "2026-05-28T18:00:00+05:30",
+          "valid_to": "2026-05-28T19:00:00+05:30"
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [],
+      "passed": true,
+      "position": 4,
+      "provider_metadata": {
+        "input_tokens": 4355,
+        "output_tokens": 160,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29859,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.28200000000000003
+        },
+        "request_id": "req_3c78cd1ff84b410c8cb748c0cd19caa2",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_0cae04f001f26580016a7770707d0c819497763b013e8a7a1e",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 4515
+      },
+      "source_id": "cal_002",
+      "validation_diagnostics": []
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 4506,
+      "budget_output_tokens": 871,
+      "case_id": "atomic_conv_004",
+      "claims": [
+        {
+          "claim_id": "claim_conv_004_002",
+          "confidence": 0.9,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_004_001",
+              "quote": "I kept wondering if being in the same city might change things for us.",
+              "source_id": "conv_004"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "relationship_would_change_if_living_same_city",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_004_001",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_004_002",
+              "quote": "I actually joined on the 18th, not the 11th.",
+              "source_id": "conv_004"
+            }
+          ],
+          "object": "2026-05-18",
+          "polarity": "positive",
+          "predicate": "employment_start_date",
+          "speaker_id": "person_aryan",
+          "subject_id": "person_aryan",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_004_003",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_004_002",
+              "quote": "But Maya, I don't want to restart the relationship.",
+              "source_id": "conv_004"
+            }
+          ],
+          "object": "i_am_maya",
+          "polarity": "negative",
+          "predicate": "wants_to_restart_relationship_with",
+          "speaker_id": "person_aryan",
+          "subject_id": "person_aryan",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_004_004",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_004_003",
+              "quote": "I had hoped this move meant something it doesn't.",
+              "source_id": "conv_004"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "hoped_aryans_move_signaled_relationship_change",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_004_005",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_004_004",
+              "quote": "I've already been lonely here.",
+              "source_id": "conv_004"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "feels_lonely_in_bengaluru",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_004_006",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_004_004",
+              "quote": "Lately I sit at work and read the same line three times because I can't focus.",
+              "source_id": "conv_004"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "has_difficulty_focusing_at_work",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [],
+      "passed": true,
+      "position": 5,
+      "provider_metadata": {
+        "input_tokens": 4506,
+        "output_tokens": 871,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29148,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 1.704
+        },
+        "request_id": "req_28c8642090514492b23156d0e297348d",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_080498eec14a0fe2016a7770822764819597cf342a2e4a6882",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 5377
+      },
+      "source_id": "conv_004",
+      "validation_diagnostics": []
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 4363,
+      "budget_output_tokens": 165,
+      "case_id": "atomic_cal_003",
+      "claims": [
+        {
+          "claim_id": "cal_003_1",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": null,
+              "quote": "Bengaluru EdTech Mixer. June 12, 6:30 PM to 9:00 PM. Koramangala Social.",
+              "source_id": "cal_003"
+            }
+          ],
+          "object": {
+            "location": "Koramangala Social",
+            "title": "Bengaluru EdTech Mixer"
+          },
+          "polarity": "positive",
+          "predicate": "has_scheduled_event",
+          "speaker_id": "person_edtech_community",
+          "subject_id": "i_am_maya",
+          "valid_from": "2026-06-12T18:30:00+05:30",
+          "valid_to": "2026-06-12T21:00:00+05:30"
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [],
+      "passed": true,
+      "position": 6,
+      "provider_metadata": {
+        "input_tokens": 4363,
+        "output_tokens": 165,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29854,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.292
+        },
+        "request_id": "req_e7bddf4152d7422d87cb15b8adf667c2",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_0d024b5a557b8547016a777099e91081948358075d6e07634b",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 4528
+      },
+      "source_id": "cal_003",
+      "validation_diagnostics": []
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 4399,
+      "budget_output_tokens": 1017,
+      "case_id": "atomic_email_003",
+      "claims": [
+        {
+          "claim_id": "claim_email_003_001_1",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_003_001",
+              "quote": "please prepare the first concept and user flow for Kids Spark by June 25",
+              "source_id": "email_003"
+            }
+          ],
+          "object": "Kids Spark",
+          "polarity": "positive",
+          "predicate": "assigned_project",
+          "speaker_id": "person_pravin",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_003_001_2",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_003_001",
+              "quote": "please prepare the first concept and user flow for Kids Spark by June 25",
+              "source_id": "email_003"
+            }
+          ],
+          "object": "2026-06-25",
+          "polarity": "positive",
+          "predicate": "project_deadline",
+          "speaker_id": "person_pravin",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_003_001_3",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_003_001",
+              "quote": "please prepare the first concept and user flow for Kids Spark by June 25",
+              "source_id": "email_003"
+            }
+          ],
+          "object": "prepare the first concept and user flow for Kids Spark",
+          "polarity": "positive",
+          "predicate": "assigned_task",
+          "speaker_id": "person_pravin",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_003_001_4",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_003_001",
+              "quote": "Treat this as a stretch project alongside your current marketing work.",
+              "source_id": "email_003"
+            }
+          ],
+          "object": "stretch project alongside your current marketing work",
+          "polarity": "positive",
+          "predicate": "assigned_task",
+          "speaker_id": "person_pravin",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_003_001_5",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_003_001",
+              "quote": "alongside your current marketing work",
+              "source_id": "email_003"
+            }
+          ],
+          "object": "marketing work",
+          "polarity": "positive",
+          "predicate": "assigned_task",
+          "speaker_id": "person_pravin",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_003_001_6",
+          "confidence": 0.8,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_003_001",
+              "quote": "Sapna can help with product questions.",
+              "source_id": "email_003"
+            }
+          ],
+          "object": "person_sapna",
+          "polarity": "positive",
+          "predicate": "plans_to_share_kids_spark_notes_with",
+          "speaker_id": "person_pravin",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_003_002_1",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_003_002",
+              "quote": "Send me your early notes before you polish them.",
+              "source_id": "email_003"
+            }
+          ],
+          "object": "person_sapna",
+          "polarity": "positive",
+          "predicate": "plans_to_share_kids_spark_notes_with",
+          "speaker_id": "person_sapna",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [],
+      "passed": true,
+      "position": 7,
+      "provider_metadata": {
+        "input_tokens": 4399,
+        "output_tokens": 1017,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29002,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 1.996
+        },
+        "request_id": "req_26b96196b9ed481a9c4ad24bd3092df7",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_08f6e9ea96e34fbf016a7770abc0fc8193b6be98db7cd46a53",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 5416
+      },
+      "source_id": "email_003",
+      "validation_diagnostics": []
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 4425,
+      "budget_output_tokens": 645,
+      "case_id": "atomic_email_005",
+      "claims": [
+        {
+          "claim_id": "claim_email_005_001_1",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_005_001",
+              "quote": "I would like to take leave on August 17 and 18.",
+              "source_id": "email_005"
+            }
+          ],
+          "object": [
+            "2026-08-17",
+            "2026-08-18"
+          ],
+          "polarity": "positive",
+          "predicate": "requested_leave_dates",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_005_001_2",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_005_001",
+              "quote": "I will finish the campaign draft before I go",
+              "source_id": "email_005"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "plans_to_finish_campaign_draft_before_leave",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_005_001_3",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_005_001",
+              "quote": "share the Kids Spark notes with Sapna.",
+              "source_id": "email_005"
+            }
+          ],
+          "object": "person_sapna",
+          "polarity": "positive",
+          "predicate": "plans_to_share_kids_spark_notes_with",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_005_002_1",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_005_002",
+              "quote": "I cannot approve those dates",
+              "source_id": "email_005"
+            }
+          ],
+          "object": false,
+          "polarity": "negative",
+          "predicate": "leave_approved",
+          "speaker_id": "person_pravin",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_005_002_2",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_005_002",
+              "quote": "the campaign launches on August 19",
+              "source_id": "email_005"
+            }
+          ],
+          "object": "2026-08-19",
+          "polarity": "positive",
+          "predicate": "campaign_launch_date",
+          "speaker_id": "person_pravin",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_email_005_002_3",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_email_005_002",
+              "quote": "we do not have cover for your part of the handoff.",
+              "source_id": "email_005"
+            }
+          ],
+          "object": false,
+          "polarity": "negative",
+          "predicate": "has_handoff_cover",
+          "speaker_id": "person_pravin",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [],
+      "passed": true,
+      "position": 8,
+      "provider_metadata": {
+        "input_tokens": 4425,
+        "output_tokens": 645,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29374,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 1.252
+        },
+        "request_id": "req_92afa76d3cad45b59979c8c49333dfcd",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_04b1210c5f44652c016a7770c39a2c819089107e27e78768d0",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 5070
+      },
+      "source_id": "email_005",
+      "validation_diagnostics": []
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 4414,
+      "budget_output_tokens": 298,
+      "case_id": "atomic_conv_010",
+      "claims": [
+        {
+          "claim_id": "claim_conv_010_001_1",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_010_002",
+              "quote": "Just exhausted.",
+              "source_id": "conv_010"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "feels_exhausted",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_010_001_2",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_010_003",
+              "quote": "I can't keep doing both this way.",
+              "source_id": "conv_010"
+            }
+          ],
+          "object": false,
+          "polarity": "positive",
+          "predicate": "can_continue_marketing_and_product_work_this_way",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_010_001_3",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_010_003",
+              "quote": "I like product work",
+              "source_id": "conv_010"
+            }
+          ],
+          "object": "product work",
+          "polarity": "positive",
+          "predicate": "likes",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [],
+      "passed": true,
+      "position": 9,
+      "provider_metadata": {
+        "input_tokens": 4414,
+        "output_tokens": 298,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29721,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.558
+        },
+        "request_id": "req_c64be044ce28480f856191e126e4a7a4",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_01574768e1b8b95d016a7770d8508c8195b1f55e534b9df663",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 4712
+      },
+      "source_id": "conv_010",
+      "validation_diagnostics": []
+    },
+    {
+      "attempted": true,
+      "budget_input_tokens": 4358,
+      "budget_output_tokens": 163,
+      "case_id": "atomic_cal_006",
+      "claims": [
+        {
+          "claim_id": "cal_006_1",
+          "confidence": 1,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": null,
+              "quote": "Saturday product foundations bootcamp. September 19, 9:30 AM to 5:00 PM. HSR Layout learning studio.",
+              "source_id": "cal_006"
+            }
+          ],
+          "object": {
+            "location": "HSR Layout learning studio",
+            "title": "Saturday product foundations bootcamp"
+          },
+          "polarity": "positive",
+          "predicate": "has_scheduled_event",
+          "speaker_id": "person_rohan_instructor",
+          "subject_id": "i_am_maya",
+          "valid_from": "2026-09-19T09:30:00+05:30",
+          "valid_to": "2026-09-19T17:00:00+05:30"
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [],
+      "passed": true,
+      "position": 10,
+      "provider_metadata": {
+        "input_tokens": 4358,
+        "output_tokens": 163,
+        "pacing_delay_seconds": 15.25,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29856,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 0.28800000000000003
+        },
+        "request_id": "req_e2860886128e45acbad090d70d87c077",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_054fbcd2a3212957016a7770ebe0b0819698ac59a5081c254c",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 4521
+      },
+      "source_id": "cal_006",
+      "validation_diagnostics": []
+    }
+  ],
+  "budget_input_tokens": 44282,
+  "budget_output_tokens": 5431,
+  "case_order": [
+    {
+      "case_id": "atomic_cal_001",
+      "source_id": "cal_001"
+    },
+    {
+      "case_id": "atomic_conv_002",
+      "source_id": "conv_002"
+    },
+    {
+      "case_id": "atomic_conv_003",
+      "source_id": "conv_003"
+    },
+    {
+      "case_id": "atomic_cal_002",
+      "source_id": "cal_002"
+    },
+    {
+      "case_id": "atomic_conv_004",
+      "source_id": "conv_004"
+    },
+    {
+      "case_id": "atomic_cal_003",
+      "source_id": "cal_003"
+    },
+    {
+      "case_id": "atomic_email_003",
+      "source_id": "email_003"
+    },
+    {
+      "case_id": "atomic_email_005",
+      "source_id": "email_005"
+    },
+    {
+      "case_id": "atomic_conv_010",
+      "source_id": "conv_010"
+    },
+    {
+      "case_id": "atomic_cal_006",
+      "source_id": "cal_006"
+    }
+  ],
+  "completed_at": "2026-08-08T18:09:50.037809Z",
+  "configuration_sha256": "f766d609cf36a28bac10ac6530eaaa0b73540e0b4567bdf78de307949227d9a2",
+  "configuration_version": "atomic-extraction-run-config-v4",
+  "dataset_split": "development",
+  "dataset_version": "pilot-v0-phase3-atomic-v5-development-v1",
+  "estimated_cost_usd": "0.132012",
+  "failed_cases": 0,
+  "generation_settings": {
+    "api": "responses",
+    "max_output_tokens": 4000,
+    "normalization_version": "source_span_v1",
+    "store": false,
+    "text_format": "json_schema",
+    "text_schema_sha256": "a6969fc404cbdb4a2f1d04f05550f8f9c6e4fdc5facb771e8274f46ce3d70422",
+    "text_schema_version": "atomic_extraction_v1"
+  },
+  "gold_file_sha256": "e802835dcb3e4278ec68e45474d094896dcad9a780c4115a01e0f0bc44f07f63",
+  "hard_cost_cap_usd": "1.500000",
+  "maximum_request_attempts": 20,
+  "maximum_retry_requests": 10,
+  "output_file_sha256": {
+    "case_scores.jsonl": "72976940a85d4c679d9b70e60cb10479726b4355435546eca621f41b9e4824a8",
+    "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "predictions.jsonl": "51a5b68001ebc59db4f400328d65ef6f051213f4696188b909374fe56000d0af",
+    "scores.json": "0fe23ada16060f792a0cb69b7e356fe29f31847ad4b58d04396457e7ecb2bacb"
+  },
+  "planned_request_count": 10,
+  "predicate_registry_sha256": "64991ee0b9e52e61d5238b2c404447d22d633e3adf0fb858757dd2fa5c574b4d",
+  "predicate_registry_version": "predicate_registry_v1",
+  "prior_provider_failures": [],
+  "prompt_sha256": "8399f1b249734b52fd0fb41d8eeed4b48a30790b6ed1c9662e8faf15cb65f5b5",
+  "prompt_version": "atomic-extraction-v5",
+  "provider": "openai",
+  "provider_requests_attempted": 10,
+  "remaining_cases": 0,
+  "repository_commit": "33e6aabaa9cfbc938a93db43e55deca734867501",
+  "repository_dirty": true,
+  "requested_model": "gpt-4.1-2025-04-14",
+  "resolved_model": "gpt-4.1-2025-04-14",
+  "resume_count": 0,
+  "run_format_version": "atomic-extraction-run-v3",
+  "run_status": "completed",
+  "runtime_dataset_sha256": "c68f6229fb928aecea1af6fef4a5d368cf0d94eff844794f7c633dcbd67adc59",
+  "scoring_version": "atomic-scoring-v2",
+  "source_file_sha256": {
+    "data/pilot/sources/calendar.jsonl": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+    "data/pilot/sources/conversations.jsonl": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+    "data/pilot/sources/emails.jsonl": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed"
+  },
+  "started_at": "2026-08-08T18:06:38.050384Z",
+  "successful_cases": 10,
+  "temperature": 0.0
+}

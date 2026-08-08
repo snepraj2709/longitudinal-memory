@@ -1,0 +1,216 @@
+{
+  "attempts": [
+    {
+      "attempted": true,
+      "budget_input_tokens": 4557,
+      "budget_output_tokens": 825,
+      "case_id": "atomic_conv_003",
+      "claims": [
+        {
+          "claim_id": "claim_conv_003_001",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_002",
+              "quote": "The onboarding was useful",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "found_onboarding_useful",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_002",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_002",
+              "quote": "Pravin explains the work without making me feel silly for asking questions.",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "explains_work_supportively",
+          "speaker_id": "i_am_maya",
+          "subject_id": "person_pravin",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_003",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_003",
+              "quote": "The hard part is coming back to an empty flat.",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": true,
+          "polarity": "positive",
+          "predicate": "finds_returning_to_empty_flat_difficult",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_004",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_003",
+              "quote": "I miss home",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": "home",
+          "polarity": "positive",
+          "predicate": "misses",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_005",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_003",
+              "quote": "The hard part is coming back to an empty flat. I miss home and everyone from college.",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": "everyone from college",
+          "polarity": "positive",
+          "predicate": "misses",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        },
+        {
+          "claim_id": "claim_conv_003_006",
+          "confidence": 1.0,
+          "epistemic_status": "asserted",
+          "evidence": [
+            {
+              "message_id": "msg_conv_003_005",
+              "quote": "I want to talk to him.",
+              "source_id": "conv_003"
+            }
+          ],
+          "object": "person_aryan",
+          "polarity": "positive",
+          "predicate": "wants_to_talk_to",
+          "speaker_id": "i_am_maya",
+          "subject_id": "i_am_maya",
+          "valid_from": null,
+          "valid_to": null
+        }
+      ],
+      "error": null,
+      "failure_stage": null,
+      "normalization_diagnostics": [
+        {
+          "code": "evidence_quote_replaced_with_cited_observation",
+          "location": "claims[4].evidence[0].quote"
+        }
+      ],
+      "passed": true,
+      "position": 1,
+      "provider_metadata": {
+        "input_tokens": 4557,
+        "output_tokens": 825,
+        "pacing_delay_seconds": 0.0,
+        "rate_limits": {
+          "remaining_project_tokens": null,
+          "remaining_requests": 499,
+          "remaining_tokens": 29194,
+          "reset_project_tokens_seconds": null,
+          "reset_requests_seconds": 0.12,
+          "reset_tokens_seconds": 1.612
+        },
+        "request_id": "req_c71b595caecc4b8992f7788585a0fbff",
+        "requested_model": "gpt-4.1-2025-04-14",
+        "response_id": "resp_06cd0479bc192a67016a776d3027588195a7fb1833f21aa1b8",
+        "returned_model": "gpt-4.1-2025-04-14",
+        "total_tokens": 5382
+      },
+      "source_id": "conv_003",
+      "validation_diagnostics": []
+    }
+  ],
+  "budget_input_tokens": 4557,
+  "budget_output_tokens": 825,
+  "case_order": [
+    {
+      "case_id": "atomic_conv_003",
+      "source_id": "conv_003"
+    }
+  ],
+  "completed_at": "2026-08-08T17:53:57.383937Z",
+  "configuration_sha256": "5beee1965493b45f1f43149411adadb4d7df11211de4f751d05b183425d71ad3",
+  "configuration_version": "atomic-extraction-diagnostic-config-v3",
+  "dataset_split": "development",
+  "dataset_version": "pilot-v0-phase3-atomic-v5-diagnostic-v3",
+  "estimated_cost_usd": "0.015714",
+  "failed_cases": 0,
+  "generation_settings": {
+    "api": "responses",
+    "max_output_tokens": 4000,
+    "normalization_version": "source_span_v1",
+    "store": false,
+    "text_format": "json_schema",
+    "text_schema_sha256": "a6969fc404cbdb4a2f1d04f05550f8f9c6e4fdc5facb771e8274f46ce3d70422",
+    "text_schema_version": "atomic_extraction_v1"
+  },
+  "gold_file_sha256": "e802835dcb3e4278ec68e45474d094896dcad9a780c4115a01e0f0bc44f07f63",
+  "hard_cost_cap_usd": "0.150000",
+  "maximum_request_attempts": 2,
+  "maximum_retry_requests": 1,
+  "output_file_sha256": {
+    "case_scores.jsonl": "61696995787f6d6c070a9679822a3c63588976d4d20267e6d01433124d0193bf",
+    "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "predictions.jsonl": "8540f2eb4f35cfa12beccd0f9b9c55a2e0171739d66625c1895527c70edb90c2",
+    "scores.json": "fa58d8244fdeebb2a14ab28d56c151d488eccdd0317696207086e732a94e2392"
+  },
+  "planned_request_count": 1,
+  "predicate_registry_sha256": "64991ee0b9e52e61d5238b2c404447d22d633e3adf0fb858757dd2fa5c574b4d",
+  "predicate_registry_version": "predicate_registry_v1",
+  "prior_provider_failures": [],
+  "prompt_sha256": "a254b76f2f17872507fa00b54cec44df1b54e5034cd9017e4f5f8f654309650b",
+  "prompt_version": "atomic-extraction-v5",
+  "provider": "openai",
+  "provider_requests_attempted": 1,
+  "remaining_cases": 0,
+  "repository_commit": "33e6aabaa9cfbc938a93db43e55deca734867501",
+  "repository_dirty": true,
+  "requested_model": "gpt-4.1-2025-04-14",
+  "resolved_model": "gpt-4.1-2025-04-14",
+  "resume_count": 0,
+  "run_format_version": "atomic-extraction-run-v3",
+  "run_status": "completed",
+  "runtime_dataset_sha256": "940213d042bf3066537c18cecb7771e64a3e97246ff04af8ecc0f3bfd0ec052f",
+  "scoring_version": "atomic-scoring-v2",
+  "source_file_sha256": {
+    "data/pilot/sources/calendar.jsonl": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+    "data/pilot/sources/conversations.jsonl": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+    "data/pilot/sources/emails.jsonl": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed"
+  },
+  "started_at": "2026-08-08T17:53:50.889735Z",
+  "successful_cases": 1,
+  "temperature": 0.0
+}
