@@ -1,0 +1,30 @@
+{
+  "$id": "https://longitudinal-memory.local/load-test-v1/user.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "cohort": {
+      "type": "string"
+    },
+    "corpus_version": {
+      "const": "load_test_v1"
+    },
+    "dataset_role": {
+      "const": "load_test"
+    },
+    "timezone": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "corpus_version",
+    "dataset_role",
+    "timezone",
+    "cohort"
+  ],
+  "type": "object"
+}

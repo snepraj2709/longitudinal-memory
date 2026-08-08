@@ -1,0 +1,67 @@
+{
+  "$id": "https://longitudinal-memory.local/load-test-v1/manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contains_evaluation_records": {
+      "const": false
+    },
+    "corpus_sha256": {
+      "type": "string"
+    },
+    "corpus_version": {
+      "const": "load_test_v1"
+    },
+    "counts": {
+      "type": "object"
+    },
+    "dataset_role": {
+      "const": "load_test"
+    },
+    "files": {
+      "type": "array"
+    },
+    "generation_date": {
+      "format": "date",
+      "type": "string"
+    },
+    "generator": {
+      "type": "object"
+    },
+    "manifest_version": {
+      "const": "1"
+    },
+    "protected_quality_releases": {
+      "type": "object"
+    },
+    "quality_denominator_eligible": {
+      "const": false
+    },
+    "release_status": {
+      "type": "string"
+    },
+    "review": {
+      "type": "object"
+    },
+    "time_range": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "manifest_version",
+    "corpus_version",
+    "dataset_role",
+    "release_status",
+    "quality_denominator_eligible",
+    "contains_evaluation_records",
+    "generator",
+    "generation_date",
+    "counts",
+    "time_range",
+    "files",
+    "corpus_sha256",
+    "protected_quality_releases",
+    "review"
+  ],
+  "type": "object"
+}

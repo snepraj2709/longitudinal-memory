@@ -1,0 +1,105 @@
+{
+  "corpus_sha256": "c271b987c53262176f9a1692140ba5caa039cc2533404caf692bd7199b8b957b",
+  "corpus_version": "load_test_v1",
+  "dataset_role": "load_test",
+  "determinism": {
+    "approved_manifest_sha256": "38986c5fbab5dcf8091e23e250db8cd42e5da93cf66ddc251d946e1e4b8a3104",
+    "byte_identical_candidate_manifests": true,
+    "candidate_manifest_sha256": "4c63524aee198f9c74b5954fdd5379b2dbcf32a8640b37ea843766db247c38ca",
+    "first_generation": {
+      "elapsed_seconds": 6.209,
+      "peak_rss_mib": 25.97
+    },
+    "second_generation": {
+      "elapsed_seconds": 6.197,
+      "peak_rss_mib": 25.98
+    }
+  },
+  "generation": {
+    "chunk_size": 5000,
+    "generator_version": "1.0.0",
+    "llm_calls": 0,
+    "seed": 20260808,
+    "streamed": true
+  },
+  "load_counts": {
+    "declared_bytes": 320139640,
+    "event_chunks": 100,
+    "operation_classes": {
+      "correction": 8000,
+      "deletion_candidate": 6000,
+      "repeated_observation": 10000,
+      "reprocessing_candidate": 4000,
+      "retrieval_distractor": 12000,
+      "standard": 460000
+    },
+    "sessions": 100000,
+    "source_events": 500000,
+    "source_types": {
+      "calendar": 125000,
+      "chat": 125000,
+      "conversation": 125000,
+      "email": 125000
+    },
+    "users": 2000
+  },
+  "known_limitations": [
+    "The corpus uses repetitive synthetic templates because it is intended for load testing, not quality scoring.",
+    "R3 creates and validates the workload only; it does not run ingestion or latency benchmarks."
+  ],
+  "quality_denominators": {
+    "eligible": false,
+    "gold_records": 0,
+    "quality_cases": 0
+  },
+  "quality_releases": {
+    "benchmark_v1": {
+      "dataset_sha256": "1a0c6db251dc43d793662a919be18b0c7d32f01aad2fb52a086c2ba8fb1f18de",
+      "manifest_sha256": "a812da8b788b86eef59c5a1f08aeca5850fb840417ab3fbeea65e6c8ccf3d970",
+      "validation_status": "passed"
+    },
+    "pilot_v0": {
+      "protected_user_sha256": "ec951239b54197c76c3fd048564b18494c2d97a3d632a63b985e3c2c9c247140"
+    },
+    "scaled_v1": {
+      "dataset_sha256": "746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61",
+      "manifest_sha256": "e3b4386b7063b3c2d65b45574b2e5665fc5094a8330ffd16ea83781744b9a5d3",
+      "validation_status": "passed"
+    }
+  },
+  "review": {
+    "approved_on": "2026-08-08",
+    "automated_validation_status": "passed",
+    "human_review_status": "approved",
+    "implementation_review_status": "complete",
+    "reviewed_by": "Sneha",
+    "reviewed_corpus_sha256": "c271b987c53262176f9a1692140ba5caa039cc2533404caf692bd7199b8b957b"
+  },
+  "separation_checks": {
+    "contains_evaluation_records": false,
+    "quality_loaders_opened_load_corpus": false,
+    "quality_use_guard": "passed",
+    "scorer_gold_fields_found": false,
+    "split_labels_found": false
+  },
+  "time_range": {
+    "created_at_end": "2025-12-14T05:19:00Z",
+    "created_at_start": "2025-01-01T00:00:00Z"
+  },
+  "verification": {
+    "focused_tests": {
+      "passed": 5,
+      "status": "passed"
+    },
+    "git_diff_check": "passed",
+    "humanizer_pass": "passed",
+    "load_corpus_validator": "passed",
+    "quality_release_validators": "passed",
+    "repository_tests": {
+      "passed": 232,
+      "status": "passed"
+    },
+    "scorer_field_scan": "passed",
+    "secret_scan": "passed"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "$id": "https://longitudinal-memory.local/load-test-v1/source_event.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "corpus_version": {
+      "const": "load_test_v1"
+    },
+    "created_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "dataset_role": {
+      "const": "load_test"
+    },
+    "idempotency_key": {
+      "type": "string"
+    },
+    "ingested_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "metadata": {
+      "additionalProperties": false,
+      "properties": {
+        "operation_class": {
+          "enum": [
+            "standard",
+            "repeated_observation",
+            "correction",
+            "retrieval_distractor",
+            "deletion_candidate",
+            "reprocessing_candidate"
+          ]
+        },
+        "replay_batch": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "sequence_number": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "source_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "template_id": {
+          "type": "string"
+        },
+        "topic_key": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_class",
+        "template_id",
+        "topic_key",
+        "sequence_number",
+        "source_reference",
+        "replay_batch"
+      ],
+      "type": "object"
+    },
+    "participants": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "source_type": {
+      "enum": [
+        "conversation",
+        "email",
+        "calendar",
+        "chat"
+      ]
+    },
+    "user_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_id",
+    "corpus_version",
+    "dataset_role",
+    "user_id",
+    "idempotency_key",
+    "source_type",
+    "session_id",
+    "created_at",
+    "ingested_at",
+    "participants",
+    "content",
+    "metadata"
+  ],
+  "type": "object"
+}
