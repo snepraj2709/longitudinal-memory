@@ -19,7 +19,8 @@ from .source import ExtractionSource
 
 ATOMIC_EXTRACTION_PROMPT_VERSION = "atomic-extraction-v3"
 ATOMIC_EXTRACTION_V4_PROMPT_VERSION = "atomic-extraction-v4"
-ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION = "atomic-extraction-v5"
+ATOMIC_EXTRACTION_V5_PROMPT_VERSION = "atomic-extraction-v5"
+ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION = "atomic-extraction-v6"
 
 _POLARITIES = ", ".join(sorted(ALLOWED_POLARITIES))
 _EPISTEMIC_STATUSES = ", ".join(sorted(ALLOWED_EPISTEMIC_STATUSES))
@@ -65,6 +66,21 @@ _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V5 = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V4.replac
     _V4_INTERVENTION + _V5_INTERVENTION,
 )
 
+_V6_INTERVENTION = """Review every independent clause, but emit only propositions that map directly to one active registry predicate. Do not create a broader, narrower, or overlapping claim merely because a related registry predicate exists. Prefer the predicate whose wording and temporal meaning most directly match the source. The subject is the entity described by the proposition, not automatically the speaker, recipient, or user.
+
+For a boolean predicate, object represents the affirmative proposition and polarity represents whether the source affirms or denies it. A direct negation therefore normally uses object true with negative polarity; do not encode the same negation twice as object false and negative polarity. Phrases such as "might", "maybe", and "do not know if" express uncertainty about the affirmative proposition, not a denial. Use uncertain for them. Use reported_by_other when the current speaker attributes a proposition to somebody else. When text explicitly corrects a previous value, preserve each directly stated old and new proposition: mark the rejected value denied and the replacement corrected.
+
+Resolve explicit temporal language wherever it constrains the claim. A start date can begin an ongoing role or state; a deadline sets valid_to; a point date uses the same valid_from and valid_to; a stated date range sets both boundaries. Do not use a related date for a claim unless the source links that date to the proposition.
+
+Evidence may include more than one exact span when a short reply depends on a preceding question or reference. Otherwise cite the shortest exact span that fully supports the subject, predicate, object, polarity, epistemic status, and time. Before returning, remove duplicate or partially overlapping claims that represent the same proposition.
+
+"""
+
+_ATOMIC_EXTRACTION_SYSTEM_PROMPT_V6 = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V5.replace(
+    _V4_INTERVENTION,
+    _V6_INTERVENTION,
+)
+
 ATOMIC_EXTRACTION_SYSTEM_PROMPT = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V3
 
 
@@ -74,7 +90,8 @@ def get_atomic_extraction_system_prompt(prompt_version: str) -> str:
     prompts = {
         ATOMIC_EXTRACTION_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V3,
         ATOMIC_EXTRACTION_V4_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V4,
-        ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V5,
+        ATOMIC_EXTRACTION_V5_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V5,
+        ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V6,
     }
     try:
         return prompts[prompt_version]

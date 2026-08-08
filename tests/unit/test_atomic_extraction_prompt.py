@@ -16,6 +16,7 @@ from extraction.prompt import (
     ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION,
     ATOMIC_EXTRACTION_PROMPT_VERSION,
     ATOMIC_EXTRACTION_V4_PROMPT_VERSION,
+    ATOMIC_EXTRACTION_V5_PROMPT_VERSION,
     ATOMIC_EXTRACTION_SYSTEM_PROMPT,
     build_atomic_extraction_prompt,
     get_atomic_extraction_system_prompt,
@@ -282,7 +283,7 @@ class AtomicExtractionPromptTests(unittest.TestCase):
 
     def test_v5_rechecks_source_bound_identifiers_and_quotes(self) -> None:
         candidate_prompt = get_atomic_extraction_system_prompt(
-            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+            ATOMIC_EXTRACTION_V5_PROMPT_VERSION
         )
 
         self.assertIn("speaker_id and subject_id appear in the supplied source", candidate_prompt)
@@ -298,10 +299,68 @@ class AtomicExtractionPromptTests(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )
         candidate_prompt = get_atomic_extraction_system_prompt(
-            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+            ATOMIC_EXTRACTION_V5_PROMPT_VERSION
         )
 
         self.assertEqual(snapshot["prompt_version"], "atomic-extraction-v5")
+        self.assertEqual(
+            snapshot["system_prompt_sha256"],
+            hashlib.sha256(candidate_prompt.encode("utf-8")).hexdigest(),
+        )
+        self.assertEqual(
+            snapshot["text_schema_sha256"],
+            canonical_sha256(atomic_extraction_text_format()),
+        )
+        for suite in snapshot["suites"].values():
+            plan = prepare_atomic_run(
+                repo_root=repo_root,
+                config_path=repo_root / suite["config_path"],
+            )
+            self.assertEqual(plan.config.prompt_sha256, suite["prompt_sha256"])
+            self.assertEqual(
+                [case_id for case_id, _ in plan.case_refs], suite["case_ids"]
+            )
+
+    def test_v6_targets_v5_quality_regressions_without_changing_v5(self) -> None:
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+        )
+        v5_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_V5_PROMPT_VERSION
+        )
+        required_text = (
+            "map directly to one active registry predicate",
+            "not automatically the speaker, recipient, or user",
+            "object true with negative polarity",
+            "do not know if",
+            "Use reported_by_other",
+            "mark the rejected value denied and the replacement corrected",
+            "a deadline sets valid_to",
+            "short reply depends on a preceding question",
+            "remove duplicate or partially overlapping claims",
+        )
+        for text in required_text:
+            with self.subTest(text=text):
+                self.assertIn(text, candidate_prompt)
+                self.assertNotIn(text, v5_prompt)
+        self.assertEqual(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION,
+            "atomic-extraction-v6",
+        )
+
+    def test_v6_prompt_and_schema_snapshot_matches_smoke_and_full_suites(self) -> None:
+        repo_root = Path(__file__).resolve().parents[2]
+        snapshot = json.loads(
+            (
+                repo_root
+                / "configs/extraction/atomic_extraction_prompt_v6_snapshot.json"
+            ).read_text(encoding="utf-8")
+        )
+        candidate_prompt = get_atomic_extraction_system_prompt(
+            ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION
+        )
+
+        self.assertEqual(snapshot["prompt_version"], "atomic-extraction-v6")
         self.assertEqual(
             snapshot["system_prompt_sha256"],
             hashlib.sha256(candidate_prompt.encode("utf-8")).hexdigest(),
