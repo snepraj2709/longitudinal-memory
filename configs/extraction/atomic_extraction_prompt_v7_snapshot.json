@@ -1,0 +1,37 @@
+{
+  "snapshot_version": "atomic_extraction_prompt_snapshot_v4",
+  "prompt_version": "atomic-extraction-v7",
+  "system_prompt_sha256": "afa32e5aa4aefe039e655e2520c1981b29f5965130fe9d4b1c8737509e3a42e2",
+  "text_schema_version": "atomic_extraction_v1",
+  "text_schema_sha256": "a6969fc404cbdb4a2f1d04f05550f8f9c6e4fdc5facb771e8274f46ce3d70422",
+  "normalization_version": "source_span_v1",
+  "predicate_registry_version": "predicate_registry_v1",
+  "predicate_registry_sha256": "64991ee0b9e52e61d5238b2c404447d22d633e3adf0fb858757dd2fa5c574b4d",
+  "suites": {
+    "smoke": {
+      "config_path": "configs/extraction/atomic_extraction_smoke_v4.json",
+      "case_ids": [
+        "atomic_conv_002",
+        "atomic_conv_003",
+        "atomic_email_005"
+      ],
+      "prompt_sha256": "c1db31db0cc624903319e87caaa1ab8e334596d056db0f1d3936d3ecde87bcb4"
+    },
+    "full": {
+      "config_path": "configs/extraction/atomic_extraction_run_v6.json",
+      "case_ids": [
+        "atomic_cal_001",
+        "atomic_conv_002",
+        "atomic_conv_003",
+        "atomic_cal_002",
+        "atomic_conv_004",
+        "atomic_cal_003",
+        "atomic_email_003",
+        "atomic_email_005",
+        "atomic_conv_010",
+        "atomic_cal_006"
+      ],
+      "prompt_sha256": "865a33ecd7a821a8b9ec1f7d83c22049471d0e6139d2bd7c41c3b3ca8400d3a2"
+    }
+  }
+}

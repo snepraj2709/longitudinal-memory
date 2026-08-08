@@ -20,7 +20,8 @@ from .source import ExtractionSource
 ATOMIC_EXTRACTION_PROMPT_VERSION = "atomic-extraction-v3"
 ATOMIC_EXTRACTION_V4_PROMPT_VERSION = "atomic-extraction-v4"
 ATOMIC_EXTRACTION_V5_PROMPT_VERSION = "atomic-extraction-v5"
-ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION = "atomic-extraction-v6"
+ATOMIC_EXTRACTION_V6_PROMPT_VERSION = "atomic-extraction-v6"
+ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION = "atomic-extraction-v7"
 
 _POLARITIES = ", ".join(sorted(ALLOWED_POLARITIES))
 _EPISTEMIC_STATUSES = ", ".join(sorted(ALLOWED_EPISTEMIC_STATUSES))
@@ -81,6 +82,23 @@ _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V6 = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V5.replac
     _V6_INTERVENTION,
 )
 
+_V7_INTERVENTION = """Choose a predicate from its complete registry definition, including temporal_behavior, rather than from a shared keyword. For a future employer or role that starts on a stated date, use the scheduled predicates will_work_for and will_have_job_role; reserve employer and accepted_role for an interval already in effect. Use job_start_date for a stated date when employment starts. Use assigned_task for an action somebody must perform, assigned_project for assignment to a project as a whole, and offered_help when a named person can help or offers to review work. Use requested_leave for a leave request; requested_leave_dates is only for a source that separately identifies the requested date list as its proposition. When two predicates remain semantically equivalent, prefer the one introduced in phase3_atomic_v2 for backward compatibility.
+
+Extract direct statements, attributed reports, hypotheticals, explicit denials, corrections, and offers when they map to registered propositions. Keep their epistemic_status distinct instead of omitting non-asserted claims. A short answer may use the immediately preceding question as additional evidence when the question supplies the subject or object.
+
+For boolean predicates, object represents the affirmative proposition. Direct negation normally uses object true with negative polarity. Phrases such as "might", "maybe", and "do not know if" express uncertainty about the affirmative proposition, so use positive polarity with uncertain status unless the speaker explicitly rejects it.
+
+Use an explicit start date as valid_from for the scheduled role or employer and as both valid_from and valid_to for the start-date claim. A deadline sets valid_to. A stated date range sets both boundaries. Do not attach a date to a claim unless the source connects them.
+
+"""
+
+_ATOMIC_EXTRACTION_SYSTEM_PROMPT_V7 = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V3.replace(
+    f"Active predicate registry version: {_PREDICATE_REGISTRY.registry_version}",
+    _V7_INTERVENTION
+    + _V5_INTERVENTION
+    + f"Active predicate registry version: {_PREDICATE_REGISTRY.registry_version}",
+)
+
 ATOMIC_EXTRACTION_SYSTEM_PROMPT = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V3
 
 
@@ -91,7 +109,8 @@ def get_atomic_extraction_system_prompt(prompt_version: str) -> str:
         ATOMIC_EXTRACTION_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V3,
         ATOMIC_EXTRACTION_V4_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V4,
         ATOMIC_EXTRACTION_V5_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V5,
-        ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V6,
+        ATOMIC_EXTRACTION_V6_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V6,
+        ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V7,
     }
     try:
         return prompts[prompt_version]
