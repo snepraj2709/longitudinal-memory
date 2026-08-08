@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: test validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2
+.PHONY: test validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -15,3 +15,6 @@ validate-load-corpus:
 
 analyze-atomic-v2:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m extraction.failure_analysis --repo-root .
+
+dry-run-atomic-safety:
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m extraction.run_atomic --dry-run

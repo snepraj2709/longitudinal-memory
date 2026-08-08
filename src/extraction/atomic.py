@@ -49,6 +49,16 @@ def extract_atomic_claims(
         system_prompt=ATOMIC_EXTRACTION_SYSTEM_PROMPT,
         user_prompt=build_atomic_extraction_prompt(source_group),
     )
+    return validate_atomic_response(source_group, raw_response, metadata)
+
+
+def validate_atomic_response(
+    source_group: ExtractionSource,
+    raw_response: object,
+    metadata: OpenAIResponseMetadata,
+) -> AtomicExtractionResult:
+    """Validate one returned response without making another provider call."""
+
     records = _parse_claim_records(raw_response, source_group.source_id)
     claims = _validate_claim_records(records, source_group)
     return AtomicExtractionResult(

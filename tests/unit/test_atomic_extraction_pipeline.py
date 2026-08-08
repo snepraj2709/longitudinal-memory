@@ -30,7 +30,7 @@ class FakeAtomicPipelineClient:
     def __init__(
         self,
         *,
-        model: str = "fake-atomic-model",
+        model: str = "gpt-4.1-2025-04-14",
         provider_failures_at: set[int] | None = None,
         validation_failures_at: set[int] | None = None,
     ) -> None:
@@ -93,9 +93,13 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
             client_type.assert_not_called()
             self.assertFalse(result_dir.exists())
 
+        record = json.loads(output.getvalue())
+        self.assertTrue(record["dry_run"])
+        self.assertEqual(record["provider_calls"], 0)
+        self.assertEqual(record["output_writes"], 0)
         self.assertEqual(
-            output.getvalue().splitlines(),
-            [f"{case_id}\t{source_id}" for case_id, source_id in ATOMIC_CASE_REFS],
+            [(item["case_id"], item["source_id"]) for item in record["case_order"]],
+            list(ATOMIC_CASE_REFS),
         )
 
     def test_success_calls_ten_sources_in_order_then_loads_gold(self) -> None:
@@ -181,31 +185,13 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
                 expected_scores,
             )
             self.assertEqual(run, json.loads((output_dir / "run.json").read_text()))
-            self.assertEqual(
-                set(run),
-                {
-                    "run_status",
-                    "prompt_version",
-                    "scoring_version",
-                    "requested_model",
-                    "resolved_model",
-                    "temperature",
-                    "gold_file_sha256",
-                    "source_file_sha256",
-                    "started_at",
-                    "completed_at",
-                    "total_cases",
-                    "calls_attempted",
-                    "successful_cases",
-                    "failed_cases",
-                    "output_file_sha256",
-                },
-            )
             self.assertEqual(run["run_status"], "completed")
-            self.assertEqual(run["scoring_version"], "atomic-scoring-v2")
-            self.assertEqual(run["calls_attempted"], 10)
+            self.assertEqual(run["prompt_version"], "atomic-extraction-v2")
+            self.assertEqual(run["provider_requests_attempted"], 10)
             self.assertEqual(run["successful_cases"], 10)
             self.assertEqual(run["failed_cases"], 0)
+            self.assertEqual(len(run["attempts"]), 10)
+            self.assertEqual(run["resume_count"], 0)
 
         self.assertEqual(self.hash_tree(B1_RESULT_DIR), before_b1)
 
@@ -221,8 +207,8 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
         ]
         expected_sources = [source_id for _, source_id in ATOMIC_CASE_REFS]
         self.assertEqual(prompted_sources, expected_sources[:4])
-        self.assertEqual(run["run_status"], "failed")
-        self.assertEqual(run["calls_attempted"], 4)
+        self.assertEqual(run["run_status"], "completed_with_provider_failures")
+        self.assertEqual(run["provider_requests_attempted"], 4)
         self.assertEqual(run["successful_cases"], 3)
 
     def test_failures_are_sanitized_and_not_scored(self) -> None:
@@ -237,8 +223,13 @@ class AtomicExtractionPipelineTests(unittest.TestCase):
 
                     loader.assert_not_called()
                     self.assertEqual(len(client.calls), 4)
-                    self.assertEqual(run["run_status"], "failed")
-                    self.assertEqual(run["calls_attempted"], 4)
+                    self.assertEqual(
+                        run["run_status"],
+                        "completed_with_provider_failures"
+                        if failure_kind == "provider"
+                        else "failed_validation",
+                    )
+                    self.assertEqual(run["provider_requests_attempted"], 4)
                     self.assertEqual(run["successful_cases"], 3)
                     self.assertEqual(run["failed_cases"], 1)
                     self.assertFalse((output_dir / "scores.json").exists())

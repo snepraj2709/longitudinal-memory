@@ -1,0 +1,48 @@
+{
+  "configuration_version": "atomic-extraction-run-config-v1",
+  "run_format_version": "atomic-extraction-run-v3",
+  "provider": "openai",
+  "dataset_version": "pilot-v0-phase3-atomic-v2",
+  "dataset_split": "development",
+  "runtime_dataset_sha256": "c68f6229fb928aecea1af6fef4a5d368cf0d94eff844794f7c633dcbd67adc59",
+  "requested_model": "gpt-4.1-2025-04-14",
+  "resolved_model": "gpt-4.1-2025-04-14",
+  "prompt_version": "atomic-extraction-v2",
+  "prompt_sha256": "974173042bea3ef6161f9a27ef60743e170b616c3ce60dda06348bc6bfd9f903",
+  "predicate_registry_version": "maya-atomic-predicates-v1",
+  "predicate_registry_sha256": "41ead61b696a10166fba07a9d894151828779c673d6d3c11d3628a8ad9a276e6",
+  "temperature": 0.0,
+  "generation_settings": {
+    "api": "responses",
+    "max_output_tokens": 4000,
+    "store": false,
+    "text_format": "json_object"
+  },
+  "case_order": [
+    {"case_id": "atomic_cal_001", "source_id": "cal_001"},
+    {"case_id": "atomic_conv_002", "source_id": "conv_002"},
+    {"case_id": "atomic_conv_003", "source_id": "conv_003"},
+    {"case_id": "atomic_cal_002", "source_id": "cal_002"},
+    {"case_id": "atomic_conv_004", "source_id": "conv_004"},
+    {"case_id": "atomic_cal_003", "source_id": "cal_003"},
+    {"case_id": "atomic_email_003", "source_id": "email_003"},
+    {"case_id": "atomic_email_005", "source_id": "email_005"},
+    {"case_id": "atomic_conv_010", "source_id": "conv_010"},
+    {"case_id": "atomic_cal_006", "source_id": "cal_006"}
+  ],
+  "source_file_sha256": {
+    "data/pilot/sources/calendar.jsonl": "8f5d3dfef2ab3115b2099e79b4151415925649b892c9c3443cfe89eee89752b9",
+    "data/pilot/sources/conversations.jsonl": "0f4900d8b13ee55040bcfde4d1b7c6943786b11d1723c6c7aaf2ce0eb6480c9e",
+    "data/pilot/sources/emails.jsonl": "ba94d6c80b8d307862e2692ad5ee37db0114599a3190811145f647976e816bed"
+  },
+  "gold_file_sha256": "e802835dcb3e4278ec68e45474d094896dcad9a780c4115a01e0f0bc44f07f63",
+  "planned_request_count": 10,
+  "maximum_retry_requests": 10,
+  "maximum_request_attempts": 20,
+  "maximum_input_tokens": 106668,
+  "maximum_output_tokens": 80000,
+  "expected_output_tokens": 12000,
+  "input_usd_per_million_tokens": "2.00",
+  "output_usd_per_million_tokens": "8.00",
+  "hard_cost_cap_usd": "1.00"
+}
