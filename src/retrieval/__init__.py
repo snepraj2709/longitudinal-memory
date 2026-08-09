@@ -1,0 +1,65 @@
+"""Deterministic retrieval-index contracts and builders."""
+
+from .contracts import (
+    CONTENT_RENDERER_VERSION,
+    EMBEDDING_DIMENSION,
+    EMBEDDING_VERSION,
+    INDEX_VERSION,
+    AtomicIndexInput,
+    ClaimVersionLineage,
+    IndexConfig,
+    IndexRecord,
+    RelationLineage,
+    RetrievalIndexError,
+    SessionIndexInput,
+    SessionStatementInput,
+    SourceSpanLineage,
+    TransactionTime,
+    ValidTime,
+    load_index_config,
+)
+from .embeddings import DeterministicTokenHashEmbedder, Embedder, normalized_tokens
+from .indexing import (
+    build_atomic_index_record,
+    build_session_index_record,
+    render_atomic_content,
+    render_session_content,
+)
+from .repository import (
+    IndexBuildRequest,
+    IndexPersistenceResult,
+    RetrievalIndexRepository,
+    RetrievalPersistenceConflict,
+    RetrievalPersistenceError,
+)
+
+__all__ = [
+    "CONTENT_RENDERER_VERSION",
+    "EMBEDDING_DIMENSION",
+    "EMBEDDING_VERSION",
+    "INDEX_VERSION",
+    "AtomicIndexInput",
+    "ClaimVersionLineage",
+    "DeterministicTokenHashEmbedder",
+    "Embedder",
+    "IndexConfig",
+    "IndexBuildRequest",
+    "IndexPersistenceResult",
+    "IndexRecord",
+    "RelationLineage",
+    "RetrievalIndexError",
+    "RetrievalIndexRepository",
+    "RetrievalPersistenceConflict",
+    "RetrievalPersistenceError",
+    "SessionIndexInput",
+    "SessionStatementInput",
+    "SourceSpanLineage",
+    "TransactionTime",
+    "ValidTime",
+    "build_atomic_index_record",
+    "build_session_index_record",
+    "load_index_config",
+    "normalized_tokens",
+    "render_atomic_content",
+    "render_session_content",
+]

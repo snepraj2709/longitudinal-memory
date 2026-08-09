@@ -192,7 +192,7 @@ class ConflictRelationIntegrationTests(unittest.TestCase):
         return self._request(left_id, right_id)
 
     def test_clean_repeat_migration_and_composite_database_constraints(self) -> None:
-        self.assertEqual(self.applied[-1], "0007_durative_claims.sql")
+        self.assertEqual(self.applied[-1], "0008_retrieval_indexes.sql")
         self.assertEqual(apply_migrations(self.connection, ROOT / "migrations"), ())
         tables = {
             row[0]

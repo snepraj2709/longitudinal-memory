@@ -231,7 +231,7 @@ class DurativeClaimPersistenceIntegrationTests(unittest.TestCase):
         ).fetchone()[0]
 
     def test_migration_repeats_and_composite_ownership_is_enforced(self) -> None:
-        self.assertEqual(self.applied[-1], "0007_durative_claims.sql")
+        self.assertEqual(self.applied[-1], "0008_retrieval_indexes.sql")
         self.assertEqual(apply_migrations(self.connection, ROOT / "migrations"), ())
         self.assertEqual(
             {

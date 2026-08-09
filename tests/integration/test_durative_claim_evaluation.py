@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+import hashlib
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 import tempfile
@@ -19,13 +21,88 @@ from summaries.durative_evaluation import (
     RESULT_ROOT,
     DurativeEvaluationError,
     execute_durative_evaluation,
-    verify_durative_release,
 )
 
 
 ROOT = Path(__file__).resolve().parents[2]
 DATABASE_URL = os.environ.get("STORAGE_DATABASE_URL")
 RELEASE_FILES = (*ARTIFACT_NAMES, "manifest.json")
+FROZEN_MANIFEST_SHA256 = "1d3f1c78d95bd96399224581bec21143c4b52562517d4779b74850e42d26fdbb"
+AUTHORIZED_IMPLEMENTATION_DRIFT = {
+    "Makefile",
+    "tests/integration/test_durative_claim_persistence.py",
+    "tests/integration/test_durative_claim_evaluation.py",
+}
+AUTHORIZED_PREDECESSOR_HASH_DRIFT = {
+    "Makefile",
+    "tests/integration/test_belief_resolution.py",
+    "tests/integration/test_conflict_relations.py",
+    "tests/integration/test_grounded_summary_persistence.py",
+    "tests/integration/test_phase4_storage.py",
+    "tests/integration/test_phase5_conflict_evaluation.py",
+    "tests/integration/test_temporal_service.py",
+}
+
+
+def verify_frozen_release(path: Path) -> dict[str, object]:
+    manifest_path = path / "manifest.json"
+    if hashlib.sha256(manifest_path.read_bytes()).hexdigest() != FROZEN_MANIFEST_SHA256:
+        raise AssertionError("frozen durative manifest changed")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    for name, expected in manifest["artifacts"].items():
+        if hashlib.sha256((path / name).read_bytes()).hexdigest() != expected:
+            raise AssertionError("frozen durative artifact changed")
+    drift = {
+        relative
+        for relative, expected in manifest["implementation_hashes"].items()
+        if hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() != expected
+    }
+    if drift != AUTHORIZED_IMPLEMENTATION_DRIFT:
+        raise AssertionError("durative compatibility drift changed")
+    return manifest
+
+
+def verify_fresh_manifest_adapter(fresh_path: Path, frozen: dict[str, object]) -> None:
+    fresh = json.loads(fresh_path.read_text(encoding="utf-8"))
+    normalized = json.loads(json.dumps(fresh))
+    implementation_drift = {
+        path
+        for path, frozen_hash in frozen["implementation_hashes"].items()
+        if fresh["implementation_hashes"][path] != frozen_hash
+    }
+    if implementation_drift != AUTHORIZED_IMPLEMENTATION_DRIFT:
+        raise AssertionError("fresh durative implementation drift changed")
+    for path in implementation_drift:
+        current = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+        if fresh["implementation_hashes"][path] != current:
+            raise AssertionError("fresh durative implementation hash is stale")
+        normalized["implementation_hashes"][path] = frozen["implementation_hashes"][path]
+
+    fresh_predecessor = {
+        item["path"]: item for item in fresh["predecessor"]["authorized_drift"]
+    }
+    frozen_predecessor = {
+        item["path"]: item for item in frozen["predecessor"]["authorized_drift"]
+    }
+    predecessor_drift = {
+        path
+        for path, item in frozen_predecessor.items()
+        if fresh_predecessor[path]["step6_3_sha256"] != item["step6_3_sha256"]
+    }
+    if predecessor_drift != AUTHORIZED_PREDECESSOR_HASH_DRIFT:
+        raise AssertionError("fresh durative predecessor drift changed")
+    normalized_predecessor = {
+        item["path"]: item for item in normalized["predecessor"]["authorized_drift"]
+    }
+    for path in predecessor_drift:
+        current = hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+        if fresh_predecessor[path]["step6_3_sha256"] != current:
+            raise AssertionError("fresh durative predecessor hash is stale")
+        normalized_predecessor[path]["step6_3_sha256"] = frozen_predecessor[path][
+            "step6_3_sha256"
+        ]
+    if normalized != frozen:
+        raise AssertionError("fresh durative manifest changed outside approved hashes")
 
 
 @unittest.skipUnless(
@@ -55,7 +132,7 @@ class DurativeClaimEvaluationIntegrationTests(unittest.TestCase):
     def test_two_clean_database_runs_are_byte_identical_to_checked_release(self) -> None:
         checked = ROOT / RESULT_ROOT
         self.assertTrue(checked.is_dir())
-        verify_durative_release(repo_root=ROOT)
+        frozen_manifest = verify_frozen_release(checked)
         self.assertTrue((checked / "rejections.jsonl").is_file())
         self.assertFalse((checked / "decisions.jsonl").exists())
         with tempfile.TemporaryDirectory() as temporary:
@@ -65,9 +142,11 @@ class DurativeClaimEvaluationIntegrationTests(unittest.TestCase):
             self._reset_database()
             second_score = self._run(second)
             self.assertEqual(first_score, second_score)
-            for name in RELEASE_FILES:
+            for name in ARTIFACT_NAMES:
                 self.assertEqual((first / name).read_bytes(), (second / name).read_bytes())
                 self.assertEqual((first / name).read_bytes(), (checked / name).read_bytes())
+            verify_fresh_manifest_adapter(first / "manifest.json", frozen_manifest)
+            verify_fresh_manifest_adapter(second / "manifest.json", frozen_manifest)
 
     def test_exact_rejection_accounting_provenance_and_zero_model_use(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

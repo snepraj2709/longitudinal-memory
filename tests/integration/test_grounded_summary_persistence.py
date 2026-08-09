@@ -206,7 +206,7 @@ class GroundedSummaryPersistenceIntegrationTests(unittest.TestCase):
         return self.connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0]
 
     def test_migration_repeats_and_enforces_composite_ownership_and_json(self) -> None:
-        self.assertEqual(self.applied[-1], "0007_durative_claims.sql")
+        self.assertEqual(self.applied[-1], "0008_retrieval_indexes.sql")
         self.assertEqual(apply_migrations(self.connection, ROOT / "migrations"), ())
         tables = {
             row[0]

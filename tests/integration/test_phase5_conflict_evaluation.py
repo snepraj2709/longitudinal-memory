@@ -57,11 +57,11 @@ ARTIFACT_NAMES = (
     "findings.md",
 )
 STEP62_AUTHORIZED_DRIFT = {
-    "Makefile": "e3602406110b790c01f238edb1eab0b06a2b9ff18179b993fab0b97e2151bdf9",
-    "tests/integration/test_belief_resolution.py": "29873d20d37e900faa6b09563af454ac8861666aa1af5c59aa4cb6d1a60d81b4",
-    "tests/integration/test_conflict_relations.py": "cbf277b99f8d33be170a87d46090dd890da455767751e5f5acff5ff6d7811ddb",
-    "tests/integration/test_phase4_storage.py": "735fd285912578ed597cd0f32fe336a9b64dd4c9bee65e70a69a2ae0591c82fc",
-    "tests/integration/test_temporal_service.py": "ef119e8023c403da09fbd920efe3c519cb7721a5fa4a498a430cecf6b4d09c5e",
+    "Makefile": "973795fe1c4e5febc0ccbf2713336e0063d99ce0b7ad1bcc8d4b240bc2949f73",
+    "tests/integration/test_belief_resolution.py": "597d429b639357dfea2b4fabbed22d0dc7cee41464a2ec798fafe7b88577f702",
+    "tests/integration/test_conflict_relations.py": "2639bb343f909957b438ca36e61bcf0f874f2a47bed3c6e27d13310a80f4dd5a",
+    "tests/integration/test_phase4_storage.py": "4cecbde7b2e8d53dfad3b246d2a68cdf208cfce0ab87938da7c4d4c1722b8e4d",
+    "tests/integration/test_temporal_service.py": "7edf89c34684dd29b84022d4250ef82957758bca306278bf9f9aad942db7e24e",
 }
 
 

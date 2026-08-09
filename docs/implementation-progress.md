@@ -883,3 +883,61 @@ These low scores are an honest outcome of the frozen baseline. It returns every 
 ### Next-step input
 
 Step 7.1 receives the frozen session boundaries, grounded-summary and durative contracts, immutable durative and summary-quality scorecards, exact statement provenance, and versioned session-index input. Step 7.1 has not started and requires separate guidance and authorization.
+
+## Phase 7, Step 7.1: Build atomic and session indexes
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `9e72921e930a336c8a3ef280165f5715cac0019a`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-7.1-guidance-v1`, envelope SHA-256 `41a3f67caa7a41f9039f24a3d78eff26c1e45568eda64a9be3b3753ee8c33418`
+- Commit message: `retrieval: add atomic and session indexes`
+
+### Schema and implementation
+
+- Migration `0008` adds user-owned index runs, atomic and session records, and exact claim-version, source-span, and checked-relation lineage. Composite foreign keys enforce ownership. Separate partial GIN and HNSW indexes cover atomic and session records, while B-tree filters begin with user, index version, and record kind.
+- Atomic records preserve the frozen Claim and ClaimVersion fields, lifecycle, valid and transaction time, sensitivity, evidence, and checked relation context. Session records reuse the existing summary text, ordered statements, unresolved questions, lifecycle set, sensitivity flag, and exact statement lineage. Restricted records are excluded; candidate, current, historical, disputed, and superseded records keep their original status.
+- `deterministic_token_hash_v1` produces 256-dimensional, L2-normalized vectors with Unicode normalization and SHA-256 bucket and sign selection. It uses only the Python standard library, has no random or network path, and is explicitly a development storage vector rather than a semantic embedding model.
+- Per-user builds use an advisory lock and one transaction. Exact replay is a no-op; an idempotency-key drift, ownership mismatch, stale lineage, or partial write fails closed. Source, span, relation, evidence, and summary deletion remove affected index rows before any stale content can remain, and survivors can be rebuilt under the same contract.
+
+### Review corrections
+
+- The development loader originally hashed the complete mixed runtime user and source files. Review replaced those bindings with the frozen two-user and 20-source prefix hashes from the sessionization manifest and added a read trap that fails on record 3 or source 21.
+- Checked relation lineage originally lacked the build cutoff. It now requires `created_at <= transaction_as_of`; a live regression covers both the exact boundary and a future relation.
+- A pre-commit release attempt used the 126-file protection map inside runtime generation and therefore hashed three prohibited Step 6.4 gold files. That release was rejected and never committed. The corrected runtime hashes only four approved authority manifests: the Step 6.3 result manifest, Step 6.4 result manifest, checkpoint manifest, and checkpoint preflight. A full-execution read trap rejects gold, scorer, evaluator, oracle, review-queue, and test-user paths.
+- The final release states that its 126-path result is a `git_and_reviewer_gate` with `runtime_verified=false`. Reviewer-side recomputation found exactly the nine authorized compatibility changes and 117 unchanged protected paths. The private pre-correction backup remains outside the repository.
+
+### Results
+
+The final development build contains 33 atomic records and 17 session records for `user_001` and `user_002`, with no durative records. It created two successful user-scoped runs and 50 total records. Claim and source lineage each contain 66 rows; there are no checked relation rows because the frozen development handoff contains none.
+
+Failures, duplicates, cross-user references, stale references, unsupported records, restricted records, partial writes, model calls, retries, tokens, and incremental cost are all zero. All 50 records have 256-dimensional vectors and full-text documents. Exact lineage, replay, deletion, and deterministic-release checks passed. The five payload artifacts remained byte-identical across the leakage correction; only the release manifest changed to record the narrower runtime authority contract.
+
+### Tests and contract checks
+
+- `make test-retrieval-index PYTHON=.venv-storage/bin/python`: 40 tests passed against disposable PostgreSQL 16, including the prefix trap, relation cutoff, full runtime-read trap, migration, index, replay, concurrency, rollback, deletion, and two-clean-build checks.
+- Protected live gates passed: ingestion 5, storage 30, temporal lifecycle 15, temporal evaluation 20, conflict candidates 29, conflict relations 29, belief resolution 46, Phase 5 evaluation 39, sessionization 33, grounded summaries 45, durative claims 55, and Step 6.4 summary quality 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 729 tests were discovered in 30.385 seconds; 621 passed and 108 database tests skipped. The skipped database groups passed in the sequential live gates above.
+- Release self-verification, in-memory compilation, `git diff --check`, staged and unstaged inspection, secret and leakage scans, out-of-band 126-path protection with exactly nine authorized changes, payload-byte comparison, and Docker cleanup passed.
+
+### Artifacts, costs and limitations
+
+- Index configuration: `configs/retrieval/index_v1.json`, SHA-256 `4579b9fe671985a35f605ad9f0dcf256d4672b95329e597d0876754bc5c84a48`
+- Migration: `migrations/0008_retrieval_indexes.sql`, SHA-256 `57608bce946af98cd88c8ecb1741e4d2ce32520f7894bf81b9beaf103b639156`
+- Dataset manifest: `data/retrieval/index-development-v1/manifest.json`, SHA-256 `b9c1afd7490d78d25d9bd37d34abb0b90b739908f6ab3da89f9e3b7da343f8fc`
+- Result manifest: `results/retrieval/index-development-v1/manifest.json`, SHA-256 `5854d9389224128549df992a9fd7f60e857333ed273adb946b1c1c8c58dea0c6`
+- Records: `records.jsonl`, SHA-256 `e29531cd3bf72419c947a31b13c0b4adbd008f019dfbfc3e6a820ad541e23cfe`
+- Checks: `checks.json`, SHA-256 `513c869d0ed4c1247be650a065ac88ad1b4b8256f9c3c9c029d53aa70f59441d`
+- Run metadata: `run.json`, SHA-256 `802c46fc63cefcb5d2e99a9a27f6ebf9b6173e4519da0bf4433fa17286168987`
+- Findings: `findings.md`, SHA-256 `11a712bbd98e9340a3c0a06840ade6181c0ca6fd4acc8794b2b9950e2f4a2980`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Step 7.1 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- The development handoff contains only candidate atomic claims and no accepted durative claim. The token-hash vectors prove index mechanics and reproducibility; they do not establish semantic retrieval quality, relevance, ranking, latency, or production embedding quality.
+
+### Next-step input
+
+Step 7.2 receives the frozen index schema, deterministic renderer and embedder contract, exact record lineage, deletion-aware rebuild behavior, and immutable 50-record development release. Query classification, filters, ranking, fusion, retrieval scoring, and answers have not started and require separate guidance and authorization.
