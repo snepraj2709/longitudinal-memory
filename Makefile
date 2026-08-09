@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
+.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -77,6 +77,16 @@ test-conflict-eval:
 		tests.integration.test_conflict_candidates \
 		tests.integration.test_conflict_relations \
 		tests.integration.test_belief_resolution -v
+
+test-sessionization:
+	@set -eu; \
+	trap 'docker compose down -v >/dev/null' EXIT; \
+	docker compose up -d --wait storage-db; \
+	STORAGE_DATABASE_URL=postgresql://storage_test:storage_test@127.0.0.1:55432/longitudinal_memory \
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \
+		tests.unit.test_sessionization \
+		tests.unit.test_sessionization_evaluation \
+		tests.integration.test_sessionization -v
 
 test-ingestion:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \

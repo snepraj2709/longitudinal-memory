@@ -611,3 +611,68 @@ Current belief selection, historical preservation, unresolved-dispute handling, 
 ### Next-step input
 
 Phase 6 receives the protected Phase 5 candidate, relation, resolution, and component scorecards, together with exact user-scoped provenance and current-belief state. Phase 6.1 has not started and still requires its own implementation and review.
+
+## Phase 6, Step 6.1: Compute deterministic session boundaries
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `548b12750142eb07c8749f0a8f7834ba4c7b7c3b`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-6.1-guidance-v1`, envelope SHA-256 `bdbf7a891369104061b675a9c0754de573444e9eeca27972da6c98b6c863f09f`
+- Commit message: `summary: add deterministic session boundaries`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added a frozen session-boundary configuration and typed contracts for user-scoped, transaction-cutoff reads. Sessions are computed from live source events; this step adds no migration or session table.
+- Conversation and calendar sources form single-source sessions. Email uses `source_events.session_id`, then `metadata.thread_id`, and falls back to the source itself. Conflicting declared email keys fail without exposing either value, and subject text is never used.
+- Chat uses the declared session ID before a metadata thread ID. Declared and unthreaded chats never mix. Unthreaded chats share a session when the gap is at most 1,800 seconds and split at 1,801 seconds.
+- Stable session definition IDs bind the user, source type, boundary rule and internal key. Membership hashes bind the ordered sources, time range, user and as-of cutoff. Raw thread values are not written to output artifacts.
+- PostgreSQL reads require a user and aware as-of time, apply `ingested_at <= as_of`, and order by produced time and source ID. Deletion is reflected on the next read, and earlier as-of views remain reproducible.
+- Added a development loader that reads only the first 20 scaled source records and first two user records. The prefix parser stops before the next record. Runtime code does not load scaled gold, oracle data, review queues or test users.
+- Added unit and live PostgreSQL coverage, an immutable development result, a focused Makefile target, and the narrow Step 5.4 replay adapter. The adapter permits exactly two predecessor drifts: the Makefile target and its own replay test.
+
+### Results
+
+The release contains 20 deterministic sessions from 20 development sources, split evenly between `user_001` and `user_002`. The type counts are eight conversation sessions and four each for email, chat and calendar. Source coverage is `20/20`; failures, invalid sessions, duplicate sources and cross-user outputs are all zero.
+
+The frozen development sources happen to have unique declared thread IDs, so the release does not exercise multi-source grouping. The live fixtures cover the 1,800-second boundary, declared-key precedence, late ingestion, deletion, bridge recomputation, last-member removal and tombstones.
+
+### Tests and contract checks
+
+- `make test-sessionization PYTHON=.venv-storage/bin/python`: 33 tests passed against disposable PostgreSQL 16.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected candidate tests passed.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 protected relation tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 protected resolver tests passed.
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 protected Phase 5 evaluator tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 559 tests were discovered in 30.823 seconds; 492 passed and 67 database tests skipped. Every skipped database group passed in the sequential Docker targets above.
+- Exact boundary inclusivity, declared-key precedence and conflicts, user and as-of filtering before grouping, stable IDs and hashes, deletion-derived recomputation, prefix isolation, immutable output refusal, and two clean byte-identical runs passed.
+- `git diff --check`, staged and unstaged inspection, result self-verification, the changed-file secret and leakage scans, all 68 effective predecessor hashes, and Docker cleanup passed.
+
+### Files, protected inputs and costs
+
+- Added `configs/summaries/session_boundaries_v1.json`, `data/summaries/sessionization-development-v1/manifest.json`, the five files under `src/summaries`, three focused test files, and the six-file immutable result under `results/summaries/sessionization-development-v1`.
+- Changed only `Makefile`, `tests/integration/test_phase5_conflict_evaluation.py`, and this ledger outside those new paths. Production migrations, storage, ingestion, temporal and conflict code remain unchanged.
+- The Step 5.4 manifest kept SHA-256 `35f37c3ef5f4a45739df200e64053a5d35552dec264336bb6bca3b701fb850ff`. Its five non-manifest artifacts remained byte-identical, and its fresh replay still matched those artifacts under the current Makefile.
+- Step 6.1 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Boundary configuration: `configs/summaries/session_boundaries_v1.json`, SHA-256 `d2af3cbfd35e24d1f0b3a10acd148fb46a7fc2b4cd96268182bd12dd8570f20b`
+- Dataset manifest: `data/summaries/sessionization-development-v1/manifest.json`, SHA-256 `c139e2624cbec7904ca8edd67b4b1f42423dcfda8a47a1d8ca04cf8ee5507b69`
+- Result manifest: `results/summaries/sessionization-development-v1/manifest.json`, SHA-256 `34611525b22cb9dcf8b5c9eb4affd2422d778b58b4b443c90913ce29c8f9365c`
+- Predictions: `predictions.jsonl`, SHA-256 `2b7de7fc1b2d821867e8eeaa29182a1e22e15977387ce40e46301e2e56f86845`
+- Scores: `scores.json`, SHA-256 `12fd9d01232fa5e1a418d699388c5bf333676d0827c477bcc85c4c5b66c02131`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- This step tests deterministic boundary mechanics and source coverage. It does not assess summary quality, create durative memories, persist sessions, call a model, or inspect frozen test users.
+
+### Next-step input
+
+Step 6.2 receives the frozen boundary configuration, typed session contracts, user-scoped repository, immutable 20-source development release, and deletion-aware as-of behavior. Step 6.2 has not started and still requires separate implementation and review.

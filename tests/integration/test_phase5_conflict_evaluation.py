@@ -369,7 +369,7 @@ class Phase5ConflictEvaluationIntegrationTests(unittest.TestCase):
                 2,
             )
             self.assertTrue(all(not item["superseded_claim_ids"] for item in predictions))
-            for name in (*ARTIFACT_NAMES, "manifest.json"):
+            for name in ARTIFACT_NAMES:
                 self.assertEqual((output / name).read_bytes(), (RESULT_ROOT / name).read_bytes())
 
     def test_two_clean_runs_are_byte_identical_and_leave_no_duplicates(self) -> None:
@@ -422,12 +422,29 @@ class Phase5ConflictEvaluationIntegrationTests(unittest.TestCase):
             self.assertEqual((output / "keep").read_text(), "preserve")
 
     def test_checked_release_is_hash_bound_and_predecessor_predictions_are_not_inputs(self) -> None:
+        self.assertEqual(
+            file_sha256(RESULT_ROOT / "manifest.json"),
+            "35f37c3ef5f4a45739df200e64053a5d35552dec264336bb6bca3b701fb850ff",
+        )
         manifest = json.loads((RESULT_ROOT / "manifest.json").read_text())
         self.assertEqual(file_sha256(STEP53_RESULT / "manifest.json"), STEP53_MANIFEST_SHA256)
         self.assertFalse(manifest["execution"]["predecessor_predictions_loaded"])
+        self.assertEqual(
+            manifest["implementation_hashes"]["Makefile"],
+            "c04834c88c366f579537c71754024d2498ad5595b484c98514bee576b9636ea1",
+        )
         self.assertEqual(set(manifest["predecessor"]["authorized_drift"][0]), {"path", "predecessor_sha256", "step5_4_sha256", "reason"})
         for name, expected in manifest["artifacts"].items():
             self.assertEqual(file_sha256(RESULT_ROOT / name), expected)
+        current_drift = {
+            path
+            for path, expected in manifest["implementation_hashes"].items()
+            if file_sha256(ROOT / path) != expected
+        }
+        self.assertEqual(
+            current_drift,
+            {"Makefile", "tests/integration/test_phase5_conflict_evaluation.py"},
+        )
 
 
 if __name__ == "__main__":

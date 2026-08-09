@@ -1,0 +1,61 @@
+{
+  "dataset_version": "sessionization_development_v1",
+  "split": "development",
+  "review_status": "implementation_reviewed",
+  "source_count": 20,
+  "user_counts": {
+    "user_001": 10,
+    "user_002": 10
+  },
+  "expected_source_order": [
+    "scaled_user_001_conversation_001",
+    "scaled_user_001_email_001",
+    "scaled_user_001_chat_001",
+    "scaled_user_001_calendar_001",
+    "scaled_user_001_conversation_002",
+    "scaled_user_001_email_002",
+    "scaled_user_001_chat_002",
+    "scaled_user_001_calendar_002",
+    "scaled_user_001_conversation_003",
+    "scaled_user_001_conversation_004",
+    "scaled_user_002_conversation_001",
+    "scaled_user_002_email_001",
+    "scaled_user_002_chat_001",
+    "scaled_user_002_calendar_001",
+    "scaled_user_002_conversation_002",
+    "scaled_user_002_email_002",
+    "scaled_user_002_chat_002",
+    "scaled_user_002_calendar_002",
+    "scaled_user_002_conversation_003",
+    "scaled_user_002_conversation_004"
+  ],
+  "expected_session_counts": {
+    "calendar": 4,
+    "chat": 4,
+    "conversation": 8,
+    "email": 4,
+    "total": 20
+  },
+  "inputs": {
+    "sources": {
+      "path": "data/scaled-v1/runtime/sources.jsonl",
+      "frozen_file_sha256": "a5cbdf38faf22689726c5d5998ea58e2b9e8a19acfae9318511064b5e29235de",
+      "development_prefix_records": 20,
+      "development_prefix_sha256": "b0dc2b0dae985b51e2e25e441f98dcbe8d86045fa6a3beae2545f50de9e844d9"
+    },
+    "users": {
+      "path": "data/scaled-v1/runtime/users.jsonl",
+      "frozen_file_sha256": "13e118ad1e8ecda61616eec51d6ff896ee37321f48a8c187d6c460af898cc3ef",
+      "development_prefix_records": 2,
+      "development_prefix_sha256": "3cb98b28b57ed333c170eb93ba2bdd9cea1c24941df74d3d60e75397a88fbfdd"
+    },
+    "boundary_config": {
+      "path": "configs/summaries/session_boundaries_v1.json",
+      "sha256": "d2af3cbfd35e24d1f0b3a10acd148fb46a7fc2b4cd96268182bd12dd8570f20b"
+    }
+  },
+  "loader_boundary": "parse_exact_development_prefix_only_and_stop_before_test_records",
+  "evaluation_contract": "deterministic_runtime_source_coverage_no_scorer_inputs_or_persisted_sessions",
+  "guidance_version": "step-6.1-guidance-v1",
+  "decision_envelope_sha256": "bdbf7a891369104061b675a9c0754de573444e9eeca27972da6c98b6c863f09f"
+}

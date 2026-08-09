@@ -1,0 +1,30 @@
+{
+  "boundary_version": "session_boundaries_v1",
+  "calendar_boundary_kind": "source",
+  "chat_declared_boundary_kind": "declared_thread",
+  "chat_declared_key_precedence": [
+    "session_id",
+    "metadata.thread_id"
+  ],
+  "chat_unthreaded_boundary_kind": "inactivity",
+  "chat_unthreaded_gap_seconds": 1800,
+  "conversation_boundary_kind": "source",
+  "email_boundary_kind": "declared_thread_or_source",
+  "email_declared_key_precedence": [
+    "session_id",
+    "metadata.thread_id"
+  ],
+  "email_thread_conflict": "reject",
+  "review_status": "implementation_reviewed",
+  "session_order": [
+    "start_at",
+    "source_type",
+    "first_source_id",
+    "definition_id"
+  ],
+  "source_order": [
+    "produced_at",
+    "source_id"
+  ],
+  "visibility_rule": "ingested_at_lte_transaction_as_of"
+}
