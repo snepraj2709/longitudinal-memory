@@ -53,7 +53,10 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.connection.execute("DROP SCHEMA public CASCADE")
         self.connection.execute("CREATE SCHEMA public")
-        self.assertEqual(apply_migrations(self.connection, MIGRATIONS), ("0001_phase4_storage.sql",))
+        self.assertEqual(
+            apply_migrations(self.connection, MIGRATIONS),
+            ("0001_phase4_storage.sql", "0002_ingestion_reprocessing.sql"),
+        )
         self.repository = StorageRepository(self.connection)
 
     def test_clean_and_repeated_migration_enable_vector_and_all_tables(self) -> None:
@@ -76,6 +79,9 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
                 "claims",
                 "claim_versions",
                 "evidence_links",
+                "claim_extractions",
+                "processing_outbox",
+                "source_tombstones",
             },
         )
         self.assertEqual(
@@ -107,12 +113,12 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
         records = self._insert_complete_graph()
         for insert, get, record, identity in (
             (self.repository.insert_user, self.repository.get_user, records["user"], ("user_1",)),
-            (self.repository.insert_source_event, self.repository.get_source_event, records["source"], ("source_1",)),
-            (self.repository.insert_source_span, self.repository.get_source_span, records["span"], ("span_1",)),
+            (self.repository.insert_source_event, self.repository.get_source_event, records["source"], ("user_1", "source_1")),
+            (self.repository.insert_source_span, self.repository.get_source_span, records["span"], ("user_1", "span_1")),
             (self.repository.insert_extraction_version, self.repository.get_extraction_version, records["extraction"], ("extractor_1",)),
-            (self.repository.insert_processing_attempt, self.repository.get_processing_attempt, records["attempt"], ("attempt_1",)),
-            (self.repository.insert_claim, self.repository.get_claim, records["claim"], ("claim_1",)),
-            (self.repository.insert_claim_version, self.repository.get_claim_version, records["version"], ("version_1",)),
+            (self.repository.insert_processing_attempt, self.repository.get_processing_attempt, records["attempt"], ("user_1", "attempt_1")),
+            (self.repository.insert_claim, self.repository.get_claim, records["claim"], ("user_1", "claim_1")),
+            (self.repository.insert_claim_version, self.repository.get_claim_version, records["version"], ("user_1", "version_1")),
         ):
             self.assertEqual(get(*identity), record)
             self.assertEqual(insert(record), record)
@@ -142,7 +148,10 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
             self.connection.execute("DELETE FROM source_events WHERE source_id = 'source_1'")
         with self.assertRaises(psycopg.errors.ForeignKeyViolation):
             self.connection.execute("DELETE FROM claims WHERE claim_id = 'claim_1'")
-        self.assertEqual(self.repository.get_claim(records["claim"].claim_id), records["claim"])
+        self.assertEqual(
+            self.repository.get_claim("user_1", records["claim"].claim_id),
+            records["claim"],
+        )
 
     def test_stable_id_idempotency_open_version_and_checks_reject_drift(self) -> None:
         records = self._insert_complete_graph()

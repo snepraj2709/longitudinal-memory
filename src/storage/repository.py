@@ -9,14 +9,17 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
 from .contracts import (
+    ClaimExtractionRecord,
     ClaimRecord,
     ClaimVersionRecord,
     EvidenceLinkRecord,
     ExtractionVersionRecord,
     MemoryUser,
+    ProcessingOutboxRecord,
     ProcessingAttemptRecord,
     SourceEventRecord,
     SourceSpanRecord,
+    SourceTombstoneRecord,
 )
 
 
@@ -34,6 +37,9 @@ Record = TypeVar(
     ClaimRecord,
     ClaimVersionRecord,
     EvidenceLinkRecord,
+    ClaimExtractionRecord,
+    ProcessingOutboxRecord,
+    SourceTombstoneRecord,
 )
 
 _JSON_COLUMNS = {
@@ -41,6 +47,7 @@ _JSON_COLUMNS = {
     "metadata",
     "sanitized_error_metadata",
     "object_json",
+    "payload",
 }
 
 
@@ -57,16 +64,45 @@ class StorageRepository:
         return self._get("memory_users", MemoryUser, {"user_id": user_id})
 
     def insert_source_event(self, record: SourceEventRecord) -> SourceEventRecord:
-        return self._insert("source_events", record, {"source_id": record.source_id})
+        return self._insert(
+            "source_events",
+            record,
+            {"user_id": record.user_id, "source_id": record.source_id},
+        )
 
-    def get_source_event(self, source_id: str) -> SourceEventRecord | None:
-        return self._get("source_events", SourceEventRecord, {"source_id": source_id})
+    def get_source_event(
+        self, user_id: str, source_id: str
+    ) -> SourceEventRecord | None:
+        return self._get(
+            "source_events",
+            SourceEventRecord,
+            {"user_id": user_id, "source_id": source_id},
+        )
+
+    def get_source_event_by_idempotency(
+        self, user_id: str, idempotency_key: str
+    ) -> SourceEventRecord | None:
+        return self._get(
+            "source_events",
+            SourceEventRecord,
+            {"user_id": user_id, "idempotency_key": idempotency_key},
+        )
 
     def insert_source_span(self, record: SourceSpanRecord) -> SourceSpanRecord:
-        return self._insert("source_spans", record, {"span_id": record.span_id})
+        return self._insert(
+            "source_spans",
+            record,
+            {"user_id": record.user_id, "span_id": record.span_id},
+        )
 
-    def get_source_span(self, span_id: str) -> SourceSpanRecord | None:
-        return self._get("source_spans", SourceSpanRecord, {"span_id": span_id})
+    def get_source_span(
+        self, user_id: str, span_id: str
+    ) -> SourceSpanRecord | None:
+        return self._get(
+            "source_spans",
+            SourceSpanRecord,
+            {"user_id": user_id, "span_id": span_id},
+        )
 
     def insert_extraction_version(
         self, record: ExtractionVersionRecord
@@ -86,32 +122,48 @@ class StorageRepository:
         self, record: ProcessingAttemptRecord
     ) -> ProcessingAttemptRecord:
         return self._insert(
-            "processing_attempts", record, {"attempt_id": record.attempt_id}
+            "processing_attempts",
+            record,
+            {"user_id": record.user_id, "attempt_id": record.attempt_id},
         )
 
     def get_processing_attempt(
-        self, attempt_id: str
+        self, user_id: str, attempt_id: str
     ) -> ProcessingAttemptRecord | None:
         return self._get(
-            "processing_attempts", ProcessingAttemptRecord, {"attempt_id": attempt_id}
+            "processing_attempts",
+            ProcessingAttemptRecord,
+            {"user_id": user_id, "attempt_id": attempt_id},
         )
 
     def insert_claim(self, record: ClaimRecord) -> ClaimRecord:
-        return self._insert("claims", record, {"claim_id": record.claim_id})
+        return self._insert(
+            "claims",
+            record,
+            {"user_id": record.user_id, "claim_id": record.claim_id},
+        )
 
-    def get_claim(self, claim_id: str) -> ClaimRecord | None:
-        return self._get("claims", ClaimRecord, {"claim_id": claim_id})
+    def get_claim(self, user_id: str, claim_id: str) -> ClaimRecord | None:
+        return self._get(
+            "claims", ClaimRecord, {"user_id": user_id, "claim_id": claim_id}
+        )
 
     def insert_claim_version(
         self, record: ClaimVersionRecord
     ) -> ClaimVersionRecord:
         return self._insert(
-            "claim_versions", record, {"version_id": record.version_id}
+            "claim_versions",
+            record,
+            {"user_id": record.user_id, "version_id": record.version_id},
         )
 
-    def get_claim_version(self, version_id: str) -> ClaimVersionRecord | None:
+    def get_claim_version(
+        self, user_id: str, version_id: str
+    ) -> ClaimVersionRecord | None:
         return self._get(
-            "claim_versions", ClaimVersionRecord, {"version_id": version_id}
+            "claim_versions",
+            ClaimVersionRecord,
+            {"user_id": user_id, "version_id": version_id},
         )
 
     def insert_evidence_link(
@@ -140,6 +192,74 @@ class StorageRepository:
                 "span_id": span_id,
                 "support_type": support_type,
             },
+        )
+
+    def insert_claim_extraction(
+        self, record: ClaimExtractionRecord
+    ) -> ClaimExtractionRecord:
+        return self._insert(
+            "claim_extractions",
+            record,
+            {
+                "user_id": record.user_id,
+                "claim_id": record.claim_id,
+                "source_id": record.source_id,
+                "extraction_version_id": record.extraction_version_id,
+            },
+        )
+
+    def get_claim_extraction(
+        self,
+        user_id: str,
+        claim_id: str,
+        source_id: str,
+        extraction_version_id: str,
+    ) -> ClaimExtractionRecord | None:
+        return self._get(
+            "claim_extractions",
+            ClaimExtractionRecord,
+            {
+                "user_id": user_id,
+                "claim_id": claim_id,
+                "source_id": source_id,
+                "extraction_version_id": extraction_version_id,
+            },
+        )
+
+    def insert_outbox(
+        self, record: ProcessingOutboxRecord
+    ) -> ProcessingOutboxRecord:
+        return self._insert(
+            "processing_outbox",
+            record,
+            {"user_id": record.user_id, "event_id": record.event_id},
+        )
+
+    def get_outbox(
+        self, user_id: str, event_id: str
+    ) -> ProcessingOutboxRecord | None:
+        return self._get(
+            "processing_outbox",
+            ProcessingOutboxRecord,
+            {"user_id": user_id, "event_id": event_id},
+        )
+
+    def insert_tombstone(
+        self, record: SourceTombstoneRecord
+    ) -> SourceTombstoneRecord:
+        return self._insert(
+            "source_tombstones",
+            record,
+            {"user_id": record.user_id, "source_id": record.source_id},
+        )
+
+    def get_tombstone(
+        self, user_id: str, source_id: str
+    ) -> SourceTombstoneRecord | None:
+        return self._get(
+            "source_tombstones",
+            SourceTombstoneRecord,
+            {"user_id": user_id, "source_id": source_id},
         )
 
     def _insert(

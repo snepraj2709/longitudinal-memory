@@ -15,6 +15,15 @@ JSONValue: TypeAlias = JSONScalar | list["JSONValue"] | dict[str, "JSONValue"]
 
 SOURCE_TYPES = frozenset({"conversation", "email", "calendar", "chat"})
 PROCESSING_STATES = frozenset({"pending", "running", "succeeded", "failed"})
+OUTBOX_EVENT_TYPES = frozenset(
+    {
+        "source_ingested",
+        "claims_changed",
+        "claim_recompute_required",
+        "source_deleted",
+    }
+)
+OUTBOX_STATES = frozenset({"pending", "published"})
 POLARITIES = frozenset({"positive", "negative"})
 EPISTEMIC_STATUSES = frozenset(
     {"asserted", "inferred", "reported_by_other", "hypothetical", "uncertain", "denied", "corrected"}
@@ -195,6 +204,9 @@ class ProcessingAttemptRecord:
     completed_at: datetime | None = None
     sanitized_error_code: str | None = None
     sanitized_error_metadata: dict[str, JSONValue] | None = None
+    lease_owner: str | None = None
+    lease_expires_at: datetime | None = None
+    retryable: bool = False
 
     def __post_init__(self) -> None:
         for name in ("attempt_id", "user_id", "source_id", "extraction_version_id"):
@@ -210,6 +222,36 @@ class ProcessingAttemptRecord:
         _text(self.sanitized_error_code, "sanitized_error_code", nullable=True)
         if self.sanitized_error_metadata is not None:
             object.__setattr__(self, "sanitized_error_metadata", safe_json(self.sanitized_error_metadata, "sanitized_error_metadata", top_type=dict))
+        _text(self.lease_owner, "lease_owner", nullable=True)
+        if self.lease_expires_at is not None:
+            _aware(self.lease_expires_at, "lease_expires_at")
+        if not isinstance(self.retryable, bool):
+            raise StorageValidationError("retryable must be a boolean")
+        self._validate_state()
+
+    def _validate_state(self) -> None:
+        has_error = self.sanitized_error_code is not None
+        has_lease = self.lease_owner is not None or self.lease_expires_at is not None
+        if self.state == "pending" and (
+            self.completed_at is not None or has_error or has_lease or not self.retryable
+        ):
+            raise StorageValidationError("pending attempt fields are inconsistent")
+        if self.state == "running" and (
+            self.completed_at is not None
+            or has_error
+            or self.lease_owner is None
+            or self.lease_expires_at is None
+            or not self.retryable
+        ):
+            raise StorageValidationError("running attempt fields are inconsistent")
+        if self.state == "succeeded" and (
+            self.completed_at is None or has_error or has_lease or self.retryable
+        ):
+            raise StorageValidationError("succeeded attempt fields are inconsistent")
+        if self.state == "failed" and (
+            self.completed_at is None or not has_error or has_lease
+        ):
+            raise StorageValidationError("failed attempt fields are inconsistent")
 
 
 @dataclass(frozen=True)
@@ -331,6 +373,72 @@ class EvidenceLinkRecord:
             _text(getattr(self, name), name)
         _enum(self.support_type, SUPPORT_TYPES, "support_type")
         object.__setattr__(self, "extraction_confidence", _confidence(self.extraction_confidence, "extraction_confidence"))
+
+
+@dataclass(frozen=True)
+class ClaimExtractionRecord:
+    user_id: str
+    claim_id: str
+    source_id: str
+    extraction_version_id: str
+    attempt_id: str
+    created_at: datetime
+
+    def __post_init__(self) -> None:
+        for name in (
+            "user_id",
+            "claim_id",
+            "source_id",
+            "extraction_version_id",
+            "attempt_id",
+        ):
+            _text(getattr(self, name), name)
+        _aware(self.created_at, "created_at")
+
+
+@dataclass(frozen=True)
+class ProcessingOutboxRecord:
+    event_id: str
+    user_id: str
+    event_type: str
+    aggregate_id: str
+    dedupe_key: str
+    payload: dict[str, JSONValue]
+    state: str
+    created_at: datetime
+    published_at: datetime | None = None
+
+    def __post_init__(self) -> None:
+        for name in ("event_id", "user_id", "aggregate_id", "dedupe_key"):
+            _text(getattr(self, name), name)
+        _enum(self.event_type, OUTBOX_EVENT_TYPES, "event_type")
+        _enum(self.state, OUTBOX_STATES, "state")
+        object.__setattr__(
+            self, "payload", safe_json(self.payload, "payload", top_type=dict)
+        )
+        _aware(self.created_at, "created_at")
+        if self.published_at is not None:
+            _aware(self.published_at, "published_at")
+            if self.published_at < self.created_at:
+                raise StorageValidationError("published_at cannot precede created_at")
+        if (self.state == "pending") != (self.published_at is None):
+            raise StorageValidationError("outbox state and published_at are inconsistent")
+
+
+@dataclass(frozen=True)
+class SourceTombstoneRecord:
+    user_id: str
+    source_id: str
+    idempotency_key: str
+    content_hash: str
+    deleted_at: datetime
+
+    def __post_init__(self) -> None:
+        for name in ("user_id", "source_id", "idempotency_key"):
+            _text(getattr(self, name), name)
+        if not _is_sha256(self.content_hash):
+            raise StorageValidationError("content_hash must be a lowercase SHA-256")
+        _aware(self.deleted_at, "deleted_at")
 
 
 def _is_sha256(value: object) -> bool:

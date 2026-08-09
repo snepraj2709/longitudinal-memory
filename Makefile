@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: test test-storage validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
+.PHONY: test test-storage test-ingestion validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -10,7 +10,13 @@ test-storage:
 	docker compose up -d --wait storage-db; \
 	STORAGE_DATABASE_URL=postgresql://storage_test:storage_test@127.0.0.1:55432/longitudinal_memory \
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \
-		tests.unit.test_storage_contracts tests.integration.test_phase4_storage -v
+		tests.unit.test_storage_contracts tests.unit.test_ingestion_contracts \
+		tests.integration.test_phase4_storage \
+		tests.integration.test_ingestion_service -v
+
+test-ingestion:
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \
+		tests.unit.test_ingestion_contracts -v
 
 validate-benchmark-v1:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m evaluation.benchmark_release --repo-root .
