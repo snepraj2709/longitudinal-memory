@@ -104,3 +104,66 @@ The final development scorecard compares 33 predicted claims with 32 reviewed cl
 Phase 4 receives the immutable `claims.jsonl`, predicate registry v2, manifest, reverse evidence index, scorecard, and known-limitations file from `phase4-input-development-gpt41-fallback-v1`.
 
 Step 4.1 has not started. It still requires separate approval.
+
+## Phase 4, Step 4.1: Add storage and migrations
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `a768f6292d0c1404876ba1273ecbbd25829f9ed8`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-4.1-guidance-v1`, envelope SHA-256 `104d11223157154be066b61357cf7e75d62fbccc415f034722750a46cfed0af0`
+- Commit message: `storage: add Phase 4 PostgreSQL schema`
+- The worktree was clean after the final commit check.
+
+### Implementation
+
+- Added one checksum-bound SQL migration and a small advisory-lock migration runner. Reapplying the same migration is a no-op; changing an applied migration's bytes is an error.
+- Added eight domain tables: `memory_users`, `source_events`, `source_spans`, `extraction_versions`, `processing_attempts`, `claims`, `claim_versions`, and `evidence_links`. The runner also owns `schema_migrations`.
+- Added typed, frozen Python records and a parameter-bound repository. The repository inserts and reads records without committing the caller's transaction.
+- Added composite `(user_id, id)` foreign keys for sources, spans, claims, versions, and evidence. Cross-user evidence cannot satisfy these keys.
+- Added database checks for enums, confidence ranges, JSON shapes, stable IDs, exact span offsets, valid-time representation, transaction interval order, idempotency keys, and one open version per claim.
+- Source and claim deletion uses `ON DELETE RESTRICT`. Step 4.2 still owns deletion propagation and reprocessing behaviour.
+- The reviewer changed unknown valid-time membership so null boundaries do not match a date. Date and timestamp query representations can no longer cross. The reviewer also moved the Docker cleanup trap ahead of container startup.
+
+### Schema and dependency pins
+
+- Migration: `migrations/0001_phase4_storage.sql`, SHA-256 `6f8a84ce1f78adeccfd7ff15d830dbcf844c34159a0ed34ce11cea4313e95359`
+- PostgreSQL image: `pgvector/pgvector:0.8.6-pg16@sha256:84a355869251af1a3379cfc9fa7b4dbf962c03f642a4bb7b339a203925071c43`
+- Python driver: `psycopg[binary]==3.3.4`
+- Requirements file SHA-256: `d375af9a0f805ccfd0fbf9a4943cfc6f44b4d7371e6a2376f6b8318d3c73e3d6`
+- Compose file SHA-256: `c53c4d37a256e2203f32566a3196c246cd5b2bb67ad8e1839095c9c1c8b0f51a`
+- PostgreSQL reported pgvector `0.8.6`. The schema enables the extension but has no embedding column, vector dimension, or vector index.
+
+### Phase 3 handoff check
+
+The PostgreSQL integration test loaded all 20 development source records and all 33 Phase 3 claims in one transaction. It preserved the canonical claim IDs, created 33 candidate versions and 33 evidence links, and left `memory_kind`, `sensitivity`, and `belief_confidence` null. The test then rolled back the transaction and confirmed that every loaded domain table was empty.
+
+The weak Phase 3 scorecard remains unchanged: precision `0.303030`, recall `0.312500`, F1 `0.307692`, unsupported-memory rate `15/33`, and valid-time accuracy `0.000000`. Step 4.1 did not filter, promote, repair, or rescore a claim.
+
+### Tests and contract checks
+
+- `make test-storage PYTHON=.venv-storage/bin/python`: 16 tests passed, including seven tests against disposable PostgreSQL 16 with pgvector 0.8.6.
+- `make validate-scaled-benchmark`: passed with the frozen `scaled_v1` counts and dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test`: 355 tests passed in 23.166 seconds. The seven Docker-only tests were skipped in this command and passed in `make test-storage`.
+- Clean and repeated migration, checksum drift, typed round trips, stable-ID conflicts, duplicate idempotency, cross-user references, unknown references, invalid JSON, offset and enum checks, interval order, one-open-version uniqueness, and transaction rollback all passed.
+- Valid time is inclusive. Transaction time includes its start and excludes its end. Unknown valid time does not imply current membership.
+- The protected Phase 3 manifest, claims, evidence index, scores, failures, and predicate registry kept their recorded hashes.
+- Runtime storage code reads no gold or oracle files and makes no model calls. Step 4.1 used zero OpenAI requests, tokens, and cost.
+- The changed-file secret scan found no API key, private key, `.env`, or secret-shaped token.
+- The disposable Docker container, network, and volumes were absent after the storage test.
+
+### Limitations
+
+- This step provides schema and record access only. It does not implement ingestion acknowledgement, retries, reprocessing, lifecycle transitions, `as_of` queries, conflict resolution, deletion propagation, retrieval, or embeddings.
+- Lifecycle values beyond `candidate` are schema vocabulary for later steps. This step does not promote claims or decide what is current.
+- The integration load is a rollback proof, not a retained development database or a performance measurement.
+- Phase 3 extraction quality remains the limiting input quality and must stay visible in later temporal results.
+
+### Next-step input
+
+Step 4.2 receives the versioned SQL migration, typed storage records, checksum migration runner, transaction-scoped repository, pinned disposable PostgreSQL configuration, and the 20-source/33-claim rollback test.
+
+Step 4.2 has not started. It still requires separate implementation and review.
