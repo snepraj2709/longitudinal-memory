@@ -1,0 +1,222 @@
+from __future__ import annotations
+
+from dataclasses import replace
+import ast
+import json
+import os
+from pathlib import Path
+import tempfile
+import unittest
+
+try:
+    import psycopg
+except ModuleNotFoundError:
+    psycopg = None
+
+from evaluation.run_temporal import execute_temporal_evaluation
+from evaluation.temporal import (
+    TemporalEvaluationError,
+    load_temporal_runtime,
+    run_temporal_cases,
+)
+from storage.migrations import apply_migrations
+
+if psycopg is not None:
+    from storage.repository import StorageRepository
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DATABASE_URL = os.environ.get("STORAGE_DATABASE_URL")
+
+
+@unittest.skipUnless(
+    psycopg is not None and DATABASE_URL,
+    "psycopg and STORAGE_DATABASE_URL are required for temporal evaluation integration tests",
+)
+class TemporalEvaluationIntegrationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.connection = psycopg.connect(DATABASE_URL, autocommit=True)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.connection.close()
+
+    def reset_database(self) -> None:
+        self.connection.execute("DROP SCHEMA public CASCADE")
+        self.connection.execute("CREATE SCHEMA public")
+
+    def test_all_cases_score_on_clean_database_and_repeat_byte_identically(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            first = Path(temporary) / "first"
+            second = Path(temporary) / "second"
+            self.reset_database()
+            first_manifest = execute_temporal_evaluation(
+                self.connection, repo_root=REPO_ROOT, result_root=first
+            )
+            predictions = [json.loads(line) for line in first.joinpath("predictions.jsonl").read_text().splitlines()]
+            failures = first.joinpath("failures.jsonl").read_text()
+            scores = json.loads(first.joinpath("scores.json").read_text())
+            self.assertEqual(len(predictions), 12)
+            self.assertEqual(failures, "")
+            self.assertEqual(first_manifest["execution"]["failure_count"], 0)
+            for name in (
+                "event_ordering_accuracy",
+                "date_normalization_accuracy",
+                "interval_relation_accuracy",
+                "current_state_accuracy",
+                "historical_state_accuracy",
+                "correction_visibility_accuracy",
+            ):
+                self.assertEqual(scores[name]["value"], 1.0, name)
+            self.assertEqual(scores["mean_interval_iou"]["value"], 0.027027)
+
+            by_case = {item["case_id"]: item for item in predictions}
+            self.assertEqual(
+                by_case["t44_u1_correction_before"]["current_claim_ids"],
+                ["t44_before_old_claim"],
+            )
+            self.assertEqual(
+                by_case["t44_u1_correction_at"]["current_claim_ids"],
+                ["t44_at_new_claim"],
+            )
+            self.assertEqual(
+                by_case["t44_u1_normal_change"]["historical_claim_ids"],
+                ["t44_normal_old_claim"],
+            )
+            self.assertEqual(
+                by_case["t44_u2_out_of_order"]["ordered_source_ids"],
+                ["t44_order_conversation", "t44_order_email"],
+            )
+            runtime = load_temporal_runtime(
+                REPO_ROOT / "data/phase4/temporal-development-v1/runtime/cases.jsonl"
+            )
+            repeated = next(item for item in runtime if item.case_id == "t44_u1_repeated_evidence")
+            self.assertEqual(repeated.claims[0]["span_ids"], ["t44_repeat_span_a", "t44_repeat_span_b"])
+            self.assertEqual(
+                self.connection.execute("SELECT count(*) FROM claims").fetchone()[0],
+                0,
+            )
+
+            artifact_names = (
+                "predictions.jsonl",
+                "failures.jsonl",
+                "scores.json",
+                "run.json",
+                "findings.md",
+                "manifest.json",
+            )
+            first_artifacts = {
+                name: first.joinpath(name).read_bytes() for name in artifact_names
+            }
+            self.reset_database()
+            second_manifest = execute_temporal_evaluation(
+                self.connection, repo_root=REPO_ROOT, result_root=second
+            )
+            for name, payload in first_artifacts.items():
+                self.assertEqual(second.joinpath(name).read_bytes(), payload, name)
+            self.assertEqual(first_manifest, second_manifest)
+
+    def test_cross_user_runtime_reference_becomes_sanitized_failure(self) -> None:
+        self.reset_database()
+        apply_migrations(self.connection, REPO_ROOT / "migrations")
+        runtime = load_temporal_runtime(
+            REPO_ROOT / "data/phase4/temporal-development-v1/runtime/cases.jsonl"
+        )
+        changed = replace(runtime[0], user_id="user_002")
+        predictions, failures = run_temporal_cases(
+            self.connection, (changed,), REPO_ROOT
+        )
+        self.assertEqual(predictions, ())
+        self.assertEqual(len(failures), 1)
+        self.assertEqual(failures[0].case_id, changed.case_id)
+        self.assertEqual(failures[0].location, "case")
+        self.assertNotIn("Asha", failures[0].code)
+
+    def test_runner_refuses_a_database_with_existing_runtime_rows(self) -> None:
+        self.reset_database()
+        apply_migrations(self.connection, REPO_ROOT / "migrations")
+        self.connection.execute(
+            "INSERT INTO memory_users (user_id, created_at) VALUES (%s, %s)",
+            ("existing_user", "2026-01-01T00:00:00Z"),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            with self.assertRaisesRegex(TemporalEvaluationError, "clean database"):
+                execute_temporal_evaluation(
+                    self.connection,
+                    repo_root=REPO_ROOT,
+                    result_root=Path(temporary) / "result",
+                )
+
+    def test_runtime_import_graph_has_no_scaled_gold_or_oracle_dependency(self) -> None:
+        source_path = REPO_ROOT / "src/evaluation/temporal.py"
+        source = source_path.read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        imports = {
+            alias.name
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Import)
+            for alias in node.names
+        } | {
+            node.module or ""
+            for node in ast.walk(tree)
+            if isinstance(node, ast.ImportFrom)
+        }
+        self.assertFalse(any("scaled_scoring" in name for name in imports))
+        self.assertNotIn("review_queues", source)
+        self.assertNotIn("data/scaled-v1/gold", source)
+        self.assertNotIn("data/scaled-v1/oracle", source)
+
+    def test_existing_twenty_source_thirty_three_claim_replay_is_idempotent(self) -> None:
+        from tests.integration.test_phase4_storage import (
+            Phase4StorageIntegrationTests,
+            _read_jsonl_all,
+            _read_jsonl_prefix,
+        )
+
+        self.reset_database()
+        apply_migrations(self.connection, REPO_ROOT / "migrations")
+        sources = _read_jsonl_prefix(
+            REPO_ROOT / "data/scaled-v1/runtime/sources.jsonl", 20
+        )
+        claims = _read_jsonl_all(
+            REPO_ROOT
+            / "results/phase3/phase4-input-development-gpt41-fallback-v1/claims.jsonl"
+        )
+        self.assertEqual((len(sources), len(claims)), (20, 33))
+        harness = Phase4StorageIntegrationTests(
+            "test_phase3_handoff_loads_20_sources_and_33_weak_candidates_then_rolls_back"
+        )
+        harness.connection = self.connection
+        harness.repository = StorageRepository(self.connection)
+        harness._load_phase3_handoff(sources, claims)
+        first = self._phase3_snapshot()
+        harness._load_phase3_handoff(sources, claims)
+        second = self._phase3_snapshot()
+        self.assertEqual(first, second)
+        self.assertEqual(first["source_count"], 20)
+        self.assertEqual(first["claim_count"], 33)
+        self.assertEqual(len(first["candidate"]), 33)
+        self.assertEqual(first["current"], ())
+        self.assertEqual(first["historical"], ())
+
+    def _phase3_snapshot(self) -> dict[str, object]:
+        statuses = {
+            status: tuple(
+                row[0]
+                for row in self.connection.execute(
+                    "SELECT claim_id FROM claim_versions WHERE lifecycle_status = %s ORDER BY claim_id",
+                    (status,),
+                ).fetchall()
+            )
+            for status in ("candidate", "current", "historical")
+        }
+        return {
+            "source_count": self.connection.execute("SELECT count(*) FROM source_events").fetchone()[0],
+            "claim_count": self.connection.execute("SELECT count(*) FROM claims").fetchone()[0],
+            **statuses,
+        }
+
+
+if __name__ == "__main__":
+    unittest.main()

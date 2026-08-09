@@ -1,0 +1,55 @@
+{
+  "dataset_version": "temporal_development_v1",
+  "split": "development",
+  "case_count": 12,
+  "user_counts": {
+    "user_001": 6,
+    "user_002": 6
+  },
+  "runtime": {
+    "path": "runtime/cases.jsonl",
+    "sha256": "4c67e1a01f0513512f9c1c3d65bacf8a943f66d037c369182a24adae9b656416"
+  },
+  "gold": {
+    "path": "gold/cases.jsonl",
+    "sha256": "1afce9b37f441925826b0511c8e32b004d825b29e2c8d614f10a5c7ca04ceefa",
+    "review_status": "approved",
+    "access_boundary": "after_all_prediction_or_failure_records_are_persisted"
+  },
+  "allowed_users": [
+    "user_001",
+    "user_002"
+  ],
+  "case_order": [
+    "t44_u1_correction_before",
+    "t44_u1_correction_at",
+    "t44_u1_correction_after",
+    "t44_u1_repeated_evidence",
+    "t44_u1_normal_change",
+    "t44_u1_approximate",
+    "t44_u2_timestamp_utc",
+    "t44_u2_out_of_order",
+    "t44_u2_separate_old",
+    "t44_u2_separate_new",
+    "t44_u2_inclusive_endpoint",
+    "t44_u2_transaction_boundary"
+  ],
+  "coverage": [
+    "correction_before_at_after_transaction_cutoff",
+    "repeated_evidence",
+    "normal_change_to_historical",
+    "approximate_date_precision",
+    "timezone_aware_timestamp_utc_equivalence",
+    "out_of_order_ingestion",
+    "separate_valid_periods",
+    "inclusive_valid_boundaries",
+    "half_open_transaction_boundaries",
+    "shared_endpoint_interval_overlap"
+  ],
+  "source_contract": {
+    "scaled_dataset_sha256": "746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61",
+    "loader": "load_scaled_development_sources",
+    "test_users_opened": false,
+    "scaled_gold_or_oracle_opened": false
+  }
+}

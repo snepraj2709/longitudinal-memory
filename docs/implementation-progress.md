@@ -283,3 +283,62 @@ Status: complete
 ### Next-step input
 
 Step 4.4 receives the checksum-bound temporal migration, explicit lifecycle service, immutable transition audit, transactional outbox events, and user-scoped bitemporal query interface. Step 4.4 has not started and still requires a separate implementation and review.
+
+## Phase 4, Step 4.4: Evaluate temporal behavior
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `21ebed2b1d06b623deee2b9b0f72ee45d0ff71d3`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-4.4-guidance-v1`, envelope SHA-256 `294fd04ec604e94f79fe1e276342c15bf1b515b1ecce5c865eee98e8c6d2cb50`
+- Commit message: `eval: add temporal behavior scorecard`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added 12 reviewed development cases, six each for `user_001` and `user_002`. Every source reference resolves through the development-only loader, and every evidence quote and speaker matches its source observation.
+- Kept runtime cases and gold expectations in separate files. The runner writes one prediction or sanitized failure for every runtime case before it hashes or opens gold.
+- Covered correction visibility before, at, and after the transaction cutoff; repeated evidence; a normal change to historical status; approximate dates; time-zone normalization; out-of-order ingestion; separate valid periods; inclusive valid endpoints; shared-endpoint overlap; and half-open transaction boundaries.
+- Added strict runtime, gold, prediction, failure, and scorecard records. Runtime imports have no path to scaled gold, oracle data, or review queues.
+- Added deterministic event-ordering, date-normalization and precision, interval-relation, interval-IoU, current-state, historical-state, and correction-visibility scores. Every score records its denominator; a zero denominator returns null with a reason.
+- Added a clean-database precondition, immutable result-directory checks, protected-input hashes, and byte-stable JSON output. The reviewer also corrected current, historical, and correction scoring to compare exact sets without depending on database row order.
+- Added unit and disposable PostgreSQL tests, including two clean runs that compare all six emitted artifact files byte for byte and a regression that rejects an already populated database.
+
+### Results
+
+The evaluator produced 12 predictions and no failures. Event ordering, date normalization and precision, interval relation, current-state selection, historical-state selection, and correction visibility each scored `1.000000`.
+
+Mean interval IoU was `0.027027` with a denominator of one. This is the exact inclusive overlap for the reviewed shared-endpoint pair: one overlapping day across a 37-day union. The small value is preserved as measured rather than treated as a failed or omitted case.
+
+### Tests and contract checks
+
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 tests passed against disposable PostgreSQL 16.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed against disposable PostgreSQL 16.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed against disposable PostgreSQL 16.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with the frozen `scaled_v1` counts and dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 404 tests were discovered in 24.843 seconds; 374 passed and 30 database tests skipped. Those 30 passed in the Docker targets above.
+- The 12-case run repeated byte-identically from a second clean database. The existing 20-source, 33-candidate Phase 3 handoff also replayed twice without changing counts.
+- Gold sequencing, exact source ownership, source order, cross-user rejection, time-zone equivalence, inclusive valid time, half-open transaction time, failure denominators, immutable output refusal, protected hashes, secret scanning, diff checks, and Docker cleanup passed.
+- Migrations `0001` through `0003`, production storage, ingestion, extraction, and temporal code, the Step 4.3 release, the scaled release, the Phase 3 handoff, the predicate registry, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 4.4 made zero model requests, used zero tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Dataset manifest: `data/phase4/temporal-development-v1/manifest.json`, SHA-256 `785f17876b56ebdf29b8765e104e0160c19befae5271687869e4db9726034f8e`
+- Runtime cases: `runtime/cases.jsonl`, SHA-256 `4c67e1a01f0513512f9c1c3d65bacf8a943f66d037c369182a24adae9b656416`
+- Reviewed gold: `gold/cases.jsonl`, SHA-256 `1afce9b37f441925826b0511c8e32b004d825b29e2c8d614f10a5c7ca04ceefa`
+- Result manifest: `results/phase4/step4.4-temporal-evaluation-v1/manifest.json`, SHA-256 `8f7cc49fbe5620094c618eaaaa98c27ce7a337fdb2747ca9918d8bcfe6d4d644`
+- Predictions: `predictions.jsonl`, SHA-256 `641e2b1221f6b0123c7521b95b997fa7d4a321faf7aa49f4fc8ab1713726c8b1`
+- Scores: `scores.json`, SHA-256 `23ce6b37522e1367d91e72959b3acfb1a6558597a2667f53c0da9bd970a53d9e`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Run metadata: `run.json`, SHA-256 `1613ed40d8e9a73c2263aa651400e2240fda9a3ca46174e76d903d49e44cb285`
+- Findings: `findings.md`, SHA-256 `1317ef934f24f8b3f7eb08b49703bde0bc23855ae1cde4e419d1d223d047159f`
+- This is a 12-case deterministic development evaluation, not a production workload or frozen-test result. Interval IoU has one case, so its mean is descriptive rather than broad evidence.
+- The fixtures exercise explicit lifecycle commands. They do not infer lifecycle changes, classify conflicts, repair the weak Phase 3 claims, or modify the stored development claim set.
+
+### Next-step input
+
+Phase 5 receives the protected relational store and temporal query interface together with the immutable Step 4.4 runtime cases, reviewed gold, predictions, scorecard, manifest, and documented limitations. Step 5 has not started and still requires separate approval.

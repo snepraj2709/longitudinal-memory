@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: test test-storage test-ingestion test-temporal validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
+.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -22,6 +22,15 @@ test-temporal:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \
 		tests.unit.test_temporal_contracts \
 		tests.integration.test_temporal_service -v
+
+test-temporal-eval:
+	@set -eu; \
+	trap 'docker compose down -v >/dev/null' EXIT; \
+	docker compose up -d --wait storage-db; \
+	STORAGE_DATABASE_URL=postgresql://storage_test:storage_test@127.0.0.1:55432/longitudinal_memory \
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \
+		tests.unit.test_temporal_evaluation \
+		tests.integration.test_temporal_evaluation -v
 
 test-ingestion:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \
