@@ -676,3 +676,73 @@ The frozen development sources happen to have unique declared thread IDs, so the
 ### Next-step input
 
 Step 6.2 receives the frozen boundary configuration, typed session contracts, user-scoped repository, immutable 20-source development release, and deletion-aware as-of behavior. Step 6.2 has not started and still requires separate implementation and review.
+
+## Phase 6, Step 6.2: Build grounded session summaries
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `97485bcc62ccc954c63fb1d8cd593d5f0d42533e`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-6.2-guidance-v1`, envelope SHA-256 `175f3a05789d633cefeab329816c38123de4f2226713a82154f10755bb123fd1`
+- Commit message: `summary: add grounded session summaries`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added migration `0006` with user-owned summary definitions, immutable versions, complete source membership, and statement-to-claim-version-and-span evidence. Composite foreign keys enforce ownership, and transaction time is stored as a half-open interval.
+- Source, span, and evidence deletion triggers physically purge every affected summary version before protected predecessor rows are removed. The coordinator also handles each existing source, claim, lifecycle, and recompute outbox event; it adds no new event type.
+- Added a typed transactional repository with deterministic create, exact replay, drift rejection, successor, stale-input, concurrent first-write, and empty-summary behavior. It never mutates an older version.
+- Rendering is structural and deterministic. It preserves status, time, attribution, and sensitivity qualifiers; omits restricted, hypothetical, and excluded claims; marks disputes as unresolved; and asks a question only for explicit uncertainty or dispute. Every statement must cite the exact same-user claim version and source span. No evidence is generated.
+- The development loader binds the protected Step 6.1 sessions to the Phase 3 development claims and evidence. It reads no summary gold, oracle data, review queue, frozen test user, or model output.
+- During review, exact-lineage validation was tightened. Statement claim IDs must now equal the claims represented by their evidence, and provenance scoring independently recomputes and verifies each span ID instead of accepting any span from the same source. Two focused regressions cover these cases.
+
+### Results
+
+The release evaluated 20 sessions. Seventeen produced persisted summaries and three had no eligible evidence and remained explicitly empty. The 17 summaries contain 34 statements and cover all 33 development claims with exact source, span, claim-version, and session-membership lineage. One uncertain claim produces a separate review question.
+
+All structural coverage and consistency metrics scored `1.000000`; invalid, stale, cross-user, and unsupported-lineage counts were zero. The deletion check removed an affected summary before rebuilding the surviving sessions. Two clean PostgreSQL runs produced byte-identical artifacts.
+
+### Tests and contract checks
+
+- `make test-grounded-summaries PYTHON=.venv-storage/bin/python`: 45 tests passed against disposable PostgreSQL 16, including the two review regressions.
+- `make test-sessionization PYTHON=.venv-storage/bin/python`: 33 protected Step 6.1 tests passed.
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 protected Phase 5 evaluator tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 protected resolver tests passed.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 protected relation tests passed.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected candidate tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 604 tests were discovered in 27.758 seconds; 528 passed and 76 database tests skipped. Every skipped database group passed in the sequential Docker targets above.
+- Migration replay and checksum enforcement, four-table constraints, composite ownership, all-version deletion, exact replay and successor behavior, stale and concurrent writes, rendering rules, time normalization, source and claim lineage, immutable output refusal, and two clean byte-identical runs passed.
+- `git diff --check`, staged and unstaged inspection, result-manifest self-verification, the changed-file secret and leakage scans, all 79 predecessor hashes with exactly seven authorized changes, and Docker cleanup passed.
+
+### Files, protected inputs and costs
+
+- Added `configs/summaries/session_summary_renderer_v1.json`, `migrations/0006_session_summaries.sql`, four implementation files under `src/summaries`, five focused test files, one dataset manifest, and the seven-file immutable release under `results/summaries/grounded-summary-development-v1`.
+- Changed only `Makefile` and the six migration adapters named in the Step 6.2 contract outside those new paths. Core storage, ingestion, temporal, conflict, extraction, and sessionization implementations remain unchanged.
+- The Step 6.1 and Phase 5 frozen releases kept their recorded manifest and artifact hashes. The adapter applies only migrations `0001` through `0005` when replaying Step 6.1, and its five non-manifest artifacts remain byte-identical.
+- Step 6.2 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Renderer configuration: `configs/summaries/session_summary_renderer_v1.json`, SHA-256 `1e15e3359c292095f7563de1f00f0d348d43030eebe34f68545b0f851e8797a5`
+- Migration: `migrations/0006_session_summaries.sql`, SHA-256 `64181b9e87054bb4f206018a4576e31f197218762e8f684a95ab642df4bc0834`
+- Dataset manifest: `data/summaries/grounded-summary-development-v1/manifest.json`, SHA-256 `4b4a48e62029a4e138f54dba4235b506eba8cc6236526ff7c2ede14243fa07b5`
+- Result manifest: `results/summaries/grounded-summary-development-v1/manifest.json`, SHA-256 `ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761`
+- Summaries: `summaries.jsonl`, SHA-256 `6ce2ddbdc3ade54154e4db0bd136ff6f12e1037ebf4b214d560a2247fb674b22`
+- Empty sessions: `empty_sessions.jsonl`, SHA-256 `409d2d275cd4ea4e1f218b8b7fc3e6810bbaa886fb3c0128ce78b734ccf71a81`
+- Checks: `checks.json`, SHA-256 `4d5b6a3f96ac2fa0f60ff9dd1177e51b44e6badd612cbb10d2ad8885aacfc7ea`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Run metadata: `run.json`, SHA-256 `278c541668357b69d2a0884375537c69164bea65be76f9df5aec144cf83edf8e`
+- Findings: `findings.md`, SHA-256 `4d535d9f1abad75c67734d7e5128f8ec734070f71bb744c674870cba0adf7eed`
+- This development set contains only single-source sessions and candidate claims. The scorecard checks grounding, structure, persistence, and reproducibility; it does not rate editorial quality or estimate production summary quality.
+- This step does not create durative memories, call a model, infer missing evidence, or implement Step 6.3.
+
+### Next-step input
+
+Step 6.3 receives the checksum-bound summary schema, deterministic renderer, exact lineage model, deletion-aware coordinator, and immutable grounded-summary development release. Step 6.3 has not started and still requires separate implementation and review.

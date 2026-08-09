@@ -62,6 +62,7 @@ class TemporalServiceIntegrationTests(unittest.TestCase):
                 "0003_temporal_lifecycle.sql",
                 "0004_conflict_relations.sql",
                 "0005_belief_resolution.sql",
+                "0006_session_summaries.sql",
             ),
         )
         self.repository = StorageRepository(self.connection)
@@ -184,6 +185,7 @@ class TemporalServiceIntegrationTests(unittest.TestCase):
                 "0003_temporal_lifecycle.sql",
                 "0004_conflict_relations.sql",
                 "0005_belief_resolution.sql",
+                "0006_session_summaries.sql",
             ),
         )
         self.assertEqual(

@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
+.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization test-grounded-summaries validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -87,6 +87,18 @@ test-sessionization:
 		tests.unit.test_sessionization \
 		tests.unit.test_sessionization_evaluation \
 		tests.integration.test_sessionization -v
+
+test-grounded-summaries:
+	@set -eu; \
+	trap 'docker compose down -v >/dev/null' EXIT; \
+	docker compose up -d --wait storage-db; \
+	STORAGE_DATABASE_URL=postgresql://storage_test:storage_test@127.0.0.1:55432/longitudinal_memory \
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \
+		tests.unit.test_grounded_summaries \
+		tests.unit.test_summary_persistence \
+		tests.unit.test_grounded_summary_evaluation \
+		tests.integration.test_grounded_summary_persistence \
+		tests.integration.test_grounded_summary_evaluation -v
 
 test-ingestion:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \

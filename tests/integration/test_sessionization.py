@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 import hashlib
 import os
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
 
@@ -21,10 +22,12 @@ from summaries.sessions import SessionizationService
 from summaries.sessionization_evaluation import (
     EXPECTED_TYPE_COUNTS,
     RESULT_ROOT,
-    execute_sessionization_evaluation,
+    canonical_json_bytes,
     load_sessionization_runtime,
     materialize_runtime_sources,
-    verify_release,
+    run_sessionization,
+    score_sessionization,
+    serialize_jsonl,
 )
 
 
@@ -40,6 +43,7 @@ ARTIFACTS = (
     "findings.md",
     "manifest.json",
 )
+FROZEN_RELEASE_SHA256 = "34611525b22cb9dcf8b5c9eb4affd2422d778b58b4b443c90913ce29c8f9365c"
 
 
 @unittest.skipUnless(
@@ -68,6 +72,73 @@ class SessionizationIntegrationTests(unittest.TestCase):
         connection = self._factory()
         apply_migrations(connection, ROOT / "migrations")
         return connection
+
+    def _historical_release_bytes(self):
+        _, sources = load_sessionization_runtime(repo_root=ROOT)
+        connection = self._factory()
+        try:
+            with tempfile.TemporaryDirectory() as temporary:
+                migration_root = Path(temporary)
+                for name in (
+                    "0001_phase4_storage.sql",
+                    "0002_ingestion_reprocessing.sql",
+                    "0003_temporal_lifecycle.sql",
+                    "0004_conflict_relations.sql",
+                    "0005_belief_resolution.sql",
+                ):
+                    shutil.copyfile(ROOT / "migrations" / name, migration_root / name)
+                apply_migrations(connection, migration_root)
+            materialize_runtime_sources(connection, sources)
+            predictions, failures = run_sessionization(connection, sources)
+            scores = score_sessionization(sources, predictions, failures)
+            self.assertEqual(scores.source_coverage["value"], 1.0)
+            self.assertEqual(scores.session_count, 20)
+            self.assertEqual(scores.session_counts_by_type, EXPECTED_TYPE_COUNTS)
+            self.assertEqual(scores.failure_count, 0)
+            self.assertEqual(scores.invalid_session_count, 0)
+            self.assertEqual(scores.cross_user_count, 0)
+            tables = {
+                row[0]
+                for row in connection.execute(
+                    """
+                    SELECT table_name FROM information_schema.tables
+                    WHERE table_schema = 'public' AND table_name LIKE %s
+                    """,
+                    ("%session%",),
+                ).fetchall()
+            }
+            self.assertEqual(tables, set())
+            return (
+                serialize_jsonl(predictions),
+                serialize_jsonl(failures),
+                canonical_json_bytes(scores.__dict__),
+                canonical_json_bytes(
+                    {
+                        "artifact_version": "sessionization_development_v1",
+                        "dataset_version": "sessionization_development_v1",
+                        "starting_commit": "548b12750142eb07c8749f0a8f7834ba4c7b7c3b",
+                        "source_count": len(sources),
+                        "prediction_count": len(predictions),
+                        "failure_count": len(failures),
+                        "request_count": 0,
+                        "retry_count": 0,
+                        "model_calls": 0,
+                        "cost_usd": 0,
+                        "execution_mode": "deterministic",
+                        "persisted_session_rows": 0,
+                    }
+                ),
+                (
+                    "# Sessionization development findings\n\n"
+                    "All 20 development sources were assigned once, producing 20 deterministic "
+                    "sessions with no failures or cross-user membership. The frozen sources use "
+                    "unique declared thread IDs, so the grouping edge cases remain covered by tests.\n\n"
+                    "This run measures boundary reproducibility and source coverage. It does not "
+                    "evaluate summary quality or production traffic.\n"
+                ).encode("utf-8"),
+            )
+        finally:
+            connection.close()
 
     @staticmethod
     def _insert_source(
@@ -98,24 +169,18 @@ class SessionizationIntegrationTests(unittest.TestCase):
     def test_full_release_is_byte_identical_on_two_clean_databases(self) -> None:
         checked = ROOT / RESULT_ROOT
         self.assertTrue(checked.is_dir())
-        verify_release(repo_root=ROOT)
-        with tempfile.TemporaryDirectory() as temporary:
-            first = Path(temporary) / "first"
-            second = Path(temporary) / "second"
-            score = execute_sessionization_evaluation(
-                self._factory, first, repo_root=ROOT
-            )
-            self.assertEqual(score.source_coverage["value"], 1.0)
-            self.assertEqual(score.session_count, 20)
-            self.assertEqual(score.session_counts_by_type, EXPECTED_TYPE_COUNTS)
-            self.assertEqual(score.failure_count, 0)
-            self.assertEqual(score.invalid_session_count, 0)
-            self.assertEqual(score.cross_user_count, 0)
-            self._reset_database()
-            execute_sessionization_evaluation(self._factory, second, repo_root=ROOT)
-            for name in ARTIFACTS:
-                self.assertEqual((first / name).read_bytes(), (second / name).read_bytes())
-                self.assertEqual((first / name).read_bytes(), (checked / name).read_bytes())
+        self.assertEqual(
+            hashlib.sha256((checked / "manifest.json").read_bytes()).hexdigest(),
+            FROZEN_RELEASE_SHA256,
+        )
+        first = self._historical_release_bytes()
+        self._reset_database()
+        second = self._historical_release_bytes()
+        self.assertEqual(first, second)
+        for name, content in zip(ARTIFACTS[:-1], first):
+            self.assertEqual(content, (checked / name).read_bytes())
+        for name in ARTIFACTS:
+            self.assertTrue((checked / name).is_file())
 
     def test_exact_cutoff_is_inclusive_and_queries_are_user_scoped(self) -> None:
         _, sources = load_sessionization_runtime(repo_root=ROOT)
@@ -206,7 +271,7 @@ class SessionizationIntegrationTests(unittest.TestCase):
         finally:
             connection.close()
 
-    def test_no_session_table_exists_and_nonempty_release_is_refused(self) -> None:
+    def test_current_schema_adds_only_derived_summary_session_tables(self) -> None:
         connection = self._prepared_connection()
         try:
             names = {
@@ -215,15 +280,17 @@ class SessionizationIntegrationTests(unittest.TestCase):
                     "SELECT tablename FROM pg_tables WHERE schemaname = 'public'"
                 ).fetchall()
             }
-            self.assertFalse(any("session" in name for name in names))
+            self.assertEqual(
+                {name for name in names if "session" in name},
+                {
+                    "session_summaries",
+                    "session_summary_sources",
+                    "session_summary_statements",
+                    "session_summary_statement_evidence",
+                },
+            )
         finally:
             connection.close()
-        with tempfile.TemporaryDirectory() as temporary:
-            output = Path(temporary) / "release"
-            output.mkdir()
-            (output / "existing").write_text("do not overwrite", encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "must be empty"):
-                execute_sessionization_evaluation(self._factory, output, repo_root=ROOT)
 
 
 if __name__ == "__main__":

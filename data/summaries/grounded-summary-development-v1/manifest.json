@@ -1,0 +1,61 @@
+{
+  "dataset_version": "grounded_summary_development_v1",
+  "split": "development",
+  "review_status": "implementation_reviewed",
+  "guidance_version": "step-6.2-guidance-v1",
+  "expected": {
+    "user_count": 2,
+    "source_count": 20,
+    "session_count": 20,
+    "claim_count": 33,
+    "evidence_count": 33,
+    "persisted_summary_count": 17,
+    "empty_session_count": 3
+  },
+  "allowed_users": [
+    "user_001",
+    "user_002"
+  ],
+  "inputs": {
+    "sessionization_release": {
+      "manifest_path": "results/summaries/sessionization-development-v1/manifest.json",
+      "manifest_sha256": "34611525b22cb9dcf8b5c9eb4affd2422d778b58b4b443c90913ce29c8f9365c",
+      "predictions_path": "results/summaries/sessionization-development-v1/predictions.jsonl",
+      "predictions_sha256": "2b7de7fc1b2d821867e8eeaa29182a1e22e15977387ce40e46301e2e56f86845",
+      "failure_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runtime_prefix": {
+      "sessionization_manifest_path": "data/summaries/sessionization-development-v1/manifest.json",
+      "sessionization_manifest_sha256": "c139e2624cbec7904ca8edd67b4b1f42423dcfda8a47a1d8ca04cf8ee5507b69",
+      "source_prefix_records": 20,
+      "source_prefix_sha256": "b0dc2b0dae985b51e2e25e441f98dcbe8d86045fa6a3beae2545f50de9e844d9",
+      "user_prefix_records": 2,
+      "user_prefix_sha256": "3cb98b28b57ed333c170eb93ba2bdd9cea1c24941df74d3d60e75397a88fbfdd"
+    },
+    "phase3_handoff": {
+      "manifest_path": "results/phase3/phase4-input-development-gpt41-fallback-v1/manifest.json",
+      "manifest_sha256": "f5127cfdb7720ecf84e320da613396d11d71629b709813e2e25ea2ab00df0876",
+      "claims_path": "results/phase3/phase4-input-development-gpt41-fallback-v1/claims.jsonl",
+      "claims_sha256": "509c51229eb8a6e13e898a28fec594d0118c29b6f5a93fc917fb0d1af34b4ff7",
+      "evidence_index_path": "results/phase3/phase4-input-development-gpt41-fallback-v1/evidence_index.json",
+      "evidence_index_sha256": "311107940b64e22d9ba8af77e17d04e17f4298e8b5797e6f7234261e852ca0b6"
+    },
+    "phase5_release": {
+      "manifest_path": "results/conflicts/phase5-conflict-evaluation-development-v1/manifest.json",
+      "manifest_sha256": "35f37c3ef5f4a45739df200e64053a5d35552dec264336bb6bca3b701fb850ff",
+      "implementation_hashes": {
+        "Makefile": "c04834c88c366f579537c71754024d2498ad5595b484c98514bee576b9636ea1",
+        "data/conflicts/phase5-evaluation-development-v1/manifest.json": "62be6e153e74e7263d14303dd09f09a2ca4820efa766ec44375c96487bccff77",
+        "src/conflicts/phase_evaluation.py": "fc987ecf8bb2ebc68406a6b85c06e0189f4306dd1c256077b8e8018f35377a62",
+        "tests/integration/test_phase5_conflict_evaluation.py": "574a3265b370dbd5eafd763987476d8d0ff66897f830eb323596f20ab64aa21f",
+        "tests/unit/test_phase5_conflict_evaluation.py": "03a7c7fc2659d2ce1345d0489ee78c29dad0cfc5b83d25d57e87aa398014c2ec"
+      }
+    },
+    "renderer": {
+      "path": "configs/summaries/session_summary_renderer_v1.json",
+      "sha256": "1e15e3359c292095f7563de1f00f0d348d43030eebe34f68545b0f851e8797a5"
+    }
+  },
+  "loader_boundary": "read_exact_development_prefix_and_bound_artifacts_only",
+  "execution_mode": "deterministic_no_model"
+}
