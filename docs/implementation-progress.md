@@ -815,3 +815,71 @@ During review, a wrong exclusion glob accidentally exposed frozen-test gold text
 ### Next-step input
 
 Step 6.4 receives the frozen rules, checksum-bound schema, user-run inference contract, exact support and counterevidence lineage, deletion-aware recompute behavior, and immutable development release. Step 6.4 has not started and still requires separate implementation and review.
+
+## Phase 6, Step 6.4: Evaluate summary quality
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `d52b4a2a9a1178ab37354fc65fd1d202519185cc`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-6.4-guidance-v2`, envelope SHA-256 `3b5673d169a1ad58cffda7ff45bd83ffe0a541da9ed38e870be99503842955b9`
+- Commit message: `eval: add Phase 6 summary scorecard`
+- The worktree was clean after the final commit check.
+
+### Evaluation boundary and sequencing
+
+- The first Step 6.4 attempt under guidance v1 was invalid and never committed. Cached-diff review found a trailing blank line in the runtime module after development gold had already been opened. Even though the change was only whitespace, changing the frozen runtime byte invalidated that checkpoint.
+- Guidance v2 froze the corrected runtime module at SHA-256 `5b8b991d7fe5ea6a723fe7ca18929351ade8559b6e3082aa38c43afc228ea093`. The v2 runtime contains no scorer, gold, oracle, review, reference-summary, or test-user import or path.
+- The runtime checkpoint was generated for ten development cases while all v1 and v2 scorer configurations, scorer code, scorer tests, gold files, event maps, and final result paths were absent. The preflight records that state, the two byte-identical runtime trials, five cases per user, and zero model use. The complete checkpoint tree was frozen before any scorer file returned.
+- The previously authorized v1 development-only gold was then copied byte-for-byte from the private backup into the v2 paths. Gold cases, claims, and event map retained SHA-256 values `66271b5cd113a126f3ed5c339a599e5ff35d342fa2be233bdeea39310174e8d6`, `88361358e7972753655a38107e3a8fcef2131a3e8b9e98000e771f808ef7001f`, and `83393611342afde3bd8606a78f377c2f41969bf2e41c18a4a5493b2029052c17`.
+- This was not a blind evaluation: the implementing agent had already seen the authorized development gold during the invalid v1 attempt. The v2 scorer and mapping were carried forward without reinterpretation or threshold tuning. No frozen test-user, oracle, or review-queue content was opened, copied, or scored.
+
+### Results
+
+The release has one prediction and no failure for each of the ten cases belonging to `user_001` and `user_002`. The all-visible-session baseline contains 165 factual statements and five unresolved questions. The reviewed gold contains 22 events, 31 evidence instances, two correction events, and nine uncertainty events.
+
+Exact Claim-and-evidence matching found no event match. Gold-event micro precision is `0/165`, recall is `0/22`, and F1 is `0.000000`; macro precision, recall, and F1 are each `0.000000` over ten cases. Supporting-evidence micro precision is `0/165`, recall is `0/31`, and F1 is `0.000000`. Current-versus-historical accuracy is `null` because there are no matched reviewed-state events. Correction preservation is `0/2`, and uncertainty preservation is `0/9`.
+
+Case accounting is `10/10`, and exact statement-to-Claim-version-to-span provenance coverage is `170/170`. Cross-user predictions, stale references, unsupported statements, runtime failures, and sanitized failures are all zero. The result publishes no composite score.
+
+These low scores are an honest outcome of the frozen baseline. It returns every visible session summary instead of retrieving by instruction, and the upstream weak extraction does not exactly match the reviewed gold Claims and evidence. Step 6.4 did not change production behavior or tune to the exposed development gold.
+
+### Tests and contract checks
+
+- Focused Step 6.4 unit and integration tests: 30 tests passed, including guarded runtime reads, exact checkpoint bytes, invalid-v1 rejection, carried-gold identity, one-to-one scoring, metric denominators, and two deterministic scorer runs.
+- `make test-durative-claims PYTHON=.venv-storage/bin/python`: 55 tests passed against disposable PostgreSQL 16.
+- `make test-grounded-summaries PYTHON=.venv-storage/bin/python`: 45 tests passed.
+- `make test-sessionization PYTHON=.venv-storage/bin/python`: 33 tests passed.
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 tests passed.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 tests passed.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 689 tests were discovered in 26.246 seconds; 594 passed and 95 database tests skipped. Every guidance-required database group passed in the sequential Docker targets above.
+- Compilation, `git diff --check`, staged and unstaged inspection, secret and leakage scans, manifest self-verification, exact checkpoint/final prediction and failure identity, the 103-path predecessor check with zero drift, and Docker cleanup passed.
+
+### Artifacts and costs
+
+- Scorer configuration: `configs/summaries/summary_quality_scorer_v2.json`, SHA-256 `28b02f194f2cfafb4c2ec82e876bfae6797a9f588465f7fcc3564da6d58bddf1`
+- Runtime cases: `data/summaries/summary-quality-development-v2/runtime/cases.jsonl`, SHA-256 `3ec24d5abe216b125f088307822bd4e48a3b82f9a21f75cf91e3110640797b33`
+- Runtime input manifest: `data/summaries/summary-quality-development-v2/runtime/manifest.json`, SHA-256 `4feba4d18e7ec6ad8932a683d58114d55a138a0b1f4a90d61547a8a0d9f7ac8f`
+- Dataset manifest: `data/summaries/summary-quality-development-v2/manifest.json`, SHA-256 `d58646b3df446c467fabc0bf41099f80fc0a045f54a41c361ee92013702fbc17`
+- Runtime preflight: `results/summaries/summary-quality-development-runtime-v2/checkpoint_preflight.json`, SHA-256 `4a2b8947c10259199ab2ca122f5d86ab8ce225f3819ec4469f98f723f5c23dd7`
+- Runtime checkpoint manifest: `checkpoint_manifest.json`, SHA-256 `6b0a474e42962ac792516c0ed024fa78d9d52842974cf8e8f221f0297e04500e`
+- Runtime and final predictions: SHA-256 `4bcd6c0c821936465f927e2f3196fcaccf108b997a24c45cc24191602942813a`
+- Runtime and final failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Final result manifest: `results/summaries/summary-quality-development-v2/manifest.json`, SHA-256 `b9ed38d2bf68afc0532adda7a1b229cc989548eaabd1087e597b8787819b4385`
+- Scores: `scores.json`, SHA-256 `c5b1590be212388b1daf5a81065e1ec6c972402b7d348b0ab47f08c2a087658c`
+- Run metadata: `run.json`, SHA-256 `9ffd729551312accdfa40112b625c72ee24a5e51e41f5291e6d8710d1ec13d6d`
+- Findings: `findings.md`, SHA-256 `26312cf69531aa36b5aee405feba88230fbf97ee83ded3bae16a8a23429a5bde`
+- Step 6.4 made zero requests or retries, used zero input and output tokens, cost `$0`, and called no provider. Historical OpenAI spend remains `$0.2314404`.
+
+### Next-step input
+
+Step 7.1 receives the frozen session boundaries, grounded-summary and durative contracts, immutable durative and summary-quality scorecards, exact statement provenance, and versioned session-index input. Step 7.1 has not started and requires separate guidance and authorization.
