@@ -1,0 +1,46 @@
+{
+  "resolver_version": "belief_resolver_v1",
+  "policy_version": "belief_resolution_rules_v1",
+  "classifier_config_path": "configs/conflicts/relation_classifier_v1.json",
+  "classifier_config_sha256": "fab3171a55ad21e25e303e89f44e57b7d0b926eb8f82283ce1dcb910d8960659",
+  "classifier_version": "relation_classifier_v1",
+  "predicate_registry_path": "configs/extraction/predicate_registry_v2.json",
+  "predicate_registry_version": "predicate_registry_v2",
+  "predicate_registry_sha256": "5cb9ba2f2b7a81aa2ce61d52d9425fbf1f2d39964a3a66286d5679ebb2e5175d",
+  "labels": [
+    "hard_contradiction",
+    "temporal_change",
+    "explicit_correction",
+    "refinement",
+    "source_disagreement",
+    "retraction",
+    "unresolved_ambiguity",
+    "unrelated"
+  ],
+  "authority_order": [
+    "official_record",
+    "subject_correction",
+    "subject_assertion",
+    "participant_firsthand",
+    "third_party_report",
+    "inference"
+  ],
+  "decisive_authority_kind": "official_record",
+  "official_source_types": [
+    "calendar",
+    "email"
+  ],
+  "exclusion_precedence": [
+    "restricted",
+    "hypothetical",
+    "wrong_subject",
+    "deleted",
+    "unsupported"
+  ],
+  "terminal_lifecycle_statuses": [
+    "excluded",
+    "superseded"
+  ],
+  "belief_confidence": "null_only",
+  "review_status": "implementation_reviewed"
+}

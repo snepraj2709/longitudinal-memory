@@ -9,6 +9,9 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
 from .contracts import (
+    BeliefResolutionActionRecord,
+    BeliefResolutionEvidenceRecord,
+    BeliefResolutionRecord,
     ClaimExtractionRecord,
     ClaimRelationRecord,
     ClaimRecord,
@@ -48,6 +51,9 @@ Record = TypeVar(
     ConflictDecisionRecord,
     ClaimRelationRecord,
     ConflictDecisionEvidenceRecord,
+    BeliefResolutionRecord,
+    BeliefResolutionActionRecord,
+    BeliefResolutionEvidenceRecord,
 )
 
 _JSON_COLUMNS = {
@@ -354,6 +360,64 @@ class StorageRepository:
             {
                 "user_id": user_id,
                 "decision_evidence_id": decision_evidence_id,
+            },
+        )
+
+    def insert_belief_resolution(
+        self, record: BeliefResolutionRecord
+    ) -> BeliefResolutionRecord:
+        return self._insert(
+            "belief_resolutions",
+            record,
+            {"user_id": record.user_id, "resolution_id": record.resolution_id},
+        )
+
+    def get_belief_resolution(
+        self, user_id: str, resolution_id: str
+    ) -> BeliefResolutionRecord | None:
+        return self._get(
+            "belief_resolutions",
+            BeliefResolutionRecord,
+            {"user_id": user_id, "resolution_id": resolution_id},
+        )
+
+    def get_belief_resolution_by_idempotency(
+        self, user_id: str, idempotency_key: str
+    ) -> BeliefResolutionRecord | None:
+        return self._get(
+            "belief_resolutions",
+            BeliefResolutionRecord,
+            {"user_id": user_id, "idempotency_key": idempotency_key},
+        )
+
+    def insert_belief_resolution_action(
+        self, record: BeliefResolutionActionRecord
+    ) -> BeliefResolutionActionRecord:
+        return self._insert(
+            "belief_resolution_actions",
+            record,
+            {"user_id": record.user_id, "action_id": record.action_id},
+        )
+
+    def get_belief_resolution_action(
+        self, user_id: str, action_id: str
+    ) -> BeliefResolutionActionRecord | None:
+        return self._get(
+            "belief_resolution_actions",
+            BeliefResolutionActionRecord,
+            {"user_id": user_id, "action_id": action_id},
+        )
+
+    def insert_belief_resolution_evidence(
+        self, record: BeliefResolutionEvidenceRecord
+    ) -> BeliefResolutionEvidenceRecord:
+        return self._insert(
+            "belief_resolution_evidence",
+            record,
+            {
+                "user_id": record.user_id,
+                "resolution_id": record.resolution_id,
+                "decision_evidence_id": record.decision_evidence_id,
             },
         )
 

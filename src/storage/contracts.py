@@ -23,6 +23,7 @@ OUTBOX_EVENT_TYPES = frozenset(
         "source_deleted",
         "claim_lifecycle_changed",
         "conflict_recompute_required",
+        "belief_resolved",
     }
 )
 OUTBOX_STATES = frozenset({"pending", "published"})
@@ -643,6 +644,8 @@ class ClaimRelationRecord:
     confidence: Real
     input_snapshot_sha256: str
     created_at: datetime
+    resolver_version: str | None = None
+    resolution_id: str | None = None
 
     def __post_init__(self) -> None:
         for name in (
@@ -671,6 +674,12 @@ class ClaimRelationRecord:
                 "input_snapshot_sha256 must be a lowercase SHA-256"
             )
         _aware(self.created_at, "created_at")
+        _text(self.resolver_version, "resolver_version", nullable=True)
+        _text(self.resolution_id, "resolution_id", nullable=True)
+        if (self.resolver_version is None) != (self.resolution_id is None):
+            raise StorageValidationError(
+                "resolver relation provenance must be wholly null or wholly set"
+            )
 
 
 @dataclass(frozen=True)
@@ -697,6 +706,130 @@ class ConflictDecisionEvidenceRecord:
             raise StorageValidationError(
                 "input_snapshot_sha256 must be a lowercase SHA-256"
             )
+
+
+BELIEF_RESOLUTION_OUTCOMES = frozenset(
+    {
+        "no_change",
+        "excluded",
+        "temporal_change_resolved",
+        "correction_resolved",
+        "refinement_resolved",
+        "retraction_resolved",
+        "authority_resolved",
+        "disputed",
+    }
+)
+
+
+@dataclass(frozen=True)
+class BeliefResolutionRecord:
+    resolution_id: str
+    user_id: str
+    resolver_version: str
+    policy_version: str
+    decision_id: str
+    idempotency_key: str
+    input_snapshot_sha256: str
+    transaction_as_of: datetime
+    valid_at_date: date | None
+    valid_at_timestamp: datetime | None
+    resolved_at: datetime
+    outcome: str
+    selected_current_claim_id: str | None
+    authority_reason: str
+    belief_confidence: None = None
+
+    def __post_init__(self) -> None:
+        for name in (
+            "resolution_id", "user_id", "resolver_version", "policy_version",
+            "decision_id", "idempotency_key", "authority_reason",
+        ):
+            _text(getattr(self, name), name)
+        if not _is_sha256(self.input_snapshot_sha256):
+            raise StorageValidationError(
+                "input_snapshot_sha256 must be a lowercase SHA-256"
+            )
+        _aware(self.transaction_as_of, "transaction_as_of")
+        _aware(self.resolved_at, "resolved_at")
+        if self.resolved_at < self.transaction_as_of:
+            raise StorageValidationError("resolved_at precedes transaction_as_of")
+        if self.valid_at_date is not None and type(self.valid_at_date) is not date:
+            raise StorageValidationError("valid_at_date must be a date")
+        if self.valid_at_timestamp is not None:
+            _aware(self.valid_at_timestamp, "valid_at_timestamp")
+        if self.valid_at_date is not None and self.valid_at_timestamp is not None:
+            raise StorageValidationError("valid_at representations cannot mix")
+        _enum(self.outcome, BELIEF_RESOLUTION_OUTCOMES, "outcome")
+        _text(
+            self.selected_current_claim_id,
+            "selected_current_claim_id",
+            nullable=True,
+        )
+        if self.selected_current_claim_id is not None and (
+            self.valid_at_date is None and self.valid_at_timestamp is None
+        ):
+            raise StorageValidationError("selected current claim requires valid_at")
+        if self.belief_confidence is not None:
+            raise StorageValidationError("belief_confidence must remain null")
+
+
+@dataclass(frozen=True)
+class BeliefResolutionActionRecord:
+    action_id: str
+    user_id: str
+    resolution_id: str
+    action_order: int
+    claim_id: str
+    from_status: str
+    target_status: str
+    replacement_claim_id: str | None
+    reason: str
+    from_version_id: str
+    to_version_id: str
+    transition_id: str
+
+    def __post_init__(self) -> None:
+        for name in (
+            "action_id", "user_id", "resolution_id", "claim_id", "reason",
+            "from_version_id", "to_version_id", "transition_id",
+        ):
+            _text(getattr(self, name), name)
+        if isinstance(self.action_order, bool) or not isinstance(
+            self.action_order, int
+        ) or self.action_order < 1:
+            raise StorageValidationError("action_order must be positive")
+        _enum(self.from_status, LIFECYCLE_STATUSES, "from_status")
+        _enum(
+            self.target_status,
+            LIFECYCLE_STATUSES - {"candidate"},
+            "target_status",
+        )
+        if self.from_status == self.target_status:
+            raise StorageValidationError("resolution action must change status")
+        _text(
+            self.replacement_claim_id,
+            "replacement_claim_id",
+            nullable=True,
+        )
+        if self.replacement_claim_id == self.claim_id:
+            raise StorageValidationError("replacement claim must differ")
+        if self.from_version_id == self.to_version_id:
+            raise StorageValidationError("resolution action versions must differ")
+
+
+@dataclass(frozen=True)
+class BeliefResolutionEvidenceRecord:
+    user_id: str
+    resolution_id: str
+    decision_id: str
+    decision_evidence_id: str
+
+    def __post_init__(self) -> None:
+        for name in (
+            "user_id", "resolution_id", "decision_id", "decision_evidence_id"
+        ):
+            _text(getattr(self, name), name)
 
 
 def _is_sha256(value: object) -> bool:

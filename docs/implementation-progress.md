@@ -476,3 +476,70 @@ The represented labels are six unrelated cases, one temporal change, and one unr
 ### Next-step input
 
 Step 5.3 receives canonical candidate pairs, immutable conflict decisions, full-vocabulary relation storage, exact evidence snapshots, user-scoped repository reads, and the deterministic Step 5.2 development scorecard. Step 5.3 has not started and still requires separate implementation and review.
+
+## Phase 5, Step 5.3: Resolve temporal beliefs deterministically
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `56ce3125886af28625808b31c6b412aa62ae1c9f`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-5.3-guidance-v1`, envelope SHA-256 `8bbaf5c53358858027db6f5a6eda383c6c8cc47dae80f36a5228fe1b8ed6bea8`
+- Commit message: `conflicts: resolve temporal beliefs deterministically`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added a frozen resolver configuration and a deterministic planner for every Step 5.2 label. The request carries only user, decision, time, idempotency, and resolver identifiers; the service loads the decision, claim versions, relations, authority inputs, and exact evidence from PostgreSQL.
+- Exclusion runs before conflict policy. Restricted, hypothetical, wrong-subject, deleted, and unsupported claims cannot become current. Authority must come from an exact, current, source-backed official record with matching speaker, subject, predicate, spans, and time scope. Belief confidence remains null.
+- Added migration `0005` and typed repository records for resolutions, ordered lifecycle actions, evidence lineage, and resolver provenance on new `supersedes` relations. Composite foreign keys retain user ownership, stable IDs support exact replay, and lifecycle, audit, relation, and outbox writes share one transaction.
+- Added the single approved lifecycle edge, `candidate -> historical`, and a transaction-scoped temporal transition seam. No other Step 4.3 transition changed.
+- Source deletion now invalidates directly affected resolutions, rewinds the complete resolver-owned suffix to its baseline, removes the deleted decision lineage, and replays eligible surviving decisions in stable order. Any rewind or replay failure rolls back the whole deletion.
+- Added eight development cases derived only from the protected Step 5.2 runtime and predictions, four per development user. Predictions and sanitized failures are written and runtime resources are closed before the separate reviewed gold file is hashed or opened.
+- During review, the resolver was corrected so an already terminal `superseded` or `excluded` replacement cannot be selected as current or recorded as an active replacement. A focused regression covers the selection, relation, and replacement-action fields.
+
+### Results
+
+The evaluator produced eight deterministic predictions and no failures. It recorded four no-change outcomes, two exclusions for non-user subjects, one temporal resolution that preserved the existing historical/current state without a redundant action, and one unresolved ambiguity that left both claims disputed.
+
+Exact outcome, exact action, current selection, historical preservation, dispute handling, no-change handling, and evidence-trace coverage each scored `1.000000`. Supersession is not evaluated because the fixed input has no correction, refinement, or retraction case. All eight predictions were deterministic, no cross-user action was recorded, and belief confidence remained null.
+
+### Tests and contract checks
+
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 tests passed, including 13 against disposable PostgreSQL 16.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 protected Step 5.2 tests passed.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected Step 5.1 tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected Step 4.4 tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 508 tests were discovered in 25.487 seconds; 451 passed and 57 database tests skipped. Every skipped database group passed in the Docker targets above.
+- The review covered all policy branches, exact relation direction, authority scope, terminal-state handling, null and mixed time, user and transaction visibility, deterministic IDs, exact replay and drift rejection, rollback, three deletion rewind/replay paths, gold sequencing, failure denominators, immutable outputs, and two clean byte-identical evaluator runs.
+- `git diff --check`, staged and unstaged checks, the changed-file secret and leakage scans, 23 implementation hashes, 58 predecessor hashes with exactly 13 authorized changes, result-manifest self-verification, and Docker cleanup passed.
+
+### Protected inputs and costs
+
+- Migrations `0001` through `0004`, the Step 5.2 configuration, dataset and release, the Step 5.1 and Phase 4 releases, storage and temporal predecessor interfaces outside the authorized seams, Phase 3 claims and evidence, the scaled runtime identity, predicate registry v2, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 5.3 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Resolver configuration: `configs/conflicts/belief_resolver_v1.json`, SHA-256 `9cd5ac711da1ec11f0528852845f42e9da7f2050d088bd51ad7e12cf8e9356c6`
+- Migration: `migrations/0005_belief_resolution.sql`, SHA-256 `641588e4a05a6c20bc5513fe1c0a41825ba9ed0379bf2de50a64c339732f59cb`
+- Dataset manifest: `data/conflicts/belief-resolution-development-v1/manifest.json`, SHA-256 `0c0903606fe25793c9c76f4eb699f5a59c75f294075e4547bb69812e809768d7`
+- Runtime cases: `runtime/cases.jsonl`, SHA-256 `f2d92261abd6a7bf49616068e7738ea4929cf8bcfaf0a85f1ec5252558421692`
+- Reviewed gold: `gold/cases.jsonl`, SHA-256 `f76b7bafd0a1796a0a7474cc222384c3f81716c44d5b5db71e29472b9a659276`
+- Result manifest: `results/conflicts/belief-resolution-development-v1/manifest.json`, SHA-256 `df01c8fbf9494e3f2eb0898e6f2c18aae3ee1cc57e8b2e3fe39ab0006e9f887d`
+- Predictions: `predictions.jsonl`, SHA-256 `f9250461eac63627f564f8d811b4964e1912da439b5a5e055c5d062b243f5596`
+- Scores: `scores.json`, SHA-256 `030f3db4a64be821b1e5d45a538e896bbf5ee04bab571536a836812a7c72ec29`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Run metadata: `run.json`, SHA-256 `c85ce29f65785f50eab16cd8ee0607c7668c7a3bc618d9bc86f30315474e752e`
+- Findings: `findings.md`, SHA-256 `630d9fe87380fe271a231f9588542d9a0a7035791a52f1dcb90ef42cd86371fb`
+- This is an eight-case deterministic development check. Five conflict labels and supersession have no development denominator, so the exact represented-case scores do not estimate production accuracy.
+- Unsupported lifecycle transitions remain fail-closed. In particular, the resolver does not add `confirmed -> historical`; Step 5.3 changes only the approved `candidate -> historical` edge.
+
+### Next-step input
+
+Step 5.4 receives the frozen resolver policy, checksum-bound resolution schema, user-scoped atomic service, deletion rewind/replay semantics, and immutable belief-resolution scorecard. Step 5.4 has not started and still requires separate implementation and review.

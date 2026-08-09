@@ -25,7 +25,9 @@ class TemporalContractTests(unittest.TestCase):
         self.assertEqual(
             TRANSITION_MATRIX,
             {
-                "candidate": frozenset({"confirmed", "current", "disputed", "excluded"}),
+                "candidate": frozenset(
+                    {"confirmed", "current", "historical", "disputed", "excluded"}
+                ),
                 "confirmed": frozenset({"disputed", "superseded", "excluded"}),
                 "current": frozenset({"historical", "disputed", "superseded", "excluded"}),
                 "historical": frozenset({"disputed", "superseded", "excluded"}),

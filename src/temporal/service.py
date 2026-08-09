@@ -47,33 +47,40 @@ class TemporalService:
 
     def transition(self, request: TransitionRequest) -> TransitionResult:
         with self._connection.transaction():
-            self._lock_claims(request.user_id, (request.claim_id,))
-            replay = self._repository.get_lifecycle_transition_by_idempotency(
-                request.user_id, request.idempotency_key
-            )
-            if replay is not None:
-                return self._replay_transition(request, replay)
-            claim = self._claim(request.user_id, request.claim_id)
-            version = self._open_version(request.user_id, request.claim_id)
-            self._require_transition(claim, version, request.target_status)
-            successor, transition = self._advance(
-                claim,
-                version,
-                request.idempotency_key,
-                request.target_status,
-                request.reason,
-                request.transitioned_at,
-                request.belief_confidence,
-                None,
-            )
-            self._outbox(
-                request.user_id,
-                request.claim_id,
-                request.idempotency_key,
-                request.transitioned_at,
-                {"claim_id": request.claim_id, "target_status": request.target_status},
-            )
-            return TransitionResult(transition, successor, False)
+            return self.transition_in_transaction(request)
+
+    def transition_in_transaction(
+        self, request: TransitionRequest
+    ) -> TransitionResult:
+        """Apply one transition inside a transaction already owned by the caller."""
+
+        self._lock_claims(request.user_id, (request.claim_id,))
+        replay = self._repository.get_lifecycle_transition_by_idempotency(
+            request.user_id, request.idempotency_key
+        )
+        if replay is not None:
+            return self._replay_transition(request, replay)
+        claim = self._claim(request.user_id, request.claim_id)
+        version = self._open_version(request.user_id, request.claim_id)
+        self._require_transition(claim, version, request.target_status)
+        successor, transition = self._advance(
+            claim,
+            version,
+            request.idempotency_key,
+            request.target_status,
+            request.reason,
+            request.transitioned_at,
+            request.belief_confidence,
+            None,
+        )
+        self._outbox(
+            request.user_id,
+            request.claim_id,
+            request.idempotency_key,
+            request.transitioned_at,
+            {"claim_id": request.claim_id, "target_status": request.target_status},
+        )
+        return TransitionResult(transition, successor, False)
 
     def correct(self, request: CorrectionRequest) -> CorrectionResult:
         secondary_key = f"{request.idempotency_key}:replacement"

@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
-from dataclasses import fields
+from dataclasses import dataclass, fields
 from datetime import datetime, timedelta
 from typing import Iterable
 
 from psycopg.rows import dict_row
 
 from storage.contracts import (
+    BeliefResolutionRecord,
     ClaimExtractionRecord,
+    ClaimRelationRecord,
     ClaimRecord,
     ClaimVersionRecord,
+    ConflictDecisionEvidenceRecord,
+    ConflictDecisionRecord,
     ProcessingAttemptRecord,
     ProcessingOutboxRecord,
     SourceTombstoneRecord,
@@ -34,6 +38,14 @@ from .contracts import (
     leased_attempt,
     outbox_id,
 )
+
+
+@dataclass(frozen=True)
+class _ResolutionReplay:
+    resolution: BeliefResolutionRecord
+    decision: ConflictDecisionRecord
+    relations: tuple[ClaimRelationRecord, ...]
+    evidence: tuple[ConflictDecisionEvidenceRecord, ...]
 
 
 class IngestionService:
@@ -349,7 +361,17 @@ class IngestionService:
                     (user_id, source_id),
                 ).fetchall()
             )
-            self._remove_conflicts_for_source(user_id, source_id, deleted_at)
+            conflict_rows = self._conflicts_for_source(user_id, source_id)
+            replays = self._invalidate_belief_resolutions_for_source(
+                user_id, conflict_rows
+            )
+            self._remove_conflicts_for_source(
+                user_id,
+                source_id,
+                deleted_at,
+                rows=conflict_rows,
+                decisions_removed=True,
+            )
             self._connection.execute(
                 """
                 DELETE FROM evidence_links
@@ -449,6 +471,7 @@ class IngestionService:
                 "DELETE FROM source_events WHERE user_id = %s AND source_id = %s",
                 (user_id, source_id),
             )
+            self._replay_surviving_resolutions(user_id, source_id, replays)
             self._insert_outbox(
                 user_id,
                 "source_deleted",
@@ -465,43 +488,414 @@ class IngestionService:
                 source_id, True, affected, tuple(retired)
             )
 
-    def _remove_conflicts_for_source(
-        self, user_id: str, source_id: str, deleted_at: datetime
+    def _invalidate_belief_resolutions_for_source(
+        self,
+        user_id: str,
+        conflict_rows: tuple[tuple[str, str, str, str], ...],
+    ) -> tuple[_ResolutionReplay, ...]:
+        if not conflict_rows:
+            return ()
+        direct_decisions = {row[0] for row in conflict_rows}
+        direct_resolutions = {
+            row[0]
+            for row in self._connection.execute(
+                """
+                SELECT resolution_id FROM belief_resolutions
+                WHERE user_id = %s AND decision_id = ANY(%s)
+                """,
+                (user_id, list(direct_decisions)),
+            ).fetchall()
+        }
+        with self._connection.cursor(row_factory=dict_row) as cursor:
+            cursor.execute(
+                """
+                SELECT action.*, resolution.resolved_at
+                FROM belief_resolution_actions AS action
+                JOIN belief_resolutions AS resolution
+                  ON resolution.user_id = action.user_id
+                 AND resolution.resolution_id = action.resolution_id
+                WHERE action.user_id = %s
+                ORDER BY resolution.resolved_at, action.action_order,
+                         action.action_id
+                """,
+                (user_id,),
+            )
+            all_actions = tuple(cursor.fetchall())
+        by_to_version = {
+            (row["claim_id"], row["to_version_id"]): row for row in all_actions
+        }
+        by_resolution: dict[str, list[dict[str, object]]] = {}
+        for row in all_actions:
+            by_resolution.setdefault(row["resolution_id"], []).append(row)
+        affected_claims = {
+            value for row in conflict_rows for value in (row[2], row[3])
+        }
+        pending_claims = list(sorted(affected_claims))
+        walked_claims: set[str] = set()
+        suffix_resolutions = set(direct_resolutions)
+        while pending_claims:
+            claim_id = pending_claims.pop(0)
+            if claim_id in walked_claims:
+                continue
+            walked_claims.add(claim_id)
+            open_row = self._connection.execute(
+                """
+                SELECT version_id FROM claim_versions
+                WHERE user_id = %s AND claim_id = %s AND transaction_to IS NULL
+                FOR UPDATE
+                """,
+                (user_id, claim_id),
+            ).fetchone()
+            if open_row is None:
+                continue
+            version_id = open_row[0]
+            while (claim_id, version_id) in by_to_version:
+                action = by_to_version[(claim_id, version_id)]
+                resolution_id = action["resolution_id"]
+                if resolution_id not in suffix_resolutions:
+                    suffix_resolutions.add(resolution_id)
+                    for sibling in by_resolution[resolution_id]:
+                        sibling_claim = sibling["claim_id"]
+                        if sibling_claim not in walked_claims:
+                            pending_claims.append(sibling_claim)
+                version_id = action["from_version_id"]
+        resolution_records = tuple(
+            sorted(
+                (
+                    self._repository.get_belief_resolution(user_id, resolution_id)
+                    for resolution_id in suffix_resolutions
+                ),
+                key=lambda value: (value.resolved_at, value.resolution_id),
+            )
+        )
+        if any(value is None for value in resolution_records):
+            raise IngestionConflict(
+                "resolver_lineage_conflict", "belief_resolution"
+            )
+        replays: list[_ResolutionReplay] = []
+        for resolution in resolution_records:
+            if resolution.decision_id in direct_decisions:
+                continue
+            decision = self._repository.get_conflict_decision(
+                user_id, resolution.decision_id
+            )
+            if decision is None:
+                raise IngestionConflict(
+                    "resolver_decision_missing", "belief_resolution"
+                )
+            with self._connection.cursor(row_factory=dict_row) as cursor:
+                cursor.execute(
+                    """
+                    SELECT relation_id, user_id, decision_id, classifier_version,
+                           source_claim_id, target_claim_id, relation_type,
+                           confidence, input_snapshot_sha256, created_at,
+                           resolver_version, resolution_id
+                    FROM claim_relations
+                    WHERE user_id = %s AND decision_id = %s
+                      AND resolution_id IS NULL
+                    ORDER BY relation_id
+                    """,
+                    (user_id, decision.decision_id),
+                )
+                relations = tuple(
+                    ClaimRelationRecord(**row) for row in cursor.fetchall()
+                )
+                cursor.execute(
+                    """
+                    SELECT decision_evidence_id, user_id, decision_id, claim_id,
+                           span_id, support_type, input_snapshot_sha256
+                    FROM conflict_decision_evidence
+                    WHERE user_id = %s AND decision_id = %s
+                    ORDER BY claim_id, span_id, support_type,
+                             decision_evidence_id
+                    """,
+                    (user_id, decision.decision_id),
+                )
+                evidence = tuple(
+                    ConflictDecisionEvidenceRecord(**row)
+                    for row in cursor.fetchall()
+                )
+            replays.append(
+                _ResolutionReplay(resolution, decision, relations, evidence)
+            )
+        ordered_resolutions = tuple(
+            sorted(
+                resolution_records,
+                key=lambda value: (value.resolved_at, value.resolution_id),
+                reverse=True,
+            )
+        )
+        rewind_actions: list[dict[str, object]] = []
+        for resolution in ordered_resolutions:
+            actions = sorted(
+                by_resolution.get(resolution.resolution_id, ()),
+                key=lambda value: value["action_order"],
+                reverse=True,
+            )
+            rewind_actions.extend(actions)
+            self._connection.execute(
+                "DELETE FROM claim_relations WHERE user_id = %s AND resolution_id = %s",
+                (user_id, resolution.resolution_id),
+            )
+            self._connection.execute(
+                """
+                DELETE FROM processing_outbox
+                WHERE user_id = %s AND event_type = 'belief_resolved'
+                  AND aggregate_id = %s
+                """,
+                (user_id, resolution.resolution_id),
+            )
+            self._connection.execute(
+                "DELETE FROM belief_resolution_evidence WHERE user_id = %s AND resolution_id = %s",
+                (user_id, resolution.resolution_id),
+            )
+            self._connection.execute(
+                "DELETE FROM belief_resolution_actions WHERE user_id = %s AND resolution_id = %s",
+                (user_id, resolution.resolution_id),
+            )
+            self._connection.execute(
+                "DELETE FROM belief_resolutions WHERE user_id = %s AND resolution_id = %s",
+                (user_id, resolution.resolution_id),
+            )
+        removed_decisions = direct_decisions | {
+            value.decision.decision_id for value in replays
+        }
+        if removed_decisions:
+            self._connection.execute(
+                "DELETE FROM claim_relations WHERE user_id = %s AND decision_id = ANY(%s)",
+                (user_id, list(removed_decisions)),
+            )
+            self._connection.execute(
+                "DELETE FROM conflict_decision_evidence WHERE user_id = %s AND decision_id = ANY(%s)",
+                (user_id, list(removed_decisions)),
+            )
+            self._connection.execute(
+                "DELETE FROM conflict_decisions WHERE user_id = %s AND decision_id = ANY(%s)",
+                (user_id, list(removed_decisions)),
+            )
+        for action in rewind_actions:
+            claim_id = action["claim_id"]
+            to_version_id = action["to_version_id"]
+            open_row = self._connection.execute(
+                """
+                SELECT version_id FROM claim_versions
+                WHERE user_id = %s AND claim_id = %s AND transaction_to IS NULL
+                FOR UPDATE
+                """,
+                (user_id, claim_id),
+            ).fetchone()
+            if open_row is None or open_row[0] != to_version_id:
+                raise IngestionConflict(
+                    "resolver_suffix_conflict", "belief_resolution"
+                )
+            transition = self._connection.execute(
+                """
+                SELECT idempotency_key FROM lifecycle_transitions
+                WHERE user_id = %s AND transition_id = %s
+                """,
+                (user_id, action["transition_id"]),
+            ).fetchone()
+            if transition is None or not transition[0].startswith("belief:"):
+                raise IngestionConflict(
+                    "resolver_lineage_conflict", "belief_resolution"
+                )
+            blocking = self._connection.execute(
+                """
+                SELECT 1 FROM conflict_decisions
+                WHERE user_id = %s
+                  AND (left_version_id = %s OR right_version_id = %s)
+                LIMIT 1
+                """,
+                (user_id, to_version_id, to_version_id),
+            ).fetchone()
+            if blocking is not None:
+                raise IngestionConflict(
+                    "resolver_suffix_conflict", "conflict_decision"
+                )
+            self._connection.execute(
+                """
+                DELETE FROM processing_outbox
+                WHERE user_id = %s AND event_type = 'claim_lifecycle_changed'
+                  AND dedupe_key = %s
+                """,
+                (user_id, f"claim_lifecycle_changed:{transition[0]}"),
+            )
+            self._connection.execute(
+                "DELETE FROM lifecycle_transitions WHERE user_id = %s AND transition_id = %s",
+                (user_id, action["transition_id"]),
+            )
+            self._connection.execute(
+                "DELETE FROM claim_versions WHERE user_id = %s AND version_id = %s",
+                (user_id, to_version_id),
+            )
+            restored = self._connection.execute(
+                """
+                UPDATE claim_versions SET transaction_to = NULL
+                WHERE user_id = %s AND claim_id = %s AND version_id = %s
+                  AND transaction_to IS NOT NULL
+                RETURNING version_id
+                """,
+                (user_id, claim_id, action["from_version_id"]),
+            ).fetchone()
+            if restored is None:
+                raise IngestionConflict(
+                    "resolver_baseline_conflict", "belief_resolution"
+                )
+        return tuple(
+            sorted(
+                replays,
+                key=lambda value: (
+                    value.resolution.resolved_at,
+                    value.resolution.resolution_id,
+                ),
+            )
+        )
+
+    def _replay_surviving_resolutions(
+        self,
+        user_id: str,
+        deleted_source_id: str,
+        replays: tuple[_ResolutionReplay, ...],
     ) -> None:
-        rows = self._connection.execute(
-            """
-            SELECT DISTINCT decision.decision_id, decision.pair_id,
-                            decision.left_claim_id, decision.right_claim_id
-            FROM conflict_decision_evidence AS cited
-            JOIN source_spans AS span
-              ON span.user_id = cited.user_id
-             AND span.span_id = cited.span_id
-            JOIN conflict_decisions AS decision
-              ON decision.user_id = cited.user_id
-             AND decision.decision_id = cited.decision_id
-            WHERE span.user_id = %s AND span.source_id = %s
-            ORDER BY decision.pair_id, decision.decision_id
-            """,
-            (user_id, source_id),
-        ).fetchall()
+        if not replays:
+            return
+        from conflicts.resolution import BeliefResolutionService
+        from conflicts.resolver import ResolutionRequest
+
+        service = BeliefResolutionService(self._connection)
+        for replay in replays:
+            decision = replay.decision
+            claims = self._connection.execute(
+                """
+                SELECT claim_id FROM claims
+                WHERE user_id = %s AND claim_id = ANY(%s)
+                ORDER BY claim_id
+                """,
+                (user_id, [decision.left_claim_id, decision.right_claim_id]),
+            ).fetchall()
+            if tuple(row[0] for row in claims) != (
+                decision.left_claim_id,
+                decision.right_claim_id,
+            ):
+                continue
+            versions = self._connection.execute(
+                """
+                SELECT version_id FROM claim_versions
+                WHERE user_id = %s AND version_id = ANY(%s)
+                ORDER BY version_id
+                """,
+                (user_id, [decision.left_version_id, decision.right_version_id]),
+            ).fetchall()
+            if {row[0] for row in versions} != {
+                decision.left_version_id,
+                decision.right_version_id,
+            }:
+                continue
+            visible = self._connection.execute(
+                """
+                SELECT evidence.claim_id, evidence.span_id, evidence.support_type
+                FROM evidence_links AS evidence
+                JOIN source_spans AS span
+                  ON span.user_id = evidence.user_id
+                 AND span.span_id = evidence.span_id
+                JOIN source_events AS source
+                  ON source.user_id = span.user_id
+                 AND source.source_id = span.source_id
+                WHERE evidence.user_id = %s
+                  AND evidence.claim_id = ANY(%s)
+                  AND source.source_id <> %s
+                """,
+                (
+                    user_id,
+                    [decision.left_claim_id, decision.right_claim_id],
+                    deleted_source_id,
+                ),
+            ).fetchall()
+            visible_keys = set(visible)
+            expected_keys = {
+                (value.claim_id, value.span_id, value.support_type)
+                for value in replay.evidence
+            }
+            if not expected_keys or not expected_keys <= visible_keys:
+                continue
+            if {
+                claim_id for claim_id, _, _ in expected_keys
+            } != {decision.left_claim_id, decision.right_claim_id}:
+                continue
+            self._repository.insert_conflict_decision(decision)
+            for relation in replay.relations:
+                self._repository.insert_claim_relation(relation)
+            for evidence in replay.evidence:
+                self._repository.insert_conflict_decision_evidence(evidence)
+            resolution = replay.resolution
+            valid_at = (
+                resolution.valid_at_timestamp
+                if resolution.valid_at_timestamp is not None
+                else resolution.valid_at_date
+            )
+            result = service.resolve_in_transaction(
+                ResolutionRequest(
+                    user_id=user_id,
+                    decision_id=decision.decision_id,
+                    transaction_as_of=resolution.transaction_as_of,
+                    valid_at=valid_at,
+                    resolved_at=resolution.resolved_at,
+                    idempotency_key=resolution.idempotency_key,
+                    resolver_version=resolution.resolver_version,
+                )
+            )
+            if result.resolution != resolution or result.replayed:
+                raise IngestionConflict(
+                    "resolver_replay_drift", "belief_resolution"
+                )
+
+    def _conflicts_for_source(
+        self, user_id: str, source_id: str
+    ) -> tuple[tuple[str, str, str, str], ...]:
+        return tuple(
+            self._connection.execute(
+                """
+                SELECT DISTINCT decision.decision_id, decision.pair_id,
+                                decision.left_claim_id, decision.right_claim_id
+                FROM conflict_decision_evidence AS cited
+                JOIN source_spans AS span
+                  ON span.user_id = cited.user_id AND span.span_id = cited.span_id
+                JOIN conflict_decisions AS decision
+                  ON decision.user_id = cited.user_id
+                 AND decision.decision_id = cited.decision_id
+                WHERE span.user_id = %s AND span.source_id = %s
+                ORDER BY decision.pair_id, decision.decision_id
+                """,
+                (user_id, source_id),
+            ).fetchall()
+        )
+
+    def _remove_conflicts_for_source(
+        self,
+        user_id: str,
+        source_id: str,
+        deleted_at: datetime,
+        *,
+        rows: tuple[tuple[str, str, str, str], ...] | None = None,
+        decisions_removed: bool = False,
+    ) -> None:
+        rows = self._conflicts_for_source(user_id, source_id) if rows is None else rows
         decision_ids = tuple(row[0] for row in rows)
         if not decision_ids:
             return
-        self._connection.execute(
-            "DELETE FROM claim_relations WHERE user_id = %s AND decision_id = ANY(%s)",
-            (user_id, list(decision_ids)),
-        )
-        self._connection.execute(
-            """
-            DELETE FROM conflict_decision_evidence
-            WHERE user_id = %s AND decision_id = ANY(%s)
-            """,
-            (user_id, list(decision_ids)),
-        )
-        self._connection.execute(
-            "DELETE FROM conflict_decisions WHERE user_id = %s AND decision_id = ANY(%s)",
-            (user_id, list(decision_ids)),
-        )
+        if not decisions_removed:
+            self._connection.execute(
+                "DELETE FROM claim_relations WHERE user_id = %s AND decision_id = ANY(%s)",
+                (user_id, list(decision_ids)),
+            )
+            self._connection.execute(
+                "DELETE FROM conflict_decision_evidence WHERE user_id = %s AND decision_id = ANY(%s)",
+                (user_id, list(decision_ids)),
+            )
+            self._connection.execute(
+                "DELETE FROM conflict_decisions WHERE user_id = %s AND decision_id = ANY(%s)",
+                (user_id, list(decision_ids)),
+            )
         pairs = {
             (pair_id, left_claim_id, right_claim_id)
             for _, pair_id, left_claim_id, right_claim_id in rows
