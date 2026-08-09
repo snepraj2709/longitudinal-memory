@@ -349,6 +349,7 @@ class IngestionService:
                     (user_id, source_id),
                 ).fetchall()
             )
+            self._remove_conflicts_for_source(user_id, source_id, deleted_at)
             self._connection.execute(
                 """
                 DELETE FROM evidence_links
@@ -462,6 +463,80 @@ class IngestionService:
             )
             return DeleteResult(
                 source_id, True, affected, tuple(retired)
+            )
+
+    def _remove_conflicts_for_source(
+        self, user_id: str, source_id: str, deleted_at: datetime
+    ) -> None:
+        rows = self._connection.execute(
+            """
+            SELECT DISTINCT decision.decision_id, decision.pair_id,
+                            decision.left_claim_id, decision.right_claim_id
+            FROM conflict_decision_evidence AS cited
+            JOIN source_spans AS span
+              ON span.user_id = cited.user_id
+             AND span.span_id = cited.span_id
+            JOIN conflict_decisions AS decision
+              ON decision.user_id = cited.user_id
+             AND decision.decision_id = cited.decision_id
+            WHERE span.user_id = %s AND span.source_id = %s
+            ORDER BY decision.pair_id, decision.decision_id
+            """,
+            (user_id, source_id),
+        ).fetchall()
+        decision_ids = tuple(row[0] for row in rows)
+        if not decision_ids:
+            return
+        self._connection.execute(
+            "DELETE FROM claim_relations WHERE user_id = %s AND decision_id = ANY(%s)",
+            (user_id, list(decision_ids)),
+        )
+        self._connection.execute(
+            """
+            DELETE FROM conflict_decision_evidence
+            WHERE user_id = %s AND decision_id = ANY(%s)
+            """,
+            (user_id, list(decision_ids)),
+        )
+        self._connection.execute(
+            "DELETE FROM conflict_decisions WHERE user_id = %s AND decision_id = ANY(%s)",
+            (user_id, list(decision_ids)),
+        )
+        pairs = {
+            (pair_id, left_claim_id, right_claim_id)
+            for _, pair_id, left_claim_id, right_claim_id in rows
+        }
+        for pair_id, left_claim_id, right_claim_id in sorted(pairs):
+            counts = self._connection.execute(
+                """
+                SELECT claim_id, count(*)
+                FROM evidence_links AS evidence
+                JOIN source_spans AS span
+                  ON span.user_id = evidence.user_id
+                 AND span.span_id = evidence.span_id
+                WHERE evidence.user_id = %s
+                  AND evidence.claim_id = ANY(%s)
+                  AND span.source_id <> %s
+                GROUP BY claim_id
+                """,
+                (user_id, [left_claim_id, right_claim_id], source_id),
+            ).fetchall()
+            surviving = {claim_id for claim_id, count in counts if count > 0}
+            if surviving != {left_claim_id, right_claim_id}:
+                continue
+            dedupe_key = f"conflict_recompute_required:{pair_id}:{source_id}"
+            self._insert_outbox(
+                user_id,
+                "conflict_recompute_required",
+                pair_id,
+                dedupe_key,
+                {
+                    "pair_id": pair_id,
+                    "left_claim_id": left_claim_id,
+                    "right_claim_id": right_claim_id,
+                    "deleted_source_id": source_id,
+                },
+                deleted_at,
             )
 
     def _recover_expired_locked(self, recovered_at: datetime) -> int:

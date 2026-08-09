@@ -22,6 +22,7 @@ OUTBOX_EVENT_TYPES = frozenset(
         "claim_recompute_required",
         "source_deleted",
         "claim_lifecycle_changed",
+        "conflict_recompute_required",
     }
 )
 OUTBOX_STATES = frozenset({"pending", "published"})
@@ -34,6 +35,34 @@ MEMORY_KINDS = frozenset({"episodic", "durative"})
 LIFECYCLE_STATUSES = frozenset({"candidate", "confirmed", "current", "historical", "disputed", "superseded", "excluded"})
 SENSITIVITIES = frozenset({"standard", "sensitive", "restricted"})
 SUPPORT_TYPES = frozenset({"supports", "contradicts", "corrects"})
+CONFLICT_LABELS = frozenset(
+    {
+        "hard_contradiction",
+        "temporal_change",
+        "explicit_correction",
+        "refinement",
+        "source_disagreement",
+        "retraction",
+        "unresolved_ambiguity",
+        "unrelated",
+    }
+)
+CLAIM_RELATION_TYPES = frozenset(
+    {
+        "supports",
+        "contradicts",
+        "corrects",
+        "supersedes",
+        "refines",
+        "same_event_as",
+        "caused_by",
+        "hindered_by",
+        "same_topic_as",
+    }
+)
+SYMMETRIC_CLAIM_RELATION_TYPES = frozenset(
+    {"contradicts", "same_event_as", "same_topic_as"}
+)
 
 
 class StorageValidationError(ValueError):
@@ -556,6 +585,118 @@ class SourceTombstoneRecord:
         if not _is_sha256(self.content_hash):
             raise StorageValidationError("content_hash must be a lowercase SHA-256")
         _aware(self.deleted_at, "deleted_at")
+
+
+@dataclass(frozen=True)
+class ConflictDecisionRecord:
+    decision_id: str
+    user_id: str
+    classifier_version: str
+    rule_version: str
+    pair_id: str
+    left_claim_id: str
+    right_claim_id: str
+    left_version_id: str
+    right_version_id: str
+    input_snapshot_sha256: str
+    transaction_as_of: datetime
+    matched_rule: str
+    label: str
+    classified_at: datetime
+
+    def __post_init__(self) -> None:
+        for name in (
+            "decision_id",
+            "user_id",
+            "classifier_version",
+            "rule_version",
+            "pair_id",
+            "left_claim_id",
+            "right_claim_id",
+            "left_version_id",
+            "right_version_id",
+        ):
+            _text(getattr(self, name), name)
+        if self.left_claim_id >= self.right_claim_id:
+            raise StorageValidationError("decision claims must be canonical")
+        if not _is_sha256(self.input_snapshot_sha256):
+            raise StorageValidationError(
+                "input_snapshot_sha256 must be a lowercase SHA-256"
+            )
+        _aware(self.transaction_as_of, "transaction_as_of")
+        _aware(self.classified_at, "classified_at")
+        _enum(self.matched_rule, CONFLICT_LABELS, "matched_rule")
+        _enum(self.label, CONFLICT_LABELS, "label")
+        if self.matched_rule != self.label:
+            raise StorageValidationError("matched_rule must equal the frozen label")
+
+
+@dataclass(frozen=True)
+class ClaimRelationRecord:
+    relation_id: str
+    user_id: str
+    decision_id: str
+    classifier_version: str
+    source_claim_id: str
+    target_claim_id: str
+    relation_type: str
+    confidence: Real
+    input_snapshot_sha256: str
+    created_at: datetime
+
+    def __post_init__(self) -> None:
+        for name in (
+            "relation_id",
+            "user_id",
+            "decision_id",
+            "classifier_version",
+            "source_claim_id",
+            "target_claim_id",
+        ):
+            _text(getattr(self, name), name)
+        if self.source_claim_id == self.target_claim_id:
+            raise StorageValidationError("relation claims must differ")
+        _enum(self.relation_type, CLAIM_RELATION_TYPES, "relation_type")
+        if self.relation_type in SYMMETRIC_CLAIM_RELATION_TYPES and (
+            self.source_claim_id >= self.target_claim_id
+        ):
+            raise StorageValidationError("symmetric relation claims must be canonical")
+        object.__setattr__(
+            self, "confidence", _confidence(self.confidence, "confidence")
+        )
+        if self.confidence != 1.0:
+            raise StorageValidationError("checked relation confidence must be one")
+        if not _is_sha256(self.input_snapshot_sha256):
+            raise StorageValidationError(
+                "input_snapshot_sha256 must be a lowercase SHA-256"
+            )
+        _aware(self.created_at, "created_at")
+
+
+@dataclass(frozen=True)
+class ConflictDecisionEvidenceRecord:
+    decision_evidence_id: str
+    user_id: str
+    decision_id: str
+    claim_id: str
+    span_id: str
+    support_type: str
+    input_snapshot_sha256: str
+
+    def __post_init__(self) -> None:
+        for name in (
+            "decision_evidence_id",
+            "user_id",
+            "decision_id",
+            "claim_id",
+            "span_id",
+        ):
+            _text(getattr(self, name), name)
+        _enum(self.support_type, SUPPORT_TYPES, "support_type")
+        if not _is_sha256(self.input_snapshot_sha256):
+            raise StorageValidationError(
+                "input_snapshot_sha256 must be a lowercase SHA-256"
+            )
 
 
 def _is_sha256(value: object) -> bool:

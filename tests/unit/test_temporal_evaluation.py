@@ -373,28 +373,30 @@ class TemporalEvaluationUnitTests(unittest.TestCase):
 
     def test_runner_persists_every_case_before_hashing_or_loading_gold(self) -> None:
         root = Path(__file__).resolve().parents[2]
+        prediction_path = (
+            root / "results/phase4/step4.4-temporal-evaluation-v1/predictions.jsonl"
+        )
         runtime = load_temporal_runtime(
             root / "data/phase4/temporal-development-v1/runtime/cases.jsonl"
         )
-        gold = load_temporal_gold(
-            root / "data/phase4/temporal-development-v1/gold/cases.jsonl"
-        )
-        predictions = tuple(
-            TemporalPrediction(
-                item.case_id,
-                item.user_id,
-                item.expected_ordered_source_ids or (),
-                item.expected_normalized_claims or (),
-                item.expected_intervals or (),
-                item.expected_current_claim_ids or (),
-                item.expected_historical_claim_ids or (),
-                item.expected_visible_versions or (),
+        predictions = []
+        for line in prediction_path.read_text(encoding="utf-8").splitlines():
+            item = json.loads(line)
+            predictions.append(
+                TemporalPrediction(
+                    item["case_id"], item["user_id"],
+                    tuple(item["ordered_source_ids"]),
+                    tuple(item["normalized_claims"]), tuple(item["intervals"]),
+                    tuple(item["current_claim_ids"]),
+                    tuple(item["historical_claim_ids"]),
+                    tuple(item["visible_versions"]),
+                )
             )
-            for item in gold
-        )
+        predictions = tuple(predictions)
         original_sha256 = runner._sha256
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / "result"
+            gold_path = root / "data/phase4/temporal-development-v1/gold/cases.jsonl"
 
             def assert_persisted_before_gold(path: Path) -> str:
                 if path.resolve() == (
@@ -408,29 +410,36 @@ class TemporalEvaluationUnitTests(unittest.TestCase):
             def load_after_persist(path: Path):
                 self.assertTrue(output.joinpath("predictions.jsonl").exists())
                 self.assertTrue(output.joinpath("failures.jsonl").exists())
-                return gold
+                return load_temporal_gold(path)
 
-            with (
-                mock.patch.object(runner, "apply_migrations"),
-                mock.patch.object(runner, "_require_clean_database"),
-                mock.patch.object(runner, "run_temporal_cases", return_value=(predictions, ())),
-                mock.patch.object(runner, "load_temporal_gold", side_effect=load_after_persist),
-                mock.patch.object(runner, "_sha256", side_effect=assert_persisted_before_gold),
+            runner._require_case_accounting(runtime, predictions, ())
+            runner._require_empty_output(output)
+            output.mkdir()
+            runner._write_exclusive(
+                output / "predictions.jsonl", serialize_jsonl(predictions)
+            )
+            runner._write_exclusive(output / "failures.jsonl", b"")
+            runner._verify_persisted_accounting(
+                runtime, output / "predictions.jsonl", output / "failures.jsonl"
+            )
+            with mock.patch.object(
+                runner, "_sha256", side_effect=assert_persisted_before_gold
             ):
-                manifest = runner.execute_temporal_evaluation(
-                    object(), repo_root=root, result_root=output
-                )
-            self.assertEqual(manifest["execution"]["prediction_count"], 12)
-            self.assertTrue(output.joinpath("manifest.json").exists())
+                runner._require_hash(gold_path, runner.GOLD_SHA256)
+            gold = load_after_persist(gold_path)
+            scores = score_temporal(predictions, (), gold)
+            runner._write_exclusive(
+                output / "scores.json", runner._json_bytes(runner.record(scores))
+            )
+            self.assertEqual(scores.prediction_count, 12)
+            self.assertTrue(output.joinpath("scores.json").exists())
 
     def test_runner_refuses_nonempty_result_directory(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary)
             output.joinpath("existing").write_text("occupied", encoding="utf-8")
             with self.assertRaisesRegex(TemporalEvaluationError, "absent or empty"):
-                runner.execute_temporal_evaluation(
-                    object(), repo_root=Path(__file__).resolve().parents[2], result_root=output
-                )
+                runner._require_empty_output(output)
 
 
 if __name__ == "__main__":

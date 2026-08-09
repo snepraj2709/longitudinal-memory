@@ -60,6 +60,7 @@ class TemporalServiceIntegrationTests(unittest.TestCase):
                 "0001_phase4_storage.sql",
                 "0002_ingestion_reprocessing.sql",
                 "0003_temporal_lifecycle.sql",
+                "0004_conflict_relations.sql",
             ),
         )
         self.repository = StorageRepository(self.connection)
@@ -178,7 +179,7 @@ class TemporalServiceIntegrationTests(unittest.TestCase):
 
         self.assertEqual(
             apply_migrations(self.connection, REPO_ROOT / "migrations"),
-            ("0003_temporal_lifecycle.sql",),
+            ("0003_temporal_lifecycle.sql", "0004_conflict_relations.sql"),
         )
         self.assertEqual(
             self.connection.execute(

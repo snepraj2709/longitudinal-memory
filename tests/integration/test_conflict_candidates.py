@@ -20,7 +20,13 @@ from conflicts.candidates import (
     ConflictCandidateError,
     ConflictCandidateService,
 )
-from conflicts.evaluation import ConflictEvaluationError, execute_candidate_evaluation
+from conflicts.evaluation import (
+    ConflictEvaluationError,
+    file_sha256,
+    load_candidate_dataset_runtime,
+    persist_outputs_before_gold,
+    run_candidate_cases,
+)
 from storage.contracts import (
     ClaimRecord,
     ClaimVersionRecord,
@@ -41,6 +47,15 @@ ROOT = Path(__file__).resolve().parents[2]
 DATABASE_URL = os.environ.get("STORAGE_DATABASE_URL")
 UTC = timezone.utc
 BASE = datetime(2026, 1, 1, tzinfo=UTC)
+CANDIDATE_DATASET_ROOT = ROOT / "data/conflicts/candidate-development-v1"
+CANDIDATE_REFERENCE_RUNTIME = ROOT / "data/phase4/temporal-development-v1/runtime/cases.jsonl"
+CANDIDATE_GOLD = CANDIDATE_DATASET_ROOT / "gold/required_pairs.jsonl"
+CANDIDATE_RESULT_ROOT = ROOT / "results/conflicts/candidate-generation-development-v1"
+CANDIDATE_ARTIFACT_SHA256 = {
+    "predictions.jsonl": "2d8d0c790c3aa136735b2ac8bb1f2fcca5eeeb9732acca2af5b4dd5dd35870ae",
+    "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scores.json": "57dc7c12e6e3665978862158fd8d592c86481479778d00546c6f742fe05214fa",
+}
 
 
 @unittest.skipUnless(
@@ -125,6 +140,23 @@ class ConflictCandidateIntegrationTests(unittest.TestCase):
             self.repository.insert_evidence_link(
                 EvidenceLinkRecord(user_id, claim_id, span_id, "supports", 1)
             )
+
+    def _run_candidate_release_seams(self, output: Path) -> None:
+        manifest, runtime = load_candidate_dataset_runtime(CANDIDATE_DATASET_ROOT)
+        predictions, failures = run_candidate_cases(
+            self.connection,
+            runtime,
+            repo_root=ROOT,
+            reference_runtime_path=CANDIDATE_REFERENCE_RUNTIME,
+        )
+        persist_outputs_before_gold(
+            output,
+            runtime,
+            predictions,
+            failures,
+            CANDIDATE_GOLD,
+            expected_gold_sha256=str(manifest["gold"]["sha256"]),
+        )
 
     def test_visibility_applies_source_ingestion_and_transaction_as_of(self) -> None:
         incoming_span = self._source("incoming")
@@ -249,15 +281,10 @@ class ConflictCandidateIntegrationTests(unittest.TestCase):
             first = Path(directory) / "first"
             second = Path(directory) / "second"
             self.reset_database()
-            first_manifest = execute_candidate_evaluation(
-                self.connection, repo_root=ROOT, result_root=first
-            )
+            self._run_candidate_release_seams(first)
             first_artifacts = {
                 name: (first / name).read_bytes()
-                for name in (
-                    "predictions.jsonl", "failures.jsonl", "scores.json",
-                    "run.json", "findings.md", "manifest.json",
-                )
+                for name in CANDIDATE_ARTIFACT_SHA256
             }
             predictions = [
                 json.loads(line)
@@ -287,21 +314,33 @@ class ConflictCandidateIntegrationTests(unittest.TestCase):
                 self.connection.execute("SELECT count(*) FROM claims").fetchone()[0], 0
             )
             self.reset_database()
-            second_manifest = execute_candidate_evaluation(
-                self.connection, repo_root=ROOT, result_root=second
-            )
-            self.assertEqual(first_manifest, second_manifest)
+            self._run_candidate_release_seams(second)
             for name, payload in first_artifacts.items():
                 self.assertEqual((second / name).read_bytes(), payload, name)
+                self.assertEqual(file_sha256(first / name), CANDIDATE_ARTIFACT_SHA256[name])
+                self.assertEqual(
+                    (CANDIDATE_RESULT_ROOT / name).read_bytes(), payload, name
+                )
 
     def test_result_directory_is_immutable(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "result"
             output.mkdir()
             (output / "marker").write_text("existing", encoding="utf-8")
+            _, runtime = load_candidate_dataset_runtime(CANDIDATE_DATASET_ROOT)
+            predictions, failures = run_candidate_cases(
+                self.connection,
+                runtime,
+                repo_root=ROOT,
+                reference_runtime_path=CANDIDATE_REFERENCE_RUNTIME,
+            )
             with self.assertRaisesRegex(ConflictEvaluationError, "must be empty"):
-                execute_candidate_evaluation(
-                    self.connection, repo_root=ROOT, result_root=output
+                persist_outputs_before_gold(
+                    output,
+                    runtime,
+                    predictions,
+                    failures,
+                    CANDIDATE_GOLD,
                 )
 
 

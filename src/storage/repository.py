@@ -10,8 +10,11 @@ from psycopg.types.json import Jsonb
 
 from .contracts import (
     ClaimExtractionRecord,
+    ClaimRelationRecord,
     ClaimRecord,
     ClaimVersionRecord,
+    ConflictDecisionEvidenceRecord,
+    ConflictDecisionRecord,
     EvidenceLinkRecord,
     ExtractionVersionRecord,
     LifecycleTransitionRecord,
@@ -42,6 +45,9 @@ Record = TypeVar(
     ProcessingOutboxRecord,
     SourceTombstoneRecord,
     LifecycleTransitionRecord,
+    ConflictDecisionRecord,
+    ClaimRelationRecord,
+    ConflictDecisionEvidenceRecord,
 )
 
 _JSON_COLUMNS = {
@@ -289,6 +295,66 @@ class StorageRepository:
             "source_tombstones",
             SourceTombstoneRecord,
             {"user_id": user_id, "source_id": source_id},
+        )
+
+    def insert_conflict_decision(
+        self, record: ConflictDecisionRecord
+    ) -> ConflictDecisionRecord:
+        return self._insert(
+            "conflict_decisions",
+            record,
+            {"user_id": record.user_id, "decision_id": record.decision_id},
+        )
+
+    def get_conflict_decision(
+        self, user_id: str, decision_id: str
+    ) -> ConflictDecisionRecord | None:
+        return self._get(
+            "conflict_decisions",
+            ConflictDecisionRecord,
+            {"user_id": user_id, "decision_id": decision_id},
+        )
+
+    def insert_claim_relation(
+        self, record: ClaimRelationRecord
+    ) -> ClaimRelationRecord:
+        return self._insert(
+            "claim_relations",
+            record,
+            {"user_id": record.user_id, "relation_id": record.relation_id},
+        )
+
+    def get_claim_relation(
+        self, user_id: str, relation_id: str
+    ) -> ClaimRelationRecord | None:
+        return self._get(
+            "claim_relations",
+            ClaimRelationRecord,
+            {"user_id": user_id, "relation_id": relation_id},
+        )
+
+    def insert_conflict_decision_evidence(
+        self, record: ConflictDecisionEvidenceRecord
+    ) -> ConflictDecisionEvidenceRecord:
+        return self._insert(
+            "conflict_decision_evidence",
+            record,
+            {
+                "user_id": record.user_id,
+                "decision_evidence_id": record.decision_evidence_id,
+            },
+        )
+
+    def get_conflict_decision_evidence(
+        self, user_id: str, decision_evidence_id: str
+    ) -> ConflictDecisionEvidenceRecord | None:
+        return self._get(
+            "conflict_decision_evidence",
+            ConflictDecisionEvidenceRecord,
+            {
+                "user_id": user_id,
+                "decision_evidence_id": decision_evidence_id,
+            },
         )
 
     def _insert(

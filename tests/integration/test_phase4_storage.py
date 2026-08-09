@@ -59,6 +59,7 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
                 "0001_phase4_storage.sql",
                 "0002_ingestion_reprocessing.sql",
                 "0003_temporal_lifecycle.sql",
+                "0004_conflict_relations.sql",
             ),
         )
         self.repository = StorageRepository(self.connection)
@@ -87,6 +88,9 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
                 "processing_outbox",
                 "source_tombstones",
                 "lifecycle_transitions",
+                "conflict_decisions",
+                "claim_relations",
+                "conflict_decision_evidence",
             },
         )
         self.assertEqual(

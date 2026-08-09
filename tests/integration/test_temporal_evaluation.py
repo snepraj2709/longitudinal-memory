@@ -7,17 +7,22 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
+import hashlib
 
 try:
     import psycopg
 except ModuleNotFoundError:
     psycopg = None
 
-from evaluation.run_temporal import execute_temporal_evaluation
+from evaluation import run_temporal as runner
 from evaluation.temporal import (
     TemporalEvaluationError,
+    load_temporal_gold,
     load_temporal_runtime,
+    record,
     run_temporal_cases,
+    score_temporal,
+    serialize_jsonl,
 )
 from storage.migrations import apply_migrations
 
@@ -27,6 +32,16 @@ if psycopg is not None:
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATABASE_URL = os.environ.get("STORAGE_DATABASE_URL")
+TEMPORAL_DATASET = REPO_ROOT / "data/phase4/temporal-development-v1"
+TEMPORAL_RESULT = REPO_ROOT / "results/phase4/step4.4-temporal-evaluation-v1"
+TEMPORAL_ARTIFACT_SHA256 = {
+    "predictions.jsonl": "641e2b1221f6b0123c7521b95b997fa7d4a321faf7aa49f4fc8ab1713726c8b1",
+    "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scores.json": "23ce6b37522e1367d91e72959b3acfb1a6558597a2667f53c0da9bd970a53d9e",
+    "run.json": "1613ed40d8e9a73c2263aa651400e2240fda9a3ca46174e76d903d49e44cb285",
+    "findings.md": "1317ef934f24f8b3f7eb08b49703bde0bc23855ae1cde4e419d1d223d047159f",
+    "manifest.json": "8f7cc49fbe5620094c618eaaaa98c27ce7a337fdb2747ca9918d8bcfe6d4d644",
+}
 
 
 @unittest.skipUnless(
@@ -46,20 +61,40 @@ class TemporalEvaluationIntegrationTests(unittest.TestCase):
         self.connection.execute("DROP SCHEMA public CASCADE")
         self.connection.execute("CREATE SCHEMA public")
 
+    def _run_current_lower_seams(self, output: Path) -> object:
+        apply_migrations(self.connection, REPO_ROOT / "migrations")
+        runner._require_clean_database(self.connection)
+        runtime = load_temporal_runtime(TEMPORAL_DATASET / "runtime/cases.jsonl")
+        predictions, failures = run_temporal_cases(
+            self.connection, runtime, REPO_ROOT
+        )
+        runner._require_case_accounting(runtime, predictions, failures)
+        runner._require_empty_output(output)
+        output.mkdir(parents=True)
+        prediction_path = output / "predictions.jsonl"
+        failure_path = output / "failures.jsonl"
+        runner._write_exclusive(prediction_path, serialize_jsonl(predictions))
+        runner._write_exclusive(failure_path, serialize_jsonl(failures))
+        runner._verify_persisted_accounting(runtime, prediction_path, failure_path)
+        gold = load_temporal_gold(TEMPORAL_DATASET / "gold/cases.jsonl")
+        scores = score_temporal(predictions, failures, gold)
+        runner._write_exclusive(
+            output / "scores.json", runner._json_bytes(record(scores))
+        )
+        return scores
+
     def test_all_cases_score_on_clean_database_and_repeat_byte_identically(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             first = Path(temporary) / "first"
             second = Path(temporary) / "second"
             self.reset_database()
-            first_manifest = execute_temporal_evaluation(
-                self.connection, repo_root=REPO_ROOT, result_root=first
-            )
+            first_scores = self._run_current_lower_seams(first)
             predictions = [json.loads(line) for line in first.joinpath("predictions.jsonl").read_text().splitlines()]
             failures = first.joinpath("failures.jsonl").read_text()
             scores = json.loads(first.joinpath("scores.json").read_text())
             self.assertEqual(len(predictions), 12)
             self.assertEqual(failures, "")
-            self.assertEqual(first_manifest["execution"]["failure_count"], 0)
+            self.assertEqual(first_scores.failure_count, 0)
             for name in (
                 "event_ordering_accuracy",
                 "date_normalization_accuracy",
@@ -102,20 +137,27 @@ class TemporalEvaluationIntegrationTests(unittest.TestCase):
                 "predictions.jsonl",
                 "failures.jsonl",
                 "scores.json",
-                "run.json",
-                "findings.md",
-                "manifest.json",
             )
             first_artifacts = {
                 name: first.joinpath(name).read_bytes() for name in artifact_names
             }
             self.reset_database()
-            second_manifest = execute_temporal_evaluation(
-                self.connection, repo_root=REPO_ROOT, result_root=second
-            )
+            second_scores = self._run_current_lower_seams(second)
             for name, payload in first_artifacts.items():
                 self.assertEqual(second.joinpath(name).read_bytes(), payload, name)
-            self.assertEqual(first_manifest, second_manifest)
+                self.assertEqual(
+                    hashlib.sha256(payload).hexdigest(),
+                    TEMPORAL_ARTIFACT_SHA256[name],
+                    name,
+                )
+                self.assertEqual(TEMPORAL_RESULT.joinpath(name).read_bytes(), payload)
+            self.assertEqual(record(first_scores), record(second_scores))
+            for name in ("run.json", "findings.md", "manifest.json"):
+                self.assertEqual(
+                    hashlib.sha256(TEMPORAL_RESULT.joinpath(name).read_bytes()).hexdigest(),
+                    TEMPORAL_ARTIFACT_SHA256[name],
+                    name,
+                )
 
     def test_cross_user_runtime_reference_becomes_sanitized_failure(self) -> None:
         self.reset_database()
@@ -140,13 +182,8 @@ class TemporalEvaluationIntegrationTests(unittest.TestCase):
             "INSERT INTO memory_users (user_id, created_at) VALUES (%s, %s)",
             ("existing_user", "2026-01-01T00:00:00Z"),
         )
-        with tempfile.TemporaryDirectory() as temporary:
-            with self.assertRaisesRegex(TemporalEvaluationError, "clean database"):
-                execute_temporal_evaluation(
-                    self.connection,
-                    repo_root=REPO_ROOT,
-                    result_root=Path(temporary) / "result",
-                )
+        with self.assertRaisesRegex(TemporalEvaluationError, "clean database"):
+            runner._require_clean_database(self.connection)
 
     def test_runtime_import_graph_has_no_scaled_gold_or_oracle_dependency(self) -> None:
         source_path = REPO_ROOT / "src/evaluation/temporal.py"

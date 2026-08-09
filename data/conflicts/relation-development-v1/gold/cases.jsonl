@@ -1,0 +1,8 @@
+{"case_id":"c51_u1_same_family_repeat","dataset_version":"relation_development_v1","split":"development","user_id":"user_001","review_status":"approved","expected_label":"unrelated","expected_relations":[]}
+{"case_id":"c51_u1_separate_periods","dataset_version":"relation_development_v1","split":"development","user_id":"user_001","review_status":"approved","expected_label":"temporal_change","expected_relations":[{"source_claim_id":"c51_u1_sep_new","target_claim_id":"c51_u1_sep_old","relation_type":"same_topic_as"}]}
+{"case_id":"c51_u1_ninety_day_boundary","dataset_version":"relation_development_v1","split":"development","user_id":"user_001","review_status":"approved","expected_label":"unrelated","expected_relations":[]}
+{"case_id":"c51_u1_lexical_threshold","dataset_version":"relation_development_v1","split":"development","user_id":"user_001","review_status":"approved","expected_label":"unrelated","expected_relations":[]}
+{"case_id":"c51_u2_shared_entity_overlap","dataset_version":"relation_development_v1","split":"development","user_id":"user_002","review_status":"approved","expected_label":"unrelated","expected_relations":[]}
+{"case_id":"c51_u2_mixed_unknown","dataset_version":"relation_development_v1","split":"development","user_id":"user_002","review_status":"approved","expected_label":"unresolved_ambiguity","expected_relations":[]}
+{"case_id":"c51_u2_approximate","dataset_version":"relation_development_v1","split":"development","user_id":"user_002","review_status":"approved","expected_label":"unrelated","expected_relations":[]}
+{"case_id":"c51_u2_cross_user_distractor","dataset_version":"relation_development_v1","split":"development","user_id":"user_002","review_status":"approved","expected_label":"unrelated","expected_relations":[]}

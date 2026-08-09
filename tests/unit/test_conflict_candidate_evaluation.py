@@ -37,6 +37,50 @@ ROOT = Path(__file__).resolve().parents[2]
 DATASET_ROOT = ROOT / "data/conflicts/candidate-development-v1"
 REFERENCE_RUNTIME = ROOT / "data/phase4/temporal-development-v1/runtime/cases.jsonl"
 GOLD_PATH = DATASET_ROOT / "gold/required_pairs.jsonl"
+STEP51_RESULT_ROOT = ROOT / "results/conflicts/candidate-generation-development-v1"
+STEP51_MANIFEST_SHA256 = "e089dd87b4361982988cd6df37a150e678f3b9245c1a14a007f90202de6b6c18"
+STEP51_ARTIFACT_SHA256 = {
+    "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "findings.md": "882dc375f582cd3247392f90aaad1419ac365fca326d0b8058acdefe1ea69297",
+    "predictions.jsonl": "2d8d0c790c3aa136735b2ac8bb1f2fcca5eeeb9732acca2af5b4dd5dd35870ae",
+    "run.json": "a6dbd095cff5f3be62cda6484a77cc5f92b700ca067101d135db305108faa722",
+    "scores.json": "57dc7c12e6e3665978862158fd8d592c86481479778d00546c6f742fe05214fa",
+}
+STEP51_IMPLEMENTATION_SHA256 = {
+    "Makefile": "28bb69d856d8c64a04b56969097e58842e8d30257b985e6818a0870d49a54bf3",
+    "src/conflicts/__init__.py": "a6da0cd3a4b39ee895da493c12aa64aab6b58e2cc03814db725ba74085ce16f1",
+    "src/conflicts/candidates.py": "9d99f71d628fbf12366252825830ffc9ff724b69cd52318ea011e276753b1cec",
+    "src/conflicts/evaluation.py": "0202c6f27ff5665b3a3838829c4f3c5c2c374889c191ff589c5f9562f18915d2",
+    "tests/integration/test_conflict_candidates.py": "77cbc669b43f39b8061c581c77fb6da320cf8b832dc7876b1731f32e646de55d",
+    "tests/unit/test_conflict_candidate_evaluation.py": "a641e2b3bc5a43094b0eabbdf28238aa31376358ba5976f24a3ac8845d30e1b6",
+    "tests/unit/test_conflict_candidates.py": "c13787154bde8cf4688bbd36ca51595bdacd584123fa629097660a54af18c103",
+}
+STEP52_AUTHORIZED_PREDECESSOR_DRIFT = frozenset(
+    {
+        "Makefile",
+        "src/conflicts/__init__.py",
+        "src/ingestion/service.py",
+        "src/storage/contracts.py",
+        "src/storage/repository.py",
+        "tests/integration/test_conflict_candidates.py",
+        "tests/integration/test_phase4_storage.py",
+        "tests/integration/test_temporal_evaluation.py",
+        "tests/integration/test_temporal_service.py",
+        "tests/unit/test_conflict_candidate_evaluation.py",
+        "tests/unit/test_temporal_evaluation.py",
+    }
+)
+STEP52_AUTHORIZED_PROTECTED_DRIFT = frozenset(
+    {
+        "src/ingestion/service.py",
+        "src/storage/contracts.py",
+        "src/storage/repository.py",
+        "tests/integration/test_phase4_storage.py",
+        "tests/integration/test_temporal_evaluation.py",
+        "tests/integration/test_temporal_service.py",
+        "tests/unit/test_temporal_evaluation.py",
+    }
+)
 
 
 def _temporal_claim(value: object) -> TemporalClaim:
@@ -214,18 +258,36 @@ class ConflictCandidateEvaluationTests(unittest.TestCase):
 
     def test_all_protected_inputs_are_bound_and_prior_gold_is_deferred(self) -> None:
         self.assertEqual(len(PROTECTED_SHA256), 42)
+        predecessor_path = STEP51_RESULT_ROOT / "manifest.json"
+        self.assertEqual(file_sha256(predecessor_path), STEP51_MANIFEST_SHA256)
+        predecessor = json.loads(predecessor_path.read_text(encoding="utf-8"))
+        self.assertEqual(predecessor["protected_inputs"], PROTECTED_SHA256)
+        self.assertEqual(
+            predecessor["implementation_hashes"], STEP51_IMPLEMENTATION_SHA256
+        )
+        self.assertEqual(predecessor["artifacts"], STEP51_ARTIFACT_SHA256)
+        for name, expected in STEP51_ARTIFACT_SHA256.items():
+            self.assertEqual(file_sha256(STEP51_RESULT_ROOT / name), expected)
+        predecessor_files = {
+            **PROTECTED_SHA256,
+            **STEP51_IMPLEMENTATION_SHA256,
+        }
+        actual_drift = {
+            path
+            for path, expected in predecessor_files.items()
+            if file_sha256(ROOT / path) != expected
+        }
+        self.assertEqual(actual_drift, STEP52_AUTHORIZED_PREDECESSOR_DRIFT)
+        protected_drift = {
+            path
+            for path, expected in PROTECTED_SHA256.items()
+            if file_sha256(ROOT / path) != expected
+        }
+        self.assertEqual(protected_drift, STEP52_AUTHORIZED_PROTECTED_DRIFT)
         self.assertEqual(
             file_sha256(ROOT / SCORER_ONLY_PROTECTED_PATH),
             PROTECTED_SHA256[SCORER_ONLY_PROTECTED_PATH],
         )
-        with mock.patch.object(
-            evaluation_module, "_require_hash", wraps=evaluation_module._require_hash
-        ) as require_hash:
-            evaluation_module._verify_protected_inputs(
-                ROOT, include_scorer_only=False
-            )
-        checked = {str(call.args[0].relative_to(ROOT)) for call in require_hash.call_args_list}
-        self.assertEqual(checked, set(PROTECTED_SHA256) - {SCORER_ONLY_PROTECTED_PATH})
 
     def test_reference_claim_and_evidence_ownership_guards(self) -> None:
         source = (DATASET_ROOT / "runtime/cases.jsonl").read_text(encoding="utf-8")

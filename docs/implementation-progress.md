@@ -404,3 +404,75 @@ The signal counts were six same-subject pairs, six same-family pairs, eight shar
 ### Next-step input
 
 Step 5.2 receives the frozen candidate-linker configuration, `CandidateRequest`, `CandidatePair` and signal contracts, the deterministic development dataset, and the immutable candidate-generation scorecard. Step 5.2 has not started and still requires separate implementation and review.
+
+## Phase 5, Step 5.2: Classify and persist checked relations
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `4780c85a05d6397d24abe15de96f6c3979867f33`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-5.2-guidance-v1`, envelope SHA-256 `212dd69b414fab36987c917cc1c6a05bf2828b8abf9c7fa657afb7fc0838767b`
+- Commit message: `conflicts: classify and persist checked relations`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added a frozen deterministic classifier for eight labels: hard contradiction, temporal change, explicit correction, refinement, source disagreement, retraction, unresolved ambiguity, and unrelated. The precedence order is explicit, and every decision records the exact candidate pair, claim versions, evidence snapshot, rule version, and transaction cutoff.
+- The classifier accepts only canonical Step 5.1 pairs for the same user. It checks lifecycle and transaction visibility, source ingestion time, exact evidence ownership, predicate registry v2 compatibility, object shape, valid-time representation, and structured correction targets before applying a rule.
+- Added migration `0004` and typed repository records for conflict decisions, claim relations, and decision evidence. Composite foreign keys enforce user ownership. Stable IDs make exact replay a no-op and changed input a conflict, while one transaction prevents partial decisions, relations, or evidence.
+- Storage accepts the full nine-relation ontology. The v1 classifier emits only `contradicts`, `corrects`, `refines`, and `same_topic_as`; it never emits `supersedes`. Symmetric stored relations use canonical claim order.
+- Source deletion removes decisions, relations, and cited evidence before deleting spans. It schedules one content-free, ID-only recomputation event only when both claims still have evidence. It does not change lifecycle state.
+- Added eight reviewed development cases from the exact Step 5.1 candidate output, four per development user. Runtime cases contain no relation expectations. The evaluator persists all predictions and failures, closes runtime resources, and only then hashes and opens the separate gold file.
+- Added deterministic scoring for overall labels, supported-label precision, recall and F1, exact relation sets, relation direction, failures, unresolved cases, execution mode, and cross-user relations. Missing denominators are null and carry a reason.
+
+### Review corrections
+
+- Expanded the storage and SQL relation vocabulary from the four v1 outputs to all nine ontology relations. Added coverage for future relation types and canonical `same_event_as` storage while keeping classifier output restricted to v1's four relations.
+- Bound classifier input to `candidate_linker_v1` so a pair produced under another linker version cannot be reinterpreted under this frozen rule set.
+- Regenerated only the affected dataset and result manifest bindings. A clean-database evaluator run reproduced predictions, failures, scores, run metadata, and findings byte for byte.
+
+### Results
+
+The evaluator produced eight predictions and no failures. Overall label accuracy, macro F1 across the three represented labels, and exact relation-set accuracy were each `1.000000`. One of eight cases was unresolved, for an unresolved rate of `0.125000`. The release contains no directed gold relation, so direction accuracy is null with reason `no_directed_gold_relations`.
+
+The represented labels are six unrelated cases, one temporal change, and one unresolved ambiguity. The other five labels remain explicitly not evaluated. This step made no model call or lifecycle decision.
+
+### Tests and contract checks
+
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 tests passed, including eight tests against disposable PostgreSQL 16.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected Step 5.1 tests passed, including six against disposable PostgreSQL 16.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected Step 4.4 tests passed against disposable PostgreSQL 16.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed against disposable PostgreSQL 16.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed against disposable PostgreSQL 16.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 462 tests were discovered in 24.613 seconds; 418 passed and 44 database tests skipped. Those database paths passed in the Docker targets above.
+- Rule precedence, all eight labels, registry compatibility, inclusive valid time, half-open transaction time, unknown and mixed time, explicit target direction, exact evidence snapshots, cross-user rejection, stable IDs, replay and drift handling, rollback, deletion recomputation, gold sequencing, failure denominators, and immutable outputs passed.
+- The Step 5.1 release replayed through the current migrations with the same predictions, failures, and scores. The protected Step 4.4 release also kept its recorded prediction, failure, score, run, findings, and manifest hashes.
+- `git diff --check`, staged and unstaged checks, manifest self-verification, predecessor drift checks, the changed-file secret scan, and Docker cleanup passed.
+
+### Protected inputs and costs
+
+- The Step 5.1 manifest kept SHA-256 `e089dd87b4361982988cd6df37a150e678f3b9245c1a14a007f90202de6b6c18`. Its predictions, empty failures, and scores kept SHA-256 values `2d8d0c790c3aa136735b2ac8bb1f2fcca5eeeb9732acca2af5b4dd5dd35870ae`, `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`, and `57dc7c12e6e3665978862158fd8d592c86481479778d00546c6f742fe05214fa`.
+- The protected Step 4.4 manifest, predictions, failures, scores, run, and findings kept their recorded hashes. Migrations `0001` through `0003`, the Step 4.3 and Step 4.2 releases, Phase 3 claims and evidence, scaled runtime identity, predicate registry v2, `preference.md`, and the roadmap also remained unchanged.
+- Step 5.2 made zero OpenAI requests, used zero tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Classifier configuration: `configs/conflicts/relation_classifier_v1.json`, SHA-256 `fab3171a55ad21e25e303e89f44e57b7d0b926eb8f82283ce1dcb910d8960659`
+- Migration: `migrations/0004_conflict_relations.sql`, SHA-256 `d48a4c3902b59f9fc83f3497cedc65c964de25c4edb3b1fd53a04e3afaa1e5c3`
+- Dataset manifest: `data/conflicts/relation-development-v1/manifest.json`, SHA-256 `690694179f910a93fd536d082e7abd4c48cf76d9216959211189833af9f72d5a`
+- Runtime cases: `runtime/cases.jsonl`, SHA-256 `9a298284bc25a155954be6e20e7807541f9638fbfd50640060878b7a73b5fe0e`
+- Reviewed gold: `gold/cases.jsonl`, SHA-256 `0e245546cab7b85cffa83fa3ef05fe860ea6a230891718f36dfe44851fa42d74`
+- Result manifest: `results/conflicts/relation-classification-development-v1/manifest.json`, SHA-256 `2f29edd580957192cc7808e2e4a454b7fa7c0b89bfc9ea3851efbf9e1c76179e`
+- Predictions: `predictions.jsonl`, SHA-256 `f41a15fa83df9602c0536976aaebbc7aef9d7e33d1353f057dbeb52a6b3cf201`
+- Scores: `scores.json`, SHA-256 `4efc0bbc243e9bca92898da6aeabf7d0693ef479b7cfeef39afb647c2ecd49bd`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- This is an eight-pair deterministic development check. Five labels and directed relation accuracy have no development denominator, so the perfect represented-label scores do not estimate production accuracy.
+- This step records checked classification and relation facts only. It does not select a current belief, mutate lifecycle state, rank source authority, embed or retrieve memory, call a model, or implement Step 5.3.
+
+### Next-step input
+
+Step 5.3 receives canonical candidate pairs, immutable conflict decisions, full-vocabulary relation storage, exact evidence snapshots, user-scoped repository reads, and the deterministic Step 5.2 development scorecard. Step 5.3 has not started and still requires separate implementation and review.
