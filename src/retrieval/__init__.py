@@ -32,6 +32,25 @@ from .repository import (
     RetrievalPersistenceConflict,
     RetrievalPersistenceError,
 )
+from .query_contracts import (
+    EligibilityDecision,
+    EligibilityResult,
+    QueryPlan,
+    RequestedValidTime,
+    RetrievalQueryError,
+    RetrievalQueryFailure,
+    RetrievalQueryRequest,
+    parse_retrieval_query_request,
+)
+from .query_planner import (
+    QueryPlannerConfig,
+    RetrievalQueryPlanner,
+    build_query_plan,
+    classify_query,
+    load_query_planner_config,
+    normalized_query_tokens,
+)
+from .query_repository import RetrievalQueryRepository, RetrievalQueryRepositoryError
 
 __all__ = [
     "CONTENT_RENDERER_VERSION",
@@ -49,6 +68,12 @@ __all__ = [
     "RelationLineage",
     "RetrievalIndexError",
     "RetrievalIndexRepository",
+    "RetrievalQueryError",
+    "RetrievalQueryFailure",
+    "RetrievalQueryPlanner",
+    "RetrievalQueryRepository",
+    "RetrievalQueryRepositoryError",
+    "RetrievalQueryRequest",
     "RetrievalPersistenceConflict",
     "RetrievalPersistenceError",
     "SessionIndexInput",
@@ -56,10 +81,20 @@ __all__ = [
     "SourceSpanLineage",
     "TransactionTime",
     "ValidTime",
+    "EligibilityDecision",
+    "EligibilityResult",
+    "QueryPlan",
+    "QueryPlannerConfig",
+    "RequestedValidTime",
     "build_atomic_index_record",
     "build_session_index_record",
     "load_index_config",
+    "load_query_planner_config",
     "normalized_tokens",
+    "normalized_query_tokens",
+    "parse_retrieval_query_request",
+    "build_query_plan",
+    "classify_query",
     "render_atomic_content",
     "render_session_content",
 ]

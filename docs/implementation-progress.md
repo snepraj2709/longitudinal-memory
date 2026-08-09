@@ -941,3 +941,60 @@ Failures, duplicates, cross-user references, stale references, unsupported recor
 ### Next-step input
 
 Step 7.2 receives the frozen index schema, deterministic renderer and embedder contract, exact record lineage, deletion-aware rebuild behavior, and immutable 50-record development release. Query classification, filters, ranking, fusion, retrieval scoring, and answers have not started and require separate guidance and authorization.
+
+## Phase 7, Step 7.2: Add query planning and pre-search filters
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `cd8fc5856b682584aa979623b500fabaf8d5f902`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-7.2-guidance-v1`, envelope SHA-256 `d698cc1b53460bc6422fa9d25fb9f47a398425e7848cdf18f93a71e2e9103e70`
+- Compatibility ruling: `step-7.2-guidance-v1-compatibility-ruling-1`, envelope SHA-256 `bb83c54b37ff2ff14c7e6655fded7a696de79e19c4dfa4b0f63086cd1dbc1e4b`
+- Commit message: `retrieval: add deterministic query planning and filters`
+
+### Implementation
+
+- The request and plan contracts require an aware cutoff, a frozen index version, sorted record-kind, speaker, and subject filters, typed valid time, and explicit sensitivity permissions. Unknown fields, duplicate filters, mixed or reversed time, naive timestamps, and version drift fail before repository work.
+- The planner classifies eight query types with frozen NFKC and casefolded phrase rules. Evidence requests take precedence over the underlying factual type, while change and correction intent takes precedence over simple current or historical wording. Structured time remains authoritative; unstructured time is flagged for clarification instead of parsed.
+- The query repository chooses the latest successful user-owned index run at or before the request cutoff. It then applies transaction, source-ingestion, relation, inclusive valid-time, speaker, subject, lifecycle, and sensitivity checks. Cross-user rows never enter the result or its rejection counts. Restricted rows cannot be authorized, sensitive rows require permission, and null sensitivity requires a separate audit opt-in.
+- The repository returns stable record-ID order for reproducibility only. It does not execute full-text or vector search, compute an embedding, score or rank a record, choose `k`, fuse results, rerank, or answer a question.
+- Compatibility ruling 1 updates only the frozen Makefile hash in `tests/integration/test_phase5_conflict_evaluation.py`. The final Makefile SHA-256 is `347eab60fd4d62d3764bb4315f1831cc024c3696bd37524de8ffd8106252c6e1`; the ruled adapter SHA-256 is `580fd9b546996641a397f9ea1f57980c44e41066ceb92f91f0fea50f3d734a8f`. The Step 5.3 and Phase 5 manifests and payloads remain unchanged.
+
+### Development release
+
+The release contains 24 synthetic development requests, split evenly across `user_001` and `user_002`, with three requests for each query label. Runtime planning and filtering completed before the scorer opened the separate reviewed reference. The runtime checkpoint records that no reference, gold, oracle, review-queue, test-user, search, ranking, or model path ran.
+
+All 24 labels, 24 plan expectations, and 24 eligibility expectations matched. Failures, cross-user rows, restricted rows, post-cutoff rows, duplicate decisions, stale rows, unsupported rows, model calls, retries, tokens, and incremental cost were all zero. Two clean PostgreSQL runs produced byte-identical runtime artifacts, and two scorer runs over the checkpoint produced byte-identical releases.
+
+### Tests and review gates
+
+- `make test-retrieval-planning PYTHON=.venv-storage/bin/python`: 81 tests passed, including the frozen Step 7.1 index tests and 41 new unit and PostgreSQL integration tests.
+- Protected live gates passed: ingestion 5, storage 30, temporal lifecycle 15, temporal evaluation 20, conflict candidates 29, conflict relations 29, belief resolution 46, Phase 5 evaluation 39, sessionization 33, grounded summaries 45, durative claims 55, and Step 6.4 summary quality 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 770 tests were discovered in 32.473 seconds; 650 passed and 120 database tests skipped. The skipped database groups passed in the sequential live gates above.
+- Independent release recomputation, in-memory compilation, manifest self-verification, `git diff --check`, staged and unstaged inspection, secret and leakage scans, Docker cleanup, and the no-search SQL spy passed.
+- The out-of-band 126-path predecessor replay found the same nine authorized compatibility paths and 117 unchanged paths. The Step 7.1 result manifest remains `5854d9389224128549df992a9fd7f60e857333ed273adb946b1c1c8c58dea0c6`, and its 50-record payload remains byte-exact. Before the ledger entry, tracked Step 7.2 drift was limited to `Makefile`, `src/retrieval/__init__.py`, and the ruled Phase 5 adapter.
+
+### Artifacts, costs, and limitations
+
+- Planner configuration: `configs/retrieval/query_planner_v1.json`, SHA-256 `538af5ceb41f50c752dc086c9f6ef39ee6b42b4ec0616948b3ac38192f66c654`
+- Dataset manifest: `data/retrieval/query-planning-development-v1/manifest.json`, SHA-256 `c93af3341693425611e75749d962d12fb185bb3ee9788d0eb906ad03bcc4f260`
+- Runtime requests: `requests.jsonl`, SHA-256 `9763e0a723a00e9dce7ec2f031ba9863983c06b7a20fe42f97019f1e229a2b30`
+- Reviewed reference: `reference.jsonl`, SHA-256 `5c2f6f9a2aa21f18a3050cf48d4d8954377ee1f58d013813481da211db1be36b`
+- Runtime checkpoint: `runtime-checkpoint.json`, SHA-256 `2f7986346623f7af93115c1f74ea4640447975317f93a399cdfe155c372279eb`
+- Predictions: `predictions.jsonl`, SHA-256 `b925bc80a1cb1e37832d096adc0256de8f7f42c85be275f6b316c164743080b9`
+- Filter decisions: `filter-decisions.jsonl`, SHA-256 `1167c707272c308b8dca6b29aecd120d7796f36512210000b618f8a0fe5d07bc`
+- Checks: `checks.json`, SHA-256 `c71ddba046d8ae6a1f7bc5d46179e4651d67a296dd37cc2c2df0010e08165cd1`
+- Run metadata: `run.json`, SHA-256 `6a6f1aa3de6adc5162eee154189cddef99ac7f9c2ca86b8f991e4f593418d2fb`
+- Findings: `findings.md`, SHA-256 `b2e0cb66b82f8eb463b432914793a25fbead6823877a02f53851761eb30bcb7a`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Result manifest: `results/retrieval/query-planning-development-v1/manifest.json`, SHA-256 `007b5c14c7e74a87c717150a5ab0ee454e8ed1e61dd493c014705cae5dd7383f`
+- Step 7.2 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- This is a structural planner and filter release, not a retrieval-quality result. It does not reconstruct an older aggregate index snapshot when no safe snapshot exists. The frozen index remains candidate-heavy, and its deterministic token-hash vectors do not establish semantic retrieval quality.
+
+### Next-step input
+
+Step 7.3 receives the frozen request, plan, eligibility-result, planner configuration, repository boundary, and immutable Step 7.2 release. Search, ranking, fusion, reranking, connected-history expansion, retrieval metrics, evidence packages, and answers have not started and require separate guidance and authorization.
