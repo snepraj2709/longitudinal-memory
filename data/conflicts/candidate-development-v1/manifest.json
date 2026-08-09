@@ -1,0 +1,40 @@
+{
+  "dataset_version": "candidate_development_v1",
+  "review_status": "approved",
+  "case_count": 8,
+  "user_counts": {
+    "user_001": 4,
+    "user_002": 4
+  },
+  "case_ids": [
+    "c51_u1_same_family_repeat",
+    "c51_u1_separate_periods",
+    "c51_u1_ninety_day_boundary",
+    "c51_u1_lexical_threshold",
+    "c51_u2_shared_entity_overlap",
+    "c51_u2_mixed_unknown",
+    "c51_u2_approximate",
+    "c51_u2_cross_user_distractor"
+  ],
+  "runtime": {
+    "path": "runtime/cases.jsonl",
+    "sha256": "19aa0171b3ce655f06725e4c555a8e0a5d4b3c9c3c25bc9cc3d7de35e4368a33"
+  },
+  "gold": {
+    "path": "gold/required_pairs.jsonl",
+    "sha256": "e22bff6a26c34ede3b57076d9bddf74849cbd7f62b3a39457ecf30976559c924"
+  },
+  "reference_runtime": {
+    "path": "phase4/temporal-development-v1/runtime/cases.jsonl",
+    "sha256": "4c67e1a01f0513512f9c1c3d65bacf8a943f66d037c369182a24adae9b656416"
+  },
+  "candidate_config": {
+    "path": "configs/conflicts/candidate_linker_v1.json",
+    "sha256": "c21fe89467f64d31098f42940cb0b7a62d8a213bd93d7ac04d1d91f2280d9f7f"
+  },
+  "predicate_registry": {
+    "path": "configs/extraction/predicate_registry_v2.json",
+    "sha256": "15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1"
+  },
+  "source_boundary": "step4.4_runtime_only_no_temporal_gold_scaled_gold_oracle_review_or_test_users"
+}

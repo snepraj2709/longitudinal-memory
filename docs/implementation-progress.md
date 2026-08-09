@@ -342,3 +342,65 @@ Mean interval IoU was `0.027027` with a denominator of one. This is the exact in
 ### Next-step input
 
 Phase 5 receives the protected relational store and temporal query interface together with the immutable Step 4.4 runtime cases, reviewed gold, predictions, scorecard, manifest, and documented limitations. Step 5 has not started and still requires separate approval.
+
+## Phase 5, Step 5.1: Generate conflict candidates
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `f0f658a356179f363f31a21bab146b446b144f72`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-5.1-guidance-v1`, envelope SHA-256 `e14a27ee4e7f5b2ddb58ca986aa61f4fbe523a974dbc0c0d1adddd1d5c3b92ec`
+- Commit message: `conflicts: add deterministic candidate linking`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added eight reviewed development cases, four each for `user_001` and `user_002`. Every claim points to evidence owned by a protected Step 4.4 runtime claim. The runtime file contains no required pairs, relation labels, scaled gold, oracle data, review queues, or test users.
+- Added a frozen candidate-linker configuration bound to predicate registry v2. It uses complete normalized string leaves, subject IDs, inclusive finite-time overlap or a gap of at most 90 days, and token Jaccard over the predicate, predicate family, and canonical object.
+- Added deterministic candidate generation with the three approved rules. Every result involves an incoming claim, uses lexically ordered claim IDs, records all visible source IDs, and has a stable SHA-256 pair ID. The linker neither ranks candidates nor assigns a relation type.
+- Added user-scoped PostgreSQL reads through the existing temporal service. Source visibility, transaction visibility, lifecycle eligibility, evidence support, and deletion effects are applied before features are computed.
+- Added separate runtime and scorer-only gold loaders. The evaluator writes one prediction or sanitized failure for every case before it hashes or opens gold. It refuses a nonempty output path and produces byte-stable artifacts from clean database runs.
+- During review, the pure generator was corrected to reject mixed-user claim or version inputs before feature computation instead of silently dropping them. A regression covers both ownership mismatches.
+- During review, the immutable result manifest was expanded to bind all 42 protected inputs. The runner checks the 41 non-gold inputs before execution and defers the prior scorer-only gold hash until after this step's outcomes have been persisted and scored.
+
+### Results
+
+The evaluator produced eight predictions and no failures. It returned all eight reviewed required pairs from ten possible same-user pairs, for candidate recall `1.000000` and pair reduction `0.200000`. It generated no cross-user pair.
+
+The signal counts were six same-subject pairs, six same-family pairs, eight shared-entity pairs, three temporal overlaps, two pairs within the 90-day gap, one approximate-time pair, and four pairs at or above the lexical threshold. These are descriptive counts, not precision estimates.
+
+### Tests and contract checks
+
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 tests passed, including six against disposable PostgreSQL 16.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed against disposable PostgreSQL 16.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed against disposable PostgreSQL 16.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed against disposable PostgreSQL 16.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 433 tests were discovered in 25.144 seconds; 397 passed and 36 database tests skipped. Those database paths passed in the Docker targets above.
+- Exact lexical and 90-day thresholds, inclusive endpoints, mixed and unknown time, repeated evidence, source-ID completeness, user isolation before feature work, deletion visibility, failure denominators, gold sequencing, immutable output refusal, and two clean byte-identical runs passed.
+- `git diff --check`, the staged and unstaged checks, the changed-file secret scan, all 42 protected hashes, all seven implementation hashes, all five artifact hashes, and Docker cleanup passed.
+
+### Protected inputs and costs
+
+- Migrations `0001` through `0003`, storage, ingestion and temporal services, the complete Step 4.4 dataset and result, the Step 4.2 and Step 4.3 handoffs, the Phase 3 claim input, the scaled runtime identity, predicate registry v2, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 5.1 made zero model requests, used zero tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Candidate configuration: `configs/conflicts/candidate_linker_v1.json`, SHA-256 `c21fe89467f64d31098f42940cb0b7a62d8a213bd93d7ac04d1d91f2280d9f7f`
+- Dataset manifest: `data/conflicts/candidate-development-v1/manifest.json`, SHA-256 `9dd85b3bf49d04ebdd3e0f3a6ea05da4b01fff9901be0d5d9019272bc728f2bb`
+- Runtime cases: `runtime/cases.jsonl`, SHA-256 `19aa0171b3ce655f06725e4c555a8e0a5d4b3c9c3c25bc9cc3d7de35e4368a33`
+- Reviewed required-pair gold: `gold/required_pairs.jsonl`, SHA-256 `e22bff6a26c34ede3b57076d9bddf74849cbd7f62b3a39457ecf30976559c924`
+- Result manifest: `results/conflicts/candidate-generation-development-v1/manifest.json`, SHA-256 `e089dd87b4361982988cd6df37a150e678f3b9245c1a14a007f90202de6b6c18`
+- Predictions: `predictions.jsonl`, SHA-256 `2d8d0c790c3aa136735b2ac8bb1f2fcca5eeeb9732acca2af5b4dd5dd35870ae`
+- Scores: `scores.json`, SHA-256 `57dc7c12e6e3665978862158fd8d592c86481479778d00546c6f742fe05214fa`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- This is an eight-pair deterministic development check, not a production workload or frozen-test result. Candidate recall measures whether required pairs survive linking. It does not estimate precision.
+- This step proposes pairs only. It does not persist a relation, classify a conflict, resolve a belief, change lifecycle state, or use embeddings or a model.
+
+### Next-step input
+
+Step 5.2 receives the frozen candidate-linker configuration, `CandidateRequest`, `CandidatePair` and signal contracts, the deterministic development dataset, and the immutable candidate-generation scorecard. Step 5.2 has not started and still requires separate implementation and review.
