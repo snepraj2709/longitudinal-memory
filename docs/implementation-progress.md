@@ -543,3 +543,71 @@ Exact outcome, exact action, current selection, historical preservation, dispute
 ### Next-step input
 
 Step 5.4 receives the frozen resolver policy, checksum-bound resolution schema, user-scoped atomic service, deletion rewind/replay semantics, and immutable belief-resolution scorecard. Step 5.4 has not started and still requires separate implementation and review.
+
+## Phase 5, Step 5.4: Evaluate conflicts
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `5dd1eed3fd61a99eb1c234b08651b38fe9e34067`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-5.4-guidance-v1`, envelope SHA-256 `512dcbffc4d6b8dab30ba9c55045bb0b22eb8fea16942f9b9c50ea61896043e3`
+- Commit message: `eval: freeze Phase 5 conflict scorecard`
+- The worktree was clean after the final commit check.
+
+### Dataset and evaluator
+
+- Added one eight-case Phase 5 development view, with four cases for each development user. It binds only the protected Step 5.1 candidate runtime, Step 5.2 relation runtime, and Step 5.3 resolution runtime.
+- Runtime loading checks the exact case order, users, pairs, decision snapshots, and cross-stage continuity without opening or hashing gold. The scorer opens only the three corresponding Step 5 gold files after every fresh prediction or sanitized failure has been written and the database and runtime resources are closed.
+- The integration runner starts from a clean PostgreSQL database, applies migrations `0001` through `0005`, and runs the candidate linker, relation classifier, and belief resolver through their current production services. It does not load predecessor predictions. Every case stops at its first failed stage, and extra candidates or changed snapshots become visible failures.
+- The scorecard reports each component separately. It includes candidate recall, conflict-pair precision, recall and F1, type accuracy, false contradiction rate, correction links, current and historical belief selection, superseded preservation, unresolved disputes, evidence lineage, failures, cross-user output, and execution mode. It has no composite score.
+- The result path is immutable. A nonempty directory is rejected, and two clean database runs produced byte-identical artifacts.
+
+### Review corrections
+
+- Changed evidence coverage to require an exact source-ID set. The earlier subset check could have credited a prediction with extra provenance. A regression now proves that an unexpected source lowers coverage.
+- Changed the two empty-denominator reasons to the frozen values `no_reviewed_correction_links` and `no_reviewed_superseded_claims`.
+- Added explicit F1 accounting checks. The perfect fixed set is represented as numerator `4` over denominator `4`; adding one false positive changes it to `4/5`.
+
+### Results
+
+The fresh run produced eight deterministic predictions and no failures. Candidate recall was `8/8`. Conflict-pair precision, recall, and F1 were each `1.000000` over two reviewed positive pairs, and conflict-type accuracy was `2/2`. The false contradiction rate was `0/8`.
+
+Current belief selection, historical preservation, unresolved-dispute handling, and exact evidence lineage each scored `1.000000`, with denominators `1`, `1`, `1`, and `8`. The dataset has no reviewed correction link or superseded claim, so those two metrics are null with their recorded reasons. The run produced no cross-user output, made no model call, and used no fallback.
+
+### Tests and contract checks
+
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 tests passed against disposable PostgreSQL 16 after the review corrections and artifact rebind.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected candidate tests passed.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 protected relation tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 protected resolver tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 526 tests were discovered in 23.787 seconds; 464 passed and 62 database tests skipped. Every skipped database group passed in the sequential Docker targets above.
+- Gold sequencing, fresh service execution, failure stop points, exact evidence lineage, F1 denominators, deletion and replay behavior, downstream temporal views, immutable output refusal, and two clean byte-identical runs passed.
+- `git diff --check`, staged and unstaged inspection, result-manifest self-verification, the changed-file secret and leakage scans, all 68 effective protected hashes, and Docker cleanup passed. The Makefile test target was the only authorized predecessor-file change.
+
+### Protected inputs and costs
+
+- Production code, migrations `0001` through `0005`, configurations, the complete Step 5.1 through Step 5.3 datasets and releases, Phase 4 releases, Phase 3 claims and evidence, scaled runtime identity, predicate registry v2, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 5.4 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Dataset manifest: `data/conflicts/phase5-evaluation-development-v1/manifest.json`, SHA-256 `62be6e153e74e7263d14303dd09f09a2ca4820efa766ec44375c96487bccff77`
+- Result manifest: `results/conflicts/phase5-conflict-evaluation-development-v1/manifest.json`, SHA-256 `35f37c3ef5f4a45739df200e64053a5d35552dec264336bb6bca3b701fb850ff`
+- Predictions: `predictions.jsonl`, SHA-256 `0655f923dc99a592dec1731f7c04409304108def6d647c024bebecf53eb2021b`
+- Scores: `scores.json`, SHA-256 `c1524091183d2fe5fb152523ae92f24600bdb4e743aecc1d3c9d76ffc186366c`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Run metadata: `run.json`, SHA-256 `43aacc222959492916499d43bc9110d61fd948de4bc7d4dd8e5d020e7654d880`
+- Findings: `findings.md`, SHA-256 `e72c3643fe6ab7f9c702959f229951e0c45efe3ab16d55be59e0b6d16bfe6409`
+- This is an eight-case deterministic development evaluation. It contains two conflict-positive pairs and no correction or supersession example, so the exact scores do not estimate production accuracy.
+- The evaluator measures the frozen Phase 5 pipeline. It does not add conflict policy, change lifecycle state, call a model, or inspect frozen test users.
+
+### Next-step input
+
+Phase 6 receives the protected Phase 5 candidate, relation, resolution, and component scorecards, together with exact user-scoped provenance and current-belief state. Phase 6.1 has not started and still requires its own implementation and review.
