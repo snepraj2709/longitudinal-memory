@@ -998,3 +998,65 @@ All 24 labels, 24 plan expectations, and 24 eligibility expectations matched. Fa
 ### Next-step input
 
 Step 7.3 receives the frozen request, plan, eligibility-result, planner configuration, repository boundary, and immutable Step 7.2 release. Search, ranking, fusion, reranking, connected-history expansion, retrieval metrics, evidence packages, and answers have not started and require separate guidance and authorization.
+
+## Phase 7, Step 7.3: Add B2-B4 search and fusion
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `701a23b1af2749f83ba782206b1d29cffc83dc5d`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-7.3-guidance-v1`, envelope SHA-256 `4f9b8a1f9671eaa722ae71134d9714300d8a7302b952a8d896cee5f7cc060597`
+- Commit message: `retrieval: add B2-B4 search and fusion`
+
+### Implementation
+
+- B2 searches atomic records, B3 searches session records, and B4 searches both. Each run rebinds the frozen Step 7.2 eligibility result by user, index version, successful snapshot run, record kind, and record ID before search.
+- Lexical and vector queries start from a materialized, user-owned eligible set. They use PostgreSQL full-text search and exact pgvector cosine ordering with a pool of 40 records per kind. An empty text-search query or zero vector skips that channel instead of creating a match.
+- Search, expansion, metadata loading, and result assembly run in one read-only repeatable-read transaction. Missing records, changed eligibility fields, future source or relation lineage, unrelated source lineage, non-finite scores, and incomplete provenance fail the whole execution.
+- Fusion uses unweighted reciprocal rank fusion with `1 / (60 + rank)`. Scores are stored as fixed 12-place decimal strings. The reranker changes only equal-score order using the frozen query-label kind and lifecycle preferences, followed by stable record ID.
+- Change queries can add eligible versions of the same claim and one-hop checked relation neighbours. Expansion stays inside the same user, index version, snapshot, and eligibility result. Symmetric relation direction is kept in the trace. The first ten atomic seeds are chosen after filtering out session results.
+- Accepted items contain record anchors, component scores, RRF contributions, lifecycle state, claim-version lineage, source-span lineage, and expansion paths. Rejected items retain the Step 7.2 pre-filter reasons or record `outside_top_k` and `no_channel_match`. No raw source text is copied into the result.
+
+### Review corrections
+
+- Source-lineage validation originally allowed extra claim-version pairs that were not part of the indexed record's claim lineage. It now requires exact equality and has a PostgreSQL regression proving the corrupt record fails closed.
+- Symmetric checked relations were accepted from storage but rewritten as incoming or outgoing in the result trace. The contract and repository now preserve `symmetric`, with unit and live coverage.
+- B4 originally limited the combined atomic and session ranking to ten before selecting atomic expansion seeds. It now filters to atomic records first and then takes ten, as required by the expansion contract.
+- The corrected release kept `results.jsonl`, `checks.json`, `failures.jsonl`, `run.json`, and `findings.md` byte-identical. Only the implementation-bound runtime checkpoint and manifest changed.
+
+### Development release
+
+The release contains eight handcrafted runtime queries, one per Step 7.2 query label and four per development user. Each query ran as B2, B3, and B4, producing 24 results: eight per baseline. B2 accepted only atomic records, B3 accepted only session records, and B4 used the atomic and session lexical and vector channels.
+
+The 24 runs accepted 204 records, recorded 44 pre-filter and 152 post-rank rejections, and produced no failures. All accepted ranks are contiguous and at most ten. Cross-user, restricted, post-cutoff, stale, unsupported, duplicate, and partial-lineage counts are zero. The frozen development index has no checked relation links or multi-version claim chain, so its expansion count is zero; live fixtures cover both paths.
+
+This is a runtime-only release. It created, opened, and hashed no relevance file and computed no retrieval-quality or timing metric. Provider requests, retries, tokens, and incremental cost are zero. Historical OpenAI spend remains `$0.2314404`.
+
+### Tests and contract checks
+
+- `make test-retrieval-baselines PYTHON=.venv-storage/bin/python`: 132 tests passed against disposable PostgreSQL 16. This includes the frozen index and planning suites, B2-B4 search, tie ordering, expansion, deletion, repeatable-read consistency, read traps, and two clean byte-identical releases.
+- Protected live gates passed: conflict evaluation 39, belief resolution 46, conflict relations 29, conflict candidates 29, durative claims 55, grounded summaries 45, sessionization 33, temporal evaluation 20, temporal lifecycle 15, and storage with ingestion 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 821 tests were discovered in 29.409 seconds; 688 passed and 133 database tests skipped. Every required database group passed in the sequential live gates above.
+- Release self-verification, compilation, `git diff --check`, staged and unstaged inspection, secret and leakage scans, exact three-path predecessor drift, all 15 protected hashes, and Docker cleanup passed.
+
+### Artifacts, costs, and limitations
+
+- Ranking configuration: `configs/retrieval/baseline_v1.json`, SHA-256 `6d49b6d9302b32eb5446ceeb36eb14642091a73ff264c4d7cfeeb4569858cea1`
+- Dataset manifest: `data/retrieval/baseline-execution-development-v1/manifest.json`, SHA-256 `d32915d803cb1d2dcaeaf4f0269b1da33b3f9111a58222c4027b9a5e95446b48`
+- Runtime queries: `queries.jsonl`, SHA-256 `e6e98f9b6de0747652d0d99b2379abe2d1e1a01ab012b1c6cae00cfab8e72bb4`
+- Result manifest: `results/retrieval/baseline-execution-development-v1/manifest.json`, SHA-256 `ab45d4a51766d9d0edcc39c77f8b0ccd4abbcb1254437153f7759418cfe01703`
+- Runtime checkpoint: `runtime-checkpoint.json`, SHA-256 `d99a2ee8720f16fb40867f92d1740582536ecced84c7eadfffc5f1907065e3b4`
+- Results: `results.jsonl`, SHA-256 `e1e69fe8ac64a81f27e171cdd7082b7648e2a339659f11e6e4f2a1702a1dbb60`
+- Checks: `checks.json`, SHA-256 `c5ec466fe24c7105931886632cb4751aca9211a816e7edd2ef8056052179bc0d`
+- Run metadata: `run.json`, SHA-256 `03b1edb8079cd9601ec70aa13f71c3017170cdae20a3176fcee7e925ae564555`
+- Findings: `findings.md`, SHA-256 `860e385b5d5a99742351d8bdbf33eb51710e3dbf3e9474b5b9b77c11dea2c4a9`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- The deterministic signed token-hash vector rewards shared tokens and hash collisions; it is not a semantic embedding. The index remains candidate-heavy. This step makes no relevance, latency, or production retrieval-quality claim.
+
+### Next-step input
+
+Step 7.4 receives the immutable runtime queries, ranking configuration, 24 B2-B4 results, exact lineage, and runtime checkpoint. Relevance annotations and retrieval metrics have not started and require separate guidance and authorization.

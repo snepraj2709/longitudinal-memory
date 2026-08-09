@@ -1,0 +1,56 @@
+{
+  "dataset_version": "baseline_execution_development_v1",
+  "split": "development",
+  "guidance_version": "step-7.3-guidance-v1",
+  "guidance_sha256": "4f9b8a1f9671eaa722ae71134d9714300d8a7302b952a8d896cee5f7cc060597",
+  "review_status": "implementation_reviewed",
+  "query_count": 8,
+  "result_count": 24,
+  "allowed_users": [
+    "user_001",
+    "user_002"
+  ],
+  "baselines": [
+    "B2",
+    "B3",
+    "B4"
+  ],
+  "runtime_bindings": {
+    "queries": {
+      "path": "data/retrieval/baseline-execution-development-v1/queries.jsonl",
+      "sha256": "e6e98f9b6de0747652d0d99b2379abe2d1e1a01ab012b1c6cae00cfab8e72bb4"
+    },
+    "ranking_config": {
+      "path": "configs/retrieval/baseline_v1.json",
+      "sha256": "6d49b6d9302b32eb5446ceeb36eb14642091a73ff264c4d7cfeeb4569858cea1"
+    },
+    "planner_config": {
+      "path": "configs/retrieval/query_planner_v1.json",
+      "sha256": "538af5ceb41f50c752dc086c9f6ef39ee6b42b4ec0616948b3ac38192f66c654"
+    },
+    "index_release": {
+      "manifest_path": "results/retrieval/index-development-v1/manifest.json",
+      "manifest_sha256": "5854d9389224128549df992a9fd7f60e857333ed273adb946b1c1c8c58dea0c6",
+      "records_path": "results/retrieval/index-development-v1/records.jsonl",
+      "records_sha256": "e29531cd3bf72419c947a31b13c0b4adbd008f019dfbfc3e6a820ad541e23cfe"
+    },
+    "query_planning_release": {
+      "manifest_path": "results/retrieval/query-planning-development-v1/manifest.json",
+      "manifest_sha256": "007b5c14c7e74a87c717150a5ab0ee454e8ed1e61dd493c014705cae5dd7383f",
+      "runtime_checkpoint_path": "results/retrieval/query-planning-development-v1/runtime-checkpoint.json",
+      "runtime_checkpoint_sha256": "2f7986346623f7af93115c1f74ea4640447975317f93a399cdfe155c372279eb"
+    }
+  },
+  "execution_mode": "deterministic_no_model",
+  "sensitivity_exception": "development_audit_unclassified_opt_in",
+  "relevance_boundary": "runtime_only_no_relevance_file_created_opened_or_hashed",
+  "excluded_inputs": [
+    "retrieval_relevance",
+    "benchmark_qa",
+    "gold",
+    "oracle",
+    "review_queue",
+    "step6_4_scorer",
+    "test_users"
+  ]
+}

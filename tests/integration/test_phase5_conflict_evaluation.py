@@ -57,7 +57,7 @@ ARTIFACT_NAMES = (
     "findings.md",
 )
 STEP62_AUTHORIZED_DRIFT = {
-    "Makefile": "347eab60fd4d62d3764bb4315f1831cc024c3696bd37524de8ffd8106252c6e1",
+    "Makefile": "6c7f965049ab12d4bb5339ddd2a75b701e318abc424be91a7e5d3c46e1dc7e6f",
     "tests/integration/test_belief_resolution.py": "597d429b639357dfea2b4fabbed22d0dc7cee41464a2ec798fafe7b88577f702",
     "tests/integration/test_conflict_relations.py": "2639bb343f909957b438ca36e61bcf0f874f2a47bed3c6e27d13310a80f4dd5a",
     "tests/integration/test_phase4_storage.py": "4cecbde7b2e8d53dfad3b246d2a68cdf208cfce0ab87938da7c4d4c1722b8e4d",

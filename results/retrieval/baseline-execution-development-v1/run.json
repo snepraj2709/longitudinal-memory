@@ -1,0 +1,1 @@
+{"artifact_version":"baseline_execution_development_v1","baselines":["B2","B3","B4"],"execution_mode":"deterministic_no_model","failure_count":0,"historical_openai_spend_usd":"0.2314404","incremental_cost_usd":0,"input_tokens":0,"model_calls":0,"output_tokens":0,"query_count":8,"relevance_opened":false,"result_count":24,"retries":0,"retrieval_metrics_computed":false}
