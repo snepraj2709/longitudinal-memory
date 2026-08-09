@@ -14,6 +14,7 @@ from .contracts import (
     ClaimVersionRecord,
     EvidenceLinkRecord,
     ExtractionVersionRecord,
+    LifecycleTransitionRecord,
     MemoryUser,
     ProcessingOutboxRecord,
     ProcessingAttemptRecord,
@@ -40,6 +41,7 @@ Record = TypeVar(
     ClaimExtractionRecord,
     ProcessingOutboxRecord,
     SourceTombstoneRecord,
+    LifecycleTransitionRecord,
 )
 
 _JSON_COLUMNS = {
@@ -164,6 +166,33 @@ class StorageRepository:
             "claim_versions",
             ClaimVersionRecord,
             {"user_id": user_id, "version_id": version_id},
+        )
+
+    def insert_lifecycle_transition(
+        self, record: LifecycleTransitionRecord
+    ) -> LifecycleTransitionRecord:
+        return self._insert(
+            "lifecycle_transitions",
+            record,
+            {"user_id": record.user_id, "transition_id": record.transition_id},
+        )
+
+    def get_lifecycle_transition(
+        self, user_id: str, transition_id: str
+    ) -> LifecycleTransitionRecord | None:
+        return self._get(
+            "lifecycle_transitions",
+            LifecycleTransitionRecord,
+            {"user_id": user_id, "transition_id": transition_id},
+        )
+
+    def get_lifecycle_transition_by_idempotency(
+        self, user_id: str, idempotency_key: str
+    ) -> LifecycleTransitionRecord | None:
+        return self._get(
+            "lifecycle_transitions",
+            LifecycleTransitionRecord,
+            {"user_id": user_id, "idempotency_key": idempotency_key},
         )
 
     def insert_evidence_link(

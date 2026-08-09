@@ -55,7 +55,11 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
         self.connection.execute("CREATE SCHEMA public")
         self.assertEqual(
             apply_migrations(self.connection, MIGRATIONS),
-            ("0001_phase4_storage.sql", "0002_ingestion_reprocessing.sql"),
+            (
+                "0001_phase4_storage.sql",
+                "0002_ingestion_reprocessing.sql",
+                "0003_temporal_lifecycle.sql",
+            ),
         )
         self.repository = StorageRepository(self.connection)
 
@@ -82,6 +86,7 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
                 "claim_extractions",
                 "processing_outbox",
                 "source_tombstones",
+                "lifecycle_transitions",
             },
         )
         self.assertEqual(
@@ -261,6 +266,23 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
                     ).fetchone()[0],
                     0,
                 )
+                self.assertEqual(
+                    self.connection.execute(
+                        """
+                        SELECT count(*)
+                        FROM claim_versions AS version
+                        JOIN claims AS claim
+                          ON claim.user_id = version.user_id
+                         AND claim.claim_id = version.claim_id
+                        WHERE version.valid_from_date IS DISTINCT FROM claim.valid_from_date
+                           OR version.valid_from_timestamp IS DISTINCT FROM claim.valid_from_timestamp
+                           OR version.valid_to_date IS DISTINCT FROM claim.valid_to_date
+                           OR version.valid_to_timestamp IS DISTINCT FROM claim.valid_to_timestamp
+                           OR version.time_precision IS DISTINCT FROM claim.time_precision
+                        """
+                    ).fetchone()[0],
+                    0,
+                )
                 stored_ids = {
                     row[0]
                     for row in self.connection.execute("SELECT claim_id FROM claims").fetchall()
@@ -305,6 +327,11 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
         version = ClaimVersionRecord(
             "version_1", "user_1", "claim_1", "candidate",
             datetime(2026, 1, 2, tzinfo=UTC), None, None,
+            valid_from_date=claim.valid_from_date,
+            valid_from_timestamp=claim.valid_from_timestamp,
+            valid_to_date=claim.valid_to_date,
+            valid_to_timestamp=claim.valid_to_timestamp,
+            time_precision=claim.time_precision,
         )
         evidence = EvidenceLinkRecord("user_1", "claim_1", "span_1", "supports", 0.8)
         for insert, record in (
@@ -404,6 +431,11 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
                 ClaimVersionRecord(
                     f"version_{item['claim_id']}", item["user_id"], item["claim_id"],
                     "candidate", transaction_from, None, None,
+                    valid_from_date=valid_from_date,
+                    valid_from_timestamp=valid_from_timestamp,
+                    valid_to_date=valid_to_date,
+                    valid_to_timestamp=valid_to_timestamp,
+                    time_precision=item["time_precision"],
                 )
             )
             self.repository.insert_evidence_link(

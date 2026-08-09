@@ -272,6 +272,11 @@ class IngestionService:
                                 write.claim.claim_id,
                                 "candidate",
                                 completed_at,
+                                valid_from_date=write.claim.valid_from_date,
+                                valid_from_timestamp=write.claim.valid_from_timestamp,
+                                valid_to_date=write.claim.valid_to_date,
+                                valid_to_timestamp=write.claim.valid_to_timestamp,
+                                time_precision=write.claim.time_precision,
                             )
                         )
                         created.append(write.claim.claim_id)
@@ -381,6 +386,33 @@ class IngestionService:
                 self._connection.execute(
                     "DELETE FROM claim_extractions WHERE user_id = %s AND claim_id = %s",
                     (user_id, claim_id_value),
+                )
+                self._connection.execute(
+                    """
+                    DELETE FROM lifecycle_transitions
+                    WHERE user_id = %s
+                      AND (claim_id = %s OR replacement_claim_id = %s)
+                    """,
+                    (user_id, claim_id_value, claim_id_value),
+                )
+                self._connection.execute(
+                    """
+                    DELETE FROM processing_outbox
+                    WHERE user_id = %s AND event_type = 'claim_lifecycle_changed'
+                      AND (
+                          aggregate_id = %s
+                          OR payload ->> 'claim_id' = %s
+                          OR payload ->> 'replaced_claim_id' = %s
+                          OR payload ->> 'replacement_claim_id' = %s
+                      )
+                    """,
+                    (
+                        user_id,
+                        claim_id_value,
+                        claim_id_value,
+                        claim_id_value,
+                        claim_id_value,
+                    ),
                 )
                 self._connection.execute(
                     "DELETE FROM claim_versions WHERE user_id = %s AND claim_id = %s",

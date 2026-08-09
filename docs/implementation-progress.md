@@ -220,3 +220,66 @@ Status: complete
 ### Next-step input
 
 Step 4.3 receives user-scoped source and claim records, immutable extraction mappings, retryable processing attempts, pending outbox events, content-free tombstones, and deterministic deletion-recompute events. Step 4.3 has not started and still requires a separate implementation and review.
+
+## Phase 4, Step 4.3: Add temporal version transitions
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `c50103c878c2c5a1d98d287d352b6ffca3a61719`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-4.3-guidance-v1`, envelope SHA-256 `9a9687396f0a77f9ab3939e0202b89376290118493c62731a6dd6f0e80e2be16`
+- Commit message: `temporal: add deterministic lifecycle queries`
+- The worktree was clean after the final commit check.
+
+### Implementation
+
+- Added migration `0003` with valid-time snapshots on claim versions, non-overlapping transaction intervals, lifecycle transition audit rows, and `claim_lifecycle_changed` outbox events. The incremental migration keeps an existing version's status and confidence while copying its valid time from the claim.
+- Added explicit lifecycle requests for the approved transition matrix. The caller supplies the target status, reason, idempotency key, confidence, and aware timestamp. The service does not infer a status or replacement.
+- Each change closes one open transaction interval and inserts an immutable successor. Repeating the same request returns the saved result. Reusing its key with different inputs fails.
+- Added atomic corrections that supersede one claim and promote an explicit same-user candidate replacement to `confirmed` or `current`.
+- Added user-scoped bitemporal reads. Transaction intervals are start-inclusive and end-exclusive. Valid-time bounds are inclusive, and date values never mix with timestamp values.
+- Queries hide versions and evidence recorded after the cutoff. Source deletion and tombstones dominate historical reconstruction, while claims with other visible evidence remain available.
+- Null `memory_kind` development claims cannot be promoted. All 33 Phase 3 claims remain candidates.
+
+### Review corrections
+
+- Lifecycle audit foreign keys now prove that both version IDs belong to the audit row's user and claim. PostgreSQL rejects a version from another claim owned by the same user.
+- The SQL and typed boundaries reject `candidate` as a transition target.
+- Added an incremental `0002` to `0003` regression that preserves a previously promoted version and its valid-time snapshot.
+- Updated the 33-claim rollback load to preserve each claim's valid-time snapshot on its candidate version.
+- Moved shared valid-time validation and interval membership into one storage helper instead of keeping separate claim and version copies.
+- Expanded the immutable result manifest to bind every implementation and test file, the findings, and every required protected input.
+
+### Files changed
+
+`Makefile`, `migrations/0003_temporal_lifecycle.sql`, `src/temporal`, the narrow storage and ingestion extensions, temporal unit and PostgreSQL integration tests, the Phase 4 storage regression, the Step 4.3 manifest and findings, and this ledger entry.
+
+### Tests and contract checks
+
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 tests passed against disposable PostgreSQL 16.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 storage and ingestion tests passed against disposable PostgreSQL 16.
+- `make validate-scaled-benchmark`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test`: 384 tests were discovered in 24.909 seconds; 359 passed and 25 database tests skipped. Those 25 passed in the Docker targets.
+- The transition matrix, terminal states, deterministic IDs, replay and drift handling, aware timestamps, valid-time boundaries, transaction boundaries, null time, and date/timestamp separation passed.
+- PostgreSQL covered clean and repeated migration, incremental backfill, non-overlap, exact boundary queries, concurrent identical and competing requests, stale rollback, normal endings, corrections, cross-user rejection, late-source visibility, deletion dominance, and atomic outbox/audit writes.
+- `git diff --check`, the staged and unstaged checks, the secret scan, all 26 manifest-bound hashes, and Docker cleanup passed.
+
+### Protected inputs and costs
+
+- Migrations `0001` and `0002`, `compose.yaml`, `requirements-storage.txt`, the Step 4.2 manifest and findings, the Phase 3 manifest, claims, evidence index, scores and failures, predicate registry v2, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 4.3 opened no benchmark gold, oracle data, or frozen test-user input. It made zero OpenAI requests, used zero tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Migration `migrations/0003_temporal_lifecycle.sql`: SHA-256 `2d4e888b262e3dab1a86464fa9de6d33d8818d8978004c5923a5a5e69226fc8e`.
+- Result manifest `results/phase4/step4.3-temporal-lifecycle-v1/manifest.json`: SHA-256 `68a527421761dcdc960862f39f589c0283a274e062afe6ca86dc01bbce1c67ad`.
+- Findings `results/phase4/step4.3-temporal-lifecycle-v1/findings.md`: SHA-256 `274b79a17d589474b70683aa77cbb2936ba0eb3d8fd5a8e4bd4c77887a6f9250`.
+- This step does not classify conflicts, infer lifecycle status, repair extraction, add embeddings, or score temporal accuracy. Step 4.4 owns reviewed temporal cases and scoring.
+- Deleting the last source evidence removes the unsupported claim and its lifecycle audit rows. The content-free tombstone remains.
+
+### Next-step input
+
+Step 4.4 receives the checksum-bound temporal migration, explicit lifecycle service, immutable transition audit, transactional outbox events, and user-scoped bitemporal query interface. Step 4.4 has not started and still requires a separate implementation and review.

@@ -21,6 +21,7 @@ OUTBOX_EVENT_TYPES = frozenset(
         "claims_changed",
         "claim_recompute_required",
         "source_deleted",
+        "claim_lifecycle_changed",
     }
 )
 OUTBOX_STATES = frozenset({"pending", "published"})
@@ -69,6 +70,77 @@ def _confidence(value: Real | None, name: str, *, nullable: bool = False) -> flo
     if not math.isfinite(numeric) or not 0 <= numeric <= 1:
         raise StorageValidationError(f"{name} must be a finite number from 0 to 1")
     return numeric
+
+
+def _validate_valid_time(
+    time_precision: str,
+    valid_from_date: date | None,
+    valid_from_timestamp: datetime | None,
+    valid_to_date: date | None,
+    valid_to_timestamp: datetime | None,
+) -> None:
+    dates = (valid_from_date, valid_to_date)
+    timestamps = (valid_from_timestamp, valid_to_timestamp)
+    if any(value is not None and type(value) is not date for value in dates):
+        raise StorageValidationError("valid date boundaries must be dates")
+    for value in timestamps:
+        if value is not None:
+            _aware(value, "valid timestamp boundary")
+    if any(value is not None for value in dates) and any(
+        value is not None for value in timestamps
+    ):
+        raise StorageValidationError(
+            "valid-time date and timestamp representations cannot mix"
+        )
+    if time_precision == "unknown":
+        if any(value is not None for value in (*dates, *timestamps)):
+            raise StorageValidationError(
+                "unknown precision cannot carry a valid-time boundary"
+            )
+    elif time_precision == "timestamp":
+        if not any(value is not None for value in timestamps) or any(
+            value is not None for value in dates
+        ):
+            raise StorageValidationError(
+                "timestamp precision requires timestamp boundaries"
+            )
+    elif not any(value is not None for value in dates) or any(
+        value is not None for value in timestamps
+    ):
+        raise StorageValidationError("date precision requires date boundaries")
+    if dates[0] is not None and dates[1] is not None and dates[0] > dates[1]:
+        raise StorageValidationError("valid date boundaries are inclusive and ordered")
+    if (
+        timestamps[0] is not None
+        and timestamps[1] is not None
+        and timestamps[0] > timestamps[1]
+    ):
+        raise StorageValidationError(
+            "valid timestamp boundaries are inclusive and ordered"
+        )
+
+
+def _valid_contains(
+    value: date | datetime,
+    time_precision: str,
+    valid_from_date: date | None,
+    valid_from_timestamp: datetime | None,
+    valid_to_date: date | None,
+    valid_to_timestamp: datetime | None,
+    owner: str,
+) -> bool:
+    if time_precision == "unknown":
+        return False
+    if time_precision == "timestamp":
+        _aware(value, "valid-time query")
+        start, end = valid_from_timestamp, valid_to_timestamp
+    else:
+        if type(value) is not date:
+            raise StorageValidationError(
+                f"date-precision {owner} require a date query"
+            )
+        start, end = valid_from_date, valid_to_date
+    return (start is None or start <= value) and (end is None or value <= end)
 
 
 def safe_json(value: object, name: str, *, top_type: type | None = None) -> JSONValue:
@@ -290,44 +362,26 @@ class ClaimRecord:
         self._validate_time()
 
     def _validate_time(self) -> None:
-        dates = (self.valid_from_date, self.valid_to_date)
-        timestamps = (self.valid_from_timestamp, self.valid_to_timestamp)
-        if any(value is not None and type(value) is not date for value in dates):
-            raise StorageValidationError("valid date boundaries must be dates")
-        if any(value is not None for value in timestamps):
-            for value in timestamps:
-                if value is not None:
-                    _aware(value, "valid timestamp boundary")
-        if any(value is not None for value in dates) and any(value is not None for value in timestamps):
-            raise StorageValidationError("valid-time date and timestamp representations cannot mix")
-        if self.time_precision == "unknown":
-            if any(value is not None for value in (*dates, *timestamps)):
-                raise StorageValidationError("unknown precision cannot carry a valid-time boundary")
-        elif self.time_precision == "timestamp":
-            if not any(value is not None for value in timestamps) or any(value is not None for value in dates):
-                raise StorageValidationError("timestamp precision requires timestamp boundaries")
-        elif not any(value is not None for value in dates) or any(value is not None for value in timestamps):
-            raise StorageValidationError("date precision requires date boundaries")
-        if dates[0] is not None and dates[1] is not None and dates[0] > dates[1]:
-            raise StorageValidationError("valid date boundaries are inclusive and ordered")
-        if timestamps[0] is not None and timestamps[1] is not None and timestamps[0] > timestamps[1]:
-            raise StorageValidationError("valid timestamp boundaries are inclusive and ordered")
+        _validate_valid_time(
+            self.time_precision,
+            self.valid_from_date,
+            self.valid_from_timestamp,
+            self.valid_to_date,
+            self.valid_to_timestamp,
+        )
 
     def valid_contains(self, value: date | datetime) -> bool:
         """Return membership in the inclusive valid-time interval."""
 
-        if self.time_precision == "unknown":
-            return False
-        if self.time_precision == "timestamp":
-            _aware(value, "valid-time query")
-            start, end = self.valid_from_timestamp, self.valid_to_timestamp
-        else:
-            if type(value) is not date:
-                raise StorageValidationError(
-                    "date-precision claims require a date query"
-                )
-            start, end = self.valid_from_date, self.valid_to_date
-        return (start is None or start <= value) and (end is None or value <= end)
+        return _valid_contains(
+            value,
+            self.time_precision,
+            self.valid_from_date,
+            self.valid_from_timestamp,
+            self.valid_to_date,
+            self.valid_to_timestamp,
+            "claims",
+        )
 
 
 @dataclass(frozen=True)
@@ -339,6 +393,11 @@ class ClaimVersionRecord:
     transaction_from: datetime
     transaction_to: datetime | None = None
     belief_confidence: Real | None = None
+    valid_from_date: date | None = None
+    valid_from_timestamp: datetime | None = None
+    valid_to_date: date | None = None
+    valid_to_timestamp: datetime | None = None
+    time_precision: str = "unknown"
 
     def __post_init__(self) -> None:
         for name in ("version_id", "user_id", "claim_id"):
@@ -350,6 +409,19 @@ class ClaimVersionRecord:
             if self.transaction_to <= self.transaction_from:
                 raise StorageValidationError("transaction interval must be [from, to)")
         object.__setattr__(self, "belief_confidence", _confidence(self.belief_confidence, "belief_confidence", nullable=True))
+        _enum(self.time_precision, TIME_PRECISIONS, "time_precision")
+        self._validate_time()
+
+    def _validate_time(self) -> None:
+        _validate_valid_time(
+            self.time_precision,
+            self.valid_from_date,
+            self.valid_from_timestamp,
+            self.valid_to_date,
+            self.valid_to_timestamp,
+        )
+        if self.lifecycle_status == "current" and self.time_precision == "unknown":
+            raise StorageValidationError("current versions require known valid time")
 
     def transaction_contains(self, value: datetime) -> bool:
         """Return membership in the start-inclusive, end-exclusive interval."""
@@ -358,6 +430,51 @@ class ClaimVersionRecord:
         return self.transaction_from <= value and (
             self.transaction_to is None or value < self.transaction_to
         )
+
+    def valid_contains(self, value: date | datetime) -> bool:
+        return _valid_contains(
+            value,
+            self.time_precision,
+            self.valid_from_date,
+            self.valid_from_timestamp,
+            self.valid_to_date,
+            self.valid_to_timestamp,
+            "versions",
+        )
+
+
+@dataclass(frozen=True)
+class LifecycleTransitionRecord:
+    transition_id: str
+    user_id: str
+    idempotency_key: str
+    claim_id: str
+    from_version_id: str
+    to_version_id: str
+    target_status: str
+    reason: str
+    replacement_claim_id: str | None
+    transitioned_at: datetime
+
+    def __post_init__(self) -> None:
+        for name in (
+            "transition_id", "user_id", "idempotency_key", "claim_id",
+            "from_version_id", "to_version_id", "reason",
+        ):
+            _text(getattr(self, name), name)
+        _text(self.replacement_claim_id, "replacement_claim_id", nullable=True)
+        _enum(
+            self.target_status,
+            LIFECYCLE_STATUSES - {"candidate"},
+            "target_status",
+        )
+        if len(self.reason) > 500:
+            raise StorageValidationError("reason must be at most 500 characters")
+        if self.from_version_id == self.to_version_id:
+            raise StorageValidationError("transition versions must differ")
+        if self.replacement_claim_id == self.claim_id:
+            raise StorageValidationError("replacement claim must differ")
+        _aware(self.transitioned_at, "transitioned_at")
 
 
 @dataclass(frozen=True)
