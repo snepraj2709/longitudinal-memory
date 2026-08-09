@@ -1,0 +1,61 @@
+{
+  "dataset_version": "durative_claim_development_v1",
+  "split": "development",
+  "review_status": "implementation_reviewed",
+  "expected": {
+    "user_count": 2,
+    "source_count": 20,
+    "session_count": 20,
+    "input_claim_count": 33,
+    "durative_proposition_count": 26,
+    "unsupported_predicate_count": 7,
+    "accepted_claim_count": 0
+  },
+  "inputs": {
+    "step6_2_release": {
+      "manifest_path": "results/summaries/grounded-summary-development-v1/manifest.json",
+      "manifest_sha256": "ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761",
+      "artifacts": {
+        "checks.json": "4d5b6a3f96ac2fa0f60ff9dd1177e51b44e6badd612cbb10d2ad8885aacfc7ea",
+        "empty_sessions.jsonl": "409d2d275cd4ea4e1f218b8b7fc3e6810bbaa886fb3c0128ce78b734ccf71a81",
+        "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "findings.md": "4d535d9f1abad75c67734d7e5128f8ec734070f71bb744c674870cba0adf7eed",
+        "run.json": "278c541668357b69d2a0884375537c69164bea65be76f9df5aec144cf83edf8e",
+        "summaries.jsonl": "6ce2ddbdc3ade54154e4db0bd136ff6f12e1037ebf4b214d560a2247fb674b22"
+      }
+    },
+    "phase3_handoff": {
+      "manifest_path": "results/phase3/phase4-input-development-gpt41-fallback-v1/manifest.json",
+      "manifest_sha256": "f5127cfdb7720ecf84e320da613396d11d71629b709813e2e25ea2ab00df0876",
+      "claims_path": "results/phase3/phase4-input-development-gpt41-fallback-v1/claims.jsonl",
+      "claims_sha256": "509c51229eb8a6e13e898a28fec594d0118c29b6f5a93fc917fb0d1af34b4ff7",
+      "evidence_index_path": "results/phase3/phase4-input-development-gpt41-fallback-v1/evidence_index.json",
+      "evidence_index_sha256": "311107940b64e22d9ba8af77e17d04e17f4298e8b5797e6f7234261e852ca0b6"
+    },
+    "session_definitions": {
+      "manifest_path": "results/summaries/sessionization-development-v1/manifest.json",
+      "manifest_sha256": "34611525b22cb9dcf8b5c9eb4affd2422d778b58b4b443c90913ce29c8f9365c",
+      "predictions_path": "results/summaries/sessionization-development-v1/predictions.jsonl",
+      "predictions_sha256": "2b7de7fc1b2d821867e8eeaa29182a1e22e15977387ce40e46301e2e56f86845"
+    },
+    "predicate_registry": {
+      "path": "configs/extraction/predicate_registry_v2.json",
+      "file_sha256": "15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1",
+      "content_sha256": "5cb9ba2f2b7a81aa2ce61d52d9425fbf1f2d39964a3a66286d5679ebb2e5175d"
+    },
+    "rules": {
+      "path": "configs/summaries/durative_claim_rules_v1.json",
+      "sha256": "680de008e33de6824b8fded16f8e6fdc6877130d9a2caa35908be1c45c1a0b7b"
+    }
+  },
+  "loader_boundary": "bound_development_artifacts_only_no_gold_or_test_users",
+  "evaluation_contract": {
+    "prediction_source": "fresh_deterministic_service_execution",
+    "failure_policy": "sanitized_and_in_denominator",
+    "accepted_zero_is_valid": true,
+    "model_calls": 0,
+    "cost_usd": 0
+  },
+  "guidance_version": "step-6.3-guidance-v1",
+  "decision_envelope_sha256": "de50f5ce8955d85f617bfef15af7e39297704c4b6a056f32a467ad7473ce28e2"
+}

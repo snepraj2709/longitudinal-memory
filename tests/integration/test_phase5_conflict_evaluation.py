@@ -57,11 +57,11 @@ ARTIFACT_NAMES = (
     "findings.md",
 )
 STEP62_AUTHORIZED_DRIFT = {
-    "Makefile": "72b6b4133e2020db1ca6f45fa7aedb7ab59b045d35c162c311cc4cf7e074e835",
-    "tests/integration/test_belief_resolution.py": "ca37e5f9d80e632ce0639e2b32d63d2d08498ff034865ef94ea96789b9c0aed1",
-    "tests/integration/test_conflict_relations.py": "77038557ed921f37581dac4c091c53480571ee51bf52929314dac5e3a1a088fb",
-    "tests/integration/test_phase4_storage.py": "5c9875d71296c3f8b42e9f6f63f3d017a12d61e731af6399be473fd62f8cc8af",
-    "tests/integration/test_temporal_service.py": "d54803a428e27652dd9acea70cdf8c20d61969bcfefa465cb296d9b2aec2d7c7",
+    "Makefile": "e3602406110b790c01f238edb1eab0b06a2b9ff18179b993fab0b97e2151bdf9",
+    "tests/integration/test_belief_resolution.py": "29873d20d37e900faa6b09563af454ac8861666aa1af5c59aa4cb6d1a60d81b4",
+    "tests/integration/test_conflict_relations.py": "cbf277b99f8d33be170a87d46090dd890da455767751e5f5acff5ff6d7811ddb",
+    "tests/integration/test_phase4_storage.py": "735fd285912578ed597cd0f32fe336a9b64dd4c9bee65e70a69a2ae0591c82fc",
+    "tests/integration/test_temporal_service.py": "ef119e8023c403da09fbd920efe3c519cb7721a5fa4a498a430cecf6b4d09c5e",
 }
 
 
@@ -297,7 +297,7 @@ def _step53_attestation():
             "reason": (
                 "adds_step6_2_grounded_summary_target"
                 if relative == "Makefile"
-                else "adapts_migration_expectation_for_0006_session_summaries"
+                else "adapts_migration_expectation_for_0007_durative_claims"
             ),
         }
     if set(drift_by_path) != set(STEP62_AUTHORIZED_DRIFT):

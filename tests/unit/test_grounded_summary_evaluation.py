@@ -21,11 +21,17 @@ from summaries.grounded_evaluation import (
     load_grounded_runtime,
     score_grounded_summaries,
     serialize_jsonl,
-    verify_grounded_release,
 )
 
 
 ROOT = Path(__file__).resolve().parents[2]
+FROZEN_RELEASE_MANIFEST_SHA256 = "ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761"
+AUTHORIZED_STEP63_DRIFT = {
+    "Makefile",
+    "tests/integration/test_grounded_summary_persistence.py",
+    "tests/integration/test_grounded_summary_evaluation.py",
+    "tests/unit/test_grounded_summary_evaluation.py",
+}
 
 
 def digest(value: str) -> str:
@@ -63,10 +69,20 @@ class GroundedSummaryEvaluationDatasetTests(unittest.TestCase):
                 "tests/unit/test_phase5_conflict_evaluation.py",
             },
         )
-        verify_grounded_release(repo_root=ROOT)
-        release = json.loads(
-            (ROOT / "results/summaries/grounded-summary-development-v1/manifest.json").read_text()
-        )
+        release_path = ROOT / "results/summaries/grounded-summary-development-v1/manifest.json"
+        self.assertEqual(hashlib.sha256(release_path.read_bytes()).hexdigest(), FROZEN_RELEASE_MANIFEST_SHA256)
+        release = json.loads(release_path.read_text())
+        for name, expected in release["artifacts"].items():
+            self.assertEqual(
+                hashlib.sha256((release_path.parent / name).read_bytes()).hexdigest(),
+                expected,
+            )
+        current_drift = {
+            path
+            for path, expected in release["implementation_hashes"].items()
+            if hashlib.sha256((ROOT / path).read_bytes()).hexdigest() != expected
+        }
+        self.assertEqual(current_drift, AUTHORIZED_STEP63_DRIFT)
         predecessor = release["predecessor"]
         self.assertEqual(predecessor["protected_file_count"], 79)
         self.assertEqual(predecessor["unchanged_file_count"], 72)

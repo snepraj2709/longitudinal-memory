@@ -334,7 +334,7 @@ class BeliefResolutionIntegrationTests(unittest.TestCase):
         )
 
     def test_migration_repeat_constraints_and_composite_ownership(self) -> None:
-        self.assertEqual(self.applied[-1], "0006_session_summaries.sql")
+        self.assertEqual(self.applied[-1], "0007_durative_claims.sql")
         self.assertEqual(apply_migrations(self.connection, ROOT / "migrations"), ())
         tables = {
             row[0]

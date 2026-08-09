@@ -62,6 +62,7 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
                 "0004_conflict_relations.sql",
                 "0005_belief_resolution.sql",
                 "0006_session_summaries.sql",
+                "0007_durative_claims.sql",
             ),
         )
         self.repository = StorageRepository(self.connection)
@@ -100,6 +101,9 @@ class Phase4StorageIntegrationTests(unittest.TestCase):
                 "session_summary_sources",
                 "session_summary_statements",
                 "session_summary_statement_evidence",
+                "durative_inference_runs",
+                "durative_inference_decisions",
+                "durative_inference_evidence",
             },
         )
         self.assertEqual(

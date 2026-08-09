@@ -746,3 +746,72 @@ All structural coverage and consistency metrics scored `1.000000`; invalid, stal
 ### Next-step input
 
 Step 6.3 receives the checksum-bound summary schema, deterministic renderer, exact lineage model, deletion-aware coordinator, and immutable grounded-summary development release. Step 6.3 has not started and still requires separate implementation and review.
+
+## Phase 6, Step 6.3: Add deterministic durative claims
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `16f6c367ed7543aa05b3da00044f9fab1555dfb1`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-6.3-guidance-v1`, envelope SHA-256 `de50f5ce8955d85f617bfef15af7e39297704c4b6a056f32a467ad7473ce28e2`
+- Commit message: `summary: add deterministic durative claims`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added a frozen rules file for interval predicates in the role, goal, preference, belief, relationship, and state families. Inference requires exact user, subject, predicate, polarity, and canonical JSON object identity. It does not paraphrase or merge predicates.
+- The public request covers one user and transaction cutoff. Each atomic run stores every proposition decision for that user. Migration `0007` adds user-owned run, decision, and evidence tables with composite foreign keys and source-deletion cascades. Persisted evidence roles are exactly `supports` or `counter_evidence`; ignored inputs remain in the run snapshot and are not written as lineage.
+- Eligible support must be episodic, visible at the transaction cutoff, asserted or corrected, and in a confirmed, current, or historical lifecycle state. One explicit closed interval is sufficient. Otherwise, support must span at least two sessions, sources, and episode times.
+- Restricted, hypothetical, denied, disputed, unresolved, recursive, and otherwise ineligible evidence cannot create a durative claim. Incompatible values block only when their time overlaps or is unknown. A resolved temporal change across disjoint intervals remains historical context.
+- Accepted results use the ordinary claim model with `memory_kind="durative"`, inferred epistemic status, candidate lifecycle, `speaker_id="memory_system"`, null belief confidence, minimum support confidence, highest eligible sensitivity, and exact span lineage. The extraction version records `model_version="deterministic"`.
+- Claim identity is stable for the exact proposition. Additional evidence appends an immutable transaction-time successor. A changed valid interval creates a replacement claim instead of mutating the old claim. Replay, concurrent writes, source deletion, and survivor recomputation are transactional.
+- The development loader binds only the frozen Step 6.2 release, Phase 3 development claims and evidence, session definitions, predicate registry, and rules file. It has no runtime path to summary gold, scaled gold, an oracle, a review queue, or frozen test users.
+
+### Results
+
+The release accounted for all 33 development claims. Seven use predicates outside the durative rules. The other 26 propositions were rejected as counterevidence because the imported claims still have null memory kind and candidate lifecycle. This is the conservative result required by the frozen handoff; no rule was weakened to create a positive example.
+
+The database contains two user-level inference runs with 26 decisions, split 13 per user. The decisions contain 42 `counter_evidence` lineage rows and no ignored rows. Accepted claims, failures, duplicate decisions, stale references, cross-user references, unsupported decisions, model calls, retries, and cost are all zero. Decision accounting, input-claim accounting, and provenance integrity each scored `1.000000`; replay and deletion recompute checks passed.
+
+During review, a wrong exclusion glob accidentally exposed frozen-test gold text to the reviewer. The reviewer stopped immediately. None of the exposed text was used in code, fixtures, expected values, metrics, or judgments. The implementation and release are derived only from the explicit development allowlist and bound manifests.
+
+### Tests and contract checks
+
+- `make test-durative-claims PYTHON=.venv-storage/bin/python`: 55 tests passed against disposable PostgreSQL 16. The first unpinned invocation stopped at import because the system Python lacked `psycopg`; no test body ran in that attempt.
+- `make test-grounded-summaries PYTHON=.venv-storage/bin/python`: 45 protected Step 6.2 tests passed.
+- `make test-sessionization PYTHON=.venv-storage/bin/python`: 33 protected sessionization tests passed.
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 protected Phase 5 evaluator tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 protected resolver tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 659 tests were discovered in 28.953 seconds; 564 passed and 95 database tests skipped. The guidance-required database groups passed in the sequential Docker targets above.
+- Public run contracts, exact-proposition matching, family coverage, counterevidence precedence, complete date and timestamp boundaries, transaction visibility, stable claim identity, successor and replacement behavior, deterministic extraction metadata, exact lineage roles, replay, concurrency, deletion, immutable output refusal, and two clean byte-identical releases passed.
+- `git diff --check`, compilation, result self-verification, the changed-file secret and leakage scans, the 91-file predecessor attestation with exactly nine authorized drifts, staged and unstaged inspection, and Docker cleanup passed.
+
+### Files, protected inputs and costs
+
+- Added the rules configuration, migration `0007`, four durative modules, four focused test files, the development manifest, and the seven-file immutable release under `results/summaries/durative-claim-development-v1`.
+- Changed only the Makefile and the eight migration or replay adapters authorized by the Step 6.3 contract outside those new paths. Core storage, ingestion, temporal, conflict, sessionization, grounded-summary, and extraction production modules remain unchanged.
+- The Step 6.2 manifest remains `ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761`. Migration `0006`, its four production modules, and all six Step 6.2 result artifacts kept their recorded hashes. The effective predecessor map covers 91 paths: 82 unchanged and exactly nine authorized drifts.
+- Step 6.3 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service. Historical OpenAI spend remains `$0.2314404`.
+
+### Artifacts and limitations
+
+- Rules configuration: `configs/summaries/durative_claim_rules_v1.json`, SHA-256 `680de008e33de6824b8fded16f8e6fdc6877130d9a2caa35908be1c45c1a0b7b`
+- Migration: `migrations/0007_durative_claims.sql`, SHA-256 `64e1fc2a9538d342b28003d5a1bf78b1532326fa5be0e6d8d448b8e94bc07325`
+- Dataset manifest: `data/summaries/durative-claim-development-v1/manifest.json`, SHA-256 `51db96e51079303c8e6267c224e02ea117c4a9d810217b3310ccef31b4ac4d72`
+- Result manifest: `results/summaries/durative-claim-development-v1/manifest.json`, SHA-256 `1d3f1c78d95bd96399224581bec21143c4b52562517d4779b74850e42d26fdbb`
+- Rejections: `rejections.jsonl`, SHA-256 `7bbc228591b89e8049fbc42a3de8f2da060162498bbce7f631f0eadfb792ebc9`
+- Claims and failures: both empty, SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Checks: `checks.json`, SHA-256 `fe36f87449c02b5260f9be755c8406b64ca213d9375eb8ceb844f67f2d2de8a5`
+- Run metadata: `run.json`, SHA-256 `863a1671a32de482112143cfdbb85f11eafa3570c49a41ce7ff9ecee1a9bbb02`
+- Findings: `findings.md`, SHA-256 `85f0aca8d2fbf164dee91790f5c51b9b0ef63ce5c4637bcea6251087ef4c1bfc`
+- The frozen development handoff cannot produce a positive durative claim because its claims are unresolved candidates with null memory kind. Positive inference, persistence, time, concurrency, and deletion behavior are covered by synthetic unit and live PostgreSQL fixtures instead.
+
+### Next-step input
+
+Step 6.4 receives the frozen rules, checksum-bound schema, user-run inference contract, exact support and counterevidence lineage, deletion-aware recompute behavior, and immutable development release. Step 6.4 has not started and still requires separate implementation and review.

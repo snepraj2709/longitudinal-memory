@@ -1,0 +1,55 @@
+{
+  "rules_version": "durative_claim_rules_v1",
+  "predicate_registry_path": "configs/extraction/predicate_registry_v2.json",
+  "predicate_registry_version": "predicate_registry_v2",
+  "predicate_registry_sha256": "5cb9ba2f2b7a81aa2ce61d52d9425fbf1f2d39964a3a66286d5679ebb2e5175d",
+  "allowed_predicate_families": [
+    "belief",
+    "goal",
+    "preference",
+    "relationship",
+    "role",
+    "state"
+  ],
+  "required_temporal_behavior": "interval",
+  "eligible_memory_kind": "episodic",
+  "eligible_lifecycle_statuses": [
+    "confirmed",
+    "current",
+    "historical"
+  ],
+  "eligible_epistemic_statuses": [
+    "asserted",
+    "corrected"
+  ],
+  "minimum_distinct_sessions": 2,
+  "minimum_distinct_sources": 2,
+  "minimum_distinct_episode_times": 2,
+  "explicit_closed_interval_minimum": 1,
+  "counterevidence_rules": [
+    "explicit_contradicts_or_corrects_exact_proposition",
+    "ineligible_exact_assertion",
+    "persisted_unresolved_correction_or_conflict",
+    "incompatible_value_when_time_overlaps_or_unknown"
+  ],
+  "rejection_precedence": [
+    "predicate_not_durative",
+    "no_exact_support",
+    "restricted_evidence",
+    "recursive_durative",
+    "memory_kind_ineligible",
+    "not_visible",
+    "lifecycle_ineligible",
+    "epistemic_ineligible",
+    "counterevidence",
+    "insufficient_repetition"
+  ],
+  "derived_memory_kind": "durative",
+  "derived_epistemic_status": "inferred",
+  "derived_lifecycle_status": "candidate",
+  "derived_speaker_id": "memory_system",
+  "derived_belief_confidence": "null_only",
+  "multi_episode_time_precision": "approximate",
+  "unknown_time_precision": "unknown",
+  "review_status": "implementation_reviewed"
+}
