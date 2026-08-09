@@ -1,0 +1,636 @@
+{
+  "registry_version": "predicate_registry_v2",
+  "review_status": "implementation_reviewed",
+  "predicates": [
+    {
+      "predicate": "accepted_offer",
+      "family": "event",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "accepted_role",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "assessment_of_first_kids_spark_version",
+      "family": "assessment",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "assigned_project",
+      "family": "task",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "multi_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "assigned_task",
+      "family": "task",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "multi_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "believes_aryans_move_signals_relationship_change",
+      "family": "belief",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "believes_marketing_is_right_fit",
+      "family": "belief",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "campaign_launch_date",
+      "family": "schedule",
+      "subject_scope": "person",
+      "object_shape": "date",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "can_continue_marketing_and_product_work_this_way",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "career_goal",
+      "family": "goal",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "city_adjustment",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "employer",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "employment_start_date",
+      "family": "schedule",
+      "subject_scope": "person",
+      "object_shape": "date",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "explains_work_supportively",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "feels_exhausted",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "feels_lonely_in_bengaluru",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "final_exam_start_date",
+      "family": "schedule",
+      "subject_scope": "person",
+      "object_shape": "date",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "finds_returning_to_empty_flat_difficult",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "first_kids_spark_presentation_date",
+      "family": "schedule",
+      "subject_scope": "person",
+      "object_shape": "date",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "found_onboarding_useful",
+      "family": "assessment",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "future_role",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "has_difficulty_focusing_at_work",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "has_handoff_cover",
+      "family": "task",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "has_mentor",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "scaled_v1"
+    },
+    {
+      "predicate": "has_relocation_plan",
+      "family": "goal",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "scaled_v1"
+    },
+    {
+      "predicate": "has_scheduled_event",
+      "family": "schedule",
+      "subject_scope": "person",
+      "object_shape": "scheduled_event",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "hoped_aryans_move_signaled_relationship_change",
+      "family": "belief",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "job_location",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "job_start_date",
+      "family": "schedule",
+      "subject_scope": "person",
+      "object_shape": "date",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "leads_project",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "multi_value",
+      "introduced_in": "scaled_v1"
+    },
+    {
+      "predicate": "leave_approved",
+      "family": "commitment",
+      "subject_scope": "person",
+      "object_shape": "boolean_or_text",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "leave_decline_reason",
+      "family": "commitment",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "leave_denial_reason",
+      "family": "commitment",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "likes",
+      "family": "preference",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "multi_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "lives_in",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "scaled_v1"
+    },
+    {
+      "predicate": "manager",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "manager_from_2026_10_01",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "marketing_work_sentiment",
+      "family": "assessment",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "met_akash_at_event",
+      "family": "event",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "misses",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "multi_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "needs_to_finish_college",
+      "family": "goal",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "offered_help",
+      "family": "commitment",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "office_base",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "scaled_v1"
+    },
+    {
+      "predicate": "plans_to_decide_marketing_fit_after_work_experience",
+      "family": "goal",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "plans_to_finish_campaign_draft_before_leave",
+      "family": "task",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "plans_to_share_kids_spark_notes_with",
+      "family": "task",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "plans_to_try_marketing_work",
+      "family": "goal",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "primary_role",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "product_guide_for_kids_spark",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "product_work_sentiment",
+      "family": "assessment",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "project_deadline",
+      "family": "schedule",
+      "subject_scope": "person",
+      "object_shape": "date",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "project_review_date",
+      "family": "schedule",
+      "subject_scope": "person",
+      "object_shape": "date",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "scaled_v1"
+    },
+    {
+      "predicate": "rated_first_work_week",
+      "family": "assessment",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "relationship_status_with_akash",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "relationship_status_with_aryan",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "relationship_would_change_if_living_same_city",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "atemporal",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "requested_leave",
+      "family": "commitment",
+      "subject_scope": "person",
+      "object_shape": "date_list_or_text",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "requested_leave_dates",
+      "family": "commitment",
+      "subject_scope": "person",
+      "object_shape": "date_list",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "repeatable",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "revised_project_outcome",
+      "family": "assessment",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "event",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "transfer_position",
+      "family": "assessment",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "transfer_status",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "wants_to_restart_relationship_with",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "wants_to_talk_to",
+      "family": "relationship",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "multi_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "will_have_job_role",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "will_run_marketing_team",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "will_work_for",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "scheduled",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    },
+    {
+      "predicate": "work_allocation",
+      "family": "role",
+      "subject_scope": "person",
+      "object_shape": "percentage_allocation",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "work_preference",
+      "family": "preference",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "multi_value",
+      "introduced_in": "scaled_v1"
+    },
+    {
+      "predicate": "workload_state",
+      "family": "state",
+      "subject_scope": "person",
+      "object_shape": "text",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "benchmark_v1"
+    },
+    {
+      "predicate": "works_on_product_backlog_after_marketing_work",
+      "family": "task",
+      "subject_scope": "person",
+      "object_shape": "boolean",
+      "temporal_behavior": "interval",
+      "conflict_compatibility": "single_value",
+      "introduced_in": "phase3_atomic_v2"
+    }
+  ]
+}

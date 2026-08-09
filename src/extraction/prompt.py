@@ -11,6 +11,7 @@ from .contracts import (
     ALLOWED_POLARITIES,
 )
 from .predicate_registry import (
+    PredicateRegistry,
     load_default_predicate_registry,
     render_registry_for_prompt,
 )
@@ -126,7 +127,11 @@ _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V9 = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V8.replac
 ATOMIC_EXTRACTION_SYSTEM_PROMPT = _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V3
 
 
-def get_atomic_extraction_system_prompt(prompt_version: str) -> str:
+def get_atomic_extraction_system_prompt(
+    prompt_version: str,
+    *,
+    registry: PredicateRegistry | None = None,
+) -> str:
     """Return a frozen prompt version without changing the accepted default."""
 
     prompts = {
@@ -139,12 +144,28 @@ def get_atomic_extraction_system_prompt(prompt_version: str) -> str:
         ATOMIC_EXTRACTION_CANDIDATE_PROMPT_VERSION: _ATOMIC_EXTRACTION_SYSTEM_PROMPT_V9,
     }
     try:
-        return prompts[prompt_version]
+        prompt = prompts[prompt_version]
     except KeyError as error:
         raise ValueError(f"unknown atomic extraction prompt version: {prompt_version}") from error
+    active_registry = registry or _PREDICATE_REGISTRY
+    if active_registry.content_sha256 == _PREDICATE_REGISTRY.content_sha256:
+        return prompt
+    if prompt_version != ATOMIC_EXTRACTION_PROMPT_VERSION:
+        raise ValueError("alternate registries are supported only by the accepted v3 prompt")
+    return prompt.replace(
+        f"Active predicate registry version: {_PREDICATE_REGISTRY.registry_version}\n"
+        f"Active predicate definitions:\n{_PREDICATE_DEFINITIONS}",
+        f"Active predicate registry version: {active_registry.registry_version}\n"
+        "Active predicate definitions:\n"
+        f"{render_registry_for_prompt(active_registry)}",
+    )
 
 
-def build_atomic_extraction_prompt(source_group: ExtractionSource) -> str:
+def build_atomic_extraction_prompt(
+    source_group: ExtractionSource,
+    *,
+    include_speaker_name: bool = True,
+) -> str:
     """Serialize one source group without changing its observation order."""
 
     source = {
@@ -158,7 +179,10 @@ def build_atomic_extraction_prompt(source_group: ExtractionSource) -> str:
             for entity in source_group.known_entities
         ],
         "observations": [
-            _observation_record(observation)
+            _observation_record(
+                observation,
+                include_speaker_name=include_speaker_name,
+            )
             for observation in source_group.observations
         ],
     }
@@ -173,14 +197,19 @@ def build_atomic_extraction_prompt(source_group: ExtractionSource) -> str:
     )
 
 
-def _observation_record(observation: HistoryObservation) -> dict[str, object]:
+def _observation_record(
+    observation: HistoryObservation,
+    *,
+    include_speaker_name: bool = True,
+) -> dict[str, object]:
     record: dict[str, object] = {
         "observed_at": observation.observed_at.isoformat(),
         "message_id": observation.message_id,
         "speaker_id": observation.author_id,
-        "speaker_name": observation.author_name,
-        "text": observation.text,
     }
+    if include_speaker_name:
+        record["speaker_name"] = observation.author_name
+    record["text"] = observation.text
     for field in ("subject", "title", "timezone", "location"):
         value = getattr(observation, field)
         if value is not None:

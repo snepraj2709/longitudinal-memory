@@ -1,0 +1,405 @@
+{
+  "budget": {
+    "actual_new_spend_usd": "0.1616440",
+    "cost_cap_usd": "0.3839604",
+    "cumulative_actual_spend_usd": "0.2314404",
+    "prior_spend_usd": "0.0697964",
+    "projected_cumulative_hard_maximum_usd": "0.2314404",
+    "remaining_hard_maximum_usd": "0.0000000",
+    "requests_charged": 16,
+    "requests_reserved": 16
+  },
+  "case_order": [
+    {
+      "position": 1,
+      "source_id": "scaled_user_001_conversation_001",
+      "user_id": "user_001"
+    },
+    {
+      "position": 2,
+      "source_id": "scaled_user_001_email_001",
+      "user_id": "user_001"
+    },
+    {
+      "position": 3,
+      "source_id": "scaled_user_001_chat_001",
+      "user_id": "user_001"
+    },
+    {
+      "position": 4,
+      "source_id": "scaled_user_001_calendar_001",
+      "user_id": "user_001"
+    },
+    {
+      "position": 5,
+      "source_id": "scaled_user_001_conversation_002",
+      "user_id": "user_001"
+    },
+    {
+      "position": 6,
+      "source_id": "scaled_user_001_email_002",
+      "user_id": "user_001"
+    },
+    {
+      "position": 7,
+      "source_id": "scaled_user_001_chat_002",
+      "user_id": "user_001"
+    },
+    {
+      "position": 8,
+      "source_id": "scaled_user_001_calendar_002",
+      "user_id": "user_001"
+    },
+    {
+      "position": 9,
+      "source_id": "scaled_user_001_conversation_003",
+      "user_id": "user_001"
+    },
+    {
+      "position": 10,
+      "source_id": "scaled_user_001_conversation_004",
+      "user_id": "user_001"
+    },
+    {
+      "position": 11,
+      "source_id": "scaled_user_002_conversation_001",
+      "user_id": "user_002"
+    },
+    {
+      "position": 12,
+      "source_id": "scaled_user_002_email_001",
+      "user_id": "user_002"
+    },
+    {
+      "position": 13,
+      "source_id": "scaled_user_002_chat_001",
+      "user_id": "user_002"
+    },
+    {
+      "position": 14,
+      "source_id": "scaled_user_002_calendar_001",
+      "user_id": "user_002"
+    },
+    {
+      "position": 15,
+      "source_id": "scaled_user_002_conversation_002",
+      "user_id": "user_002"
+    },
+    {
+      "position": 16,
+      "source_id": "scaled_user_002_email_002",
+      "user_id": "user_002"
+    },
+    {
+      "position": 17,
+      "source_id": "scaled_user_002_chat_002",
+      "user_id": "user_002"
+    },
+    {
+      "position": 18,
+      "source_id": "scaled_user_002_calendar_002",
+      "user_id": "user_002"
+    },
+    {
+      "position": 19,
+      "source_id": "scaled_user_002_conversation_003",
+      "user_id": "user_002"
+    },
+    {
+      "position": 20,
+      "source_id": "scaled_user_002_conversation_004",
+      "user_id": "user_002"
+    }
+  ],
+  "configuration": {
+    "canonical_sha256": "a09588ec23d15a0611c6cb30f4b9c492928cd1cd192dda2248914c53230db8e5",
+    "file_sha256": "4fb2426d420000cdc3c384f93e108e598406f560a910c978bfcd826a800c0aab",
+    "path": "configs/extraction/phase4_input_development_gpt41_fallback_v1.json"
+  },
+  "files": {
+    "case_scores.jsonl": "3c38d2638e120cda19f44260f598671a96f1f36ad9673f87b7afbe89da332770",
+    "claims.jsonl": "509c51229eb8a6e13e898a28fec594d0118c29b6f5a93fc917fb0d1af34b4ff7",
+    "evidence_index.json": "311107940b64e22d9ba8af77e17d04e17f4298e8b5797e6f7234261e852ca0b6",
+    "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "known_limitations.json": "cc4d1e8ff62ab85918048c0d95e5c3bf388a5d0f2627ce262f4035d4cfe8ff0d",
+    "predictions.jsonl": "98b3c22ac325b14de1de540f0439d939c90ae9be0cad85f7c8e7d766842be897",
+    "run.json": "e85a70f6e27e572f5e8a01368a4ef2fa5e19694cc4fd0481cffe42a3d801a396",
+    "scores.json": "76c96cc9590da0ac40d31a6ff5ab1d96e3decacb732a9bfc9b531e58e8750b4b"
+  },
+  "gold_access": {
+    "opened_only_after_all_20_predictions": true,
+    "sha256": "a74aa1e2f07b238ee837dfea80f0562c1a2c9fb81f02fa6b168dd0e3290cfff3"
+  },
+  "manifest_version": "phase4-input-gpt41-fallback-manifest-v1",
+  "model": {
+    "new_request_count": 16,
+    "requested_model": "gpt-4.1-2025-04-14",
+    "resolved_model": "gpt-4.1-2025-04-14",
+    "returned_models": [
+      "gpt-4.1-2025-04-14"
+    ],
+    "reused_prediction_count": 4
+  },
+  "predecessor": {
+    "artifact_sha256": {
+      "comparison.json": "c55869a81f433c9762bc9003c58c503cf5ac25228e1bf6acdebbf65494436844",
+      "decision.json": "9f3cc0d6aa15b6173c2b318a2e8fa10fd7aeab36d88b06089fe209c208847ef6",
+      "findings.md": "fd873f1c3c731c8693fb10e8999b2dba7a40ee4d860c8e2c1ca8010006bb2f07",
+      "gpt41-mini/failures.jsonl": "2971dca7880c93fa5baffe39faaee31f0ff0e121504e003a460c0d05f6722f3c",
+      "gpt41-mini/predictions.jsonl": "0adcc4ca501daee32499f182e36e8ad285fd3cced009ed68d8e92fb04b5cb925",
+      "gpt41-mini/run.json": "b92c5f8ae63147eaec9b154dbb370429d127d8a417ae410254cc0bc661371842",
+      "gpt41/failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gpt41/predictions.jsonl": "96c30aaddf64c67c7cecc551322787cade020b94d35f041bf796eac3618714a6",
+      "gpt41/run.json": "bbcb7d075e02613d26d82f6e65510519170d8046d1767262e7a9ab86b0eb1a5d",
+      "manifest.json": "e1670f586131e0c285a70f17f0acf510f3a56b58dbf12c95581a5aff52b95cd7"
+    },
+    "configuration_canonical_sha256": {
+      "configs/extraction/phase4_input_development_v2.json": "14e1fb3fb60dffc28d2055a71de173c6b58dfa99930e153e0621cf1ab96ab4d6",
+      "configs/extraction/phase4_input_model_qualification_v2.json": "cf9bd36947d5c4946903ec0061be84f7616e53c8f1a825810ec8c0ddcfd4e7bd"
+    },
+    "configuration_file_sha256": {
+      "configs/extraction/phase4_input_development_v2.json": "12eba0287733a1ce5284a1d9ba3957627671e4e03e7fd6799bb0faccf40df22d",
+      "configs/extraction/phase4_input_model_qualification_v2.json": "d66c069e66fbc6baf3c0cbce147cae1c9e47ebb54418545e901e8c40b4e7f00f"
+    },
+    "decision_envelope_sha256": "016f94919f46184994849fc46dd63b3259d6054096cffde210f9324799090f86",
+    "failure": {
+      "model_label": "gpt41-mini",
+      "position": 4,
+      "provider_output_received": true,
+      "source_id": "scaled_user_001_calendar_001",
+      "stage": "validation"
+    },
+    "fallback_guidance_version": "step-3.5-gpt41-fallback-guidance-v1",
+    "full_config_path": "configs/extraction/phase4_input_development_v2.json",
+    "qualification_config_path": "configs/extraction/phase4_input_model_qualification_v2.json",
+    "qualification_root": "results/phase3/atomic-extraction-step35-model-qualification-v2",
+    "reuse": [
+      {
+        "full_position": 1,
+        "qualification_position": 1,
+        "request_body_sha256": "5a6cacb958f90fa089c03bf9dd1a092aed427c7a264baff6b135a3147812f75b",
+        "source_id": "scaled_user_001_conversation_001",
+        "user_id": "user_001"
+      },
+      {
+        "full_position": 6,
+        "qualification_position": 2,
+        "request_body_sha256": "d4798abd56a1554e4cd73339c1f3063677d588d057c07611e5a9963ce25b1013",
+        "source_id": "scaled_user_001_email_002",
+        "user_id": "user_001"
+      },
+      {
+        "full_position": 7,
+        "qualification_position": 3,
+        "request_body_sha256": "aa50d026030797c34c64f98866a71d170e67270e66c3f4a513512672c370ab82",
+        "source_id": "scaled_user_001_chat_002",
+        "user_id": "user_001"
+      },
+      {
+        "full_position": 4,
+        "qualification_position": 4,
+        "request_body_sha256": "ca14acc2120e57be1270650e1f18856d76dbd69b90dca9e1c887e8b595e7009c",
+        "source_id": "scaled_user_001_calendar_001",
+        "user_id": "user_001"
+      }
+    ],
+    "spend": {
+      "prior_spend_usd": "0.0697964",
+      "v1_charged_usd": "0.0196460",
+      "v2_charged_usd": "0.0501504"
+    }
+  },
+  "repository": {
+    "commit": "f9cd3cd5e6dd60981aed57b73afd4ab52b03d7e5",
+    "worktree_dirty": true,
+    "worktree_status_sha256": "48236c9d93430971fb9c2a8d7d4b11a3c68e62ff8249b1b6ec7658a45d0c021a"
+  },
+  "request_plan": [
+    {
+      "exact_input_tokens": 4767,
+      "maximum_input_tokens": 5023,
+      "position": 1,
+      "request_body_sha256": "5a6cacb958f90fa089c03bf9dd1a092aed427c7a264baff6b135a3147812f75b",
+      "source_id": "scaled_user_001_conversation_001",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4753,
+      "maximum_input_tokens": 5009,
+      "position": 2,
+      "request_body_sha256": "f84dd924edee3b901ca62aac61508336f64944c54e3f7cbd1c4bb771fb8b4fef",
+      "source_id": "scaled_user_001_email_001",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4749,
+      "maximum_input_tokens": 5005,
+      "position": 3,
+      "request_body_sha256": "58d07d64fb00c71b0dbef18079388efcaef291401bfb90d1a676af2300ea602c",
+      "source_id": "scaled_user_001_chat_001",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4732,
+      "maximum_input_tokens": 4988,
+      "position": 4,
+      "request_body_sha256": "ca14acc2120e57be1270650e1f18856d76dbd69b90dca9e1c887e8b595e7009c",
+      "source_id": "scaled_user_001_calendar_001",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4757,
+      "maximum_input_tokens": 5013,
+      "position": 5,
+      "request_body_sha256": "010f3c984f76616beed06ef3ec27960e9d2687843e875ea4fbecf5a150449517",
+      "source_id": "scaled_user_001_conversation_002",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4763,
+      "maximum_input_tokens": 5019,
+      "position": 6,
+      "request_body_sha256": "d4798abd56a1554e4cd73339c1f3063677d588d057c07611e5a9963ce25b1013",
+      "source_id": "scaled_user_001_email_002",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4818,
+      "maximum_input_tokens": 5074,
+      "position": 7,
+      "request_body_sha256": "aa50d026030797c34c64f98866a71d170e67270e66c3f4a513512672c370ab82",
+      "source_id": "scaled_user_001_chat_002",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4746,
+      "maximum_input_tokens": 5002,
+      "position": 8,
+      "request_body_sha256": "92e26154398f544202d0076a6806c021045769c1122dca91d3dc022f15dbeba0",
+      "source_id": "scaled_user_001_calendar_002",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4774,
+      "maximum_input_tokens": 5030,
+      "position": 9,
+      "request_body_sha256": "808da822b84fbaee5ec28cfda4ab7aee96270136f55d93695c7f2f698024db95",
+      "source_id": "scaled_user_001_conversation_003",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4777,
+      "maximum_input_tokens": 5033,
+      "position": 10,
+      "request_body_sha256": "e7f71576e5a548f2d2305ba54e1ac5ba0e359feaacc21edfca411d5a274b10a3",
+      "source_id": "scaled_user_001_conversation_004",
+      "user_id": "user_001"
+    },
+    {
+      "exact_input_tokens": 4767,
+      "maximum_input_tokens": 5023,
+      "position": 11,
+      "request_body_sha256": "0dbea4ec3770322727bbfd370d9e1d89cfe5dc3c43b59048ca3926e917d71551",
+      "source_id": "scaled_user_002_conversation_001",
+      "user_id": "user_002"
+    },
+    {
+      "exact_input_tokens": 4752,
+      "maximum_input_tokens": 5008,
+      "position": 12,
+      "request_body_sha256": "1856bad71fe9ec95be0a4b91e1967b1d8ee795c3819aacc83dd43d11f2ec35af",
+      "source_id": "scaled_user_002_email_001",
+      "user_id": "user_002"
+    },
+    {
+      "exact_input_tokens": 4747,
+      "maximum_input_tokens": 5003,
+      "position": 13,
+      "request_body_sha256": "c377e0dcbbad6c1d33a5a6adca96a160d04ff8824fa25b094a956a7e1417617f",
+      "source_id": "scaled_user_002_chat_001",
+      "user_id": "user_002"
+    },
+    {
+      "exact_input_tokens": 4731,
+      "maximum_input_tokens": 4987,
+      "position": 14,
+      "request_body_sha256": "7ac154d9f203aedcd8604edbfc276fc0ec88a2b6fc6c748195ed65071e38972b",
+      "source_id": "scaled_user_002_calendar_001",
+      "user_id": "user_002"
+    },
+    {
+      "exact_input_tokens": 4757,
+      "maximum_input_tokens": 5013,
+      "position": 15,
+      "request_body_sha256": "d99418c6d858c700693c9b652ec863fd45e6a3d38830d3d731fbfc3508f32315",
+      "source_id": "scaled_user_002_conversation_002",
+      "user_id": "user_002"
+    },
+    {
+      "exact_input_tokens": 4761,
+      "maximum_input_tokens": 5017,
+      "position": 16,
+      "request_body_sha256": "ed0fda1703c2e868969f9c6c83e171d80c84673d608ef827350506abf3047cbc",
+      "source_id": "scaled_user_002_email_002",
+      "user_id": "user_002"
+    },
+    {
+      "exact_input_tokens": 4816,
+      "maximum_input_tokens": 5072,
+      "position": 17,
+      "request_body_sha256": "519e600fa247955e1fad82bacec5f3906654864f44ce9b393402777d1f866392",
+      "source_id": "scaled_user_002_chat_002",
+      "user_id": "user_002"
+    },
+    {
+      "exact_input_tokens": 4748,
+      "maximum_input_tokens": 5004,
+      "position": 18,
+      "request_body_sha256": "93c39068fcad3ccd776d6cd2e149acaa1dda93ff55ab0c624f605189a1d32508",
+      "source_id": "scaled_user_002_calendar_002",
+      "user_id": "user_002"
+    },
+    {
+      "exact_input_tokens": 4774,
+      "maximum_input_tokens": 5030,
+      "position": 19,
+      "request_body_sha256": "2b3003492acc307b4fa9db59dac67ba2605447f32262a7737500044ab7b369ba",
+      "source_id": "scaled_user_002_conversation_003",
+      "user_id": "user_002"
+    },
+    {
+      "exact_input_tokens": 4777,
+      "maximum_input_tokens": 5033,
+      "position": 20,
+      "request_body_sha256": "7a38401c718dcfe8f6ce89cdae3485e8e5cd4c5b2887e09cfeee0d7c9c7f34a7",
+      "source_id": "scaled_user_002_conversation_004",
+      "user_id": "user_002"
+    }
+  ],
+  "reverse_source_to_claim_evidence_index": {
+    "claim_count": 33,
+    "evidence_count": 33,
+    "indexed_claim_count": 33,
+    "source_count": 20,
+    "valid": true
+  },
+  "runtime_inputs": {
+    "dataset_sha256": "746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61",
+    "dataset_version": "scaled_v1",
+    "sources": {
+      "path": "data/scaled-v1/runtime/sources.jsonl",
+      "sha256": "a5cbdf38faf22689726c5d5998ea58e2b9e8a19acfae9318511064b5e29235de"
+    },
+    "users": {
+      "path": "data/scaled-v1/runtime/users.jsonl",
+      "sha256": "13e118ad1e8ecda61616eec51d6ff896ee37321f48a8c187d6c460af898cc3ef"
+    }
+  },
+  "token_counter": {
+    "encoding": "o200k_base",
+    "package": "tiktoken",
+    "package_version": "0.13.0",
+    "reserve_per_request": 256,
+    "version": "tiktoken_0_13_0_request_json_v1"
+  }
+}

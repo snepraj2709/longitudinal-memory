@@ -1,0 +1,44 @@
+{
+  "artifact_sha256": {
+    "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "predictions.jsonl": "96c30aaddf64c67c7cecc551322787cade020b94d35f041bf796eac3618714a6"
+  },
+  "attempted_source_ids": [
+    "scaled_user_001_conversation_001",
+    "scaled_user_001_email_002",
+    "scaled_user_001_chat_002",
+    "scaled_user_001_calendar_001"
+  ],
+  "budget": {
+    "actual_spend_usd": "0.041700",
+    "cost_cap_usd": "0.200000",
+    "cumulative_actual_spend_usd": "0.061346",
+    "prior_spend_usd": "0.019646",
+    "projected_hard_maximum_usd": "0.155632",
+    "remaining_reserved_requests": 24,
+    "requests_charged": 4,
+    "requests_reserved": 28
+  },
+  "configuration_sha256": "cf9bd36947d5c4946903ec0061be84f7616e53c8f1a825810ec8c0ddcfd4e7bd",
+  "configuration_version": "phase4-input-model-qualification-v2",
+  "cost_usd": "0.041700",
+  "failure_count": 0,
+  "input_tokens_charged": 17130,
+  "model_label": "gpt41",
+  "output_tokens_charged": 930,
+  "repository_commit": "f9cd3cd5e6dd60981aed57b73afd4ab52b03d7e5",
+  "repository_dirty": true,
+  "request_plan_sha256": "e55797e7ac9c914ac03d6c8c55ec63a0b4d57404cea64bc8fc0099cf349564ff",
+  "requested_model": "gpt-4.1-2025-04-14",
+  "resolved_model": "gpt-4.1-2025-04-14",
+  "run_format_version": "phase4-input-run-v1",
+  "started_at": "2026-08-09T05:48:52.590684Z",
+  "status": "generated",
+  "successful_source_ids": [
+    "scaled_user_001_conversation_001",
+    "scaled_user_001_email_002",
+    "scaled_user_001_chat_002",
+    "scaled_user_001_calendar_001"
+  ],
+  "updated_at": "2026-08-09T05:49:51.219040Z"
+}

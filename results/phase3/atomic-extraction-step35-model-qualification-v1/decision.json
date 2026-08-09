@@ -1,0 +1,27 @@
+{
+  "actual_cost_usd": "0.019646",
+  "all_predictions_complete": false,
+  "budget": {
+    "actual_spend_usd": "0.019646",
+    "cost_cap_usd": "0.200000",
+    "cumulative_actual_spend_usd": "0.019646",
+    "prior_spend_usd": "0.000000",
+    "projected_hard_maximum_usd": "0.172894",
+    "remaining_reserved_requests": 27,
+    "requests_charged": 1,
+    "requests_reserved": 28
+  },
+  "decision_version": "step35-model-qualification-v1",
+  "full_exact_true_positives": null,
+  "full_matched_provenance_spans": null,
+  "full_model": "gpt-4.1-2025-04-14",
+  "mini_exact_true_positives": null,
+  "mini_matched_provenance_spans": null,
+  "mini_model": "gpt-4.1-mini-2025-04-14",
+  "passed": false,
+  "provider_request_count": 1,
+  "reasons": [
+    "all eight qualification predictions must exist before scoring",
+    "gpt41 execution failures must be zero"
+  ]
+}
