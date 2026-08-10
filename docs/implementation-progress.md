@@ -1356,3 +1356,56 @@ The final diff contains exactly 18 authorized paths: 15 new Step 9.1 files, this
 ### Next-step input
 
 Step 9.2 receives the frozen answerability contracts, configuration, policy, strict artifact-only loader, uncalibrated confidence contract, and immutable candidate-only development release. Threshold tuning, answerability gold, calibration, paid calls, interactive answering, and Step 9.2 implementation have not started and require separate guidance.
+
+## Phase 9, Step 9.2: Freeze answerability thresholds
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `35d0c64431f19d4243b72af712dadeb8d522128f`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-9.2-guidance-v1`, envelope SHA-256 `c815ed3785101c08ce563c42c802c4513ab1bb00f5213e21e77098369d751628`
+- Compatibility rulings: `04a22f11ce263f3ec9ddb87b4b821881d7bbec72a655fe5cb4fc34cffbb83f81`, `930d0059bbff3323cd38855b48d4a1ca6ae97b4b35baae4653906fd50c1c9139`, `af76ef9b298cb600cb7214242993d63c7c318da5b47326a24b409275a6c52f59`, and `4b6c8a864310ff0823b5dd493abd726be8406bbe945f7b1839daf9a42f9afea7`
+- Commit message: `abstention: freeze answerability thresholds`
+
+### Calibration boundary
+
+The runtime configuration, three calibration modules, invented fixtures, 144 controlled predictions, and runtime checkpoint were frozen before the scorer reference was opened. The profile `ordinary_1_trait_2` was selected in advance and was not changed after scoring. The reference is made only from controlled invented cases; no benchmark answerability gold exists for the 24 development packages.
+
+Compatibility metadata arrived after the valid v1 checkpoint was frozen. The v2 finalizer therefore carries forward the seven substantive v1 payloads byte for byte and adds the four ruling envelopes and exact test-adapter drift. It does not change thresholds, predictions, fixtures, the selected profile, or the real development decisions.
+
+### Current result
+
+- Controlled sweep: 24 fixtures across six frozen profiles, with 144 predictions. The selected profile produces 8 answerable, 8 abstain, and 8 clarify decisions, `0.333333` coverage, `1.000000` answerable coverage, and zero controlled selective risk.
+- Real development release: 24 abstentions, zero answerable or clarification decisions, zero generation-allowed cases, 491 preserved rejections, null confidence, and zero failures.
+- Real answerability accuracy, selective risk, and confidence calibration remain null because no authorized matching gold exists. The controlled fixture metrics test policy mechanics only and are not a benchmark-quality claim.
+- Provider requests, retries, tokens, and incremental cost are all zero. Historical OpenAI spend remains `$0.2314404`.
+
+### Artifacts and review gate
+
+- Runtime predictions: SHA-256 `4b7db7c9427ada99430e49b9a42b14f4c9b92de749f83f876897064eb6b9acd0`
+- Runtime checkpoint: SHA-256 `5a66f85a0c690879771f36f3f6293d190cd672c9b291ee9c7f93f2965f39ce88`
+- Final v2 decisions: SHA-256 `28ca79bac049c1ac46d64864902a5647b1f68326ccf5e9bf38ba0032aa81b5fe`
+- Final v2 scorecard: SHA-256 `c2e94d82d8ca809fbb34ef5df7366701bdc124d5632c51608d964f50d9e4a3b6`
+- Final v2 manifest: SHA-256 `ef957226d62beb44a8cb117e786a2c59f23f96815d8b5daa48b9d22d80c6ef53`
+- Final v2 checks: SHA-256 `91acd39d1d382b40339e6f12b19cf3ccd10129acb6e0fcb56d3b2bc0394cf7bd`
+- Final v2 findings: SHA-256 `2c6949f0ab212ddd0f6e46c0a467bcb40549e727237f0ccec3fce040e1ed2279`
+
+### Independent review
+
+- The checkpoint chronology was checked independently. The runtime checkpoint predates the controlled reference and the final dataset manifest; all frozen runtime, configuration, fixture, implementation, prediction, and checkpoint hashes match.
+- Focused Step 9.2, Step 9.1, Step 8.2, and Step 8.3 suites: 108 passed. The live Step 8.1 evidence-package suite: 33 passed.
+- Protected live gates passed: retrieval baselines 132, conflict evaluation 39, belief resolution 46, conflict relations 29, conflict candidates 29, durative claims 55, grounded summaries 45, sessionization 33, temporal evaluation 20, temporal lifecycle 15, and storage with ingestion 30 tests.
+- Docker occasionally reported PostgreSQL healthy before the host port accepted a connection. The affected exact targets passed unchanged after a local readiness check; no repository code or test was altered to accommodate the startup race.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python` passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python` discovered 993 tests: 839 passed and 154 database tests skipped. Every required database group passed in the live gates above.
+- Runtime and v2 release verification, two clean finalizations, in-memory compilation, exact metric and count recomputation, all three nested topology attestations, protected hashes, secret and prohibited-import scans, `git diff --check`, cached and unstaged inspection, and Docker cleanup passed.
+- The final diff contains exactly 29 authorized paths: 24 new Step 9.2 files, this ledger entry, and four test-only compatibility paths. The adapters retain predecessor artifact assertions and only advance the committed-boundary and live-topology checks.
+
+### Limitations and handoff
+
+This release freezes threshold mechanics rather than validating real answerability. The development corpus still has no promoted claims or authorized answerability gold, so real accuracy, selective risk, abstention precision and recall, and confidence calibration remain unmeasured. Controlled fixtures are invented contract tests, not product evidence. Step 9.3 receives the immutable thresholds, checkpoint, v2 release, null-confidence policy, and these limitations.
+
+Step 9.3 has not started. It requires separate guidance and authorization.

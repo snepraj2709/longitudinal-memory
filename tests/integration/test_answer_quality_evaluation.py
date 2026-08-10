@@ -28,6 +28,7 @@ from answering.comparable_answer_run import (
 ROOT = Path(__file__).resolve().parents[2]
 START = "9f7625455abafb85b513b8d30a53d793580160ce"
 STEP83_COMMIT = "a18501a27708c259cccce8bf87948962e672bd41"
+STEP91_COMMIT = "35d0c64431f19d4243b72af712dadeb8d522128f"
 STEP83_AUTHORIZED_DRIFT = (
     "configs/answering/comparable_answer_run_v1.json",
     "data/answering/memory-answer-quality-development-v1/manifest.json",
@@ -70,6 +71,39 @@ STEP91_AUTHORIZED_DRIFT = (
     "tests/unit/test_answerability.py",
 )
 STEP91_COMPATIBILITY_DRIFT = (
+    "tests/integration/test_memory_answer.py",
+)
+STEP92_PRIMARY_DRIFT = (
+    "configs/abstention/answerability_thresholds_v1.json",
+    "data/abstention/answerability-threshold-development-v1/manifest.json",
+    "data/abstention/answerability-threshold-development-v1/reference/expected.jsonl",
+    "data/abstention/answerability-threshold-development-v1/runtime/fixtures.jsonl",
+    "data/abstention/answerability-threshold-development-v1/runtime/manifest.json",
+    "docs/implementation-progress.md",
+    "results/abstention/answerability-threshold-development-runtime-v1/checkpoint_manifest.json",
+    "results/abstention/answerability-threshold-development-runtime-v1/failures.jsonl",
+    "results/abstention/answerability-threshold-development-runtime-v1/predictions.jsonl",
+    "results/abstention/answerability-threshold-development-runtime-v1/preflight.json",
+    "results/abstention/answerability-threshold-development-v2/checks.json",
+    "results/abstention/answerability-threshold-development-v2/development-decisions.jsonl",
+    "results/abstention/answerability-threshold-development-v2/failures.jsonl",
+    "results/abstention/answerability-threshold-development-v2/findings.md",
+    "results/abstention/answerability-threshold-development-v2/fixture-results.jsonl",
+    "results/abstention/answerability-threshold-development-v2/manifest.json",
+    "results/abstention/answerability-threshold-development-v2/run.json",
+    "results/abstention/answerability-threshold-development-v2/scorecard.json",
+    "results/abstention/answerability-threshold-development-v2/threshold-sweep.jsonl",
+    "results/abstention/answerability-threshold-development-v2/thresholds.json",
+    "src/abstention/calibration.py",
+    "src/abstention/calibration_contracts.py",
+    "src/abstention/calibration_evaluation.py",
+    "src/abstention/calibration_release_v2.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_answerability_calibration.py",
+    "tests/unit/test_answerability_calibration.py",
+)
+STEP92_COMPATIBILITY_DRIFT = (
+    "tests/integration/test_answer_quality_evaluation.py",
     "tests/integration/test_memory_answer.py",
 )
 
@@ -279,7 +313,7 @@ class AnswerQualityIntegrationTests(unittest.TestCase):
             "results/answering/evidence-package-development-v1/manifest.json": "8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213",
             "results/answering/memory-answer-contract-development-v1/manifest.json": "d0d987ff126aca2c7b05a0966e6b797247c7123e252fb26fc59d9599374fb841",
             "results/answering/memory-answer-contract-development-v1/answers.jsonl": STEP82_ANSWERS_SHA256,
-            "tests/integration/test_memory_answer.py": "5b68e3cb8037c78e841ce7293498859fc2c1d5397f5fe55b087b1127d3a40818",
+            "tests/integration/test_memory_answer.py": "ec3c88940ff9b3e8a8040225c7f444dc114d1281dab17105b4848bd709ac0835",
         }
         self.assertEqual(
             {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in expected},
@@ -290,8 +324,16 @@ class AnswerQualityIntegrationTests(unittest.TestCase):
             check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(committed, list(STEP83_AUTHORIZED_DRIFT))
+        step91_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP83_COMMIT, STEP91_COMMIT], cwd=ROOT,
+            check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(
+            step91_committed,
+            sorted(set(STEP91_AUTHORIZED_DRIFT).union(STEP91_COMPATIBILITY_DRIFT)),
+        )
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP83_COMMIT], cwd=ROOT, check=True,
+            ["git", "diff", "--name-only", STEP91_COMMIT], cwd=ROOT, check=True,
             capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
@@ -300,7 +342,7 @@ class AnswerQualityIntegrationTests(unittest.TestCase):
         ).stdout.splitlines()
         self.assertEqual(
             sorted(set(tracked).union(untracked)),
-            sorted(set(STEP91_AUTHORIZED_DRIFT).union(STEP91_COMPATIBILITY_DRIFT)),
+            sorted(set(STEP92_PRIMARY_DRIFT).union(STEP92_COMPATIBILITY_DRIFT)),
         )
 
 

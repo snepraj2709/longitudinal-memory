@@ -1,0 +1,6 @@
+{"abstain_count":8,"answerable_case_coverage":"1.000000","answerable_count":8,"clarify_count":8,"fixture_count":24,"profile_id":"ordinary_1_trait_2","selective_risk":"0.000000","total_coverage":"0.333333"}
+{"abstain_count":9,"answerable_case_coverage":"0.875000","answerable_count":7,"clarify_count":8,"fixture_count":24,"profile_id":"ordinary_1_trait_3","selective_risk":"0.000000","total_coverage":"0.291667"}
+{"abstain_count":10,"answerable_case_coverage":"0.750000","answerable_count":6,"clarify_count":8,"fixture_count":24,"profile_id":"ordinary_2_trait_2","selective_risk":"0.000000","total_coverage":"0.250000"}
+{"abstain_count":11,"answerable_case_coverage":"0.625000","answerable_count":5,"clarify_count":8,"fixture_count":24,"profile_id":"ordinary_2_trait_3","selective_risk":"0.000000","total_coverage":"0.208333"}
+{"abstain_count":12,"answerable_case_coverage":"0.500000","answerable_count":4,"clarify_count":8,"fixture_count":24,"profile_id":"ordinary_3_trait_2","selective_risk":"0.000000","total_coverage":"0.166667"}
+{"abstain_count":13,"answerable_case_coverage":"0.375000","answerable_count":3,"clarify_count":8,"fixture_count":24,"profile_id":"ordinary_3_trait_3","selective_risk":"0.000000","total_coverage":"0.125000"}

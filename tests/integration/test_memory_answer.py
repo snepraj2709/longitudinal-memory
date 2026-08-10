@@ -30,6 +30,7 @@ CHECKED = ROOT / RESULT_ROOT
 START = "8fec075d754dff7f12821947919d5c01f867d949"
 STEP82_COMMIT = "9f7625455abafb85b513b8d30a53d793580160ce"
 STEP83_COMMIT = "a18501a27708c259cccce8bf87948962e672bd41"
+STEP91_COMMIT = "35d0c64431f19d4243b72af712dadeb8d522128f"
 STEP82_COMMITTED_PATHS = (
     "configs/answering/memory_answer_v1.json",
     "data/answering/memory-answer-contract-development-v1/manifest.json",
@@ -89,6 +90,39 @@ STEP91_AUTHORIZED_DRIFT = (
     "tests/unit/test_answerability.py",
 )
 STEP91_COMPATIBILITY_DRIFT = (
+    "tests/integration/test_memory_answer.py",
+)
+STEP92_PRIMARY_DRIFT = (
+    "configs/abstention/answerability_thresholds_v1.json",
+    "data/abstention/answerability-threshold-development-v1/manifest.json",
+    "data/abstention/answerability-threshold-development-v1/reference/expected.jsonl",
+    "data/abstention/answerability-threshold-development-v1/runtime/fixtures.jsonl",
+    "data/abstention/answerability-threshold-development-v1/runtime/manifest.json",
+    "docs/implementation-progress.md",
+    "results/abstention/answerability-threshold-development-runtime-v1/checkpoint_manifest.json",
+    "results/abstention/answerability-threshold-development-runtime-v1/failures.jsonl",
+    "results/abstention/answerability-threshold-development-runtime-v1/predictions.jsonl",
+    "results/abstention/answerability-threshold-development-runtime-v1/preflight.json",
+    "results/abstention/answerability-threshold-development-v2/checks.json",
+    "results/abstention/answerability-threshold-development-v2/development-decisions.jsonl",
+    "results/abstention/answerability-threshold-development-v2/failures.jsonl",
+    "results/abstention/answerability-threshold-development-v2/findings.md",
+    "results/abstention/answerability-threshold-development-v2/fixture-results.jsonl",
+    "results/abstention/answerability-threshold-development-v2/manifest.json",
+    "results/abstention/answerability-threshold-development-v2/run.json",
+    "results/abstention/answerability-threshold-development-v2/scorecard.json",
+    "results/abstention/answerability-threshold-development-v2/threshold-sweep.jsonl",
+    "results/abstention/answerability-threshold-development-v2/thresholds.json",
+    "src/abstention/calibration.py",
+    "src/abstention/calibration_contracts.py",
+    "src/abstention/calibration_evaluation.py",
+    "src/abstention/calibration_release_v2.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_answerability_calibration.py",
+    "tests/unit/test_answerability_calibration.py",
+)
+STEP92_COMPATIBILITY_DRIFT = (
+    "tests/integration/test_answer_quality_evaluation.py",
     "tests/integration/test_memory_answer.py",
 )
 
@@ -266,8 +300,16 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(step83_committed, list(STEP83_AUTHORIZED_DRIFT))
+        step91_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP83_COMMIT, STEP91_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(
+            step91_committed,
+            sorted(set(STEP91_AUTHORIZED_DRIFT).union(STEP91_COMPATIBILITY_DRIFT)),
+        )
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP83_COMMIT],
+            ["git", "diff", "--name-only", STEP91_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
@@ -276,7 +318,7 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
         ).stdout.splitlines()
         self.assertEqual(
             sorted(set(tracked).union(untracked)),
-            sorted(set(STEP91_AUTHORIZED_DRIFT).union(STEP91_COMPATIBILITY_DRIFT)),
+            sorted(set(STEP92_PRIMARY_DRIFT).union(STEP92_COMPATIBILITY_DRIFT)),
         )
 
 
