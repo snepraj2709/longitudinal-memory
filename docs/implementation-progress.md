@@ -1521,3 +1521,25 @@ Focused tests passed 13/13, including byte-identical replay, manifest-only read 
 Compilation, deep verification, exact 16-path topology, protected hashes, changed-path scans, `git diff --check`, cached and unstaged inspection, and Docker cleanup passed. The scaled-manifest-only check retained dataset identity `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61` without following any file binding. The boundary ruling intentionally excludes unrestricted `make test` and the full scaled validator, so this entry does not claim either gate passed.
 
 This is a definition release, not a comparison result. All eight scaled runtime and prediction releases are still missing, Phase 9 remains incomplete, and Step 10.2 requires separate guidance.
+
+## Phase 10, Step 10.2: Preflight and approve the frozen run
+
+Status: complete
+
+- Starting commit: `b2ae263e1129758325a30db57c03620628c6355e`
+- Guidance: `step-10.2-guidance-v1`, SHA-256 `b91d4b44752e649c3419eb557c9e0148839820998e94400e48a0f13a00f83f05`
+- Commit message: `evaluation: preflight frozen comparison run`
+
+The provider-disabled preflight opens only the five scaled runtime files named by the committed manifest. It freezes 25 resumable batches and 4,660 planned requests: 100 extraction requests plus B0-B7 runs for 500 QA, 50 summary, and 20 interactive cases. It does not open gold, oracle, review queues, or existing predictions. No API key value is stored in an artifact.
+
+Extraction is pinned to `gpt-4.1-mini-2025-04-14`; answer generation is pinned to `gpt-4.1-2025-04-14`. Both use temperature 0, `store=false`, exact output limits, no automatic retry, and a checkpoint after every successful response. Standard uncached prices checked on 2026-08-10 give an expected incremental cost of `$32.8869328` and a hard maximum of `$91.2131728`. Including the prior `$0.2314404`, the cumulative maximum is `$91.4446132`.
+
+The immutable release records the state before approval: credential reuse was approved, while transmission and paid execution were still false. Sneha later approved both remaining gates in the controlling session. The approved transmission is limited to synthetic source text and metadata, case prompts and identifiers, timestamps, and baseline-specific memory context. Gold, oracle data, review records, credentials, and scorer-only fields remain excluded. Step 10.2 itself made zero provider requests and cost `$0`.
+
+The focused Step 10.2 suite passed 12 tests. The predecessor contract stack passed 218 tests with 25 expected database or frozen-runtime skips. The read-bounded safe complement passed 627 tests with 130 expected skips. Two clean builds were byte-identical; deep verification, compilation, exact path checks, protected hashes, changed-path secret scans, and `git diff --check` passed.
+
+The final diff has 25 paths: 17 Step 10.2 additions, this ledger entry, and seven test-only adapters. The adapters preserve every predecessor artifact assertion and add committed-boundary checks before accepting the exact Step 10.2 path set.
+
+Key artifacts are the dataset manifest `d1f7455b6e931bfae95a8b5c0c14128de512ce59e088faa13a260df22bb5c052`, transmission plan `d0f17e36504c70fa0424b50c856b793f4ba8ebb8c6f3af969f5e309a8e660e78`, batch plan `c0b89899e6c3fd380557916eb91d84f7a86a21e5f24ee9c7af6748d4323b3c13`, checks `a4d606393e44749ad847b48dc2980e19fb26dc4ccfc8faf343ad359ee27bf038`, and result manifest `b5645e4189df260daa69292d15a95a641834b15b64eb19ce3a273b8c7e030ac5`.
+
+Step 10.3 receives this frozen plan and the explicit transmission and spend approvals. It must keep each batch immutable, resume only unfinished or provider-failed work, and finish predictions before opening scorer-only gold.

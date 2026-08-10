@@ -27,6 +27,7 @@ STEP92_COMMIT = "d0932a7994153745285c1f4e3d75c36ffbbaf06a"
 STEP93_COMMIT = "3c45309de43a35b0c7b7b588077f094be2b57934"
 STEP94_PREREQUISITE_COMMIT = "7e8fc5337384ac329264e3606507b925bd890d63"
 STEP94_EVALUATION_COMMIT = "78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4"
+STEP101_COMMIT = "b2ae263e1129758325a30db57c03620628c6355e"
 AUTHORIZED = (
     "configs/abstention/answerability_v1.json",
     "data/abstention/answerability-development-v1/manifest.json",
@@ -176,6 +177,33 @@ STEP101_AUTHORIZED_DRIFT = (
     "tests/integration/test_memory_answer.py",
     "tests/unit/test_comparison_freeze.py",
 )
+STEP102_AUTHORIZED_DRIFT = (
+    "configs/evaluation/frozen_preflight_v1.json",
+    "data/evaluation/frozen-preflight-v1/manifest.json",
+    "data/evaluation/frozen-preflight-v1/runtime/manifest.json",
+    "data/evaluation/frozen-preflight-v1/runtime/transmission-plan.jsonl",
+    "docs/implementation-progress.md",
+    "results/evaluation/frozen-preflight-v1/approval-request.md",
+    "results/evaluation/frozen-preflight-v1/batches.jsonl",
+    "results/evaluation/frozen-preflight-v1/checks.json",
+    "results/evaluation/frozen-preflight-v1/failures.jsonl",
+    "results/evaluation/frozen-preflight-v1/findings.md",
+    "results/evaluation/frozen-preflight-v1/manifest.json",
+    "results/evaluation/frozen-preflight-v1/preflight.json",
+    "results/evaluation/frozen-preflight-v1/run.json",
+    "results/evaluation/frozen-preflight-v1/token-estimates.jsonl",
+    "src/evaluation/frozen_preflight.py",
+    "src/evaluation/frozen_preflight_contracts.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py",
+    "tests/integration/test_b7_evaluation.py",
+    "tests/integration/test_comparison_freeze.py",
+    "tests/integration/test_frozen_preflight.py",
+    "tests/integration/test_interactive_answering_v2.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_frozen_preflight.py",
+)
 PROTECTED = {
     "preference.md": "bf6dfc6ea0b23e9ff1c52b4dbf1debce6ebe495070e826743ffa2d56681a18b8",
     "docs/memory-evaluation-steps.md": "bf89021a98273e623edbe27318c9b1cadfb8bed023f5e256a2f58b13e27913ba",
@@ -183,8 +211,8 @@ PROTECTED = {
     "results/answering/evidence-package-development-v1/manifest.json": "8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213",
     "results/answering/memory-answer-contract-development-v1/manifest.json": "d0d987ff126aca2c7b05a0966e6b797247c7123e252fb26fc59d9599374fb841",
     "results/answering/memory-answer-quality-development-v1/manifest.json": "ac936819856939f66597c279fc0b852022a650d5455a4c21240ffbb01f0a524f",
-    "tests/integration/test_answer_quality_evaluation.py": "6614eae84b61fc7c436e494cc74812a04f36ee3f155a31bc8ad2590e7f3e4e61",
-    "tests/integration/test_memory_answer.py": "29941464d35b15c4789cfb3f68c6c65ec398adb978a34a654a8a400b1adc504f",
+    "tests/integration/test_answer_quality_evaluation.py": "3b58c11717875032d16ec65e870cf590664eb89d33ee6f2901e51ae037c0975d",
+    "tests/integration/test_memory_answer.py": "aa96dcd889ae1c0133954ca29f2c8c103325f0555d23426da18d29887c47a104",
 }
 
 
@@ -332,8 +360,13 @@ class AnswerabilityIntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(tuple(evaluation_committed), STEP94_EVALUATION_AUTHORIZED_DRIFT)
+        step101_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP94_EVALUATION_COMMIT, STEP101_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(tuple(step101_committed), STEP101_AUTHORIZED_DRIFT)
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP94_EVALUATION_COMMIT],
+            ["git", "diff", "--name-only", STEP101_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
@@ -341,7 +374,7 @@ class AnswerabilityIntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         actual = tuple(sorted(set(tracked).union(untracked)))
-        self.assertEqual(actual, STEP101_AUTHORIZED_DRIFT)
+        self.assertEqual(actual, STEP102_AUTHORIZED_DRIFT)
         for path, expected in PROTECTED.items():
             self.assertEqual(hashlib.sha256((ROOT / path).read_bytes()).hexdigest(), expected, path)
 

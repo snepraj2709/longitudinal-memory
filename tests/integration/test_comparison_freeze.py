@@ -16,13 +16,15 @@ from evaluation.comparison_freeze_contracts import ComparisonFreezeError
 
 ROOT = Path(__file__).resolve().parents[2]
 SCALED_MANIFEST = (ROOT / "data/scaled-v1/manifest.json").resolve()
+STEP101_START = "78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4"
+STEP101_COMMIT = "b2ae263e1129758325a30db57c03620628c6355e"
 PROTECTED = {
     "preference.md": "bf6dfc6ea0b23e9ff1c52b4dbf1debce6ebe495070e826743ffa2d56681a18b8",
     "docs/memory-evaluation-steps.md": "bf89021a98273e623edbe27318c9b1cadfb8bed023f5e256a2f58b13e27913ba",
     "data/scaled-v1/manifest.json": "e3b4386b7063b3c2d65b45574b2e5665fc5094a8330ffd16ea83781744b9a5d3",
     "results/abstention/b7-evaluation-development-v1/manifest.json": "e8aed9be4455a1dd8b33f390928bcec537e5c69e752a41a1a23265acb5e12fbd",
 }
-ALLOWED_NEW = (
+STEP101_COMMITTED = (
     "configs/evaluation/frozen_comparison_v1.json",
     "configs/evaluation/frozen_prompts_v1.json",
     "data/evaluation/frozen-comparison-v1/manifest.json",
@@ -39,6 +41,33 @@ ALLOWED_NEW = (
     "tests/integration/test_comparison_freeze.py",
     "tests/integration/test_memory_answer.py",
     "tests/unit/test_comparison_freeze.py",
+)
+ALLOWED_NEW = (
+    "configs/evaluation/frozen_preflight_v1.json",
+    "data/evaluation/frozen-preflight-v1/manifest.json",
+    "data/evaluation/frozen-preflight-v1/runtime/manifest.json",
+    "data/evaluation/frozen-preflight-v1/runtime/transmission-plan.jsonl",
+    "docs/implementation-progress.md",
+    "results/evaluation/frozen-preflight-v1/approval-request.md",
+    "results/evaluation/frozen-preflight-v1/batches.jsonl",
+    "results/evaluation/frozen-preflight-v1/checks.json",
+    "results/evaluation/frozen-preflight-v1/failures.jsonl",
+    "results/evaluation/frozen-preflight-v1/findings.md",
+    "results/evaluation/frozen-preflight-v1/manifest.json",
+    "results/evaluation/frozen-preflight-v1/preflight.json",
+    "results/evaluation/frozen-preflight-v1/run.json",
+    "results/evaluation/frozen-preflight-v1/token-estimates.jsonl",
+    "src/evaluation/frozen_preflight.py",
+    "src/evaluation/frozen_preflight_contracts.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py",
+    "tests/integration/test_b7_evaluation.py",
+    "tests/integration/test_comparison_freeze.py",
+    "tests/integration/test_frozen_preflight.py",
+    "tests/integration/test_interactive_answering_v2.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_frozen_preflight.py",
 )
 
 
@@ -113,8 +142,13 @@ class ComparisonFreezeIntegrationTests(unittest.TestCase):
         }
         self.assertEqual(actual, PROTECTED)
         import subprocess
+        committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP101_START, STEP101_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(tuple(committed), STEP101_COMMITTED)
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", "78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4"],
+            ["git", "diff", "--name-only", STEP101_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(

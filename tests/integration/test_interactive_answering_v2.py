@@ -31,6 +31,8 @@ ROOT = Path(__file__).resolve().parents[2]
 DATABASE_URL = os.environ.get("STORAGE_DATABASE_URL")
 STEP93_COMMIT = "3c45309de43a35b0c7b7b588077f094be2b57934"
 STEP94_PREREQUISITE_COMMIT = "7e8fc5337384ac329264e3606507b925bd890d63"
+STEP94_EVALUATION_COMMIT = "78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4"
+STEP101_COMMIT = "b2ae263e1129758325a30db57c03620628c6355e"
 STEP93_COMMITTED_ADAPTER_SHA256 = {
     "tests/integration/test_answer_quality_evaluation.py": "fff42248ee2c3f361caea561341b4d0e28728be98166d11f6f8f9d138694ba2d",
     "tests/integration/test_answerability.py": "73aeedc3f24f76e3f357e99793ef6ed85bc8c7610caf9b87fd298a7e2fb3c9f4",
@@ -42,6 +44,13 @@ STEP94_EVALUATION_ADAPTER_SHA256 = {
     "tests/integration/test_answerability.py": "2e7694dfc2c188b3571c39741e891fdcfcc10222d8bd7a119b237e516ee9f40f",
     "tests/integration/test_b6_b7_comparison_prerequisite.py": "e10064e56a2e1c3d13290a0eb378be1dfa0ac9ca0ca8f712119c4241a78076c3",
     "tests/integration/test_memory_answer.py": "1802d2bc6353244c5f3fd720f5920794a6e5ee4733d25cb012fea503551f5b82",
+}
+STEP102_LIVE_ADAPTER_SHA256 = {
+    "tests/integration/test_answer_quality_evaluation.py": "3b58c11717875032d16ec65e870cf590664eb89d33ee6f2901e51ae037c0975d",
+    "tests/integration/test_answerability.py": "0f85dfc7ab169afd28946e9b5fb115628f08ca141e1b1e6274c5e46fcdde66f5",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py": "02943c85d392b2646e72d9c8280c351edf8aeb6f088925b62aee598f0860c980",
+    "tests/integration/test_comparison_freeze.py": "ef97e4d278541946491e00461047e6d5b52bd404ba0d40ac78e2af8362374292",
+    "tests/integration/test_memory_answer.py": "aa96dcd889ae1c0133954ca29f2c8c103325f0555d23426da18d29887c47a104",
 }
 STEP94_PREREQUISITE_COMMITTED_PATHS = (
     "configs/abstention/b6_b7_comparable_runtime_v1.json",
@@ -86,6 +95,51 @@ STEP94_EVALUATION_AUTHORIZED_DRIFT = (
     "tests/integration/test_memory_answer.py",
     "tests/unit/test_b7_evaluation.py",
 )
+STEP101_COMMITTED_PATHS = (
+    "configs/evaluation/frozen_comparison_v1.json",
+    "configs/evaluation/frozen_prompts_v1.json",
+    "data/evaluation/frozen-comparison-v1/manifest.json",
+    "docs/implementation-progress.md",
+    "results/evaluation/frozen-comparison-v1/checks.json",
+    "results/evaluation/frozen-comparison-v1/findings.md",
+    "results/evaluation/frozen-comparison-v1/manifest.json",
+    "results/evaluation/frozen-comparison-v1/run.json",
+    "src/evaluation/comparison_freeze.py",
+    "src/evaluation/comparison_freeze_contracts.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py",
+    "tests/integration/test_comparison_freeze.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_comparison_freeze.py",
+)
+STEP102_AUTHORIZED_DRIFT = (
+    "configs/evaluation/frozen_preflight_v1.json",
+    "data/evaluation/frozen-preflight-v1/manifest.json",
+    "data/evaluation/frozen-preflight-v1/runtime/manifest.json",
+    "data/evaluation/frozen-preflight-v1/runtime/transmission-plan.jsonl",
+    "docs/implementation-progress.md",
+    "results/evaluation/frozen-preflight-v1/approval-request.md",
+    "results/evaluation/frozen-preflight-v1/batches.jsonl",
+    "results/evaluation/frozen-preflight-v1/checks.json",
+    "results/evaluation/frozen-preflight-v1/failures.jsonl",
+    "results/evaluation/frozen-preflight-v1/findings.md",
+    "results/evaluation/frozen-preflight-v1/manifest.json",
+    "results/evaluation/frozen-preflight-v1/preflight.json",
+    "results/evaluation/frozen-preflight-v1/run.json",
+    "results/evaluation/frozen-preflight-v1/token-estimates.jsonl",
+    "src/evaluation/frozen_preflight.py",
+    "src/evaluation/frozen_preflight_contracts.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py",
+    "tests/integration/test_b7_evaluation.py",
+    "tests/integration/test_comparison_freeze.py",
+    "tests/integration/test_frozen_preflight.py",
+    "tests/integration/test_interactive_answering_v2.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_frozen_preflight.py",
+)
 
 
 class InteractiveInputV2IntegrationTests(unittest.TestCase):
@@ -95,8 +149,18 @@ class InteractiveInputV2IntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(committed, list(STEP94_PREREQUISITE_COMMITTED_PATHS))
+        evaluation_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP94_PREREQUISITE_COMMIT, STEP94_EVALUATION_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(evaluation_committed, list(STEP94_EVALUATION_AUTHORIZED_DRIFT))
+        step101_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP94_EVALUATION_COMMIT, STEP101_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(step101_committed, list(STEP101_COMMITTED_PATHS))
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP94_PREREQUISITE_COMMIT],
+            ["git", "diff", "--name-only", STEP101_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
@@ -105,7 +169,7 @@ class InteractiveInputV2IntegrationTests(unittest.TestCase):
         ).stdout.splitlines()
         self.assertEqual(
             sorted(set(tracked).union(untracked)),
-            list(STEP94_EVALUATION_AUTHORIZED_DRIFT),
+            list(STEP102_AUTHORIZED_DRIFT),
         )
 
     def test_runtime_prefix_is_exactly_four_development_cases(self) -> None:
@@ -179,11 +243,19 @@ class InteractiveInputV2IntegrationTests(unittest.TestCase):
             for path in STEP93_COMMITTED_ADAPTER_SHA256
         }
         self.assertEqual(committed, STEP93_COMMITTED_ADAPTER_SHA256)
-        live = {
-            path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+        step94_live = {
+            path: hashlib.sha256(subprocess.run(
+                ["git", "show", f"{STEP94_EVALUATION_COMMIT}:{path}"], cwd=ROOT,
+                check=True, capture_output=True,
+            ).stdout).hexdigest()
             for path in STEP94_EVALUATION_ADAPTER_SHA256
         }
-        self.assertEqual(live, STEP94_EVALUATION_ADAPTER_SHA256)
+        self.assertEqual(step94_live, STEP94_EVALUATION_ADAPTER_SHA256)
+        live = {
+            path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+            for path in STEP102_LIVE_ADAPTER_SHA256
+        }
+        self.assertEqual(live, STEP102_LIVE_ADAPTER_SHA256)
         original_sha = evaluation_module._sha
         committed_paths = {
             (ROOT / path).resolve(): digest

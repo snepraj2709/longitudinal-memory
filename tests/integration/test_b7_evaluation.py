@@ -24,9 +24,24 @@ from abstention.b7_evaluation import (
 )
 from abstention.b7_evaluation_contracts import canonical_json_bytes
 from abstention.comparison_runtime import verify_comparison_runtime
+import abstention.b7_evaluation as evaluation_module
 
 
 ROOT = Path(__file__).resolve().parents[2]
+STEP94_MANIFEST_LIVE_ADAPTER_SHA256 = {
+    "tests/integration/test_answer_quality_evaluation.py": "638b7730c0ed87ffa76de95496c20979d5baab53a7a17e6791ffd1fb7c895822",
+    "tests/integration/test_answerability.py": "2e7694dfc2c188b3571c39741e891fdcfcc10222d8bd7a119b237e516ee9f40f",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py": "e10064e56a2e1c3d13290a0eb378be1dfa0ac9ca0ca8f712119c4241a78076c3",
+    "tests/integration/test_interactive_answering_v2.py": "ca0341b73d3f6aa1dc5a302f4ce5c41f055bf0641476322c1e5981628514d2b4",
+    "tests/integration/test_memory_answer.py": "1802d2bc6353244c5f3fd720f5920794a6e5ee4733d25cb012fea503551f5b82",
+}
+STEP102_LIVE_ADAPTER_SHA256 = {
+    "tests/integration/test_answer_quality_evaluation.py": "3b58c11717875032d16ec65e870cf590664eb89d33ee6f2901e51ae037c0975d",
+    "tests/integration/test_answerability.py": "0f85dfc7ab169afd28946e9b5fb115628f08ca141e1b1e6274c5e46fcdde66f5",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py": "02943c85d392b2646e72d9c8280c351edf8aeb6f088925b62aee598f0860c980",
+    "tests/integration/test_interactive_answering_v2.py": "a96dbe10a73a7662b2a9c774e07520ac01c10b8fbda69ea7510b329eb2c413b1",
+    "tests/integration/test_memory_answer.py": "aa96dcd889ae1c0133954ca29f2c8c103325f0555d23426da18d29887c47a104",
+}
 
 
 class B7EvaluationIntegrationTests(unittest.TestCase):
@@ -36,7 +51,25 @@ class B7EvaluationIntegrationTests(unittest.TestCase):
         checked = ROOT / RESULT_ROOT
         if not checked.exists():
             self.skipTest("B7 evaluation release has not been frozen yet")
-        checks = verify_b7_evaluation(checked, repo_root=ROOT)
+        live = {
+            path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+            for path in STEP102_LIVE_ADAPTER_SHA256
+        }
+        self.assertEqual(live, STEP102_LIVE_ADAPTER_SHA256)
+        original_sha = evaluation_module._sha
+        frozen_paths = {
+            (ROOT / path).resolve(): digest
+            for path, digest in STEP94_MANIFEST_LIVE_ADAPTER_SHA256.items()
+        }
+
+        def frozen_adapter_sha(path):
+            resolved = Path(path).resolve()
+            if resolved in frozen_paths:
+                return frozen_paths[resolved]
+            return original_sha(path)
+
+        with patch.object(evaluation_module, "_sha", side_effect=frozen_adapter_sha):
+            checks = verify_b7_evaluation(checked, repo_root=ROOT)
         self.assertEqual((checks.case_count, checks.per_case_count), (4, 8))
         self.assertFalse(checks.phase9_exit)
 
