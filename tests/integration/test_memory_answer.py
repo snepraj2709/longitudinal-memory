@@ -33,6 +33,7 @@ STEP83_COMMIT = "a18501a27708c259cccce8bf87948962e672bd41"
 STEP91_COMMIT = "35d0c64431f19d4243b72af712dadeb8d522128f"
 STEP92_COMMIT = "d0932a7994153745285c1f4e3d75c36ffbbaf06a"
 STEP93_COMMIT = "3c45309de43a35b0c7b7b588077f094be2b57934"
+STEP94_PREREQUISITE_COMMIT = "7e8fc5337384ac329264e3606507b925bd890d63"
 STEP82_COMMITTED_PATHS = (
     "configs/answering/memory_answer_v1.json",
     "data/answering/memory-answer-contract-development-v1/manifest.json",
@@ -180,6 +181,30 @@ STEP94_PREREQUISITE_AUTHORIZED_DRIFT = (
     "tests/integration/test_interactive_answering_v2.py",
     "tests/integration/test_memory_answer.py",
     "tests/unit/test_b6_b7_comparison_prerequisite.py",
+)
+STEP94_EVALUATION_AUTHORIZED_DRIFT = (
+    "configs/abstention/b7_evaluation_v1.json",
+    "data/abstention/b7-evaluation-development-v1/manifest.json",
+    "data/abstention/b7-evaluation-development-v1/reference/expected.jsonl",
+    "data/abstention/b7-evaluation-development-v1/reference/review.json",
+    "docs/implementation-progress.md",
+    "results/abstention/b7-evaluation-development-v1/checks.json",
+    "results/abstention/b7-evaluation-development-v1/failures.jsonl",
+    "results/abstention/b7-evaluation-development-v1/findings.md",
+    "results/abstention/b7-evaluation-development-v1/manifest.json",
+    "results/abstention/b7-evaluation-development-v1/pair-deltas.jsonl",
+    "results/abstention/b7-evaluation-development-v1/per-case.jsonl",
+    "results/abstention/b7-evaluation-development-v1/run.json",
+    "results/abstention/b7-evaluation-development-v1/scorecard.json",
+    "src/abstention/b7_evaluation.py",
+    "src/abstention/b7_evaluation_contracts.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py",
+    "tests/integration/test_b7_evaluation.py",
+    "tests/integration/test_interactive_answering_v2.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_b7_evaluation.py",
 )
 
 
@@ -377,8 +402,13 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(step93_committed, list(STEP93_AUTHORIZED_DRIFT))
+        prerequisite_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP93_COMMIT, STEP94_PREREQUISITE_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(prerequisite_committed, list(STEP94_PREREQUISITE_AUTHORIZED_DRIFT))
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP93_COMMIT],
+            ["git", "diff", "--name-only", STEP94_PREREQUISITE_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
@@ -387,7 +417,7 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
         ).stdout.splitlines()
         self.assertEqual(
             sorted(set(tracked).union(untracked)),
-            list(STEP94_PREREQUISITE_AUTHORIZED_DRIFT),
+            list(STEP94_EVALUATION_AUTHORIZED_DRIFT),
         )
 
 

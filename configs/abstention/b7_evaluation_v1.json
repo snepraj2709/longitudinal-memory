@@ -1,0 +1,58 @@
+{
+  "evaluation_version": "b7_evaluation_v1",
+  "schema_version": "b7_evaluation_schema_v1",
+  "config_version": "b7_evaluation_config_v1",
+  "scorer_version": "b7_evaluation_scorer_v1",
+  "dataset_version": "b7-evaluation-development-v1",
+  "final_release_version": "b7-evaluation-development-v1",
+  "development_case_count": 4,
+  "roadmap_target_case_count": 20,
+  "frozen_test_deferred_count": 16,
+  "baseline_order": ["B6", "B7"],
+  "prerequisite_checkpoint_sha256": "9902507e5518b2b16fee35ad76be62ef57201bb9271b3de251e2b2063c239186",
+  "prerequisite_pairs_sha256": "a7b3e018e9fb6c45392d9a678ba2c166990e456c05ac2e43d17b1cc9f640df24",
+  "prerequisite_b6_predictions_sha256": "49992c38495346a8a88b1ed3e12995c12a965b2ccc525eb6956ee2cb6dd72d9c",
+  "prerequisite_b7_predictions_sha256": "ad1fc7bfc9eecfdc7792b281afd46b0c729596060e5a2dbdae7a49a515b4fefe",
+  "step9_3_behaviour_reference_sha256": "afa7a0d8d16140a469d79e4c69f57a7b357f7a50ea5247edb176ad69be60c975",
+  "configured_future_answer_model": "gpt-4.1-2025-04-14",
+  "memory_answer_config_sha256": "98b743d593e17a88216ac74cf17693f08898537027e0d91672d45aaeb4dfcc10",
+  "prompt_version": "memory_answer_prompt_v1",
+  "prompt_sha256": "69dd688430c55fc35a16369201ef8eea7d470d10f610edec254f5cbd59bf14c1",
+  "generation_settings": {
+    "provider": "OpenAI",
+    "api": "responses",
+    "temperature": 0.0,
+    "max_output_tokens": 1000,
+    "store": false,
+    "text_format": "json_object"
+  },
+  "provider_execution_enabled": false,
+  "provider_request_count": 0,
+  "incremental_cost_usd": 0,
+  "historical_openai_spend_usd": "0.2314404",
+  "baseline_metric_order": [
+    "abstention_precision",
+    "abstention_recall",
+    "coverage",
+    "answer_accuracy",
+    "selective_risk",
+    "false_answer_rate",
+    "unnecessary_abstention_rate"
+  ],
+  "delta_metric_order": [
+    "coverage_delta",
+    "abstention_precision_delta",
+    "abstention_recall_delta",
+    "answer_accuracy_delta",
+    "selective_risk_delta",
+    "false_answer_rate_delta",
+    "unnecessary_abstention_rate_delta",
+    "gate_changed_output_count"
+  ],
+  "null_reason_policy": {
+    "answer_accuracy": "no_answered_cases",
+    "selective_risk": "no_answered_cases",
+    "answer_accuracy_delta": "no_answered_cases_both_baselines",
+    "selective_risk_delta": "no_answered_cases_both_baselines"
+  }
+}
