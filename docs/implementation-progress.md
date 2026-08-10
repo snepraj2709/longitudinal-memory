@@ -1409,3 +1409,52 @@ Compatibility metadata arrived after the valid v1 checkpoint was frozen. The v2 
 This release freezes threshold mechanics rather than validating real answerability. The development corpus still has no promoted claims or authorized answerability gold, so real accuracy, selective risk, abstention precision and recall, and confidence calibration remain unmeasured. Controlled fixtures are invented contract tests, not product evidence. Step 9.3 receives the immutable thresholds, checkpoint, v2 release, null-confidence policy, and these limitations.
 
 Step 9.3 has not started. It requires separate guidance and authorization.
+
+## Phase 9, Step 9.3: Recover development interactive answering v2
+
+Status: complete
+
+### Repository state and recovery boundary
+
+- Starting commit: `d0932a7994153745285c1f4e3d75c36ffbbaf06a`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-9.3-guidance-v2`, envelope SHA-256 `865223b8aea8665b8df8b10839f9d1f1cdb9c9c5a31d17f97e6f47ad27606a77`
+- Corrections 1–4: `34a82610f0287d6f5321d7be6c1b75fb6fe475a984c6418cfb67d4b31b160880`, `5480ebcbe58fbeeb17bfbdb3e30c0aa4a7e9ed41477976233c0efe19a72733a1`, `4772c7f722bd1545a98c589d665248eaf7aee82f525670be0944f2820f2ca653`, and `25783bb2d0a5f8649e63c5ca1f0a0a7bdd6b890f3b6b2c217ffa3d638cbd3261`
+- Commit message: `abstention: recover development interactive answering v2`
+
+The uncommitted v1 attempt was invalid because it used three aggregate requirement aliases that are absent from the predicate registry. Its 32 files remain in the private, mode-restricted backup `/private/tmp/longitudinal-memory-step9.3-invalid-v1-d0932a7`; no v1 interactive path remains in the repository. The canonical path-key-sorted backup map contains 32 lines and 4,185 bytes and hashes to `ee40e76025fa0d7ae92ee565460c2c49dae1e0134aca4ab9da01319298659748`. The required complete-line C-sort diagnostic hashes the same entries to `ae181cd44d7e73b259a8ebd32f0b01f1ffae6b2c51e4c45ef7fee20b01e84e19`.
+
+This recovery is not blind. Development gold had been opened during the invalid v1 attempt, but it was not used to choose or validate the corrected requirements before the v2 checkpoint. A reviewer also saw isolated prohibited frozen-test snippets during the abandoned v1 review. That material was not used in the v2 runtime, scorer, fixtures, expected values, or this review. The v2 runtime and scorer opened no frozen-test row, oracle, review queue, credential, environment file, prompt, provider, or network path.
+
+### Corrected runtime and release
+
+The v2 requirements contain four sets and five exact registered predicates: `has_mentor`, `leads_project`, `career_goal`, `job_start_date`, and `office_base`. The extraction case requires both `has_mentor` and `leads_project`; the other three cases each require one predicate. The requirements file is 4,900 bytes with SHA-256 `b421acfad6a1d3c84d45ad977eacabbe0f9ef96da1c042c8745086b700d98fae`.
+
+The runtime read exactly the first four development cases for `user_001` and `user_002` and never requested row five. It froze before the v2 gold, evaluator, or final release existed. Its plans bind the requirement-set identity and predicates; `plans.jsonl` hashes to `02e2afd4001d96fa421c57b2ad5fd329dda1d581e90124cc0de768b496e5f94a`. Retrieval and evidence-package bytes remain unchanged from the invalid attempt because the requirement correction does not alter those upstream operations: `5b4f5199cff3f73a83deab9f394aff5340f307a7aac7581c5d7a524424e2f203` and `ccdf6a13fbba02125442cae803c47298e73be88407267c4c32d2367562beefe4`. The frozen runtime checkpoint is `423790b9eb4d0fa5e33aeeafd870cb75f8d78c259c307322d25e276615a199d4`.
+
+All four development histories remain candidate-only. The release contains four abstentions, four turns, 121 preserved rejections (61 candidate and 60 retrieval), and zero accepted evidence, factual statements, citations, failures, provider-eligible cases, or provider requests. Sixteen frozen-test cases remain deferred, so this is not the roadmap's literal 20-case completion. B5 and B6 remain unavailable, this run is not B7, and Step 9.4 has not started.
+
+The reviewed development metrics are deliberately modest: decision accuracy `1/4` (`0.250000`); behaviour micro precision `1/4` (`0.250000`), recall `1/10` (`0.100000`), and F1 `2/14` (`0.142857`); macro precision `0.250000`, recall `0.125000`, and F1 `0.166667`. Memory-use, current-versus-historical, correction, and evidence recall are all zero on denominators 3, 1, 1, and 4. Abstention recall is `1/1`. Clarification recall is null because there is no reviewed clarification case. Exact-evidence precision is null with no predicted evidence; recall and F1 are `0/7`. Factual provenance is null because the system produced no factual output. There is no composite score and no answer-quality claim.
+
+### Independent review
+
+- Focused v2 unit and integration tests: 17 passed; two frozen-runtime rebuild tests remain intentionally skipped because rerunning v2 after reference restoration would break the checkpoint boundary.
+- The review found and fixed one post-checkpoint verifier gap. The final verifier now rejects drift in the checkpoint's frozen implementation map and checks the exact dataset, behaviour-reference, and review authorities. The frozen runtime checkpoint and every runtime payload remain byte-identical; only the final manifest was rebound.
+- Step 9.1 and Step 9.2 contract suites: 60 passed. The Phase 8 answer-quality, memory-answer, and evidence-package suites passed 62 tests locally with 19 PostgreSQL cases skipped; the evidence-package suite then passed all 33 tests against the disposable database.
+- Protected live gates passed sequentially: retrieval baselines 132, conflict evaluation 39, belief resolution 46, conflict relations 29, conflict candidates 29, durative claims 55, grounded summaries 45, sessionization 33, temporal evaluation 20, temporal lifecycle 15, and storage with ingestion 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python` passed at dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python` passed with 1,012 tests discovered: 856 passed and 156 database or frozen-runtime tests skipped. Every required database group passed in the live gates above.
+- Runtime and final self-verification, exact identity/time/lineage recomputation, in-memory compilation, all three adapter attestations, 33-path topology, protected hashes, changed-path secret and leakage scans, `git diff --check`, cached and unstaged inspection, and Docker cleanup passed. The final diff contains 29 new v2 files, this ledger entry, and three test-only compatibility adapters; production predecessor drift is zero.
+
+### Artifacts, cost, and handoff
+
+- Configuration: SHA-256 `69985ddf0a39518571c404bac04cc6e02095c25e32d2d73612098b31f2094ea1`
+- Development cases: SHA-256 `ffc42b724ea7d36783e8ec861b4074734a933577835f39f84a8e75cba6bece26`
+- Reviewed behaviour reference: SHA-256 `afa7a0d8d16140a469d79e4c69f57a7b357f7a50ea5247edb176ad69be60c975`
+- Final predictions: SHA-256 `babf748e7014d7d89b418986b3e3b9daf3d191f04e1a93d4cca8b877a276a977`
+- Scorecard: SHA-256 `c499c3dc173871788f7a4cb463885a1b09762a5bec04eb577aaaf1b81d3bb369`
+- Final manifest after the verifier correction: SHA-256 `c9ac70ba2b25ef5639288b39eb0aa997b59957dab6195060d12e6943eec10d7b`
+- Failures are empty, SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+
+Step 9.3 v2 made no model call, transmitted no fields, used no tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`. The eventual Step 9.4 handoff is limited to this frozen four-case runtime, corrected requirement contract, checkpoint, structural scorecard, and their stated non-blind and candidate-only limitations.

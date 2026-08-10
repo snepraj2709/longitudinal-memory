@@ -31,6 +31,7 @@ START = "8fec075d754dff7f12821947919d5c01f867d949"
 STEP82_COMMIT = "9f7625455abafb85b513b8d30a53d793580160ce"
 STEP83_COMMIT = "a18501a27708c259cccce8bf87948962e672bd41"
 STEP91_COMMIT = "35d0c64431f19d4243b72af712dadeb8d522128f"
+STEP92_COMMIT = "d0932a7994153745285c1f4e3d75c36ffbbaf06a"
 STEP82_COMMITTED_PATHS = (
     "configs/answering/memory_answer_v1.json",
     "data/answering/memory-answer-contract-development-v1/manifest.json",
@@ -124,6 +125,41 @@ STEP92_PRIMARY_DRIFT = (
 STEP92_COMPATIBILITY_DRIFT = (
     "tests/integration/test_answer_quality_evaluation.py",
     "tests/integration/test_memory_answer.py",
+)
+STEP93_AUTHORIZED_DRIFT = (
+    "configs/abstention/interactive_answering_v2.json",
+    "data/abstention/interactive-answering-development-v2/gold/behaviours.jsonl",
+    "data/abstention/interactive-answering-development-v2/gold/review.json",
+    "data/abstention/interactive-answering-development-v2/manifest.json",
+    "data/abstention/interactive-answering-development-v2/runtime/cases.jsonl",
+    "data/abstention/interactive-answering-development-v2/runtime/manifest.json",
+    "data/abstention/interactive-answering-development-v2/runtime/requirements.jsonl",
+    "docs/implementation-progress.md",
+    "results/abstention/interactive-answering-development-runtime-v2/checkpoint_manifest.json",
+    "results/abstention/interactive-answering-development-runtime-v2/decisions.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/failures.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/packages.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/plans.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/preflight.json",
+    "results/abstention/interactive-answering-development-runtime-v2/responses.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/retrieval-results.jsonl",
+    "results/abstention/interactive-answering-development-v2/checks.json",
+    "results/abstention/interactive-answering-development-v2/failures.jsonl",
+    "results/abstention/interactive-answering-development-v2/findings.md",
+    "results/abstention/interactive-answering-development-v2/manifest.json",
+    "results/abstention/interactive-answering-development-v2/per-case.jsonl",
+    "results/abstention/interactive-answering-development-v2/predictions.jsonl",
+    "results/abstention/interactive-answering-development-v2/run.json",
+    "results/abstention/interactive-answering-development-v2/scorecard.json",
+    "src/abstention/interactive_contracts_v2.py",
+    "src/abstention/interactive_evaluation_v2.py",
+    "src/abstention/interactive_input_v2.py",
+    "src/abstention/interactive_runtime_v2.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_interactive_answering_v2.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_interactive_answering_v2.py",
 )
 
 
@@ -308,18 +344,23 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
             step91_committed,
             sorted(set(STEP91_AUTHORIZED_DRIFT).union(STEP91_COMPATIBILITY_DRIFT)),
         )
+        step92_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP91_COMMIT, STEP92_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(
+            step92_committed,
+            sorted(set(STEP92_PRIMARY_DRIFT).union(STEP92_COMPATIBILITY_DRIFT)),
+        )
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP91_COMMIT],
+            ["git", "diff", "--name-only", STEP92_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
             ["git", "ls-files", "--others", "--exclude-standard"],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
-        self.assertEqual(
-            sorted(set(tracked).union(untracked)),
-            sorted(set(STEP92_PRIMARY_DRIFT).union(STEP92_COMPATIBILITY_DRIFT)),
-        )
+        self.assertEqual(sorted(set(tracked).union(untracked)), list(STEP93_AUTHORIZED_DRIFT))
 
 
 if __name__ == "__main__":

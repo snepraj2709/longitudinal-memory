@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 START = "9f7625455abafb85b513b8d30a53d793580160ce"
 STEP83_COMMIT = "a18501a27708c259cccce8bf87948962e672bd41"
 STEP91_COMMIT = "35d0c64431f19d4243b72af712dadeb8d522128f"
+STEP92_COMMIT = "d0932a7994153745285c1f4e3d75c36ffbbaf06a"
 STEP83_AUTHORIZED_DRIFT = (
     "configs/answering/comparable_answer_run_v1.json",
     "data/answering/memory-answer-quality-development-v1/manifest.json",
@@ -105,6 +106,41 @@ STEP92_PRIMARY_DRIFT = (
 STEP92_COMPATIBILITY_DRIFT = (
     "tests/integration/test_answer_quality_evaluation.py",
     "tests/integration/test_memory_answer.py",
+)
+STEP93_AUTHORIZED_DRIFT = (
+    "configs/abstention/interactive_answering_v2.json",
+    "data/abstention/interactive-answering-development-v2/gold/behaviours.jsonl",
+    "data/abstention/interactive-answering-development-v2/gold/review.json",
+    "data/abstention/interactive-answering-development-v2/manifest.json",
+    "data/abstention/interactive-answering-development-v2/runtime/cases.jsonl",
+    "data/abstention/interactive-answering-development-v2/runtime/manifest.json",
+    "data/abstention/interactive-answering-development-v2/runtime/requirements.jsonl",
+    "docs/implementation-progress.md",
+    "results/abstention/interactive-answering-development-runtime-v2/checkpoint_manifest.json",
+    "results/abstention/interactive-answering-development-runtime-v2/decisions.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/failures.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/packages.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/plans.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/preflight.json",
+    "results/abstention/interactive-answering-development-runtime-v2/responses.jsonl",
+    "results/abstention/interactive-answering-development-runtime-v2/retrieval-results.jsonl",
+    "results/abstention/interactive-answering-development-v2/checks.json",
+    "results/abstention/interactive-answering-development-v2/failures.jsonl",
+    "results/abstention/interactive-answering-development-v2/findings.md",
+    "results/abstention/interactive-answering-development-v2/manifest.json",
+    "results/abstention/interactive-answering-development-v2/per-case.jsonl",
+    "results/abstention/interactive-answering-development-v2/predictions.jsonl",
+    "results/abstention/interactive-answering-development-v2/run.json",
+    "results/abstention/interactive-answering-development-v2/scorecard.json",
+    "src/abstention/interactive_contracts_v2.py",
+    "src/abstention/interactive_evaluation_v2.py",
+    "src/abstention/interactive_input_v2.py",
+    "src/abstention/interactive_runtime_v2.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_interactive_answering_v2.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_interactive_answering_v2.py",
 )
 
 
@@ -313,7 +349,7 @@ class AnswerQualityIntegrationTests(unittest.TestCase):
             "results/answering/evidence-package-development-v1/manifest.json": "8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213",
             "results/answering/memory-answer-contract-development-v1/manifest.json": "d0d987ff126aca2c7b05a0966e6b797247c7123e252fb26fc59d9599374fb841",
             "results/answering/memory-answer-contract-development-v1/answers.jsonl": STEP82_ANSWERS_SHA256,
-            "tests/integration/test_memory_answer.py": "ec3c88940ff9b3e8a8040225c7f444dc114d1281dab17105b4848bd709ac0835",
+            "tests/integration/test_memory_answer.py": "1ca97a9ff1df5f11d5210b5434f5ded6830205df0b420c4d88570fdaa5f05f1d",
         }
         self.assertEqual(
             {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in expected},
@@ -332,18 +368,23 @@ class AnswerQualityIntegrationTests(unittest.TestCase):
             step91_committed,
             sorted(set(STEP91_AUTHORIZED_DRIFT).union(STEP91_COMPATIBILITY_DRIFT)),
         )
+        step92_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP91_COMMIT, STEP92_COMMIT], cwd=ROOT,
+            check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(
+            step92_committed,
+            sorted(set(STEP92_PRIMARY_DRIFT).union(STEP92_COMPATIBILITY_DRIFT)),
+        )
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP91_COMMIT], cwd=ROOT, check=True,
+            ["git", "diff", "--name-only", STEP92_COMMIT], cwd=ROOT, check=True,
             capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
             ["git", "ls-files", "--others", "--exclude-standard"], cwd=ROOT,
             check=True, capture_output=True, text=True,
         ).stdout.splitlines()
-        self.assertEqual(
-            sorted(set(tracked).union(untracked)),
-            sorted(set(STEP92_PRIMARY_DRIFT).union(STEP92_COMPATIBILITY_DRIFT)),
-        )
+        self.assertEqual(sorted(set(tracked).union(untracked)), list(STEP93_AUTHORIZED_DRIFT))
 
 
 if __name__ == "__main__":

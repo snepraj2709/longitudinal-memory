@@ -1,0 +1,22 @@
+{
+  "config_version": "interactive_answering_config_v2",
+  "configured_future_answer_model": "gpt-4.1-2025-04-14",
+  "development_case_count": 4,
+  "final_release_version": "interactive-answering-development-v2",
+  "fixed_clarification_text": "Please clarify the exact information you want me to check in memory.",
+  "frozen_test_deferred_count": 16,
+  "incremental_cost_usd": 0,
+  "interactive_version": "interactive_answering_v2",
+  "max_output_tokens": 0,
+  "predicate_registry_path": "configs/extraction/predicate_registry_v2.json",
+  "predicate_registry_sha256": "15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1",
+  "predicate_registry_version": "predicate_registry_v2",
+  "provider_execution_enabled": false,
+  "roadmap_target_case_count": 20,
+  "runtime_release_version": "interactive-answering-development-runtime-v2",
+  "runtime_version": "interactive_answering_development_runtime_v2",
+  "schema_version": "interactive_answering_schema_v2",
+  "scorer_version": "interactive_answering_scorer_v2",
+  "selected_threshold_profile": "ordinary_1_trait_2",
+  "system_variant": "development_dual_retrieval_plus_answerability_v2"
+}
