@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CHECKED = ROOT / RESULT_ROOT
 START = "8fec075d754dff7f12821947919d5c01f867d949"
 STEP82_COMMIT = "9f7625455abafb85b513b8d30a53d793580160ce"
+STEP83_COMMIT = "a18501a27708c259cccce8bf87948962e672bd41"
 STEP82_COMMITTED_PATHS = (
     "configs/answering/memory_answer_v1.json",
     "data/answering/memory-answer-contract-development-v1/manifest.json",
@@ -67,6 +68,28 @@ STEP83_AUTHORIZED_DRIFT = (
     "tests/integration/test_answer_quality_evaluation.py",
     "tests/integration/test_memory_answer.py",
     "tests/unit/test_answer_quality_evaluation.py",
+)
+STEP91_AUTHORIZED_DRIFT = (
+    "configs/abstention/answerability_v1.json",
+    "data/abstention/answerability-development-v1/manifest.json",
+    "docs/implementation-progress.md",
+    "results/abstention/answerability-development-v1/checks.json",
+    "results/abstention/answerability-development-v1/decisions.jsonl",
+    "results/abstention/answerability-development-v1/failures.jsonl",
+    "results/abstention/answerability-development-v1/findings.md",
+    "results/abstention/answerability-development-v1/manifest.json",
+    "results/abstention/answerability-development-v1/run.json",
+    "src/abstention/__init__.py",
+    "src/abstention/contracts.py",
+    "src/abstention/evaluation.py",
+    "src/abstention/input.py",
+    "src/abstention/policy.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/unit/test_answerability.py",
+)
+STEP91_COMPATIBILITY_DRIFT = (
+    "tests/integration/test_memory_answer.py",
 )
 
 
@@ -238,8 +261,13 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(committed, list(STEP82_COMMITTED_PATHS))
+        step83_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP82_COMMIT, STEP83_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(step83_committed, list(STEP83_AUTHORIZED_DRIFT))
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP82_COMMIT],
+            ["git", "diff", "--name-only", STEP83_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
@@ -248,7 +276,7 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
         ).stdout.splitlines()
         self.assertEqual(
             sorted(set(tracked).union(untracked)),
-            list(STEP83_AUTHORIZED_DRIFT),
+            sorted(set(STEP91_AUTHORIZED_DRIFT).union(STEP91_COMPATIBILITY_DRIFT)),
         )
 
 

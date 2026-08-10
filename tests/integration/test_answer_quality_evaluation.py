@@ -27,6 +27,7 @@ from answering.comparable_answer_run import (
 
 ROOT = Path(__file__).resolve().parents[2]
 START = "9f7625455abafb85b513b8d30a53d793580160ce"
+STEP83_COMMIT = "a18501a27708c259cccce8bf87948962e672bd41"
 STEP83_AUTHORIZED_DRIFT = (
     "configs/answering/comparable_answer_run_v1.json",
     "data/answering/memory-answer-quality-development-v1/manifest.json",
@@ -48,6 +49,28 @@ STEP83_AUTHORIZED_DRIFT = (
     "tests/integration/test_answer_quality_evaluation.py",
     "tests/integration/test_memory_answer.py",
     "tests/unit/test_answer_quality_evaluation.py",
+)
+STEP91_AUTHORIZED_DRIFT = (
+    "configs/abstention/answerability_v1.json",
+    "data/abstention/answerability-development-v1/manifest.json",
+    "docs/implementation-progress.md",
+    "results/abstention/answerability-development-v1/checks.json",
+    "results/abstention/answerability-development-v1/decisions.jsonl",
+    "results/abstention/answerability-development-v1/failures.jsonl",
+    "results/abstention/answerability-development-v1/findings.md",
+    "results/abstention/answerability-development-v1/manifest.json",
+    "results/abstention/answerability-development-v1/run.json",
+    "src/abstention/__init__.py",
+    "src/abstention/contracts.py",
+    "src/abstention/evaluation.py",
+    "src/abstention/input.py",
+    "src/abstention/policy.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/unit/test_answerability.py",
+)
+STEP91_COMPATIBILITY_DRIFT = (
+    "tests/integration/test_memory_answer.py",
 )
 
 
@@ -256,14 +279,19 @@ class AnswerQualityIntegrationTests(unittest.TestCase):
             "results/answering/evidence-package-development-v1/manifest.json": "8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213",
             "results/answering/memory-answer-contract-development-v1/manifest.json": "d0d987ff126aca2c7b05a0966e6b797247c7123e252fb26fc59d9599374fb841",
             "results/answering/memory-answer-contract-development-v1/answers.jsonl": STEP82_ANSWERS_SHA256,
-            "tests/integration/test_memory_answer.py": "bcb41709723cdf8e9fc6617acd16903ce8202979016d3ac2d7e8e333e76466ea",
+            "tests/integration/test_memory_answer.py": "5b68e3cb8037c78e841ce7293498859fc2c1d5397f5fe55b087b1127d3a40818",
         }
         self.assertEqual(
             {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in expected},
             expected,
         )
+        committed = subprocess.run(
+            ["git", "diff", "--name-only", START, STEP83_COMMIT], cwd=ROOT,
+            check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(committed, list(STEP83_AUTHORIZED_DRIFT))
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", START], cwd=ROOT, check=True,
+            ["git", "diff", "--name-only", STEP83_COMMIT], cwd=ROOT, check=True,
             capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
@@ -272,7 +300,7 @@ class AnswerQualityIntegrationTests(unittest.TestCase):
         ).stdout.splitlines()
         self.assertEqual(
             sorted(set(tracked).union(untracked)),
-            list(STEP83_AUTHORIZED_DRIFT),
+            sorted(set(STEP91_AUTHORIZED_DRIFT).union(STEP91_COMPATIBILITY_DRIFT)),
         )
 
 

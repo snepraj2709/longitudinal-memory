@@ -1299,3 +1299,60 @@ The configured future comparison model remains `gpt-4.1-2025-04-14` with the fro
 ### Phase 8 handoff
 
 Phase 8 ends with the frozen Step 8.1 evidence packages, Step 8.2 answer contract, Step 8.3 no-call checkpoint, comparison policy, and structural scorecard. Phase 9 has not started. Any answerability policy, threshold tuning, abstention gold, model execution, or interactive answering requires separate guidance and authorization.
+
+## Phase 9, Step 9.1: Add the answerability decision
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `a18501a27708c259cccce8bf87948962e672bd41`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-9.1-guidance-v1`, envelope SHA-256 `9cc8c86bf9725d04c71d2033df14939e392166377ecd6fc5a70955f8c717f48b`
+- Compatibility rulings are limited to the Step 8.2 and Step 8.3 topology tests. Their envelope hashes are `7f022204628f60e1079d4dbe1c70fdea3aa30d1b891f1027ee3e131231b04def`, `6faffe095dc298db3234e8d66d47ddd3826062d65e41c3d3411cf10927f87172`, `6308f6c27642fbe3e0172d4b28140dcb3bb1b2091d94abcafd50a64712fe6eaf`, and `15e90d9f1132bee9d902d9591d67204cb9fb7c87da4260ea27692bba9ff74eb9`.
+- Commit message: `abstention: add deterministic answerability decisions`
+
+### Boundary and implementation
+
+This contract was derived in a clean room after a separate prompt derivation encountered prohibited content. The clean-room reviewer did not read that draft or the exposed content. Step 9.1 uses the frozen Step 8.1 evidence packages only. Step 8.2 and Step 8.3 remain prerequisite and protection authorities, not decision labels.
+
+The new `src/abstention/` package adds strict request, requirement, evidence, rejection, confidence, assessment, decision, failure, and check contracts. Its input loader verifies the public Step 8.1 release before reading canonical package bytes. It binds the Step 8.2 and Step 8.3 manifests, parses every nested package field strictly, and does not open a database, prompt, answer output, scorecard, gold file, provider setting, or environment credential.
+
+The policy runs before generation. It checks exact proposition and person scope, transaction and inclusive valid time, speaker and source authority, unresolved conflicts, stable-trait support, and checked causal support. Repeated durative support requires distinct sources, session definitions, and episode times unless an accepted durative claim already carries a closed interval. A relation-based causal answer requires an exact outgoing `caused_by` edge with both same-user endpoints present as visible, time-eligible categorized claims. Candidate, rejected, stale, ambiguous, missing, or wrong-direction endpoints cannot support generation.
+
+The independent review tightened nested unknown-field rejection, decision and assessment coherence, rejection-ID validation, speaker-backed authority checks, repeated durative support, and causal endpoint validation. These changes are covered by invented fixtures and did not change the candidate-only development outcome.
+
+### Development result
+
+The release contains 24 deterministic decisions, eight each for B2, B3, and B4. Every package abstains with `no_promoted_claims` because all retrieved development claims remain candidates. There are zero answerable or clarification decisions, zero generation-allowed cases, zero accepted evidence references, zero failures, and zero provider requests.
+
+All 491 upstream rejection rows are preserved exactly: 295 candidate rejections and 196 retrieval rejections. Every decision has confidence value `null`, calibration status `not_calibrated`, and null reason `step_9_2_not_run`. The release makes no claim that these abstentions are correct; positive authority, time, conflict, trait, and causal branches are covered only by controlled invented fixtures.
+
+### Tests and safeguards
+
+- Focused Step 9.1 unit and integration tests: 35 passed. They cover strict contracts and IDs, blocker precedence, wrong-person and time failures, authority classes, conflict reporting, partial answers, repeated durative evidence, directed causal endpoints, nested parser tampering, exact release accounting, prohibited-read traps, immutable writes, and byte-identical replay.
+- Focused Step 8.2 and Step 8.3 contract and topology suites: 48 passed. The two ruled adapters retain all predecessor artifact assertions and now recognize the exact Step 9.1 path set.
+- Step 8.1 unit and live PostgreSQL integration tests: 33 passed.
+- Protected live gates passed sequentially: retrieval baselines 132, Phase 5 conflict evaluation 39, grounded summaries 45, sessionization 33, temporal lifecycle 15, storage with ingestion 30, and durative claims 55 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 968 tests were discovered in 28.433 seconds; 814 passed and 154 database tests skipped. The required database groups passed in the live gates above.
+- Release self-verification, two clean byte-identical runs, in-memory compilation, exact allowlist inspection, protected hashes, `git diff --check`, secret and prohibited-data scans, cached and unstaged inspection, and Docker cleanup passed.
+
+The final diff contains exactly 18 authorized paths: 15 new Step 9.1 files, this ledger entry, and the two ruled topology-test adapters. The result manifest records both adapter hashes and all four compatibility-ruling envelopes. No production predecessor, migration, dependency, frozen release, governing policy, roadmap, or Make target changed.
+
+### Artifacts, costs, and limitations
+
+- Configuration: `configs/abstention/answerability_v1.json`, SHA-256 `b4e5dbd3fcb41c7a2b61cd2c208b7cca8cb2a0696d1d907215174eabeae4da9c`
+- Dataset manifest: `data/abstention/answerability-development-v1/manifest.json`, SHA-256 `bbcf1a703b2cbb3d6facf700882f8e354e0db906f5dbf6fee4cfb53ceb9ae9bf`
+- Decisions: `decisions.jsonl`, SHA-256 `06a57523ed2262dbccdc412e11d214b5d7f00e4ead81b974fee87e8c6323dbe0`
+- Checks: `checks.json`, SHA-256 `1160a8861f2b86496e72aac25fac99a24fbd35c7ad52d4c5ab0236d44734911a`
+- Run metadata: `run.json`, SHA-256 `651648133df3c97435808525226dd2c5b357126aa189fca16956700578f50015`
+- Findings: `findings.md`, SHA-256 `d67bbc73f85bb54a18a1c05066277dd7f47605091ed62bc9f57981fbb7ab2ebc`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Result manifest: `manifest.json`, SHA-256 `15667096c215de19fcf2ac6d897237791b62eef30e37d505adac2e5de4523de3`
+- Step 9.1 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+
+### Next-step input
+
+Step 9.2 receives the frozen answerability contracts, configuration, policy, strict artifact-only loader, uncalibrated confidence contract, and immutable candidate-only development release. Threshold tuning, answerability gold, calibration, paid calls, interactive answering, and Step 9.2 implementation have not started and require separate guidance.

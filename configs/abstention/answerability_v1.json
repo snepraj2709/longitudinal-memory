@@ -1,0 +1,46 @@
+{
+  "answerability_version": "answerability_v1",
+  "schema_version": "answerability_schema_v1",
+  "config_version": "answerability_config_v1",
+  "policy_version": "answerability_policy_v1",
+  "runtime_version": "answerability_runtime_v1",
+  "input_release_version": "evidence_package_development_v1",
+  "output_release_version": "answerability-development-v1",
+  "decisions": ["answerable", "abstain", "clarify"],
+  "permitted_answer_statuses": ["answered", "disputed", "partially_answered"],
+  "information_kinds": [
+    "fact",
+    "current_state",
+    "historical_state",
+    "change_over_time",
+    "specific_event",
+    "relationship",
+    "commitment",
+    "evidence_request",
+    "stable_trait",
+    "causal",
+    "unknown"
+  ],
+  "reason_precedence": [
+    "no_retrieved_claims",
+    "incomplete_evidence",
+    "no_promoted_claims",
+    "clarification_required",
+    "wrong_person_risk",
+    "requested_information_absent",
+    "requested_time_not_covered",
+    "stale_evidence",
+    "insufficient_speaker_authority",
+    "insufficient_source_authority",
+    "unresolved_conflict",
+    "stable_trait_support_insufficient",
+    "causal_support_insufficient"
+  ],
+  "confidence_policy": {
+    "value": null,
+    "calibration_status": "not_calibrated",
+    "null_reason": "step_9_2_not_run"
+  },
+  "structural_minimum": "step_8_1_answer_allowed_must_be_true",
+  "model": "none"
+}
