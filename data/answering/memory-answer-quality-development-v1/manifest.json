@@ -1,0 +1,39 @@
+{
+  "answer_gold_available": false,
+  "available_baselines": [
+    "B2",
+    "B3",
+    "B4"
+  ],
+  "dataset_version": "memory_answer_quality_development_v1",
+  "deferred_baselines": [
+    "B5",
+    "B6"
+  ],
+  "excluded_inputs": [
+    "answer gold",
+    "retrieval relevance annotations",
+    "oracle data",
+    "review queues",
+    "frozen test users",
+    ".env",
+    "provider credentials",
+    "network services"
+  ],
+  "expected_per_case_count": 24,
+  "expected_prediction_count": 24,
+  "expected_scorecard_row_count": 35,
+  "guidance_sha256": "64138cb9675729b340c1a471dcf698302609a35c08d4d1f36fe3956e3f596737",
+  "guidance_version": "step-8.3-guidance-v1",
+  "input_release": {
+    "step8_1_packages_sha256": "bb57898bea51417b2ecad1252b451669ae2c748033c9cef88360f16a825f8186",
+    "step8_1_result_manifest_sha256": "8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213",
+    "step8_2_answers_sha256": "d83fcac2eed3a4b2493c575cc49f593657669a690b9cfa61307afc8890940ba4",
+    "step8_2_dataset_manifest_sha256": "015e0d5e16f9870e04728f3668ee1f21f8c1b1a9a383f274c3c6bcb23c6f455e",
+    "step8_2_result_manifest_sha256": "d0d987ff126aca2c7b05a0966e6b797247c7123e252fb26fc59d9599374fb841"
+  },
+  "provider_execution": "forbidden_zero_call",
+  "run_configuration_sha256": "59714759f54323d5e80e30d006e11b02f780d286e08a23dd44b95bf782789ea2",
+  "split": "development",
+  "starting_commit": "9f7625455abafb85b513b8d30a53d793580160ce"
+}

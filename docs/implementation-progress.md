@@ -1240,3 +1240,62 @@ The release has 24 answers, 24 abstentions, and zero answered, disputed, partial
 ### Next-step input
 
 Step 8.3 receives the frozen answer schema, prompt contract, candidate validator, configuration, all-abstained development release, and its candidate-data limitation. Comparable answer runs, answer gold, paid-call preflight, provider execution, and Step 8.3 implementation have not started and require separate guidance and authorization.
+
+## Phase 8, Step 8.3: Freeze the comparable answer evaluation
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `9f7625455abafb85b513b8d30a53d793580160ce`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-8.3-guidance-v1`, envelope SHA-256 `64138cb9675729b340c1a471dcf698302609a35c08d4d1f36fe3956e3f596737`
+- Compatibility ruling: the Step 8.2 integration test changes only its Git-topology tail. The new SHA-256 is `bcb41709723cdf8e9fc6617acd16903ce8202979016d3ac2d7e8e333e76466ea`; its seven predecessor and release assertions are unchanged.
+- Commit message: `answering: freeze comparable answer evaluation`
+
+### Runtime and scoring boundary
+
+- Step 8.1 and Step 8.2 are publicly verified before their records are read. Each Step 8.2 answer is reparsed and matched to its exact package, user, query, baseline, execution, plan, snapshot, time cutoffs, and package hash.
+- The no-call preflight is written before the prediction file. It records 24 packages, zero provider-eligible cases, no transmitted cases, users, source IDs, or fields, and zero requests, retries, tokens, output allowance, or incremental cost.
+- Runtime predictions are a byte-for-byte copy of the 24 frozen Step 8.2 answers. The runtime checkpoint binds those bytes, both predecessor releases, the B1 comparison settings, the configuration, the runtime implementation, and the empty failures file.
+- The scorer verifies the checkpoint before reading predictions. It does not open a database, rebuild packages, render a prompt, call a provider, or read gold, oracle, review-queue, relevance, frozen-test, credential, or environment data.
+- B2, B3, and B4 each contain eight deterministic structural abstentions. B5 and B6 are unavailable because no frozen evidence-package release exists for either baseline; they are not represented as zero-scoring predictions.
+
+### Structural quality report
+
+The report contains 24 per-case rows and 35 scorecard rows. All 24 predictions are abstentions with `no_promoted_claims`, no factual statements, no citations, and no model metadata. There are no failures.
+
+All seven requested quality metrics are null. For B2-B4, the exact reasons are `no_non_abstained_predictions`, `no_predicted_citations`, `no_authorized_answer_evidence_gold`, or `no_factual_statements`, as appropriate. Every B5 and B6 metric uses `baseline_not_available`. The release publishes no composite score and makes no claim about answer correctness or abstention accuracy.
+
+The configured future comparison model remains `gpt-4.1-2025-04-14` with the frozen B1 generation settings, but no provider path ran. Step 8.3 made zero requests, used zero tokens, and cost `$0`; historical OpenAI spend remains `$0.2314404`.
+
+### Tests and contract checks
+
+- Focused Step 8.3 unit and integration tests: 21 passed, covering exact configuration and B1 parity, zero-call arithmetic, checkpoint-before-scorer ordering, byte-identical prediction reuse, all metric null reasons, B5/B6 unavailability, immutable outputs, prohibited-read traps, tamper rejection, and the exact 20-path topology.
+- Focused Step 8.2 unit and integration tests: 27 passed. Step 8.1 unit and live PostgreSQL integration tests: 33 passed.
+- Protected live gates passed sequentially: retrieval baselines 132, Phase 5 conflict evaluation 39, grounded summaries 45, sessionization 33, temporal lifecycle 15, and storage with ingestion 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 933 tests were discovered in 28.284 seconds; 779 passed and 154 database tests skipped. The required database groups passed in the live gates above.
+- Public Step 8.1, Step 8.2, runtime-checkpoint, and final-release verification passed. In-memory compilation, prediction byte comparison, exact allowlist inspection, protected hashes, `git diff --check`, secret and prohibited-data scans, cached and unstaged inspection, and Docker cleanup passed.
+- The final diff contains exactly 20 authorized paths: 18 new Step 8.3 files, this ledger entry, and the ruled Step 8.2 test-only adapter. No production predecessor or frozen release changed.
+
+### Artifacts and limitations
+
+- Comparable-run configuration: `configs/answering/comparable_answer_run_v1.json`, SHA-256 `59714759f54323d5e80e30d006e11b02f780d286e08a23dd44b95bf782789ea2`
+- Dataset manifest: `data/answering/memory-answer-quality-development-v1/manifest.json`, SHA-256 `17b8806421e76f5cc0206044ef49266dbc14dd975a6332001794b246eeb85ec2`
+- No-call preflight: `preflight.json`, SHA-256 `321b54c61b2e702dbfe2f223f1018ce43341f1ddcb474311b5c1e6ca3145cf22`
+- Runtime predictions: `predictions.jsonl`, SHA-256 `d83fcac2eed3a4b2493c575cc49f593657669a690b9cfa61307afc8890940ba4`
+- Runtime checkpoint: `checkpoint_manifest.json`, SHA-256 `71df6f495373cd1cf4ef1c4cf2aa296604a4f322bf8ffd47a21f59f3f9933a1a`
+- Per-case report: `per-case.jsonl`, SHA-256 `17212ac04fce3649b268e9eba4aeb7a91cf7acb206176cf255fccd7926531b13`
+- Scorecard: `scorecard.json`, SHA-256 `52342ae1982fd11aac38f7338303782ccd9974fd23ed52f3d147c51c7a054828`
+- Checks: `checks.json`, SHA-256 `9aa451266d6398c119d0fe95a2a4a3eddd2c358f70035a4e738af9afa839acde`
+- Run metadata: `run.json`, SHA-256 `92deb10fe687823c4e3640f17a77e8577f6fa949d3a246001b0c0b3e15cdac72`
+- Findings: `findings.md`, SHA-256 `a00ef558a3c14142622c915dcd159d213a7d1146665f4b1a8364c5f74bc6c0d7`
+- Final result manifest: `manifest.json`, SHA-256 `ac936819856939f66597c279fc0b852022a650d5455a4c21240ffbb01f0a524f`
+- Runtime and final failures are empty, with SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+- This release proves deterministic reuse, structural safety, and explicit denominator handling. It does not measure factual answer quality, compare B5 or B6, validate a model-generated answer, or establish answerability performance.
+
+### Phase 8 handoff
+
+Phase 8 ends with the frozen Step 8.1 evidence packages, Step 8.2 answer contract, Step 8.3 no-call checkpoint, comparison policy, and structural scorecard. Phase 9 has not started. Any answerability policy, threshold tuning, abstention gold, model execution, or interactive answering requires separate guidance and authorization.

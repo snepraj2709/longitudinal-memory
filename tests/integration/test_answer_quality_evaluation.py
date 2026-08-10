@@ -1,0 +1,280 @@
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+from pathlib import Path
+import socket
+import subprocess
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from answering.answer_quality_evaluation import (
+    RESULT_ROOT,
+    execute_answer_quality_evaluation,
+    score_frozen_answers,
+    verify_answer_quality_release,
+)
+from answering.answer_run_contracts import AnswerRunError
+from answering.comparable_answer_run import (
+    RUNTIME_ROOT,
+    STEP82_ANSWERS_SHA256,
+    freeze_answer_predictions,
+    verify_answer_runtime_checkpoint,
+)
+
+
+ROOT = Path(__file__).resolve().parents[2]
+START = "9f7625455abafb85b513b8d30a53d793580160ce"
+STEP83_AUTHORIZED_DRIFT = (
+    "configs/answering/comparable_answer_run_v1.json",
+    "data/answering/memory-answer-quality-development-v1/manifest.json",
+    "docs/implementation-progress.md",
+    "results/answering/memory-answer-quality-development-runtime-v1/checkpoint_manifest.json",
+    "results/answering/memory-answer-quality-development-runtime-v1/failures.jsonl",
+    "results/answering/memory-answer-quality-development-runtime-v1/predictions.jsonl",
+    "results/answering/memory-answer-quality-development-runtime-v1/preflight.json",
+    "results/answering/memory-answer-quality-development-v1/checks.json",
+    "results/answering/memory-answer-quality-development-v1/failures.jsonl",
+    "results/answering/memory-answer-quality-development-v1/findings.md",
+    "results/answering/memory-answer-quality-development-v1/manifest.json",
+    "results/answering/memory-answer-quality-development-v1/per-case.jsonl",
+    "results/answering/memory-answer-quality-development-v1/run.json",
+    "results/answering/memory-answer-quality-development-v1/scorecard.json",
+    "src/answering/answer_quality_evaluation.py",
+    "src/answering/answer_run_contracts.py",
+    "src/answering/comparable_answer_run.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_answer_quality_evaluation.py",
+)
+
+
+class AnswerQualityIntegrationTests(unittest.TestCase):
+    def _execute(self, base: Path):
+        runtime = base / "runtime"
+        final = base / "final"
+        checks = execute_answer_quality_evaluation(runtime, final, repo_root=ROOT)
+        return runtime, final, checks
+
+    def test_exact_release_accounting_and_null_metrics(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            runtime, final, checks = self._execute(Path(directory))
+            self.assertEqual((checks.per_case_count, checks.scorecard_row_count), (24, 35))
+            self.assertEqual((checks.B2_case_count, checks.B3_case_count, checks.B4_case_count), (8, 8, 8))
+            self.assertEqual((checks.B5_case_count, checks.B6_case_count), (0, 0))
+            self.assertEqual(checks.abstained_count, 24)
+            self.assertEqual(checks.non_null_metric_count, 0)
+            self.assertEqual(checks.provider_request_count, 0)
+            scorecard = json.loads((final / "scorecard.json").read_text())
+            self.assertEqual(len(scorecard["rows"]), 35)
+            self.assertTrue(all(row["value"]["value"] is None for row in scorecard["rows"]))
+            self.assertEqual(hashlib.sha256((runtime / "predictions.jsonl").read_bytes()).hexdigest(), STEP82_ANSWERS_SHA256)
+
+    def test_predictions_are_exact_step82_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            runtime, _, _ = self._execute(Path(directory))
+            self.assertEqual(
+                (runtime / "predictions.jsonl").read_bytes(),
+                (ROOT / "results/answering/memory-answer-contract-development-v1/answers.jsonl").read_bytes(),
+            )
+            self.assertEqual((runtime / "failures.jsonl").read_bytes(), b"")
+
+    def test_step81_and_step82_public_verifiers_run_before_answer_read(self) -> None:
+        from answering import comparable_answer_run as module
+
+        order = []
+        original_step81 = module.verify_evidence_package_release
+        original_step82 = module.verify_memory_answer_release
+
+        def step81(*args, **kwargs):
+            order.append("step81")
+            return original_step81(*args, **kwargs)
+
+        def step82(*args, **kwargs):
+            order.append("step82")
+            return original_step82(*args, **kwargs)
+
+        with tempfile.TemporaryDirectory() as directory, patch.object(
+            module, "verify_evidence_package_release", step81
+        ), patch.object(module, "verify_memory_answer_release", step82):
+            freeze_answer_predictions(Path(directory) / "runtime", repo_root=ROOT)
+        self.assertEqual(order[:2], ["step81", "step82"])
+
+    def test_checkpoint_is_verified_before_scorer_reads_predictions(self) -> None:
+        from answering import answer_quality_evaluation as module
+
+        state = {"verified": False}
+        original_verify = module.verify_answer_runtime_checkpoint
+        original_answers = module._runtime_answers
+
+        def verified(*args, **kwargs):
+            result = original_verify(*args, **kwargs)
+            state["verified"] = True
+            return result
+
+        def guarded(*args, **kwargs):
+            if not state["verified"]:
+                raise AssertionError("scorer read predictions before checkpoint verification")
+            return original_answers(*args, **kwargs)
+
+        with tempfile.TemporaryDirectory() as directory:
+            runtime = Path(directory) / "runtime"
+            freeze_answer_predictions(runtime, repo_root=ROOT)
+            with patch.object(module, "verify_answer_runtime_checkpoint", verified), patch.object(
+                module, "_runtime_answers", guarded
+            ):
+                score_frozen_answers(Path(directory) / "final", runtime_dir=runtime, repo_root=ROOT)
+
+    def test_two_runtime_and_final_runs_are_byte_identical(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            first_runtime, first_final, _ = self._execute(Path(directory) / "first")
+            second_runtime, second_final, _ = self._execute(Path(directory) / "second")
+            self.assertEqual(
+                {path.name: path.read_bytes() for path in first_runtime.iterdir()},
+                {path.name: path.read_bytes() for path in second_runtime.iterdir()},
+            )
+            self.assertEqual(
+                {path.name: path.read_bytes() for path in first_final.iterdir()},
+                {path.name: path.read_bytes() for path in second_final.iterdir()},
+            )
+
+    def test_runtime_has_no_prompt_environment_network_or_prohibited_read(self) -> None:
+        forbidden = ("/gold/", "/oracle", "review_queue", "user_003", "/.env")
+        original_open = Path.open
+
+        def guarded(path, *args, **kwargs):
+            rendered = Path(path).as_posix().lower()
+            if any(token in rendered for token in forbidden):
+                raise AssertionError(f"prohibited read: {rendered}")
+            return original_open(path, *args, **kwargs)
+
+        with tempfile.TemporaryDirectory() as directory, patch.object(Path, "open", guarded), patch(
+            "answering.memory_answer.render_answer_prompt", side_effect=AssertionError("prompt rendered")
+        ), patch.object(os, "getenv", side_effect=AssertionError("environment read")), patch.object(
+            socket, "socket", side_effect=AssertionError("network opened")
+        ):
+            self._execute(Path(directory))
+
+    def test_changed_checkpoint_metric_and_output_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            runtime, final, _ = self._execute(Path(directory))
+            checkpoint = json.loads((runtime / "checkpoint_manifest.json").read_text())
+            checkpoint["prediction_count"] = 23
+            (runtime / "checkpoint_manifest.json").write_text(json.dumps(checkpoint))
+            with self.assertRaises(AnswerRunError):
+                verify_answer_runtime_checkpoint(runtime, repo_root=ROOT)
+        with tempfile.TemporaryDirectory() as directory:
+            runtime, final, _ = self._execute(Path(directory))
+            scorecard = json.loads((final / "scorecard.json").read_text())
+            scorecard["rows"][0]["value"]["null_reason"] = "wrong_reason"
+            (final / "scorecard.json").write_text(json.dumps(scorecard))
+            with self.assertRaises(AnswerRunError):
+                verify_answer_quality_release(final, runtime_dir=runtime, repo_root=ROOT)
+        with tempfile.TemporaryDirectory() as directory:
+            runtime, final, _ = self._execute(Path(directory))
+            (final / "findings.md").write_bytes((final / "findings.md").read_bytes() + b"changed")
+            with self.assertRaises(AnswerRunError):
+                verify_answer_quality_release(final, runtime_dir=runtime, repo_root=ROOT)
+
+    def test_changed_input_authority_prompt_model_settings_and_baseline_fail(self) -> None:
+        from answering import comparable_answer_run as module
+
+        with tempfile.TemporaryDirectory() as directory, patch.object(
+            module, "STEP82_ANSWERS_SHA256", "0" * 64
+        ):
+            with self.assertRaises(AnswerRunError):
+                freeze_answer_predictions(Path(directory) / "runtime", repo_root=ROOT)
+        original = json.loads((ROOT / "configs/answering/comparable_answer_run_v1.json").read_text())
+        for field, value in (
+            ("prompt_sha256", "0" * 64),
+            ("requested_model", "wrong-model"),
+            ("available_baselines", ["B2", "B3", "B4", "B5"]),
+        ):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
+                changed = dict(original)
+                changed[field] = value
+                path = Path(directory) / "config.json"
+                path.write_text(json.dumps(changed))
+                with self.assertRaises(AnswerRunError):
+                    module.load_comparable_answer_run_config(path, repo_root=ROOT)
+        with tempfile.TemporaryDirectory() as directory:
+            changed = dict(original)
+            changed["generation_settings"] = dict(changed["generation_settings"])
+            changed["generation_settings"]["temperature"] = 0.2
+            path = Path(directory) / "config.json"
+            path.write_text(json.dumps(changed))
+            with self.assertRaises(AnswerRunError):
+                module.load_comparable_answer_run_config(path, repo_root=ROOT)
+
+    def test_provider_eligible_package_and_b5_prediction_are_rejected(self) -> None:
+        from dataclasses import replace
+        from answering import comparable_answer_run as module
+
+        views = load_views = module.load_answer_package_views(ROOT)
+        poisoned = (replace(views[0], answer_allowed=True, structural_blockers=()), *views[1:])
+        with tempfile.TemporaryDirectory() as directory, patch.object(
+            module, "load_answer_package_views", return_value=poisoned
+        ):
+            with self.assertRaises(AnswerRunError):
+                freeze_answer_predictions(Path(directory) / "runtime", repo_root=ROOT)
+        with tempfile.TemporaryDirectory() as directory:
+            runtime = Path(directory) / "runtime"
+            freeze_answer_predictions(runtime, repo_root=ROOT)
+            raw = (runtime / "predictions.jsonl").read_bytes().replace(
+                b'"baseline_id":"B2"', b'"baseline_id":"B5"', 1
+            )
+            (runtime / "predictions.jsonl").write_bytes(raw)
+            with self.assertRaises(AnswerRunError):
+                verify_answer_runtime_checkpoint(runtime, repo_root=ROOT)
+
+    def test_nonempty_runtime_and_final_directories_are_refused(self) -> None:
+        for target in ("runtime", "final"):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as directory:
+                base = Path(directory)
+                runtime = base / "runtime"
+                final = base / "final"
+                if target == "runtime":
+                    runtime.mkdir()
+                    (runtime / "keep").write_text("keep")
+                    with self.assertRaisesRegex(AnswerRunError, "must be empty"):
+                        freeze_answer_predictions(runtime, repo_root=ROOT)
+                else:
+                    freeze_answer_predictions(runtime, repo_root=ROOT)
+                    final.mkdir()
+                    (final / "keep").write_text("keep")
+                    with self.assertRaisesRegex(AnswerRunError, "must be empty"):
+                        score_frozen_answers(final, runtime_dir=runtime, repo_root=ROOT)
+
+    def test_predecessor_hashes_and_tracked_diff_are_exact(self) -> None:
+        expected = {
+            "preference.md": "bf6dfc6ea0b23e9ff1c52b4dbf1debce6ebe495070e826743ffa2d56681a18b8",
+            "docs/memory-evaluation-steps.md": "bf89021a98273e623edbe27318c9b1cadfb8bed023f5e256a2f58b13e27913ba",
+            "Makefile": "6c7f965049ab12d4bb5339ddd2a75b701e318abc424be91a7e5d3c46e1dc7e6f",
+            "src/answering/__init__.py": "582ee7aa9e8eb133a9b0a43ccbb256ef4c020f0b5fd89b42ff266d74fdb9aafa",
+            "results/answering/evidence-package-development-v1/manifest.json": "8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213",
+            "results/answering/memory-answer-contract-development-v1/manifest.json": "d0d987ff126aca2c7b05a0966e6b797247c7123e252fb26fc59d9599374fb841",
+            "results/answering/memory-answer-contract-development-v1/answers.jsonl": STEP82_ANSWERS_SHA256,
+            "tests/integration/test_memory_answer.py": "bcb41709723cdf8e9fc6617acd16903ce8202979016d3ac2d7e8e333e76466ea",
+        }
+        self.assertEqual(
+            {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in expected},
+            expected,
+        )
+        tracked = subprocess.run(
+            ["git", "diff", "--name-only", START], cwd=ROOT, check=True,
+            capture_output=True, text=True,
+        ).stdout.splitlines()
+        untracked = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard"], cwd=ROOT,
+            check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(
+            sorted(set(tracked).union(untracked)),
+            list(STEP83_AUTHORIZED_DRIFT),
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()

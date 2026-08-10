@@ -28,6 +28,46 @@ from answering.memory_answer import ABSTENTION_REASONS, ABSTENTION_TEXT
 ROOT = Path(__file__).resolve().parents[2]
 CHECKED = ROOT / RESULT_ROOT
 START = "8fec075d754dff7f12821947919d5c01f867d949"
+STEP82_COMMIT = "9f7625455abafb85b513b8d30a53d793580160ce"
+STEP82_COMMITTED_PATHS = (
+    "configs/answering/memory_answer_v1.json",
+    "data/answering/memory-answer-contract-development-v1/manifest.json",
+    "docs/implementation-progress.md",
+    "results/answering/memory-answer-contract-development-v1/answers.jsonl",
+    "results/answering/memory-answer-contract-development-v1/checks.json",
+    "results/answering/memory-answer-contract-development-v1/failures.jsonl",
+    "results/answering/memory-answer-contract-development-v1/findings.md",
+    "results/answering/memory-answer-contract-development-v1/manifest.json",
+    "results/answering/memory-answer-contract-development-v1/run.json",
+    "src/answering/answer_contracts.py",
+    "src/answering/answer_evaluation.py",
+    "src/answering/answer_input.py",
+    "src/answering/memory_answer.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_memory_answer.py",
+)
+STEP83_AUTHORIZED_DRIFT = (
+    "configs/answering/comparable_answer_run_v1.json",
+    "data/answering/memory-answer-quality-development-v1/manifest.json",
+    "docs/implementation-progress.md",
+    "results/answering/memory-answer-quality-development-runtime-v1/checkpoint_manifest.json",
+    "results/answering/memory-answer-quality-development-runtime-v1/failures.jsonl",
+    "results/answering/memory-answer-quality-development-runtime-v1/predictions.jsonl",
+    "results/answering/memory-answer-quality-development-runtime-v1/preflight.json",
+    "results/answering/memory-answer-quality-development-v1/checks.json",
+    "results/answering/memory-answer-quality-development-v1/failures.jsonl",
+    "results/answering/memory-answer-quality-development-v1/findings.md",
+    "results/answering/memory-answer-quality-development-v1/manifest.json",
+    "results/answering/memory-answer-quality-development-v1/per-case.jsonl",
+    "results/answering/memory-answer-quality-development-v1/run.json",
+    "results/answering/memory-answer-quality-development-v1/scorecard.json",
+    "src/answering/answer_quality_evaluation.py",
+    "src/answering/answer_run_contracts.py",
+    "src/answering/comparable_answer_run.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_answer_quality_evaluation.py",
+)
 
 
 class MemoryAnswerIntegrationTests(unittest.TestCase):
@@ -193,11 +233,23 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
             expected,
         )
         import subprocess
-        changed = subprocess.run(
-            ["git", "diff", "--name-only", START], cwd=ROOT, check=True,
-            capture_output=True, text=True,
+        committed = subprocess.run(
+            ["git", "diff", "--name-only", START, STEP82_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
-        self.assertEqual(changed, [])
+        self.assertEqual(committed, list(STEP82_COMMITTED_PATHS))
+        tracked = subprocess.run(
+            ["git", "diff", "--name-only", STEP82_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        untracked = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard"],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(
+            sorted(set(tracked).union(untracked)),
+            list(STEP83_AUTHORIZED_DRIFT),
+        )
 
 
 if __name__ == "__main__":
