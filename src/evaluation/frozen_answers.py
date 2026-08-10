@@ -209,7 +209,7 @@ def run_answer_batch(
         if failed:
             break
         group = remaining[offset : offset + WORKERS]
-        spent = _provider_cost(predictions)
+        spent = _provider_cost(predictions, failures)
         reserved = sum(
             (_cost(int(item["maximum_input_tokens"]), MAX_OUTPUT_TOKENS) for item in group),
             Decimal(0),
@@ -228,6 +228,7 @@ def run_answer_batch(
             for future in as_completed(future_items):
                 item = future_items[future]
                 active.remove(int(item["position"]))
+                provider = None
                 try:
                     raw, provider = future.result()
                     parsed = parse_json_bytes(raw.encode("utf-8"), location="provider answer")
@@ -241,7 +242,10 @@ def run_answer_batch(
                         "validation" if isinstance(error, FrozenRunError) else "provider"
                     )
                     code = _safe_failure_code(error, stage)
-                    failures.append(_failure(plan, item, stage, code, "response"))
+                    failures.append(_failure(
+                        plan, item, stage, code, "response",
+                        provider if stage == "validation" else None,
+                    ))
                     failures.sort(key=lambda value: value.position)
                     failed = True
                 _write_state(output, plan, predictions, failures, tuple(sorted(active)), "running", started_at, None, resume_count, prior_spend)
@@ -367,14 +371,18 @@ def _deterministic_abstention(task):
     }
 
 
-def _failure(plan, item, stage, code, location):
+def _failure(plan, item, stage, code, location, provider=None):
     payload = {
         "batch_id": plan["batch"]["batch_id"], "position": item["position"],
         "baseline_id": plan["baseline_id"], "task": plan["task"],
         "case_id": item["case_id"], "user_id": item["user_id"],
         "stage": stage, "code": code, "location": location,
+        "provider": None if provider is None else asdict(provider),
     }
-    return FrozenAnswerFailure(failure_id=stable_sha256(payload), **payload)
+    return FrozenAnswerFailure(
+        failure_id=stable_sha256(payload),
+        **{**payload, "provider": provider},
+    )
 
 
 def _prior_spend(plan, *, require_prior):
@@ -401,8 +409,10 @@ def _write_state(output, plan, predictions, failures, pending, status, started_a
     failure_bytes = b"".join(canonical_json_bytes(item) for item in failures)
     _atomic_write(output / "predictions.jsonl", prediction_bytes)
     _atomic_write(output / "failures.jsonl", failure_bytes)
-    provider_predictions = [item for item in predictions if item.provider is not None]
-    batch_cost = _provider_cost(predictions)
+    providers = _provider_records(predictions, failures)
+    batch_cost = _provider_cost(predictions, failures)
+    successful_provider_count = sum(item.provider is not None for item in predictions)
+    provider_failures = sum(item.stage != "cost_cap" for item in failures)
     checkpoint = {
         "run_version": "frozen_answer_run_v1", "schema_version": "frozen_answer_run_schema_v1",
         "batch_id": plan["batch"]["batch_id"], "batch_position": plan["batch"]["position"],
@@ -413,15 +423,15 @@ def _write_state(output, plan, predictions, failures, pending, status, started_a
         "successful_count": len(predictions), "failure_count": len(failures),
         "remaining_count": len(plan["items"]) - len(predictions) - len(failures),
         "pending_positions": list(pending),
-        "provider_request_count": len(provider_predictions) + len(failures) + len(pending),
+        "provider_request_count": successful_provider_count + provider_failures + len(pending),
         "deterministic_gate_count": sum(item.generation_mode == "deterministic_answerability_gate" for item in predictions),
-        "input_token_count": sum(item.provider.input_tokens for item in provider_predictions),
-        "output_token_count": sum(item.provider.output_tokens for item in provider_predictions),
+        "input_token_count": sum(item.input_tokens for item in providers),
+        "output_token_count": sum(item.output_tokens for item in providers),
         "incremental_cost_usd": money(batch_cost),
         "cumulative_incremental_cost_usd": money(prior_spend + batch_cost),
         "batch_cost_cap_usd": money(Decimal(str(plan["batch"]["maximum_cost_usd"]))),
         "global_cost_cap_usd": money(GLOBAL_CAP), "requested_model": MODEL,
-        "returned_models": sorted({item.provider.returned_model for item in provider_predictions}),
+        "returned_models": sorted({item.returned_model for item in providers}),
         "worker_count": WORKERS, "maximum_retry_requests": 0,
         "gold_opened": False, "oracle_opened": False, "review_queue_opened": False,
         "raw_provider_output_persisted": False,
@@ -453,17 +463,19 @@ def _validate_checkpoint(checkpoint, predictions, failures, plan, output):
     legacy_remaining = len(plan["items"]) - len(predictions)
     if checkpoint.get("remaining_count") not in {expected_remaining, legacy_remaining}:
         raise FrozenRunError("answer checkpoint remaining count is inconsistent")
-    provider = [item for item in predictions if item.provider is not None]
+    providers = _provider_records(predictions, failures)
     pending = checkpoint.get("pending_positions")
     if not isinstance(pending, list):
         raise FrozenRunError("answer checkpoint pending positions are invalid")
-    if checkpoint.get("provider_request_count") != len(provider) + len(failures) + len(pending):
+    provider_failures = sum(item.stage != "cost_cap" for item in failures)
+    successful_provider_count = sum(item.provider is not None for item in predictions)
+    if checkpoint.get("provider_request_count") != successful_provider_count + provider_failures + len(pending):
         raise FrozenRunError("answer checkpoint provider count is inconsistent")
-    if checkpoint.get("input_token_count") != sum(item.provider.input_tokens for item in provider):
+    if checkpoint.get("input_token_count") != sum(item.input_tokens for item in providers):
         raise FrozenRunError("answer checkpoint input count is inconsistent")
-    if checkpoint.get("output_token_count") != sum(item.provider.output_tokens for item in provider):
+    if checkpoint.get("output_token_count") != sum(item.output_tokens for item in providers):
         raise FrozenRunError("answer checkpoint output count is inconsistent")
-    if checkpoint.get("incremental_cost_usd") != money(_provider_cost(predictions)):
+    if checkpoint.get("incremental_cost_usd") != money(_provider_cost(predictions, failures)):
         raise FrozenRunError("answer checkpoint cost is inconsistent")
     hashes = {
         "predictions.jsonl": _sha(output / "predictions.jsonl"),
@@ -530,8 +542,15 @@ def _safe_failure_code(error: Exception, stage: str) -> str:
     return next((code for token, code in categories if token in message), "provider_output_invalid")
 
 
-def _provider_cost(predictions):
-    providers = [item.provider for item in predictions if item.provider is not None]
+def _provider_records(predictions, failures=()):
+    return [
+        item.provider for item in (*predictions, *failures)
+        if item.provider is not None
+    ]
+
+
+def _provider_cost(predictions, failures=()):
+    providers = _provider_records(predictions, failures)
     return _cost(
         sum(item.input_tokens for item in providers),
         sum(item.output_tokens for item in providers),

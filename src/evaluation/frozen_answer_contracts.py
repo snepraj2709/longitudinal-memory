@@ -69,10 +69,13 @@ class FrozenAnswerFailure:
     stage: str
     code: str
     location: str
+    provider: ProviderRecord | None
 
     def __post_init__(self) -> None:
         if self.stage not in {"provider", "model_mismatch", "validation", "cost_cap"}:
             raise FrozenRunError("answer failure stage is invalid")
+        if self.stage != "validation" and self.provider is not None:
+            raise FrozenRunError("answer failure provider metadata is inconsistent")
         payload = asdict(self)
         identity = payload.pop("failure_id")
         if identity != stable_sha256(payload):
@@ -89,7 +92,10 @@ def answer_prediction_from_mapping(value: object) -> FrozenAnswerPrediction:
 
 
 def answer_failure_from_mapping(value: object) -> FrozenAnswerFailure:
-    return FrozenAnswerFailure(**_strict(value, FrozenAnswerFailure, "answer failure"))
+    mapping = _strict(value, FrozenAnswerFailure, "answer failure")
+    provider = mapping["provider"]
+    mapping["provider"] = None if provider is None else provider_from_mapping(provider)
+    return FrozenAnswerFailure(**mapping)
 
 
 def validate_answer_output(
