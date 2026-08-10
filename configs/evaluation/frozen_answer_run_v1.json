@@ -1,0 +1,60 @@
+{
+  "run_version": "frozen_answer_run_v1",
+  "schema_version": "frozen_answer_run_schema_v1",
+  "starting_commit": "1c6332d9865358d1af7045d015beab0339418191",
+  "preflight_manifest_path": "results/evaluation/frozen-preflight-v1/manifest.json",
+  "preflight_manifest_sha256": "b5645e4189df260daa69292d15a95a641834b15b64eb19ce3a273b8c7e030ac5",
+  "prompt_contract_path": "configs/evaluation/frozen_prompts_v1.json",
+  "prompt_contract_sha256": "681935ec199e6f0a4f7cb37c971c0c28295293af9f792f1f41f6225ce5f468bf",
+  "extraction_checkpoint_path": "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/checkpoint.json",
+  "extraction_checkpoint_sha256": "cebf273adf95a2ca012adf268f6e3cef276178a12e7b0cfef4f323989415cf54",
+  "extraction_predictions_path": "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/predictions.jsonl",
+  "extraction_predictions_sha256": "527b95fd9e839b41c47e9154e03c8e9551c5c46f931feae8236222cc8117ebd2",
+  "approval": {
+    "credential_reuse_approved": true,
+    "data_transmission_approved": true,
+    "paid_execution_approved": true,
+    "provider_execution_authorized": true,
+    "approval_source": "controlling_user_session",
+    "reuse_existing_local_openai_api_key": true
+  },
+  "model": {
+    "provider": "OpenAI",
+    "api": "responses",
+    "requested_model": "gpt-4.1-2025-04-14",
+    "resolved_model": "gpt-4.1-2025-04-14",
+    "temperature": 0.0,
+    "max_output_tokens": 1000,
+    "store": false,
+    "text_format": "json_object",
+    "input_usd_per_million_tokens": "2.00",
+    "output_usd_per_million_tokens": "8.00"
+  },
+  "execution": {
+    "baseline_order": ["B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7"],
+    "task_order": ["qa", "summary", "interactive"],
+    "maximum_retry_requests": 0,
+    "worker_count": 4,
+    "checkpoint_after_each_completion": true,
+    "successful_replay_allowed": false,
+    "b7_deterministic_gate": "no_promoted_claims"
+  },
+  "cost": {
+    "historical_openai_spend_usd": "0.2314404",
+    "completed_extraction_cost_usd": "0.2036120",
+    "maximum_incremental_cost_usd": "91.2131728",
+    "maximum_cumulative_cost_usd": "91.4446132"
+  },
+  "runtime": {
+    "users_path": "data/scaled-v1/runtime/users.jsonl",
+    "users_sha256": "13e118ad1e8ecda61616eec51d6ff896ee37321f48a8c187d6c460af898cc3ef",
+    "sources_path": "data/scaled-v1/runtime/sources.jsonl",
+    "sources_sha256": "a5cbdf38faf22689726c5d5998ea58e2b9e8a19acfae9318511064b5e29235de",
+    "qa_path": "data/scaled-v1/runtime/qa.jsonl",
+    "qa_sha256": "e7112dbda8fb8868f425566c6ee8c6fb0c4f3e4c3c2f718a1c603caaecfee934",
+    "summary_path": "data/scaled-v1/runtime/summaries.jsonl",
+    "summary_sha256": "080e622a3085b1c323dd7aee9565f8c02e0a2895fcd892b175cbbb5acccf1ee5",
+    "interactive_path": "data/scaled-v1/runtime/interactive.jsonl",
+    "interactive_sha256": "9fd5ca22a9c7af22f8e4dbbd54c80745d30149751a6b65cf9b41b7de5403d706"
+  }
+}
