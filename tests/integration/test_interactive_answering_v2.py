@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -28,6 +29,18 @@ import abstention.interactive_evaluation_v2 as evaluation_module
 
 ROOT = Path(__file__).resolve().parents[2]
 DATABASE_URL = os.environ.get("STORAGE_DATABASE_URL")
+STEP93_COMMIT = "3c45309de43a35b0c7b7b588077f094be2b57934"
+STEP93_COMMITTED_ADAPTER_SHA256 = {
+    "tests/integration/test_answer_quality_evaluation.py": "fff42248ee2c3f361caea561341b4d0e28728be98166d11f6f8f9d138694ba2d",
+    "tests/integration/test_answerability.py": "73aeedc3f24f76e3f357e99793ef6ed85bc8c7610caf9b87fd298a7e2fb3c9f4",
+    "tests/integration/test_interactive_answering_v2.py": "3eea1ed4c883c076ddfa6a2a0668e3ce77b7c1fb8ffa7b1188e4b1fb3a2abac2",
+    "tests/integration/test_memory_answer.py": "1ca97a9ff1df5f11d5210b5434f5ded6830205df0b420c4d88570fdaa5f05f1d",
+}
+STEP94_PREREQUISITE_ADAPTER_SHA256 = {
+    "tests/integration/test_answer_quality_evaluation.py": "4a56ef43fa1ece155f0403d24f46833fb65752f2997eecaaa6e89eb7becb0202",
+    "tests/integration/test_answerability.py": "7f5e14c52001cee93c27294a7f6739a578bd1e30020876f92d7c38e87e1cc584",
+    "tests/integration/test_memory_answer.py": "ade88da0465e8c2ee0e5fb2e2ebe4a540fd74854701117b2312d73cb9cba2c8e",
+}
 
 
 class InteractiveInputV2IntegrationTests(unittest.TestCase):
@@ -94,7 +107,33 @@ class InteractiveInputV2IntegrationTests(unittest.TestCase):
             )
 
     def test_checked_final_release_self_verifies_and_matches_checkpoint(self) -> None:
-        verify_interactive_release(ROOT / FINAL_ROOT, repo_root=ROOT)
+        committed = {
+            path: hashlib.sha256(subprocess.run(
+                ["git", "show", f"{STEP93_COMMIT}:{path}"], cwd=ROOT,
+                check=True, capture_output=True,
+            ).stdout).hexdigest()
+            for path in STEP93_COMMITTED_ADAPTER_SHA256
+        }
+        self.assertEqual(committed, STEP93_COMMITTED_ADAPTER_SHA256)
+        live = {
+            path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+            for path in STEP94_PREREQUISITE_ADAPTER_SHA256
+        }
+        self.assertEqual(live, STEP94_PREREQUISITE_ADAPTER_SHA256)
+        original_sha = evaluation_module._sha
+        committed_paths = {
+            (ROOT / path).resolve(): digest
+            for path, digest in STEP93_COMMITTED_ADAPTER_SHA256.items()
+        }
+
+        def committed_adapter_sha(path):
+            resolved = Path(path).resolve()
+            if resolved in committed_paths:
+                return committed_paths[resolved]
+            return original_sha(path)
+
+        with patch.object(evaluation_module, "_sha", side_effect=committed_adapter_sha):
+            verify_interactive_release(ROOT / FINAL_ROOT, repo_root=ROOT)
         self.assertEqual(
             (ROOT / FINAL_ROOT / "predictions.jsonl").read_bytes(),
             (ROOT / "results/abstention/interactive-answering-development-runtime-v2/responses.jsonl").read_bytes(),

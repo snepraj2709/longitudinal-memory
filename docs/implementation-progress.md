@@ -1458,3 +1458,23 @@ The reviewed development metrics are deliberately modest: decision accuracy `1/4
 - Failures are empty, SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
 
 Step 9.3 v2 made no model call, transmitted no fields, used no tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`. The eventual Step 9.4 handoff is limited to this frozen four-case runtime, corrected requirement contract, checkpoint, structural scorecard, and their stated non-blind and candidate-only limitations.
+
+## Step 9.4 prerequisite: Freeze matched B6/B7 development inputs
+
+Status: complete
+
+- Starting commit: `3c45309de43a35b0c7b7b588077f094be2b57934`
+- Ending commit: the commit containing this entry
+- Commit message: `abstention: freeze matched B6 B7 development inputs`
+
+This prerequisite freezes matched B6 and B7 inputs for the same four development cases; it does not score them or start Step 9.4. Each pair shares the exact Step 9.3 B4 plan, snapshot, retrieval result, evidence package, timestamps, model configuration, prompt identity, and structural answer. B6 goes directly from the blocked package to Step 8.2 structural abstention without a Step 9 gate. B7 adds the committed Step 9.1 decision and Step 9.2 `ordinary_1_trait_2` threshold, then reaches the same abstention. The release contains four pairs, four B6 predictions, four B7 predictions, eight abstentions, four B7 gate applications, no B6 gate application, and zero failures, provider-eligible cases, requests, retries, tokens, or cost. Sixteen frozen-test cases remain deferred.
+
+This was not a clean-room review. The implementer had prior pilot answer-reference exposure and did not use it; the reviewer had prior frozen-snippet exposure and did not use it; the root contract derivation had no prohibited exposure. The runtime opened no Step 9.3 gold or reference, Step 9.4 scorer or reference, frozen-test row, oracle, review queue, credential, provider, or network path.
+
+Independent review tightened canonical failure and shared-pair identities and made the static verifier reconstruct every prediction and pair from the frozen Step 9.3 plan, retrieval, package, and decision artifacts. The four prediction/pair payloads stayed byte-identical. The corrected checkpoint is SHA-256 `9902507e5518b2b16fee35ad76be62ef57201bb9271b3de251e2b2063c239186`; B6 predictions are `49992c38495346a8a88b1ed3e12995c12a965b2ccc525eb6956ee2cb6dd72d9c`, B7 predictions are `ad1fc7bfc9eecfdc7792b281afd46b0c729596060e5a2dbdae7a49a515b4fefe`, pairs are `a7b3e018e9fb6c45392d9a678ba2c166990e456c05ac2e43d17b1cc9f640df24`, and failures remain the empty-file hash `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+
+The governing guidance, compatibility ruling, and correction envelope hashes are `9823e973c651cd2d8836035df07cb5fa0ef69336c18e542955afda05227b9edd`, `50b592b4507b3dd42dfce1e3cfd5a907694edc7d72ef42793ca67ff5d76df36a`, and `72ffb02598f0e9823ed61670ea156299b4e219123243533a5393297e249ddb8c`. The four test-only adapters attest the committed Step 9.3 bytes and the exact 17-path prerequisite topology. Step 9.4 scoring, reference loading, the remaining 16 cases, Phase 9 completion, and Phase 10 remain out of scope.
+
+The corrected focused suite passed 17 tests against PostgreSQL. The Step 9.3, Step 9.2, Step 9.1, memory-answer, answer-quality, and evidence-package contract matrix ran 177 tests: 152 passed and 25 database or frozen-runtime cases were skipped there; the evidence-package suite then passed all 33 tests live. Protected live gates passed for retrieval baselines, conflict evaluation (39), belief resolution (46), conflict relations (29), conflict candidates (29), durative claims (55), grounded summaries (45), sessionization (33), temporal evaluation (20), temporal lifecycle (15), and storage with ingestion (30). The scaled validator passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`, and the full 1,029-test suite passed; database coverage was supplied by the live gates.
+
+Runtime self-verification, two clean database replays, coordinated-tamper rejection, in-memory compilation, protected hashes, changed-path secret and prohibited-import scans, `git diff --check`, exact cached and unstaged inspection, and Docker cleanup passed. This is only a matched-input prerequisite: it publishes no score, opens no comparison reference, makes no quality claim, and does not complete Step 9.4 or Phase 9.

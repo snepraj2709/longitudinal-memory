@@ -32,6 +32,7 @@ STEP82_COMMIT = "9f7625455abafb85b513b8d30a53d793580160ce"
 STEP83_COMMIT = "a18501a27708c259cccce8bf87948962e672bd41"
 STEP91_COMMIT = "35d0c64431f19d4243b72af712dadeb8d522128f"
 STEP92_COMMIT = "d0932a7994153745285c1f4e3d75c36ffbbaf06a"
+STEP93_COMMIT = "3c45309de43a35b0c7b7b588077f094be2b57934"
 STEP82_COMMITTED_PATHS = (
     "configs/answering/memory_answer_v1.json",
     "data/answering/memory-answer-contract-development-v1/manifest.json",
@@ -160,6 +161,25 @@ STEP93_AUTHORIZED_DRIFT = (
     "tests/integration/test_interactive_answering_v2.py",
     "tests/integration/test_memory_answer.py",
     "tests/unit/test_interactive_answering_v2.py",
+)
+STEP94_PREREQUISITE_AUTHORIZED_DRIFT = (
+    "configs/abstention/b6_b7_comparable_runtime_v1.json",
+    "data/abstention/b6-b7-comparable-development-v1/runtime/manifest.json",
+    "docs/implementation-progress.md",
+    "results/abstention/b6-b7-comparable-development-runtime-v1/b6-predictions.jsonl",
+    "results/abstention/b6-b7-comparable-development-runtime-v1/b7-predictions.jsonl",
+    "results/abstention/b6-b7-comparable-development-runtime-v1/checkpoint_manifest.json",
+    "results/abstention/b6-b7-comparable-development-runtime-v1/failures.jsonl",
+    "results/abstention/b6-b7-comparable-development-runtime-v1/pairs.jsonl",
+    "results/abstention/b6-b7-comparable-development-runtime-v1/preflight.json",
+    "src/abstention/comparison_contracts.py",
+    "src/abstention/comparison_runtime.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py",
+    "tests/integration/test_interactive_answering_v2.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_b6_b7_comparison_prerequisite.py",
 )
 
 
@@ -352,15 +372,23 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
             step92_committed,
             sorted(set(STEP92_PRIMARY_DRIFT).union(STEP92_COMPATIBILITY_DRIFT)),
         )
+        step93_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP92_COMMIT, STEP93_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(step93_committed, list(STEP93_AUTHORIZED_DRIFT))
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP92_COMMIT],
+            ["git", "diff", "--name-only", STEP93_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
             ["git", "ls-files", "--others", "--exclude-standard"],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
-        self.assertEqual(sorted(set(tracked).union(untracked)), list(STEP93_AUTHORIZED_DRIFT))
+        self.assertEqual(
+            sorted(set(tracked).union(untracked)),
+            list(STEP94_PREREQUISITE_AUTHORIZED_DRIFT),
+        )
 
 
 if __name__ == "__main__":
