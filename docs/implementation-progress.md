@@ -1500,3 +1500,24 @@ The boundary ruling intentionally forbids unrestricted `make test` and the full 
 Focused Step 9.4 tests passed 14/14. The prerequisite, Step 9.3, Step 9.1/9.2, and Phase 8 contract matrix ran 179 tests: 154 passed and 25 live-database or frozen-runtime cases were skipped there. The prerequisite and evidence-package live run then passed 51/51. Protected PostgreSQL targets passed for retrieval baselines (132), conflict evaluation (39), belief resolution (46), conflict relations (29), conflict candidates (29), durative claims (55), grounded summaries (45), sessionization (33), temporal evaluation (20), temporal lifecycle (15), and storage with ingestion (30).
 
 Two clean scorer runs, deep release verification, coordinated-tamper rejection, compilation, exact hashes and 22-path topology, protected-tree checks, changed-path secret and prohibited-input scans, `git diff --check`, cached and unstaged inspection, and Docker cleanup passed. Provider requests, retries, tokens, and incremental cost remained zero; historical OpenAI spend stays `$0.2314404`. Phase 10 has not started.
+
+## Phase 10, Step 10.1: Freeze the B0-B7 comparison
+
+Status: complete
+
+- Starting commit: `78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4`
+- Guidance envelope: `fb8e38cf51393968183db1a40e1659bcffaac6cebe6733cfaf9bdbc3a0f1959a`
+- Compatibility ruling: `866692ef90fdb207f7636c3f78dec96a4a3301354690d972fa217f1e53eea65c`
+- Commit message: `evaluation: freeze B0 B7 comparison`
+
+This step freezes one comparison contract for B0 through B7 across QA, summaries, and interactive cases. It records the same model settings and one task-specific prompt for every baseline, 27 scaled-manifest file bindings, 82 future metrics, and eight missing runtime prerequisites. It contains no predictions, scores, or model output. Step 10.2 has not started.
+
+The build opened only `data/scaled-v1/manifest.json`. It did not follow any referenced runtime, gold, oracle, review, schema, or prediction path. Provider requests, tokens, and incremental cost remained zero; historical OpenAI spend stays `$0.2314404`. The implementer had prior pilot answer-reference exposure and did not use it. The reviewer had prior frozen-snippet exposure and did not use it. This review does not claim a clean-room boundary.
+
+Independent review found one verifier gap: coordinated changes to the live comparison or prompt configuration could be rebound into the result artifacts. The verifier now pins both existing file hashes before parsing and the standalone definition parser pins the full canonical definition. The definition, prompts, checks, run record, findings, counts, and prerequisite gaps did not change. The rebound result manifest is SHA-256 `14d14b701ac54005a8038335cd37be6cc2eb6446ef68be8a440f0159d2291159`; the dataset manifest remains `f701db8601a1f0241b6c553b86d3cd7432c4e4563db8a7a53eeaac7d4c195858`.
+
+Focused tests passed 13/13, including byte-identical replay, manifest-only read traps, immutable output checks, and coordinated-tamper rejection. The read-trapped safe complement ran 615 tests with 130 expected database skips and no prohibited read. Protected live targets passed for retrieval baselines (132), conflict evaluation (39), belief resolution (46), conflict relations (29), conflict candidates (29), durative claims (55), grounded summaries (45), sessionization (33), temporal evaluation (20), temporal lifecycle (15), and storage with ingestion (30).
+
+Compilation, deep verification, exact 16-path topology, protected hashes, changed-path scans, `git diff --check`, cached and unstaged inspection, and Docker cleanup passed. The scaled-manifest-only check retained dataset identity `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61` without following any file binding. The boundary ruling intentionally excludes unrestricted `make test` and the full scaled validator, so this entry does not claim either gate passed.
+
+This is a definition release, not a comparison result. All eight scaled runtime and prediction releases are still missing, Phase 9 remains incomplete, and Step 10.2 requires separate guidance.

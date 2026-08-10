@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DATABASE_URL = os.environ.get("STORAGE_DATABASE_URL")
 STEP93_COMMIT = "3c45309de43a35b0c7b7b588077f094be2b57934"
 STEP94_PREREQUISITE_COMMIT = "7e8fc5337384ac329264e3606507b925bd890d63"
+STEP94_EVALUATION_COMMIT = "78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4"
 STEP94_PREREQUISITE_COMMITTED_PATHS = (
     "configs/abstention/b6_b7_comparable_runtime_v1.json",
     "data/abstention/b6-b7-comparable-development-v1/runtime/manifest.json",
@@ -77,6 +78,24 @@ STEP94_EVALUATION_AUTHORIZED_DRIFT = (
     "tests/integration/test_memory_answer.py",
     "tests/unit/test_b7_evaluation.py",
 )
+STEP101_AUTHORIZED_DRIFT = (
+    "configs/evaluation/frozen_comparison_v1.json",
+    "configs/evaluation/frozen_prompts_v1.json",
+    "data/evaluation/frozen-comparison-v1/manifest.json",
+    "docs/implementation-progress.md",
+    "results/evaluation/frozen-comparison-v1/checks.json",
+    "results/evaluation/frozen-comparison-v1/findings.md",
+    "results/evaluation/frozen-comparison-v1/manifest.json",
+    "results/evaluation/frozen-comparison-v1/run.json",
+    "src/evaluation/comparison_freeze.py",
+    "src/evaluation/comparison_freeze_contracts.py",
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py",
+    "tests/integration/test_comparison_freeze.py",
+    "tests/integration/test_memory_answer.py",
+    "tests/unit/test_comparison_freeze.py",
+)
 
 
 class B6B7ComparisonPrerequisiteStaticIntegrationTests(unittest.TestCase):
@@ -86,8 +105,13 @@ class B6B7ComparisonPrerequisiteStaticIntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(committed, list(STEP94_PREREQUISITE_COMMITTED_PATHS))
+        evaluation_committed = subprocess.run(
+            ["git", "diff", "--name-only", STEP94_PREREQUISITE_COMMIT, STEP94_EVALUATION_COMMIT],
+            cwd=ROOT, check=True, capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(evaluation_committed, list(STEP94_EVALUATION_AUTHORIZED_DRIFT))
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP94_PREREQUISITE_COMMIT],
+            ["git", "diff", "--name-only", STEP94_EVALUATION_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         untracked = subprocess.run(
@@ -96,7 +120,7 @@ class B6B7ComparisonPrerequisiteStaticIntegrationTests(unittest.TestCase):
         ).stdout.splitlines()
         self.assertEqual(
             sorted(set(tracked).union(untracked)),
-            list(STEP94_EVALUATION_AUTHORIZED_DRIFT),
+            list(STEP101_AUTHORIZED_DRIFT),
         )
 
     def test_checked_runtime_self_verifies_when_present(self) -> None:
