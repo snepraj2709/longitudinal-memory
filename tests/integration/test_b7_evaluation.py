@@ -36,11 +36,11 @@ STEP94_MANIFEST_LIVE_ADAPTER_SHA256 = {
     "tests/integration/test_memory_answer.py": "1802d2bc6353244c5f3fd720f5920794a6e5ee4733d25cb012fea503551f5b82",
 }
 STEP102_LIVE_ADAPTER_SHA256 = {
-    "tests/integration/test_answer_quality_evaluation.py": "3b58c11717875032d16ec65e870cf590664eb89d33ee6f2901e51ae037c0975d",
-    "tests/integration/test_answerability.py": "0f85dfc7ab169afd28946e9b5fb115628f08ca141e1b1e6274c5e46fcdde66f5",
-    "tests/integration/test_b6_b7_comparison_prerequisite.py": "02943c85d392b2646e72d9c8280c351edf8aeb6f088925b62aee598f0860c980",
-    "tests/integration/test_interactive_answering_v2.py": "a96dbe10a73a7662b2a9c774e07520ac01c10b8fbda69ea7510b329eb2c413b1",
-    "tests/integration/test_memory_answer.py": "aa96dcd889ae1c0133954ca29f2c8c103325f0555d23426da18d29887c47a104",
+    "tests/integration/test_answer_quality_evaluation.py": "3171620fbdb36a4d7ee0ebc4601187031a0020e7517ec5dee220e277426127b5",
+    "tests/integration/test_answerability.py": "3174f90a554402f73a03b22d0f5acd13477181f36a67b295e328feb6684229fd",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py": "8147e7e18decc4dc46866fca5740b1eaa4cdab9759e025c4690c1c2197de1db2",
+    "tests/integration/test_interactive_answering_v2.py": "048e2b5deb0da7ffc26003946f1a8b20001810976eb1f7321441d49712812493",
+    "tests/integration/test_memory_answer.py": "ad7ac20d156270d95dd19e046946dd6cc50941c8427d0ad836dbc5e0ac27ed66",
 }
 
 

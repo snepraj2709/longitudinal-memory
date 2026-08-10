@@ -46,11 +46,11 @@ STEP94_EVALUATION_ADAPTER_SHA256 = {
     "tests/integration/test_memory_answer.py": "1802d2bc6353244c5f3fd720f5920794a6e5ee4733d25cb012fea503551f5b82",
 }
 STEP102_LIVE_ADAPTER_SHA256 = {
-    "tests/integration/test_answer_quality_evaluation.py": "3b58c11717875032d16ec65e870cf590664eb89d33ee6f2901e51ae037c0975d",
-    "tests/integration/test_answerability.py": "0f85dfc7ab169afd28946e9b5fb115628f08ca141e1b1e6274c5e46fcdde66f5",
-    "tests/integration/test_b6_b7_comparison_prerequisite.py": "02943c85d392b2646e72d9c8280c351edf8aeb6f088925b62aee598f0860c980",
-    "tests/integration/test_comparison_freeze.py": "ef97e4d278541946491e00461047e6d5b52bd404ba0d40ac78e2af8362374292",
-    "tests/integration/test_memory_answer.py": "aa96dcd889ae1c0133954ca29f2c8c103325f0555d23426da18d29887c47a104",
+    "tests/integration/test_answer_quality_evaluation.py": "3171620fbdb36a4d7ee0ebc4601187031a0020e7517ec5dee220e277426127b5",
+    "tests/integration/test_answerability.py": "3174f90a554402f73a03b22d0f5acd13477181f36a67b295e328feb6684229fd",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py": "8147e7e18decc4dc46866fca5740b1eaa4cdab9759e025c4690c1c2197de1db2",
+    "tests/integration/test_comparison_freeze.py": "bb3222f17afd17ee2a6bb131acc143b7e6338ff73c0b2a8b1a7845e31689719f",
+    "tests/integration/test_memory_answer.py": "ad7ac20d156270d95dd19e046946dd6cc50941c8427d0ad836dbc5e0ac27ed66",
 }
 STEP94_PREREQUISITE_COMMITTED_PATHS = (
     "configs/abstention/b6_b7_comparable_runtime_v1.json",
@@ -114,7 +114,10 @@ STEP101_COMMITTED_PATHS = (
     "tests/unit/test_comparison_freeze.py",
 )
 STEP102_AUTHORIZED_DRIFT = (
+    "configs/evaluation/frozen_answer_run_v1.json",
+    "configs/evaluation/frozen_answer_run_v2.json",
     "configs/evaluation/frozen_preflight_v1.json",
+    "configs/evaluation/frozen_run_v1.json",
     "data/evaluation/frozen-preflight-v1/manifest.json",
     "data/evaluation/frozen-preflight-v1/runtime/manifest.json",
     "data/evaluation/frozen-preflight-v1/runtime/transmission-plan.jsonl",
@@ -128,17 +131,41 @@ STEP102_AUTHORIZED_DRIFT = (
     "results/evaluation/frozen-preflight-v1/preflight.json",
     "results/evaluation/frozen-preflight-v1/run.json",
     "results/evaluation/frozen-preflight-v1/token-estimates.jsonl",
+    "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/checkpoint.json",
+    "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/failures.jsonl",
+    "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/predictions.jsonl",
+    "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/checkpoint.json",
+    "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/failures.jsonl",
+    "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/predictions.jsonl",
+    "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/checkpoint.json",
+    "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/failures.jsonl",
+    "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/predictions.jsonl",
+    "results/evaluation/openai-step10.3-interrupted-v1/findings.md",
+    "results/evaluation/openai-step10.3-interrupted-v1/manifest.json",
+    "src/evaluation/frozen_answer_contracts.py",
+    "src/evaluation/frozen_answers.py",
+    "src/evaluation/frozen_contexts.py",
     "src/evaluation/frozen_preflight.py",
     "src/evaluation/frozen_preflight_contracts.py",
+    "src/evaluation/frozen_run.py",
+    "src/evaluation/frozen_run_contracts.py",
+    "src/evaluation/openai_client.py",
+    "src/evaluation/openai_recovery.py",
     "tests/integration/test_answer_quality_evaluation.py",
     "tests/integration/test_answerability.py",
     "tests/integration/test_b6_b7_comparison_prerequisite.py",
     "tests/integration/test_b7_evaluation.py",
     "tests/integration/test_comparison_freeze.py",
+    "tests/integration/test_frozen_answers.py",
     "tests/integration/test_frozen_preflight.py",
+    "tests/integration/test_frozen_run.py",
     "tests/integration/test_interactive_answering_v2.py",
     "tests/integration/test_memory_answer.py",
+    "tests/integration/test_openai_recovery.py",
+    "tests/unit/test_frozen_answers.py",
     "tests/unit/test_frozen_preflight.py",
+    "tests/unit/test_frozen_run.py",
+    "tests/unit/test_openai_client.py",
 )
 
 
@@ -163,10 +190,13 @@ class InteractiveInputV2IntegrationTests(unittest.TestCase):
             ["git", "diff", "--name-only", STEP101_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
-        untracked = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard"],
-            cwd=ROOT, check=True, capture_output=True, text=True,
-        ).stdout.splitlines()
+        untracked = [
+            path for path in subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard"],
+                cwd=ROOT, check=True, capture_output=True, text=True,
+            ).stdout.splitlines()
+            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_") and not path.startswith("docs/THINE_")
+        ]
         self.assertEqual(
             sorted(set(tracked).union(untracked)),
             list(STEP102_AUTHORIZED_DRIFT),

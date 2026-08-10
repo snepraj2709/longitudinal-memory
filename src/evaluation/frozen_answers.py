@@ -1,4 +1,4 @@
-"""Run and verify the 24 approved Step 10.3 B0-B7 answer batches."""
+"""Run and verify the corrected Step 10.3 B0-B7 answer batches."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import time
@@ -36,6 +37,7 @@ from .frozen_contexts import (
     context_evidence_index,
     load_frozen_runtime,
 )
+from .openai_recovery import verify_interrupted_openai_history
 from .frozen_preflight import verify_frozen_preflight
 from .frozen_run import DEFAULT_OUTPUT as EXTRACTION_OUTPUT, verify_extraction_batch
 from .frozen_run_contracts import (
@@ -55,13 +57,19 @@ from .openai_client import (
 )
 
 
-CONFIG_PATH = Path("configs/evaluation/frozen_answer_run_v1.json")
-CONFIG_SHA256 = "449652ef79024070b433edffd2fb569fd5653bf37b6203ac7f01c7b20f0a6299"
+CONFIG_PATH = Path("configs/evaluation/frozen_answer_run_v2.json")
+CONFIG_SHA256 = "c9662484b7f2aca6c2d2c719c7b177779273111c29c781237199bbfdbe21782d"
 PREFLIGHT_BATCHES = Path("results/evaluation/frozen-preflight-v1/batches.jsonl")
 PREFLIGHT_ESTIMATES = Path("results/evaluation/frozen-preflight-v1/token-estimates.jsonl")
 PROMPTS_PATH = Path("configs/evaluation/frozen_prompts_v1.json")
 PROMPTS_SHA256 = "681935ec199e6f0a4f7cb37c971c0c28295293af9f792f1f41f6225ce5f468bf"
-OUTPUT_ROOT = Path("results/evaluation/frozen-run-v1/batches")
+OUTPUT_ROOT = Path("results/evaluation/frozen-run-v2/batches")
+V1_CONFIG_PATH = Path("configs/evaluation/frozen_answer_run_v1.json")
+V1_CONFIG_SHA256 = "449652ef79024070b433edffd2fb569fd5653bf37b6203ac7f01c7b20f0a6299"
+V1_FAILURE_CHECKPOINT_PATH = Path("results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/checkpoint.json")
+V1_FAILURE_CHECKPOINT_SHA256 = "1f179d144e78fa2d93aaa10528aea21279db7ee418d40b76e28aea5a5c775e60"
+V1_FAILURES_PATH = Path("results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/failures.jsonl")
+V1_FAILURES_SHA256 = "9648afc6009e5df15d277ef8983970291ade5e78ec74cd4718884fe2ce2f1c4b"
 MODEL = "gpt-4.1-2025-04-14"
 MAX_OUTPUT_TOKENS = 1000
 INPUT_RATE = Decimal("2.00")
@@ -76,12 +84,20 @@ def prepare_answer_batch(
     *, repo_root: str | Path = ".", baseline_id: str, task: str,
 ) -> Mapping[str, object]:
     root = Path(repo_root).resolve()
+    verify_interrupted_openai_history(repo_root=root)
     if baseline_id not in BASELINES or task not in TASKS:
         raise FrozenRunError("unknown answer batch")
     if _sha(root / CONFIG_PATH) != CONFIG_SHA256:
         raise FrozenRunError("frozen answer run config changed")
     config = parse_json_bytes((root / CONFIG_PATH).read_bytes(), location="answer run config")
     _validate_config(config)
+    for path, digest in (
+        (V1_CONFIG_PATH, V1_CONFIG_SHA256),
+        (V1_FAILURE_CHECKPOINT_PATH, V1_FAILURE_CHECKPOINT_SHA256),
+        (V1_FAILURES_PATH, V1_FAILURES_SHA256),
+    ):
+        if _sha(root / path) != digest:
+            raise FrozenRunError("failed v1 answer authority changed")
     verify_frozen_preflight(repo_root=root)
     verify_extraction_batch(repo_root=root, output_dir=root / EXTRACTION_OUTPUT)
     if _sha(root / PROMPTS_PATH) != PROMPTS_SHA256:
@@ -156,11 +172,16 @@ def run_answer_batch(
     clock: Callable[[], datetime] | None = None,
     monotonic: Callable[[], float] = time.monotonic,
 ) -> Mapping[str, object]:
-    """Execute one exact baseline/task batch with no retries."""
+    """Replay the historical contract only through an explicit test client."""
+
+    if client_factory is None:
+        raise FrozenRunError(
+            "historical OpenAI execution is closed; use verification or an explicit fake client"
+        )
 
     plan = prepare_answer_batch(repo_root=repo_root, baseline_id=baseline_id, task=task)
     root = plan["root"]
-    output = Path(output_dir) if output_dir is not None else root / str(plan["batch"]["output_directory"])
+    output = Path(output_dir) if output_dir is not None else root / OUTPUT_ROOT / str(plan["batch"]["batch_id"])
     if not output.is_absolute():
         output = root / output
     _require_output(output, resume=resume)
@@ -264,7 +285,7 @@ def verify_answer_batch(
 ) -> Mapping[str, object]:
     plan = prepare_answer_batch(repo_root=repo_root, baseline_id=baseline_id, task=task)
     root = plan["root"]
-    output = Path(output_dir) if output_dir is not None else root / str(plan["batch"]["output_directory"])
+    output = Path(output_dir) if output_dir is not None else root / OUTPUT_ROOT / str(plan["batch"]["batch_id"])
     if not output.is_absolute():
         output = root / output
     checkpoint, predictions, failures = _load_checkpoint(output, plan)
@@ -310,6 +331,7 @@ def _render_user_prompt(task, case, records) -> str:
     payload = {
         "runtime_case": {name: case[name] for name in fields},
         "context_records": records,
+        "response_format": "JSON object",
         "output_contract": {
             "exact_fields": ["status", body, "confidence", "statements", "citations", "unresolved_parts", "abstention_reason"],
             "statuses": ["answered", "abstained", "disputed", "partially_answered"],
@@ -390,7 +412,7 @@ def _prior_spend(plan, *, require_prior):
     current = int(plan["batch"]["position"])
     total = EXTRACTION_COST
     for batch in batches[1 : current - 1]:
-        path = plan["root"] / str(batch["output_directory"]) / "checkpoint.json"
+        path = plan["root"] / OUTPUT_ROOT / str(batch["batch_id"]) / "checkpoint.json"
         if not path.is_file():
             if require_prior:
                 raise FrozenRunError(f"prior answer batch is incomplete: {batch['batch_id']}")
@@ -414,7 +436,7 @@ def _write_state(output, plan, predictions, failures, pending, status, started_a
     successful_provider_count = sum(item.provider is not None for item in predictions)
     provider_failures = sum(item.stage != "cost_cap" for item in failures)
     checkpoint = {
-        "run_version": "frozen_answer_run_v1", "schema_version": "frozen_answer_run_schema_v1",
+        "run_version": "frozen_answer_run_v2", "schema_version": "frozen_answer_run_schema_v2",
         "batch_id": plan["batch"]["batch_id"], "batch_position": plan["batch"]["position"],
         "baseline_id": plan["baseline_id"], "task": plan["task"], "status": status,
         "started_at": started_at, "completed_at": completed_at,
@@ -455,6 +477,8 @@ def _load_checkpoint(output, plan):
 
 
 def _validate_checkpoint(checkpoint, predictions, failures, plan, output):
+    if checkpoint.get("run_version") != "frozen_answer_run_v2" or checkpoint.get("schema_version") != "frozen_answer_run_schema_v2":
+        raise FrozenRunError("answer checkpoint version changed")
     if checkpoint.get("batch_id") != plan["batch"]["batch_id"] or checkpoint.get("baseline_id") != plan["baseline_id"] or checkpoint.get("task") != plan["task"]:
         raise FrozenRunError("answer checkpoint identity changed")
     if checkpoint.get("successful_count") != len(predictions) or checkpoint.get("failure_count") != len(failures):
@@ -488,6 +512,38 @@ def _validate_checkpoint(checkpoint, predictions, failures, plan, output):
 
 
 def _validate_config(config):
+    if set(config) != {
+        "approval", "cost", "execution", "extraction_checkpoint_path",
+        "extraction_checkpoint_sha256", "extraction_predictions_path",
+        "extraction_predictions_sha256", "failed_v1", "input_contract", "model",
+        "preflight_manifest_path", "preflight_manifest_sha256",
+        "prompt_contract_path", "prompt_contract_sha256", "run_version",
+        "runtime", "schema_version", "starting_commit",
+    }:
+        raise FrozenRunError("answer run config fields changed")
+    if config.get("run_version") != "frozen_answer_run_v2" or config.get("schema_version") != "frozen_answer_run_schema_v2":
+        raise FrozenRunError("answer run version changed")
+    input_contract = config.get("input_contract")
+    if input_contract != {
+        "json_instruction_field": "response_format",
+        "json_instruction_value": "JSON object",
+        "requires_literal_json_in_serialized_input": True,
+        "supersedes_run_version": "frozen_answer_run_v1",
+    }:
+        raise FrozenRunError("answer input contract changed")
+    failed_v1 = config.get("failed_v1")
+    if failed_v1 != {
+        "checkpoint_path": V1_FAILURE_CHECKPOINT_PATH.as_posix(),
+        "checkpoint_sha256": V1_FAILURE_CHECKPOINT_SHA256,
+        "failure_count": 20,
+        "failures_path": V1_FAILURES_PATH.as_posix(),
+        "failures_sha256": V1_FAILURES_SHA256,
+        "incremental_cost_usd": "0.0000000",
+        "reason": "json_instruction_missing_from_serialized_input",
+        "run_config_path": V1_CONFIG_PATH.as_posix(),
+        "run_config_sha256": V1_CONFIG_SHA256,
+    }:
+        raise FrozenRunError("failed v1 answer record changed")
     approval = config.get("approval")
     if not isinstance(approval, Mapping) or not all(
         approval.get(name) is True for name in (
@@ -501,7 +557,12 @@ def _validate_config(config):
     if not isinstance(model, Mapping) or model.get("requested_model") != MODEL or model.get("max_output_tokens") != 1000:
         raise FrozenRunError("answer run model policy changed")
     execution = config.get("execution")
-    if not isinstance(execution, Mapping) or execution.get("maximum_retry_requests") != 0 or execution.get("worker_count") != WORKERS:
+    if (
+        not isinstance(execution, Mapping)
+        or execution.get("maximum_retry_requests") != 0
+        or execution.get("worker_count") != WORKERS
+        or execution.get("output_root") != OUTPUT_ROOT.as_posix()
+    ):
         raise FrozenRunError("answer execution policy changed")
     cost = config.get("cost")
     if not isinstance(cost, Mapping) or Decimal(str(cost.get("maximum_incremental_cost_usd"))) != GLOBAL_CAP:
@@ -512,6 +573,18 @@ def _safe_failure_code(error: Exception, stage: str) -> str:
     if stage == "model_mismatch":
         return "provider_model_mismatch"
     if stage == "provider":
+        if isinstance(error, OpenAIResponseError) and error.status_code is not None:
+            details = tuple(dict.fromkeys(
+                re.sub(r"[^a-z0-9]+", "_", value.lower()).strip("_")
+                for value in (
+                    error.provider_param,
+                    error.provider_code,
+                    error.provider_reason,
+                )
+                if value is not None
+            ))
+            suffix = "" if not details else "_" + "_".join(details)
+            return f"provider_http_{error.status_code}{suffix}"[:120]
         message = str(error)
         if "HTTP 400" in message:
             return "provider_http_400"

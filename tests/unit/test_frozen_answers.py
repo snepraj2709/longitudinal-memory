@@ -3,10 +3,36 @@ from __future__ import annotations
 import unittest
 
 from evaluation.frozen_answer_contracts import validate_answer_output
+from evaluation.frozen_answers import _render_user_prompt, _safe_failure_code
+from evaluation.openai_client import OpenAIResponseError
 from evaluation.frozen_run_contracts import FrozenRunError
 
 
 class FrozenAnswerContractTests(unittest.TestCase):
+    def test_v2_serialized_input_explicitly_requests_json(self):
+        prompt = _render_user_prompt(
+            "qa",
+            {
+                "case_id": "case_1", "user_id": "user_001",
+                "as_of": "2026-08-10T00:00:00Z", "question": "What changed?",
+            },
+            [],
+        )
+        self.assertIn('"response_format":"JSON object"', prompt)
+
+    def test_http_failure_code_uses_only_safe_provider_parameter(self):
+        error = OpenAIResponseError(
+            "OpenAI API returned HTTP 400",
+            status_code=400,
+            provider_code="unsupported_value",
+            provider_param="text.format.type",
+            provider_reason="unsupported_value",
+        )
+        self.assertEqual(
+            _safe_failure_code(error, "provider"),
+            "provider_http_400_text_format_type_unsupported_value",
+        )
+
     def test_grounded_output_requires_exact_context_citation(self):
         evidence = {("source_1", "message_1", "Exact quote."): object()}
         output = {

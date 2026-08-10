@@ -1,0 +1,126 @@
+{
+  "schema_version": "openai_step10_3_recovery_v1",
+  "status": "interrupted_failed_not_scored",
+  "recorded_at": "2026-08-10T16:22:07Z",
+  "repository_commit": "141066391f70060ce99acdf0804ac7b3cbadafdc",
+  "historical_provider_request_count": 149,
+  "historical_input_token_count": 536405,
+  "historical_output_token_count": 26921,
+  "historical_openai_spend_usd": "0.4399284",
+  "new_openai_request_count_since_recovery_goal": 0,
+  "new_openai_cost_usd_since_recovery_goal": "0.0000000",
+  "attempts": [
+    {
+      "attempt_id": "scaled_extraction_v1",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "status": "completed_historical_only",
+      "provider_request_count": 100,
+      "accepted_prediction_count": 100,
+      "failure_count": 0,
+      "input_token_count": 427542,
+      "output_token_count": 20372,
+      "incremental_cost_usd": "0.2036120",
+      "scoring_status": "not_scored_in_qwen_series"
+    },
+    {
+      "attempt_id": "b0_qa_v1",
+      "model": "gpt-4.1-2025-04-14",
+      "status": "failed_not_scored",
+      "provider_request_count": 20,
+      "accepted_prediction_count": 0,
+      "failure_count": 20,
+      "input_token_count": 0,
+      "output_token_count": 0,
+      "incremental_cost_usd": "0.0000000",
+      "failure_reason": "json_instruction_missing_from_serialized_input",
+      "scoring_status": "not_a_zero_score"
+    },
+    {
+      "attempt_id": "b0_qa_v2",
+      "model": "gpt-4.1-2025-04-14",
+      "status": "failed_validation_not_scored",
+      "provider_request_count": 4,
+      "accepted_prediction_count": 0,
+      "failure_count": 4,
+      "input_token_count": 1182,
+      "output_token_count": 314,
+      "incremental_cost_usd": "0.0048760",
+      "failure_reason": "output_status_or_body_invalid",
+      "scoring_status": "not_a_zero_score"
+    }
+  ],
+  "recovery_policy": {
+    "openai_execution_authorized": false,
+    "openai_api_key_may_be_read": false,
+    "openai_retry_allowed": false,
+    "automatic_openai_fallback_allowed": false,
+    "openai_extraction_may_be_replayed": false,
+    "openai_extraction_may_be_overwritten": false,
+    "openai_outputs_are_historical_evidence_only": true,
+    "qwen_series": "qwen35-27b-fp8-v1",
+    "qwen_regenerates_extraction": true,
+    "qwen_reuses_openai_predictions": false
+  },
+  "artifacts": [
+    {
+      "path": "configs/evaluation/frozen_answer_run_v1.json",
+      "sha256": "449652ef79024070b433edffd2fb569fd5653bf37b6203ac7f01c7b20f0a6299",
+      "bytes": 2913
+    },
+    {
+      "path": "configs/evaluation/frozen_answer_run_v2.json",
+      "sha256": "c9662484b7f2aca6c2d2c719c7b177779273111c29c781237199bbfdbe21782d",
+      "bytes": 3998
+    },
+    {
+      "path": "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/checkpoint.json",
+      "sha256": "cebf273adf95a2ca012adf268f6e3cef276178a12e7b0cfef4f323989415cf54",
+      "bytes": 1279
+    },
+    {
+      "path": "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/predictions.jsonl",
+      "sha256": "527b95fd9e839b41c47e9154e03c8e9551c5c46f931feae8236222cc8117ebd2",
+      "bytes": 148950
+    },
+    {
+      "path": "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/failures.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/checkpoint.json",
+      "sha256": "1f179d144e78fa2d93aaa10528aea21279db7ee418d40b76e28aea5a5c775e60",
+      "bytes": 1139
+    },
+    {
+      "path": "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/failures.jsonl",
+      "sha256": "9648afc6009e5df15d277ef8983970291ade5e78ec74cd4718884fe2ce2f1c4b",
+      "bytes": 6475
+    },
+    {
+      "path": "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/predictions.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/checkpoint.json",
+      "sha256": "290882071af2387e102445dd389556892d8ceb05626b9d0cac0d922f6b711d9b",
+      "bytes": 1162
+    },
+    {
+      "path": "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/failures.jsonl",
+      "sha256": "631b427c14d8816bcf21749e333bf6c750e73abf4bb1a57dedcfee81abe3310e",
+      "bytes": 2488
+    },
+    {
+      "path": "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/predictions.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "results/evaluation/openai-step10.3-interrupted-v1/findings.md",
+      "sha256": "89b67c00e171f361179994628a37f89205d555c501c61551beade0622d80f3bf",
+      "bytes": 1518
+    }
+  ]
+}

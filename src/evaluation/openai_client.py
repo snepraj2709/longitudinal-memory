@@ -30,6 +30,21 @@ _RESPONSES_URL = "https://api.openai.com/v1/responses"
 class OpenAIResponseError(RuntimeError):
     """Raised when the provider response cannot be used without guessing."""
 
+    def __init__(
+        self,
+        message: str,
+        *,
+        status_code: int | None = None,
+        provider_code: str | None = None,
+        provider_param: str | None = None,
+        provider_reason: str | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.status_code = status_code
+        self.provider_code = provider_code
+        self.provider_param = provider_param
+        self.provider_reason = provider_reason
+
 
 class OpenAIModelMismatchError(OpenAIResponseError):
     """Raised when the provider resolves to a different model snapshot."""
@@ -239,8 +254,22 @@ class OpenAIResponsesClient:
                 rate_limits = _rate_limit_metadata(response.headers)
         except HTTPError as error:
             detail = error.read().decode("utf-8", errors="replace")[:1000]
+            provider_code, provider_param, provider_reason = _provider_error_metadata(detail)
+            suffix = ", ".join(
+                value for value in (
+                    provider_code,
+                    f"param={provider_param}" if provider_param else None,
+                    f"reason={provider_reason}" if provider_reason else None,
+                )
+                if value is not None
+            )
             raise OpenAIResponseError(
-                f"OpenAI API returned HTTP {error.code}: {detail}"
+                f"OpenAI API returned HTTP {error.code}"
+                + (f" ({suffix})" if suffix else ""),
+                status_code=error.code,
+                provider_code=provider_code,
+                provider_param=provider_param,
+                provider_reason=provider_reason,
             ) from error
         except URLError as error:
             raise OpenAIResponseError(f"OpenAI API request failed: {error.reason}") from error
@@ -258,6 +287,47 @@ class OpenAIResponsesClient:
             request_id=request_id,
             rate_limits=rate_limits,
         )
+
+
+def _provider_error_metadata(
+    detail: str,
+) -> tuple[str | None, str | None, str | None]:
+    """Return only allowlisted diagnostic fields from a provider error body."""
+
+    try:
+        parsed = json.loads(detail)
+    except json.JSONDecodeError:
+        return None, None, None
+    if not isinstance(parsed, Mapping) or not isinstance(parsed.get("error"), Mapping):
+        return None, None, None
+    error = parsed["error"]
+    code = _safe_error_token(error.get("code")) or _safe_error_token(error.get("type"))
+    return (
+        code,
+        _safe_error_token(error.get("param")),
+        _provider_message_category(error.get("message")),
+    )
+
+
+def _safe_error_token(value: object) -> str | None:
+    if not isinstance(value, str) or not value or len(value) > 80:
+        return None
+    return value if re.fullmatch(r"[A-Za-z0-9_.-]+", value) else None
+
+
+def _provider_message_category(value: object) -> str | None:
+    if not isinstance(value, str):
+        return None
+    message = value.lower()
+    if "json" in message and any(token in message for token in ("mention", "must", "contain")):
+        return "json_instruction_missing"
+    if any(token in message for token in ("safety", "flagged", "usage polic")):
+        return "input_safety_rejected"
+    if "unsupported" in message:
+        return "unsupported_value"
+    if "invalid" in message and "input" in message:
+        return "invalid_input"
+    return None
 
 
 def _parse_response(

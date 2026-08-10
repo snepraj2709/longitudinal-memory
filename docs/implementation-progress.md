@@ -1543,3 +1543,62 @@ The final diff has 25 paths: 17 Step 10.2 additions, this ledger entry, and seve
 Key artifacts are the dataset manifest `d1f7455b6e931bfae95a8b5c0c14128de512ce59e088faa13a260df22bb5c052`, transmission plan `d0f17e36504c70fa0424b50c856b793f4ba8ebb8c6f3af969f5e309a8e660e78`, batch plan `c0b89899e6c3fd380557916eb91d84f7a86a21e5f24ee9c7af6748d4323b3c13`, checks `a4d606393e44749ad847b48dc2980e19fb26dc4ccfc8faf343ad359ee27bf038`, and result manifest `b5645e4189df260daa69292d15a95a641834b15b64eb19ce3a273b8c7e030ac5`.
 
 Step 10.3 receives this frozen plan and the explicit transmission and spend approvals. It must keep each batch immutable, resume only unfinished or provider-failed work, and finish predictions before opening scorer-only gold.
+
+## Recovery: preserve the interrupted OpenAI Step 10.3 run
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `141066391f70060ce99acdf0804ac7b3cbadafdc`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Commit message: `evaluation: preserve interrupted OpenAI run`
+- No unrelated path or staged change was present at recovery start.
+
+### Audit and recovery
+
+- No OpenAI evaluation worker, frozen-answer process, or external Python provider connection was running. The only Python sockets found were local connections owned by the Hermes service.
+- The dirty paths matched the interrupted Step 10.3 work exactly. The changed code, tests, v2 configuration, and failed artifacts contain no secret value or unrelated user edit.
+- The 100-request GPT-4.1-mini extraction completed with 100 accepted predictions, 427,542 input tokens, 20,372 output tokens, and cost `$0.2036120`. It remains historical evidence and will not be replayed, overwritten, or reused by the Qwen series.
+- B0 QA v1 made 20 requests. All 20 failed, and its prediction file is empty. The run is `failed_not_scored`; it is not a zero-scoring result.
+- B0 QA v2 made four requests, used 1,182 input and 314 output tokens, and cost `$0.0048760`. All four responses failed output validation. Its prediction file is empty, so it is also not a scored result.
+- Historical OpenAI usage is 149 requests, 536,405 input tokens, 26,921 output tokens, and `$0.4399284`. No OpenAI request was made after the Qwen recovery goal began, so new OpenAI cost is `$0.0000000`.
+- Added a hash-bound recovery manifest for the two failed B0 attempts, the completed extraction, both run configurations, and the recovery findings. The historical answer runner now refuses its built-in live execution path before it can read an environment file or create output. Tests may still pass an explicit fake client.
+- The replacement series is `qwen35-27b-fp8-v1`. It will regenerate extraction and write to new paths. It will not replay or modify OpenAI predictions.
+
+### Files changed
+
+- Preserved the interrupted OpenAI files under `configs/evaluation/frozen_answer_run_v2.json`, `results/evaluation/frozen-run-v1/`, and `results/evaluation/frozen-run-v2/`.
+- Added `src/evaluation/openai_recovery.py`, `results/evaluation/openai-step10.3-interrupted-v1/manifest.json`, `results/evaluation/openai-step10.3-interrupted-v1/findings.md`, and `tests/integration/test_openai_recovery.py`.
+- Updated the frozen answer runner, OpenAI error sanitization, focused unit and integration tests, and the Step 10.2 topology adapter.
+
+### Tests and checks
+
+- Focused fake-client recovery suite in `.venv-storage`: 23 tests passed before the extraction resume regression was added.
+- The first broader 43-test matrix found one test-only Step 10.2 topology assertion that still described the old worktree. Functional tests passed. The adapter now checks the original Step 10.2 commit separately and the exact 17-path recovery topology separately.
+- Final recovery matrix: 44 tests passed in 101.760 seconds.
+- Post-review manifest, runner, and topology subset: 15 tests passed in 35.959 seconds.
+- `git diff --check`, JSON parsing, tracked and untracked secret scans, cached-diff inspection, artifact counts, and SHA-256 checks passed.
+- An initial `.venv` invocation could not import `tiktoken`; `.venv-storage` contains the pinned `tiktoken==0.13.0` and ran the test gates.
+- Unrestricted `make test` remains deferred under the existing frozen-data boundary. The recovery matrix uses fake clients and opens no gold, oracle, review queue, `.env`, or frozen-test record.
+
+### Protected hashes
+
+- `preference.md`: `bf6dfc6ea0b23e9ff1c52b4dbf1debce6ebe495070e826743ffa2d56681a18b8`
+- `docs/memory-evaluation-steps.md`: `bf89021a98273e623edbe27318c9b1cadfb8bed023f5e256a2f58b13e27913ba`
+- Completed extraction checkpoint: `cebf273adf95a2ca012adf268f6e3cef276178a12e7b0cfef4f323989415cf54`
+- Completed extraction predictions: `527b95fd9e839b41c47e9154e03c8e9551c5c46f931feae8236222cc8117ebd2`
+- B0 v1 failed checkpoint: `1f179d144e78fa2d93aaa10528aea21279db7ee418d40b76e28aea5a5c775e60`
+- B0 v1 failures: `9648afc6009e5df15d277ef8983970291ade5e78ec74cd4718884fe2ce2f1c4b`
+- B0 v2 failed checkpoint: `290882071af2387e102445dd389556892d8ceb05626b9d0cac0d922f6b711d9b`
+- B0 v2 failures: `631b427c14d8816bcf21749e333bf6c750e73abf4bb1a57dedcfee81abe3310e`
+- Both B0 prediction files: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Recovery manifest: `57e34b30ceb0100a75cefa49175228fd386e89a205d27588c7104fac88061f75`
+
+### Limitations and next input
+
+- The OpenAI extraction is structurally complete but belongs only to the historical OpenAI run. Its quality has not been rescored here.
+- Neither B0 attempt produced a usable answer, and neither is part of a score denominator.
+- No Qwen model, tokenizer, vLLM server, Jarvis instance, development pilot, or Qwen-tokenized preflight exists yet.
+- The next step receives the immutable recovery manifest and the existing checkpoint contracts. It must add a provider-neutral private-vLLM seam and pass local fake-server tests before any Jarvis instance is created.

@@ -6,8 +6,9 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from evaluation.frozen_answers import MODEL, run_answer_batch, verify_answer_batch
+from evaluation.frozen_answers import MODEL, prepare_answer_batch, run_answer_batch, verify_answer_batch
 from evaluation.openai_client import OpenAIResponseError, OpenAIResponseMetadata
+from evaluation.frozen_run_contracts import FrozenRunError
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -83,6 +84,29 @@ class RateLimitFactory:
 
 
 class FrozenAnswerIntegrationTests(unittest.TestCase):
+    def test_live_openai_execution_is_closed_before_env_or_output_access(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "batch"
+            with self.assertRaisesRegex(FrozenRunError, "historical OpenAI execution is closed"):
+                run_answer_batch(
+                    repo_root=ROOT,
+                    baseline_id="B0",
+                    task="interactive",
+                    output_dir=output,
+                    env_file=Path(directory) / "missing.env",
+                    require_prior=False,
+                )
+            self.assertFalse(output.exists())
+
+    def test_v2_plan_changes_request_identity_and_preserves_failed_v1(self):
+        plan = prepare_answer_batch(repo_root=ROOT, baseline_id="B0", task="qa")
+        first = plan["items"][0]
+        self.assertIn('"response_format":"JSON object"', first["user_prompt"])
+        self.assertLessEqual(first["request_tokens"], first["maximum_input_tokens"])
+        self.assertTrue(
+            (ROOT / "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/checkpoint.json").is_file()
+        )
+
     def test_provider_batch_is_checkpointed_and_deep_verified(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "batch"
@@ -94,6 +118,7 @@ class FrozenAnswerIntegrationTests(unittest.TestCase):
                 monotonic=lambda: 1.0,
             )
             self.assertEqual((result["status"], factory.calls), ("completed", 20))
+            self.assertEqual(result["run_version"], "frozen_answer_run_v2")
             self.assertEqual(result["failure_count"], 0)
             verified = verify_answer_batch(
                 repo_root=ROOT, baseline_id="B0", task="interactive", output_dir=output,

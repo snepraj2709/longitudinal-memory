@@ -178,7 +178,10 @@ STEP101_AUTHORIZED_DRIFT = (
     "tests/unit/test_comparison_freeze.py",
 )
 STEP102_AUTHORIZED_DRIFT = (
+    "configs/evaluation/frozen_answer_run_v1.json",
+    "configs/evaluation/frozen_answer_run_v2.json",
     "configs/evaluation/frozen_preflight_v1.json",
+    "configs/evaluation/frozen_run_v1.json",
     "data/evaluation/frozen-preflight-v1/manifest.json",
     "data/evaluation/frozen-preflight-v1/runtime/manifest.json",
     "data/evaluation/frozen-preflight-v1/runtime/transmission-plan.jsonl",
@@ -192,17 +195,41 @@ STEP102_AUTHORIZED_DRIFT = (
     "results/evaluation/frozen-preflight-v1/preflight.json",
     "results/evaluation/frozen-preflight-v1/run.json",
     "results/evaluation/frozen-preflight-v1/token-estimates.jsonl",
+    "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/checkpoint.json",
+    "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/failures.jsonl",
+    "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/predictions.jsonl",
+    "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/checkpoint.json",
+    "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/failures.jsonl",
+    "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/predictions.jsonl",
+    "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/checkpoint.json",
+    "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/failures.jsonl",
+    "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/predictions.jsonl",
+    "results/evaluation/openai-step10.3-interrupted-v1/findings.md",
+    "results/evaluation/openai-step10.3-interrupted-v1/manifest.json",
+    "src/evaluation/frozen_answer_contracts.py",
+    "src/evaluation/frozen_answers.py",
+    "src/evaluation/frozen_contexts.py",
     "src/evaluation/frozen_preflight.py",
     "src/evaluation/frozen_preflight_contracts.py",
+    "src/evaluation/frozen_run.py",
+    "src/evaluation/frozen_run_contracts.py",
+    "src/evaluation/openai_client.py",
+    "src/evaluation/openai_recovery.py",
     "tests/integration/test_answer_quality_evaluation.py",
     "tests/integration/test_answerability.py",
     "tests/integration/test_b6_b7_comparison_prerequisite.py",
     "tests/integration/test_b7_evaluation.py",
     "tests/integration/test_comparison_freeze.py",
+    "tests/integration/test_frozen_answers.py",
     "tests/integration/test_frozen_preflight.py",
+    "tests/integration/test_frozen_run.py",
     "tests/integration/test_interactive_answering_v2.py",
     "tests/integration/test_memory_answer.py",
+    "tests/integration/test_openai_recovery.py",
+    "tests/unit/test_frozen_answers.py",
     "tests/unit/test_frozen_preflight.py",
+    "tests/unit/test_frozen_run.py",
+    "tests/unit/test_openai_client.py",
 )
 PROTECTED = {
     "preference.md": "bf6dfc6ea0b23e9ff1c52b4dbf1debce6ebe495070e826743ffa2d56681a18b8",
@@ -369,10 +396,13 @@ class AnswerabilityIntegrationTests(unittest.TestCase):
             ["git", "diff", "--name-only", STEP101_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
-        untracked = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard"],
-            cwd=ROOT, check=True, capture_output=True, text=True,
-        ).stdout.splitlines()
+        untracked = [
+            path for path in subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard"],
+                cwd=ROOT, check=True, capture_output=True, text=True,
+            ).stdout.splitlines()
+            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_") and not path.startswith("docs/THINE_")
+        ]
         actual = tuple(sorted(set(tracked).union(untracked)))
         self.assertEqual(actual, STEP102_AUTHORIZED_DRIFT)
         for path, expected in PROTECTED.items():

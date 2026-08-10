@@ -43,6 +43,25 @@ ALLOWED_NEW = (
     "tests/integration/test_memory_answer.py",
     "tests/unit/test_frozen_preflight.py",
 )
+RECOVERY_PATHS = (
+    "configs/evaluation/frozen_answer_run_v2.json",
+    "docs/implementation-progress.md",
+    "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/checkpoint.json",
+    "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/failures.jsonl",
+    "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/checkpoint.json",
+    "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/failures.jsonl",
+    "results/evaluation/frozen-run-v2/batches/batch_02_B0_qa/predictions.jsonl",
+    "results/evaluation/openai-step10.3-interrupted-v1/findings.md",
+    "results/evaluation/openai-step10.3-interrupted-v1/manifest.json",
+    "src/evaluation/frozen_answers.py",
+    "src/evaluation/openai_client.py",
+    "src/evaluation/openai_recovery.py",
+    "tests/integration/test_frozen_answers.py",
+    "tests/integration/test_frozen_preflight.py",
+    "tests/integration/test_openai_recovery.py",
+    "tests/unit/test_frozen_answers.py",
+    "tests/unit/test_openai_client.py",
+)
 
 
 class FrozenPreflightIntegrationTests(unittest.TestCase):
@@ -103,14 +122,29 @@ class FrozenPreflightIntegrationTests(unittest.TestCase):
     def test_exact_preapproval_path_allowlist(self):
         import subprocess
         tracked = subprocess.run(
-            ["git", "diff", "--name-only", "b2ae263e1129758325a30db57c03620628c6355e"],
+            [
+                "git", "diff", "--name-only",
+                "b2ae263e1129758325a30db57c03620628c6355e",
+                "1c6332d9865358d1af7045d015beab0339418191",
+            ],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
-        untracked = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard"],
+        self.assertEqual(tuple(sorted(set(tracked))), ALLOWED_NEW)
+
+    def test_exact_interrupted_openai_recovery_path_allowlist(self):
+        import subprocess
+        tracked = subprocess.run(
+            ["git", "diff", "--name-only", "141066391f70060ce99acdf0804ac7b3cbadafdc"],
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
-        self.assertEqual(tuple(sorted(set(tracked).union(untracked))), ALLOWED_NEW)
+        untracked = [
+            path for path in subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard"],
+                cwd=ROOT, check=True, capture_output=True, text=True,
+            ).stdout.splitlines()
+            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_") and not path.startswith("docs/THINE_")
+        ]
+        self.assertEqual(tuple(sorted(set(tracked).union(untracked))), RECOVERY_PATHS)
 
 
 if __name__ == "__main__":
