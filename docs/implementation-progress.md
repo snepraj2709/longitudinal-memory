@@ -1127,3 +1127,55 @@ The release has eight queries, 24 baseline results, 200 reviewed annotations, 24
 ### Phase 8 handoff
 
 Phase 8 receives the frozen session, index, planner, ranking, lineage, relevance, and retrieval-quality artifacts. Step 7.4 does not authorize an answerer, evidence-package assembly, benchmark test run, model call, or any Phase 8 implementation. Phase 8 has not started.
+
+## Phase 8, Step 8.1: Build validated evidence packages
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `1df7e3c0846e9bebb873debe4cc2ae1f532a2cb1`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-8.1-guidance-v1`, envelope SHA-256 `6af1d3eb7d227c430a93b89abfce8fcc1853c5d29027f828650b5c8a58dec229`
+- Commit message: `answering: build validated evidence packages`
+
+### Implementation and review
+
+- The builder hydrates the 24 frozen Step 7.3 results in a read-only, repeatable-read transaction. Queries bind the user, index version, snapshot, immutable claim version, source, and span before returning any row. Atomic and session paths are deduplicated by claim version; session summaries remain navigation records and never become evidence.
+- Every accepted claim version must match the frozen retrieval item's exact claim, source, and span lineage. Quotes are checked against the source bytes, including offset bounds when offsets exist. Raw source content, participant payloads, arbitrary metadata, embeddings, summary prose, and unresolved-question prose are not serialized.
+- Lifecycle handling stays conservative. Current and confirmed claims are current, historical and superseded claims are historical, disputed claims are conflicting, and candidates are rejected with `package_validation/candidate_not_promoted`. Excluded or restricted evidence fails the package instead of being exposed.
+- Package identity binds the schema, configuration, runtime and input-release versions and hashes, user, query, baseline, execution, result, snapshot, index, and time cutoffs. Rejections retain stable identifiers, stage, rank where the predecessor supplies one, and exact reasons.
+- The review tightened invariant checks, source and span equality, offset validation, blocker order, manifest verification, and recomputed counters. It also made relation hydration validate both decision endpoints by exact user, claim, and version ownership, half-open transaction visibility, inclusive requested valid time, and cutoff. Regressions cover a future endpoint, an ineligible endpoint, a poisoned cross-user relation, and a poisoned accepted cross-user record ID.
+- The runtime does not rerun planning, filtering, search, ranking, or relevance scoring. It opens no Step 7.4 relevance gold or scorecard and makes no model or provider call.
+
+### Development release
+
+The release contains 24 packages and zero failures: eight each for B2, B3, and B4. It hydrates 204 accepted retrieval records into 33 unique candidate claim versions. All 24 packages have complete exact provenance, with zero cross-user, missing-lineage, post-cutoff, quote-mismatch, restricted, duplicate, or partial-package records.
+
+All 33 development claims remain candidates. The release therefore has 295 candidate rejections, 196 carried retrieval rejections, zero categorized claim versions, zero serialized relevant sources or spans, and zero `answer_allowed=true` packages. This is the expected conservative result. Complete provenance does not promote a candidate or establish semantic answerability.
+
+### Tests and contract checks
+
+- Focused Step 8.1 unit and live PostgreSQL integration tests: 33 passed, including exact package execution and replay, quote and offset validation, lifecycle partitions, relation endpoint cutoffs, poisoned ownership, read traps, tamper rejection, and two clean byte-identical releases.
+- Protected live gates passed sequentially: Step 7.4 retrieval quality 31, retrieval baselines 132, Phase 5 conflict evaluation 39, storage and ingestion 30, durative claims 55, grounded summaries 45, and sessionization 33 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 885 tests were discovered in 27.224 seconds; 731 passed and 154 database tests skipped. The required database groups passed in the live gates, with the remaining groups already covered by the coding gate.
+- Release self-verification, in-memory compilation, exact allowlist inspection, protected-hash checks, `git diff --check`, secret and leakage scans, staged and unstaged inspection, and Docker cleanup passed. No predecessor file changed before this ledger entry; the implementation adds exactly the 15 authorized Step 8.1 paths.
+
+### Artifacts, costs, and limitations
+
+- Evidence-package configuration: `configs/answering/evidence_package_v1.json`, SHA-256 `64c85873389c291bcee89df6aed6dc3a72ea4cd396fd0593613b809acdf17fdd`
+- Dataset manifest: `data/answering/evidence-package-development-v1/manifest.json`, SHA-256 `016b34eccba3260974e5c8eb2be58d6fb2023ad4399919634577b82c5c4bc7f4`
+- Packages: `packages.jsonl`, SHA-256 `bb57898bea51417b2ecad1252b451669ae2c748033c9cef88360f16a825f8186`
+- Checks: `checks.json`, SHA-256 `9e081b65e5bc8c8f59c8fb320a357e14240eedc06fd5febb67ddbcf588d8c766`
+- Run metadata: `run.json`, SHA-256 `87c10978b82cf309e01982b580c41a9e48371dd262f9d8cc28aa7a4d5afd3a1d`
+- Findings: `findings.md`, SHA-256 `3c9a43eb218073ace99aff998948c1f80a1b97927ca7f7d479ae14294325a211`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Result manifest: `manifest.json`, SHA-256 `8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213`
+- Step 8.1 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- This release verifies package structure and provenance only. The candidate-heavy upstream data yields no promoted evidence and no answer-allowed package; it does not measure relevance, truth, or answer quality.
+
+### Next-step input
+
+Step 8.2 receives only the frozen `evidence_package_development_v1` release and its manifest. Answer generation, citation rendering, abstention text, model use, and Step 8.2 implementation have not started and require separate guidance and authorization.
