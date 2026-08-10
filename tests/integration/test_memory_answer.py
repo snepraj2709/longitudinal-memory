@@ -1,0 +1,204 @@
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from answering.answer_contracts import MemoryAnswerFailure, MemoryAnswerError
+from answering.answer_evaluation import (
+    RESULT_ROOT,
+    MemoryAnswerEvaluationError,
+    execute_memory_answer_evaluation,
+    verify_memory_answer_release,
+)
+from answering.answer_input import (
+    STEP81_CHECKS_SHA256,
+    STEP81_DATASET_SHA256,
+    STEP81_MANIFEST_SHA256,
+    STEP81_PACKAGES,
+    STEP81_PACKAGES_SHA256,
+    load_answer_package_views,
+)
+from answering.memory_answer import ABSTENTION_REASONS, ABSTENTION_TEXT
+
+
+ROOT = Path(__file__).resolve().parents[2]
+CHECKED = ROOT / RESULT_ROOT
+START = "8fec075d754dff7f12821947919d5c01f867d949"
+
+
+class MemoryAnswerIntegrationTests(unittest.TestCase):
+    def _execute(self, output: Path):
+        return execute_memory_answer_evaluation(output, repo_root=ROOT)
+
+    def test_checked_release_self_verifies(self) -> None:
+        verify_memory_answer_release(CHECKED, repo_root=ROOT)
+
+    def test_release_has_exact_24_structural_abstentions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "release"
+            checks = self._execute(output)
+            answers = [json.loads(line) for line in (output / "answers.jsonl").read_text().splitlines()]
+        self.assertEqual((checks.package_count, checks.answer_count, checks.failure_count), (24, 24, 0))
+        self.assertEqual((checks.abstained_count, checks.no_promoted_claims_count), (24, 24))
+        self.assertTrue(all(item["status"] == "abstained" for item in answers))
+        self.assertTrue(all(item["answer"] == ABSTENTION_TEXT for item in answers))
+        self.assertTrue(all(
+            item["abstention_reason"] == ABSTENTION_REASONS["no_promoted_claims"]
+            for item in answers
+        ))
+        self.assertTrue(all(
+            item["confidence"] == 0 and not item["statements"]
+            and item["requested_model"] is None and item["resolved_model"] is None
+            for item in answers
+        ))
+
+    def test_real_release_never_renders_prompt_or_reaches_provider_path(self) -> None:
+        with tempfile.TemporaryDirectory() as directory, patch(
+            "answering.memory_answer.render_answer_prompt",
+            side_effect=AssertionError("prompt reached"),
+        ):
+            checks = self._execute(Path(directory) / "release")
+        self.assertEqual(checks.abstained_count, 24)
+
+    def test_two_runs_are_byte_identical(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            first = Path(directory) / "first"
+            second = Path(directory) / "second"
+            self._execute(first)
+            self._execute(second)
+            self.assertEqual(
+                {path.name: path.read_bytes() for path in first.iterdir()},
+                {path.name: path.read_bytes() for path in second.iterdir()},
+            )
+
+    def test_nonempty_output_is_refused(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "release"
+            output.mkdir()
+            (output / "keep").write_text("keep")
+            with self.assertRaisesRegex(MemoryAnswerEvaluationError, "must be empty"):
+                self._execute(output)
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "release"
+            output.write_text("not a directory")
+            with self.assertRaisesRegex(MemoryAnswerEvaluationError, "must be empty"):
+                self._execute(output)
+
+    def test_tampered_output_and_package_authority_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "release"
+            self._execute(output)
+            (output / "answers.jsonl").write_bytes((output / "answers.jsonl").read_bytes() + b" ")
+            with self.assertRaisesRegex(MemoryAnswerEvaluationError, "hash changed"):
+                verify_memory_answer_release(output, repo_root=ROOT)
+        with patch("answering.answer_input.STEP81_PACKAGES_SHA256", "0" * 64):
+            with self.assertRaises(MemoryAnswerError):
+                load_answer_package_views(ROOT)
+
+    def test_dataset_manifest_binds_every_step81_authority(self) -> None:
+        from answering import answer_evaluation
+
+        original_read = answer_evaluation._read_object
+
+        def tampered(path):
+            value = dict(original_read(path))
+            if Path(path).resolve() == (ROOT / answer_evaluation.DATASET_MANIFEST).resolve():
+                value["input_release"] = dict(value["input_release"])
+                value["input_release"]["checks_sha256"] = "0" * 64
+            return value
+
+        with patch.object(answer_evaluation, "_read_object", tampered):
+            with self.assertRaisesRegex(MemoryAnswerEvaluationError, "dataset manifest"):
+                answer_evaluation._dataset(ROOT)
+        self.assertEqual(STEP81_CHECKS_SHA256, "9e081b65e5bc8c8f59c8fb320a357e14240eedc06fd5febb67ddbcf588d8c766")
+
+    def test_step81_release_is_verified_before_package_bytes_are_read(self) -> None:
+        state = {"verifying": False, "verified": False}
+        from answering import answer_input
+
+        original_verify = answer_input.verify_evidence_package_release
+        original_read_bytes = Path.read_bytes
+
+        def verified(*args, **kwargs):
+            state["verifying"] = True
+            try:
+                result = original_verify(*args, **kwargs)
+            finally:
+                state["verifying"] = False
+            state["verified"] = True
+            return result
+
+        def guarded(path):
+            if (
+                Path(path).resolve() == (ROOT / STEP81_PACKAGES).resolve()
+                and not state["verifying"] and not state["verified"]
+            ):
+                raise AssertionError("packages read before verifier")
+            return original_read_bytes(path)
+
+        with patch.object(answer_input, "verify_evidence_package_release", verified), patch.object(
+            Path, "read_bytes", guarded
+        ):
+            self.assertEqual(len(load_answer_package_views(ROOT)), 24)
+
+    def test_runtime_has_no_prohibited_data_provider_or_environment_access(self) -> None:
+        forbidden = (
+            "/gold/", "relevance.jsonl", "/oracle", "review_queue", "user_003",
+            "/.env", "OPENAI_API_KEY",
+        )
+        original_open = Path.open
+
+        def guarded(path, *args, **kwargs):
+            value = Path(path).as_posix()
+            if any(token in value for token in forbidden):
+                raise AssertionError(f"forbidden read: {value}")
+            return original_open(path, *args, **kwargs)
+
+        with tempfile.TemporaryDirectory() as directory, patch.object(Path, "open", guarded):
+            self.assertEqual(self._execute(Path(directory) / "release").answer_count, 24)
+        source = "".join((ROOT / path).read_text() for path in (
+            "src/answering/answer_contracts.py", "src/answering/answer_input.py",
+            "src/answering/memory_answer.py", "src/answering/answer_evaluation.py",
+        ))
+        self.assertNotIn("import openai", source.lower())
+        self.assertNotIn("OPENAI_API_KEY", source)
+        self.assertNotIn("os.environ", source)
+
+    def test_failure_contract_is_sanitized(self) -> None:
+        failure = MemoryAnswerFailure(
+            "1" * 64, None, "2" * 64, "query_safe", "B2", "runtime_failure", "runtime"
+        )
+        self.assertNotIn("quote", json.dumps(failure.__dict__))
+        with self.assertRaises(MemoryAnswerError):
+            MemoryAnswerFailure(
+                "1" * 64, None, "2" * 64, "query_safe", "B2", "raw source", "runtime"
+            )
+
+    def test_predecessor_bytes_and_allowlist_are_exact(self) -> None:
+        expected = {
+            "preference.md": "bf6dfc6ea0b23e9ff1c52b4dbf1debce6ebe495070e826743ffa2d56681a18b8",
+            "docs/memory-evaluation-steps.md": "bf89021a98273e623edbe27318c9b1cadfb8bed023f5e256a2f58b13e27913ba",
+            "Makefile": "6c7f965049ab12d4bb5339ddd2a75b701e318abc424be91a7e5d3c46e1dc7e6f",
+            "src/answering/__init__.py": "582ee7aa9e8eb133a9b0a43ccbb256ef4c020f0b5fd89b42ff266d74fdb9aafa",
+            "results/answering/evidence-package-development-v1/manifest.json": STEP81_MANIFEST_SHA256,
+            "results/answering/evidence-package-development-v1/packages.jsonl": STEP81_PACKAGES_SHA256,
+            "data/answering/evidence-package-development-v1/manifest.json": STEP81_DATASET_SHA256,
+        }
+        self.assertEqual(
+            {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in expected},
+            expected,
+        )
+        import subprocess
+        changed = subprocess.run(
+            ["git", "diff", "--name-only", START], cwd=ROOT, check=True,
+            capture_output=True, text=True,
+        ).stdout.splitlines()
+        self.assertEqual(changed, [])
+
+
+if __name__ == "__main__":
+    unittest.main()

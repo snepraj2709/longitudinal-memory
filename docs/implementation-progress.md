@@ -1179,3 +1179,64 @@ All 33 development claims remain candidates. The release therefore has 295 candi
 ### Next-step input
 
 Step 8.2 receives only the frozen `evidence_package_development_v1` release and its manifest. Answer generation, citation rendering, abstention text, model use, and Step 8.2 implementation have not started and require separate guidance and authorization.
+
+## Phase 8, Step 8.2: Add the memory answer contract
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `8fec075d754dff7f12821947919d5c01f867d949`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-8.2-guidance-v1`, envelope SHA-256 `91593dde89451249910fdbc00b0f048db4964d499b0c83d3c60deba5c3a2033d`
+- Commit message: `answering: add grounded memory answer contract`
+
+### Contract and runtime boundary
+
+- The new immutable contracts cover `answered`, `abstained`, `disputed`, and `partially_answered` outputs. Answer and statement IDs are hashes of their canonical content without the ID field. Unknown fields, unsafe JSON, duplicate or unsorted provenance, invalid time data, non-finite confidence, and inconsistent status fields fail closed.
+- Each factual statement names exact claim and immutable version IDs. Its citations must match the same package's evidence ID, source, span, nullable message ID, and quote. The validator rejects missing, changed, rejected, cross-user, wrong-version, wrong-source, wrong-span, wrong-message, and wrong-quote provenance.
+- Non-abstained answer text is only the newline join of its grounded statement text. Answered output cannot cite conflicting claims. Disputed output needs at least two conflicting claim versions, and partial output needs a grounded statement plus a non-empty unresolved part.
+- The input loader first runs the frozen Step 8.1 verifier, then checks the exact dataset, result, and package hashes. Every answer binds the Step 8.1 release, the canonical package record, user, query, baseline, plan, snapshot, time cutoffs, configuration, prompt, and runtime versions.
+- The renderer treats package strings as untrusted JSON data. Its frozen schema spells out the exact status, statement, claim-reference, and citation fields, status rules, and provenance requirements. It omits rejected evidence, summary prose, raw source content, source metadata, embeddings, gold, and runtime-owned IDs.
+- `answer_allowed=false` short-circuits before prompt rendering or candidate inspection. The provider model remains a dormant configuration value for a future validated candidate path. Step 8.2 has no provider adapter, environment lookup, database write, or model call.
+
+### Review corrections
+
+- The first renderer listed only top-level candidate and statement field names. It now includes the strict nested candidate schema, allowed status values, category rules, citation fields, and provenance requirements promised by the contract.
+- The contract now rejects invalid valid-time representations and enforces the exact generation-mode and dormant-model binding for non-blocked candidates. Unsafe Unicode strings fail with the same sanitized contract error as other unsafe JSON.
+- Dataset and result verification now bind all six Step 8.1 authorities: dataset manifest, result manifest, packages, checks, run metadata, and failures. A regression proves a rehashed authority mismatch fails closed.
+- These changes alter the dormant prompt hash and therefore the answer IDs, `answers.jsonl`, and final manifest. The release was regenerated before any model, gold, oracle, review, or frozen-test access.
+
+### Development release
+
+All 24 frozen packages contain only candidate claims and carry `no_promoted_claims`. Each produced the fixed abstention `I cannot answer this from the available memory.` with the configured unconfirmed-claim reason, confidence zero, no statements or citations, and null requested and resolved model fields.
+
+The release has 24 answers, 24 abstentions, and zero answered, disputed, partial, failed, duplicate, cross-user, or invalid-provenance records. It made no provider request and used no tokens. These counts test contract behavior only; they do not measure answer correctness or abstention accuracy.
+
+### Tests and contract checks
+
+- Focused Step 8.2 unit and integration tests: 27 passed, covering all four statuses, canonical IDs, strict prompt schema and escaping, blocked short-circuiting, time and model binding, exact citation closure, sanitized failures, all authority hashes, immutable output, byte-identical replay, and prohibited-read traps.
+- Step 8.1 unit and live PostgreSQL integration tests: 33 passed.
+- Protected live gates passed: retrieval baselines 132, Phase 5 conflict evaluation 39, grounded summaries 45, sessionization 33, temporal lifecycle 15, and storage with ingestion 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 912 tests were discovered in 27.969 seconds; 758 passed and 154 database tests skipped. The required database groups passed in the live gates above.
+- Release self-verification, two clean byte-identical runs, in-memory compilation, exact allowlist inspection, protected hashes, `git diff --check`, secret and prohibited-data scans, staged and unstaged inspection, and Docker cleanup passed. No predecessor file changed before this ledger entry; the implementation adds exactly the 14 authorized Step 8.2 paths.
+
+### Artifacts, costs, and limitations
+
+- Memory-answer configuration: `configs/answering/memory_answer_v1.json`, SHA-256 `98b743d593e17a88216ac74cf17693f08898537027e0d91672d45aaeb4dfcc10`
+- Dataset manifest: `data/answering/memory-answer-contract-development-v1/manifest.json`, SHA-256 `015e0d5e16f9870e04728f3668ee1f21f8c1b1a9a383f274c3c6bcb23c6f455e`
+- Prompt contract: `memory_answer_prompt_v1`, SHA-256 `69dd688430c55fc35a16369201ef8eea7d470d10f610edec254f5cbd59bf14c1`
+- Answers: `answers.jsonl`, SHA-256 `d83fcac2eed3a4b2493c575cc49f593657669a690b9cfa61307afc8890940ba4`
+- Checks: `checks.json`, SHA-256 `3642da6ae21165b1c2ddf6c4e64773e423615aa3a85b18834c8682ba26252164`
+- Run metadata: `run.json`, SHA-256 `bcbe9eef40c0b126e106c7b88c61e2a5c74db6df5fd2be54cd1b8183cb1e80d2`
+- Findings: `findings.md`, SHA-256 `63aefda40e96341de9e62181db8397be70aaa152d45a78a70279389a5726bd55`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Result manifest: `manifest.json`, SHA-256 `d0d987ff126aca2c7b05a0966e6b797247c7123e252fb26fc59d9599374fb841`
+- Step 8.2 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- All real development outputs abstain because upstream has no promoted claims. Positive statuses are covered only by invented unit fixtures and are not benchmark results.
+
+### Next-step input
+
+Step 8.3 receives the frozen answer schema, prompt contract, candidate validator, configuration, all-abstained development release, and its candidate-data limitation. Comparable answer runs, answer gold, paid-call preflight, provider execution, and Step 8.3 implementation have not started and require separate guidance and authorization.

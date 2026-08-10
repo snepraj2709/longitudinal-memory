@@ -1,0 +1,30 @@
+{
+  "dataset_version": "memory_answer_contract_development_v1",
+  "split": "development",
+  "allowed_users": ["user_001", "user_002"],
+  "expected_package_count": 24,
+  "expected_answer_count": 24,
+  "expected_status": "abstained",
+  "input_release": {
+    "version": "evidence_package_development_v1",
+    "dataset_manifest_sha256": "016b34eccba3260974e5c8eb2be58d6fb2023ad4399919634577b82c5c4bc7f4",
+    "result_manifest_sha256": "8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213",
+    "packages_sha256": "bb57898bea51417b2ecad1252b451669ae2c748033c9cef88360f16a825f8186",
+    "checks_sha256": "9e081b65e5bc8c8f59c8fb320a357e14240eedc06fd5febb67ddbcf588d8c766",
+    "run_sha256": "87c10978b82cf309e01982b580c41a9e48371dd262f9d8cc28aa7a4d5afd3a1d",
+    "failures_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "excluded_inputs": [
+    "answer gold",
+    "retrieval relevance gold",
+    "oracle data",
+    "review queues",
+    "Step 6.4 gold",
+    "users user_003 through user_010",
+    ".env",
+    "provider credentials"
+  ],
+  "model_execution": "dormant_no_call",
+  "provider_requests": 0,
+  "incremental_cost_usd": 0
+}

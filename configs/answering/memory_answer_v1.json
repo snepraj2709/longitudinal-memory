@@ -1,0 +1,21 @@
+{
+  "answer_version": "memory_answer_v1",
+  "schema_version": "memory_answer_schema_v1",
+  "config_version": "memory_answer_config_v1",
+  "prompt_version": "memory_answer_prompt_v1",
+  "runtime_version": "memory_answer_runtime_v1",
+  "input_release_version": "evidence_package_development_v1",
+  "output_release_version": "memory_answer_contract_development_v1",
+  "statuses": ["answered", "abstained", "disputed", "partially_answered"],
+  "blocker_priority": ["no_retrieved_claims", "incomplete_evidence", "no_promoted_claims", "clarification_required"],
+  "abstention_text": "I cannot answer this from the available memory.",
+  "abstention_reasons": {
+    "no_retrieved_claims": "The available memory does not contain evidence for this question.",
+    "incomplete_evidence": "The available memory does not contain a complete evidence trail for this question.",
+    "no_promoted_claims": "The available memory contains only unconfirmed claims, so it cannot support an answer.",
+    "clarification_required": "The question needs clarification before the available memory can support an answer."
+  },
+  "provider_execution_enabled": false,
+  "requested_model": "gpt-4.1-2025-04-14",
+  "resolved_model": "gpt-4.1-2025-04-14"
+}
