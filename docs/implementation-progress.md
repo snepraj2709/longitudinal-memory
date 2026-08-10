@@ -1060,3 +1060,70 @@ This is a runtime-only release. It created, opened, and hashed no relevance file
 ### Next-step input
 
 Step 7.4 receives the immutable runtime queries, ranking configuration, 24 B2-B4 results, exact lineage, and runtime checkpoint. Relevance annotations and retrieval metrics have not started and require separate guidance and authorization.
+
+## Phase 7, Step 7.4: Evaluate B2-B4 retrieval quality and latency
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `d849ea1140f97066edb408acd8704268655c7abe`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-7.4-guidance-v1`, envelope SHA-256 `17d8609f5e0799661ea4a7d6b3a1de3493d267a6cff90efa4d21e17de4df96ae`
+- Commit message: `retrieval: evaluate B2-B4 quality and latency`
+
+### Evaluation boundary
+
+- The runtime checkpoint was created before the relevance data, scorer contracts, scorer implementation, scorer tests, final data manifest, and final result directory existed. Its preflight records those paths as absent and records that relevance, gold, oracle, review-queue, frozen-test, and model content were not opened.
+- The checkpoint contains 240 warm local latency samples: one warmup followed by ten measured repository calls for each of eight queries and three baselines. Every sample carries the digest of its frozen Step 7.3 result. Runtime generation used only the approved development releases and did not read scorer or relevance paths.
+- After the checkpoint was frozen, all 200 same-user query/record pairs were reviewed in stable record-ID order: four queries over 24 records for `user_001` and four over 26 records for `user_002`. Ranked order was not used during labeling. This was a development diagnostic, not a blind evaluation; prior exposure to the committed ranking was possible.
+- The reviewer checked every annotation against the approved 50-record index universe and the first 20 development source records. The two start-date correction records remain separate: the correcting record is direct evidence, while the corrected record remains useful historical evidence and is marked stale for that query. Calendar-title-only rows do not inherit relevance from a nearby project event.
+- Final scoring is offline. It opens no database and performs no retrieval. The final result uses the frozen latency samples and Step 7.3 rankings without changing the index, planner, filters, search, fusion, reranking, `k`, or any predecessor artifact.
+
+### Results
+
+The release has eight queries, 24 baseline results, 200 reviewed annotations, 240 latency samples, and zero failures. Cross-user predictions, unsupported references, stale lineage, provider calls, retries, input tokens, output tokens, and incremental cost are all zero.
+
+- B2: Recall@5 `16/17 = 0.958333`; Recall@10 `17/17 = 1.000000`; nDCG@10 `32.478399/33.071157 = 0.983456`; MRR `8/8 = 1.000000`; relevant-session recall is `null` for all eight cases with reason `baseline_has_no_session_path`; stale-memory rate `1/71 = 0.014085`.
+- B3: Recall@5 `14/14 = 1.000000`; Recall@10 `14/14 = 1.000000`; nDCG@10 `24.821684/30.047438 = 0.836945`; MRR `6.833333/8 = 0.854167`; relevant-session recall `14/14 = 1.000000`; stale-memory rate `1/61 = 0.016393`.
+- B4: Recall@5 `24/31 = 0.829167`; Recall@10 `30/31 = 0.975000`; nDCG@10 `45.124256/50.171080 = 0.910682`; MRR `7.5/8 = 0.937500`; relevant-session recall `14/14 = 1.000000`; stale-memory rate `2/72 = 0.027778`.
+- Warm local latency: B2 used 80 samples with mean `10.521 ms`, p50 `9.624 ms`, p95 `15.607 ms`, and max `82.647 ms`; B3 used 80 with mean `8.863 ms`, p50 `8.408 ms`, p95 `12.289 ms`, and max `20.009 ms`; B4 used 80 with mean `13.439 ms`, p50 `13.222 ms`, p95 `18.966 ms`, and max `31.464 ms`.
+- The scorecard contains 63 quality rows and 63 latency rows. It records the same numerator, denominator, value, scored-case count, null-case count, and null reason for every baseline slice by query type, benchmark capability, source type, difficulty, and development split. Source-type slices are intentionally multi-membership and are not additive. No composite score is published.
+
+### Review corrections
+
+- An accepted result ID outside the reviewed relevance universe originally raised an untyped key lookup error. The scorer now fails closed with `RetrievalQualityError`, and a regression covers a cross-user high scorer.
+- A new regression distinguishes a report's speaker from its subject so an attributed claim is scored for the correct person.
+- Release verification originally checked only artifact hashes and selected counts. It now verifies the checkpoint-before-gold boundary, every dataset and implementation binding, all relevance and review records, and byte-for-byte recomputation of per-query results, scorecard, checks, run metadata, findings, and the final manifest. A tampered bound input now fails verification.
+- These corrections did not change the frozen runtime checkpoint, latency samples, relevance labels, per-query scores, scorecard, checks, run metadata, failures, or findings. Only the evaluator and its implementation-bound result manifest changed.
+
+### Tests and contract checks
+
+- Focused Step 7.4 unit and live PostgreSQL integration tests: 31 passed, including metric arithmetic, all five adversarial cases, immutable writes, checkpoint ordering, runtime read traps, 200-label completeness, 240 latency samples, two deterministic scorer runs, and tamper rejection.
+- Protected live gates passed sequentially: retrieval baselines, planning, and index 132; storage and ingestion 30; temporal lifecycle 15; temporal evaluation 20; conflict candidates 29; conflict relations 29; belief resolution 46; Phase 5 conflict evaluation 39; sessionization 33; grounded summaries 45; and durative claims 55. The live total was 473 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 852 tests were discovered in 23.868 seconds; 717 passed and 135 database tests skipped. Every required database group passed in the sequential live gates above.
+- Independent metric and nearest-rank latency recomputation matched all 24 per-query rows and all 63 aggregate and slice rows. Release self-verification, in-memory compilation, exact allowlist inspection, `git diff --check`, secret and leakage scans, and Docker cleanup passed.
+- All protected Step 7.1, Step 7.2, and Step 7.3 hashes remained byte-exact. Existing-path drift from `d849ea1140f97066edb408acd8704268655c7abe` is limited to this ledger entry; the implementation adds exactly the 21 authorized Step 7.4 paths.
+
+### Artifacts, costs, and limitations
+
+- Evaluation configuration: `configs/retrieval/quality_evaluation_v1.json`, SHA-256 `45e0f0bd5057f92b1bdd20fb14313911b12202b79d072e8d05c6c0600489bb2a`
+- Runtime manifest: `data/retrieval/retrieval-quality-development-v1/runtime/manifest.json`, SHA-256 `f148dc0df972f9bba3dd511014ba216047d206ccafcd84a0c1b107b57c5e9432`
+- Dataset manifest: `data/retrieval/retrieval-quality-development-v1/manifest.json`, SHA-256 `c1cb67ce7fcec77ad8004fb8a19cabd52a1ffc26ef0dba080b13ea44bae0bb6c`
+- Relevance annotations: `gold/relevance.jsonl`, SHA-256 `b1fd2024620ad8baf2165824f5715eadd1009c739dc01d11bb9aa288f8a75c83`
+- Review record: `gold/review.json`, SHA-256 `68f7ee182a11e9d812e18e6eb51c1b524ad2c203ba3c3bce34c31364427600d5`
+- Checkpoint preflight: `checkpoint_preflight.json`, SHA-256 `265a32d07bc85a3948bac6e8dc954a61aa53e12461444d2ce0880895e1a5ecab`
+- Runtime checkpoint manifest: `checkpoint_manifest.json`, SHA-256 `82807fa0ab3ae99961aa1fef3ece65353361cb45a1ed28a9c443d901c1d688e4`
+- Latency samples: `latency-samples.jsonl`, SHA-256 `4d947e64abd5d3fc0fb8d6d1f6e723a8cd77b123fa66d0e85d44971c66893305`
+- Per-query scores: `per-query.jsonl`, SHA-256 `1ff5b724786cf8d1b12979484f2d156bc5fe4a9c0b7b18491e8c78295d87d1c6`
+- Scorecard: `scorecard.json`, SHA-256 `0f6a9cf75e7b526ab893052a43c198a7d295da6efc8fb0d5cdabbb661469f0f8`
+- Final result manifest: `manifest.json`, SHA-256 `6e89700beb6a483ce0b23c3033927122c2170897b81a366ffde31fc7785a63e4`
+- Failures: both runtime and final files have empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+- Step 7.4 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- The evaluation covers a small development set with prior ranking exposure possible. The index remains candidate-heavy, and the deterministic token-hash vectors are not semantic embeddings. The reported scores and warm local timings are diagnostics, not production guarantees.
+
+### Phase 8 handoff
+
+Phase 8 receives the frozen session, index, planner, ranking, lineage, relevance, and retrieval-quality artifacts. Step 7.4 does not authorize an answerer, evidence-package assembly, benchmark test run, model call, or any Phase 8 implementation. Phase 8 has not started.

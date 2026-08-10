@@ -1,0 +1,35 @@
+{
+  "quality_evaluation_version": "retrieval_quality_development_v1",
+  "runtime_version": "retrieval_quality_runtime_v1",
+  "runtime_release": "baseline_execution_development_v1",
+  "index_version": "retrieval_index_v1",
+  "planner_version": "retrieval_query_planner_v1",
+  "ranking_config_version": "retrieval_baseline_v1",
+  "baselines": [
+    "B2",
+    "B3",
+    "B4"
+  ],
+  "query_count": 8,
+  "result_count": 24,
+  "warmups_per_result": 1,
+  "latency_trials_per_result": 10,
+  "latency_sample_count": 240,
+  "timer": "time.perf_counter_ns",
+  "trial_order": "round_case_baseline",
+  "result_digest": "canonical_json_sha256",
+  "relevance_grades": {
+    "irrelevant": 0,
+    "supporting": 1,
+    "direct": 2
+  },
+  "cutoffs": [
+    5,
+    10
+  ],
+  "quality_decimal_places": 6,
+  "latency_decimal_places": 3,
+  "quality_rounding": "ROUND_HALF_EVEN",
+  "latency_percentile": "nearest_rank",
+  "model_usage": "deterministic_no_model"
+}
