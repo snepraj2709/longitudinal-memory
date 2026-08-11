@@ -1,0 +1,87 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3549,
+  "latency_ms": 37340,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 1.0,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_001_message_001",
+            "quote": "I accepted the product engineer role at Riverstone Labs.",
+            "source_id": "scaled_user_001_conversation_001"
+          }
+        ],
+        "object": "product engineer",
+        "polarity": "positive",
+        "predicate": "primary_role",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-01-08T09:00:00+00:00",
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 1.0,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_001_message_001",
+            "quote": "For now, I want to deepen my work in data products.",
+            "source_id": "scaled_user_001_conversation_001"
+          }
+        ],
+        "object": "data products",
+        "polarity": "positive",
+        "predicate": "work_preference",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-01-08T09:00:00+00:00",
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_003",
+        "confidence": 1.0,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_001_message_001",
+            "quote": "I do my best focused work remotely.",
+            "source_id": "scaled_user_001_conversation_001"
+          }
+        ],
+        "object": "remote",
+        "polarity": "positive",
+        "predicate": "lives_in",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-01-08T09:00:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 591,
+  "position": 1,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_conversation_001",
+  "request_id": "extraction:scaled_user_001_conversation_001",
+  "request_sha256": "bb59957841501cac306ea872bf05e150a553c145ccedb5ec46aa8016da0c29e2",
+  "response_id": "chatcmpl-8d6f363bcea22caa",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

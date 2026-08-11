@@ -1,0 +1,49 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3507,
+  "latency_ms": 12948,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 0.95,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": null,
+            "quote": "Planning discussion only. Asha has not decided to move to Mumbai.",
+            "source_id": "scaled_user_001_calendar_001"
+          }
+        ],
+        "object": "Planning discussion only. Asha has not decided to move to Mumbai.",
+        "polarity": "positive",
+        "predicate": "has_relocation_plan",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-04-15T12:00:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 203,
+  "position": 4,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_calendar_001",
+  "request_id": "extraction:scaled_user_001_calendar_001",
+  "request_sha256": "8c8a0387583fdeec25c5e67b61b96deb6a9c48ef74040f27b837ad6d978b3a8e",
+  "response_id": "chatcmpl-806d8999305631e3",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

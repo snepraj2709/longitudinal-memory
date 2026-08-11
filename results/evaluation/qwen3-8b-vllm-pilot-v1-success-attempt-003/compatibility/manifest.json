@@ -1,0 +1,28 @@
+{
+  "failure_count": 0,
+  "failures_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "gold_opened": false,
+  "input_tokens": 14335,
+  "oracle_opened": false,
+  "output_tokens": 1653,
+  "planned_request_count": 12,
+  "provider_request_count": 12,
+  "raw_invalid_output_persisted": false,
+  "responses_sha256": "7750efffb556586a5cb20f5bc34fefe98e71d0ef94b8ba0b1023a487834706ce",
+  "retryable_http_status_codes": [
+    408,
+    429,
+    502,
+    503,
+    504
+  ],
+  "review_opened": false,
+  "schema_version": "qwen_vllm_compatibility_batch_v1",
+  "series_id": "qwen3-8b-vllm-pilot-v1",
+  "split": "development",
+  "status": "completed",
+  "successful_count": 12,
+  "task": "mixed",
+  "transport_retry_count": 0,
+  "worker_count": 1
+}

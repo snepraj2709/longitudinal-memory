@@ -1,0 +1,24 @@
+{
+  "b6_b7_context_identity": true,
+  "b7_provider_request_count": 0,
+  "context_count": 912,
+  "contexts_sha256": "0bbcf8edebd4396a2eb16e049721cac9a81373875f340c841d4835b1a496345a",
+  "database_counts": {
+    "belief_resolutions": 34,
+    "claim_relations": 6,
+    "claim_versions": 72,
+    "claims": 36,
+    "conflict_decisions": 47,
+    "memory_users": 2,
+    "retrieval_index_records": 48,
+    "retrieval_index_runs": 2,
+    "session_summaries": 14,
+    "source_events": 20
+  },
+  "failure_count": 13,
+  "failures_sha256": "e6dd4b54785ef71e5682bcf8f619b3f23111f28661e59f1e56b735b31321deac",
+  "schema_version": "qwen_context_materialization_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "completed_with_failures"
+}

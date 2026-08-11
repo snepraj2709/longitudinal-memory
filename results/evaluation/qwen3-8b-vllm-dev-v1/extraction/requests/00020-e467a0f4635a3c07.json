@@ -1,0 +1,87 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3563,
+  "latency_ms": 34439,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 0.95,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_conversation_004_message_001",
+            "quote": "Remote work has suited me throughout the year.",
+            "source_id": "scaled_user_002_conversation_004"
+          }
+        ],
+        "object": "remote work",
+        "polarity": "positive",
+        "predicate": "lives_in",
+        "speaker_id": "user_002",
+        "subject_id": "user_002",
+        "valid_from": null,
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 0.9,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_conversation_004_message_001",
+            "quote": "I might move to Valencia someday, but I have made no plan.",
+            "source_id": "scaled_user_002_conversation_004"
+          }
+        ],
+        "object": "Valencia",
+        "polarity": "negative",
+        "predicate": "has_relocation_plan",
+        "speaker_id": "user_002",
+        "subject_id": "user_002",
+        "valid_from": null,
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_003",
+        "confidence": 0.85,
+        "epistemic_status": "uncertain",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_conversation_004_message_001",
+            "quote": "The deadline may be 2026-12-07, though I need to confirm it.",
+            "source_id": "scaled_user_002_conversation_004"
+          }
+        ],
+        "object": "2026-12-07",
+        "polarity": "positive",
+        "predicate": "project_deadline",
+        "speaker_id": "user_002",
+        "subject_id": "user_002",
+        "valid_from": null,
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 544,
+  "position": 20,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_conversation_004",
+  "request_id": "extraction:scaled_user_002_conversation_004",
+  "request_sha256": "06cccc49f409f31d674000f97e2dc137551b3ba28a5816459d7b0ce283ec2cd1",
+  "response_id": "chatcmpl-8cc651bd99904606",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

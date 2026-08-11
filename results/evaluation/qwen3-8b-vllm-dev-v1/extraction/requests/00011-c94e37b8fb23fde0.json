@@ -1,0 +1,87 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3551,
+  "latency_ms": 37693,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 1,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_conversation_001_message_001",
+            "quote": "I accepted the design researcher role at Northstar Studio.",
+            "source_id": "scaled_user_002_conversation_001"
+          }
+        ],
+        "object": "design researcher role at Northstar Studio",
+        "polarity": "positive",
+        "predicate": "assigned_project",
+        "speaker_id": "user_002",
+        "subject_id": "user_002",
+        "valid_from": "2026-01-08T09:00:00+00:00",
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 1,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_conversation_001_message_001",
+            "quote": "For now, I want to deepen my work in service design.",
+            "source_id": "scaled_user_002_conversation_001"
+          }
+        ],
+        "object": "deepen my work in service design",
+        "polarity": "positive",
+        "predicate": "career_goal",
+        "speaker_id": "user_002",
+        "subject_id": "user_002",
+        "valid_from": "2026-01-08T09:00:00+00:00",
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_003",
+        "confidence": 1,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_conversation_001_message_001",
+            "quote": "I do my best focused work remotely.",
+            "source_id": "scaled_user_002_conversation_001"
+          }
+        ],
+        "object": "remote",
+        "polarity": "positive",
+        "predicate": "lives_in",
+        "speaker_id": "user_002",
+        "subject_id": "user_002",
+        "valid_from": "2026-01-08T09:00:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 595,
+  "position": 11,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_conversation_001",
+  "request_id": "extraction:scaled_user_002_conversation_001",
+  "request_sha256": "a6e04660fcaf61453b80774d92e08f96607384b8dfa1b53bcb0de40351ccce80",
+  "response_id": "chatcmpl-91cbf157a72f218d",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

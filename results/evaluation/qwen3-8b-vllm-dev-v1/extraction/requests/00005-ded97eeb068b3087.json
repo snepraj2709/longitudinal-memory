@@ -1,0 +1,68 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3539,
+  "latency_ms": 25607,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 1,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_002_message_001",
+            "quote": "This month I feel exhausted after the launch.",
+            "source_id": "scaled_user_001_conversation_002"
+          }
+        ],
+        "object": true,
+        "polarity": "positive",
+        "predicate": "feels_exhausted",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-05-18T09:30:00+00:00",
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 1,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_002_message_001",
+            "quote": "My goal has shifted: I want to build reliable health tools.",
+            "source_id": "scaled_user_001_conversation_002"
+          }
+        ],
+        "object": "I want to build reliable health tools",
+        "polarity": "positive",
+        "predicate": "has_relocation_plan",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-05-18T09:30:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 403,
+  "position": 5,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_conversation_002",
+  "request_id": "extraction:scaled_user_001_conversation_002",
+  "request_sha256": "639001656cd0da5a701ff5895fa7ac75898e1f7e5ae0009a9acc23392260aa56",
+  "response_id": "chatcmpl-b0030135a5541010",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

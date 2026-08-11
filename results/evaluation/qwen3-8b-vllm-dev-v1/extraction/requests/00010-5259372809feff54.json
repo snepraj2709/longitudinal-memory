@@ -1,0 +1,87 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3563,
+  "latency_ms": 34440,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 0.95,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_004_message_001",
+            "quote": "Remote work has suited me throughout the year.",
+            "source_id": "scaled_user_001_conversation_004"
+          }
+        ],
+        "object": "remote work",
+        "polarity": "positive",
+        "predicate": "lives_in",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": null,
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 0.95,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_004_message_001",
+            "quote": "I might move to Mumbai someday, but I have made no plan.",
+            "source_id": "scaled_user_001_conversation_004"
+          }
+        ],
+        "object": "Mumbai",
+        "polarity": "negative",
+        "predicate": "has_relocation_plan",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": null,
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_003",
+        "confidence": 0.8,
+        "epistemic_status": "uncertain",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_004_message_001",
+            "quote": "The deadline may be 2026-12-06, though I need to confirm it.",
+            "source_id": "scaled_user_001_conversation_004"
+          }
+        ],
+        "object": "2026-12-06",
+        "polarity": "positive",
+        "predicate": "project_deadline",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": null,
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 544,
+  "position": 10,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_conversation_004",
+  "request_id": "extraction:scaled_user_001_conversation_004",
+  "request_sha256": "06fa5d883a868e220eaae0fd45a3a8fe54f31186ce2e6bf3f30eb097766aff1c",
+  "response_id": "chatcmpl-92ab10db67707727",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

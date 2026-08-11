@@ -1,0 +1,68 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3566,
+  "latency_ms": 25065,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 1.0,
+        "epistemic_status": "corrected",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_conversation_003_message_001",
+            "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+            "source_id": "scaled_user_002_conversation_003"
+          }
+        ],
+        "object": "2026-01-12",
+        "polarity": "positive",
+        "predicate": "employment_start_date",
+        "speaker_id": "user_002",
+        "subject_id": "user_002",
+        "valid_from": "2026-01-12",
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 1.0,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_conversation_003_message_001",
+            "quote": "My current goal is still to improve public-service research.",
+            "source_id": "scaled_user_002_conversation_003"
+          }
+        ],
+        "object": false,
+        "polarity": "negative",
+        "predicate": "needs_to_finish_college",
+        "speaker_id": "user_002",
+        "subject_id": "user_002",
+        "valid_from": null,
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 394,
+  "position": 19,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_conversation_003",
+  "request_id": "extraction:scaled_user_002_conversation_003",
+  "request_sha256": "00890182e6d95f97db1cfc5ff3ae642695fba2c0d2a9558508375783fa5345d9",
+  "response_id": "chatcmpl-9147e114555415d3",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

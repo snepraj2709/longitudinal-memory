@@ -1,0 +1,21 @@
+{
+  "failure_count": 0,
+  "failures_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "gold_opened": false,
+  "input_tokens": 70945,
+  "oracle_opened": false,
+  "output_tokens": 6915,
+  "planned_request_count": 20,
+  "provider_request_count": 20,
+  "raw_invalid_output_persisted": false,
+  "responses_sha256": "a33f9d7eff94f53eacbbf7dfd8d3318b3feec93bd6979e5ac58c8cf8a0b3b8e7",
+  "review_opened": false,
+  "schema_version": "qwen_execution_batch_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "completed",
+  "successful_count": 20,
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "worker_count": 1
+}

@@ -1,0 +1,68 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3541,
+  "latency_ms": 20938,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 1,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_email_002_message_001",
+            "quote": "Asha will lead Care Map.",
+            "source_id": "scaled_user_001_email_002"
+          }
+        ],
+        "object": "Care Map",
+        "polarity": "positive",
+        "predicate": "leads_project",
+        "speaker_id": "nikhil",
+        "subject_id": "user_001",
+        "valid_from": null,
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 1,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_email_002_message_001",
+            "quote": "Leena will mentor Asha on the work.",
+            "source_id": "scaled_user_001_email_002"
+          }
+        ],
+        "object": "leena",
+        "polarity": "positive",
+        "predicate": "has_mentor",
+        "speaker_id": "nikhil",
+        "subject_id": "user_001",
+        "valid_from": null,
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 330,
+  "position": 6,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_email_002",
+  "request_id": "extraction:scaled_user_001_email_002",
+  "request_sha256": "b94ea7e7ca8e027e1a535971cd4f87c445a6c91c0dc77f4451bf0245d44ea0af",
+  "response_id": "chatcmpl-a8623b3c01b8887b",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}
