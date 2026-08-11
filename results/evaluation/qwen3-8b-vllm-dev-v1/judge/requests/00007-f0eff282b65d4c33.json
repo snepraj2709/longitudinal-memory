@@ -1,0 +1,44 @@
+{
+  "baseline_id": null,
+  "context_count": 2,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 390,
+  "latency_ms": 5135,
+  "output": {
+    "judgments": [
+      {
+        "candidate_id": "7c6686d54e80ec8d34eb",
+        "label": "correct",
+        "reason_codes": [
+          "expected_behaviours_covered"
+        ]
+      },
+      {
+        "candidate_id": "ea9e8d4bef349099b5af",
+        "label": "correct",
+        "reason_codes": [
+          "expected_behaviours_covered"
+        ]
+      }
+    ]
+  },
+  "output_tokens": 79,
+  "position": 7,
+  "provider_attempt_count": 1,
+  "record_id": "judge_batch_0007",
+  "request_id": "judge:0007",
+  "request_sha256": "6fd430110b8326c1304ad9aaaa7961ea1254e26ed71dba4193bbe21a21d06745",
+  "response_id": "chatcmpl-9613c65aa8f011dc",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "judge",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

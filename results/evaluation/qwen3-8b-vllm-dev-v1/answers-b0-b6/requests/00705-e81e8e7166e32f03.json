@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "2a0468f77993a3f6c9427daaab54a5e20b5290eeca6a99642f4141c53b06e30a",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3373,
+  "latency_ms": 9678,
+  "output": {
+    "abstention_reason": null,
+    "answer": "product engineer",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs.",
+        "source_id": "scaled_user_001_conversation_001"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "product engineer"
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 139,
+  "position": 705,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_001",
+  "request_id": "answer:B6:qa:scaled_user_001_qa_extraction_001",
+  "request_sha256": "a507db29440ce433d84db5d1db2431d00306913bf6e127576899dc593b383f69",
+  "response_id": "chatcmpl-a1a19d1c513a09a8",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "b1d3d6f3cb1950a9ecb8f0784b9cad92afb76c2ef7848f7a107b766a102c32c9",
+  "user_id": "user_001"
+}

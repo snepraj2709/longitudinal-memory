@@ -1,0 +1,63 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "f650de7d85269a691d5efbfdb4c757a816a7bc4dd8017c4329ebddde47325559",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4163,
+  "latency_ms": 50042,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "I might move to Valencia someday, but I have made no plan.",
+        "source_id": "scaled_user_002_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's supported work preferences include remote work, a career goal of deepening work in service design, and an assigned project as a design researcher at Northstar Studio. The user has no relocation plan to Valencia and corrected their employment start date to 2026-01-12."
+    ],
+    "status": "answered",
+    "summary": "The user's supported work preferences include remote work, a career goal of deepening work in service design, and an assigned project as a design researcher at Northstar Studio. The user has no relocation plan to Valencia and corrected their employment start date to 2026-01-12.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 771,
+  "position": 678,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_001",
+  "request_id": "answer:B5:summary:scaled_user_002_summary_user_modeling_001",
+  "request_sha256": "d645d793e2ddf722c337b5b10cf4828f6a3210efd6a16cf2ee0ba81c97b28b86",
+  "response_id": "chatcmpl-91a1760949cb7b26",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "b6bdda86fd97d247a66ec7f5ca7872a4bf0baed0dfbbfe99a7206c2432ee0b5a",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2373,
+  "latency_ms": 24379,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The repeated evidence supporting Mateo's work preference is that he wants to deepen his work in service design and that remote work has suited him throughout the year.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The repeated evidence supporting Mateo's work preference is that he wants to deepen his work in service design and that remote work has suited him throughout the year."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 381,
+  "position": 327,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_user_modeling_009",
+  "request_id": "answer:B2:qa:scaled_user_002_qa_user_modeling_009",
+  "request_sha256": "a0fc0d66efb091e5e49d513f05f09cb8be9bdd31866b5dcefc7d5a93a9217948",
+  "response_id": "chatcmpl-806f4ce0a26fa1f4",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

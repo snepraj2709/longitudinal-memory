@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "a50e0152acc64fc1d46ce9d716bf9f46ce7379033f1ef3b31a586d3b35609a88",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3328,
+  "latency_ms": 43219,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The two start-date claims are related as conflicting assertions about the employment start date of user_002. One claim (claim_970eeaf1002ca58c88137980f3507eeead51c6a9f180bf96e68c8fd69654214e) states that the employment start date is 2026-01-12, while another claim (claim_bcf61836860a656d9cd83e006335df1b5e3629b5a9e81fa78473e0c770746b3d) asserts it is 2026-02-04. The first claim is marked as 'corrected' and has a transaction time of 2026-09-10T09:00:00.000002Z, indicating it was made after the second claim, which was asserted on 2026-02-05T10:00:00.000002Z.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The two start-date claims are related as conflicting assertions about the employment start date of user_002. One claim (claim_970eeaf1002ca58c88137980f3507eeead51c6a9f180bf96e68c8fd69654214e) states that the employment start date is 2026-01-12, while another claim (claim_bcf61836860a656d9cd83e006335df1b5e3629b5a9e81fa78473e0c770746b3d) asserts it is 2026-02-04. The first claim is marked as 'corrected' and has a transaction time of 2026-09-10T09:00:00.000002Z, indicating it was made after the second claim, which was asserted on 2026-02-05T10:00:00.000002Z."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 672,
+  "position": 518,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_002",
+  "request_id": "answer:B4:qa:scaled_user_002_qa_conflict_detection_002",
+  "request_sha256": "dfba34fa6b074531ac6a67f657a48adb7b2f0f67207f5fdebae72c8ebe13432a",
+  "response_id": "chatcmpl-b3e365f1018434e2",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

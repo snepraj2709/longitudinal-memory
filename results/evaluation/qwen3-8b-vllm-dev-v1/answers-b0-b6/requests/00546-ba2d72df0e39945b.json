@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "a50e0152acc64fc1d46ce9d716bf9f46ce7379033f1ef3b31a586d3b35609a88",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3338,
+  "latency_ms": 12509,
+  "output": {
+    "abstention_reason": null,
+    "answer": "As of March 2026, the start date visible in the sources was 2026-02-04.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "As of March 2026, the start date visible in the sources was 2026-02-04."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 186,
+  "position": 546,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_temporal_reasoning_010",
+  "request_id": "answer:B4:qa:scaled_user_002_qa_temporal_reasoning_010",
+  "request_sha256": "79cfe8a38785700826c88ea1ea1cb6ee293e74a40da79c798129094d192c041b",
+  "response_id": "chatcmpl-809c51065c759956",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

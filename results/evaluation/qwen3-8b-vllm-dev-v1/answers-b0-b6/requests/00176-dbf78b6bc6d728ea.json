@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "53b29b8ff38f41ab469af40636ed60a04b41b6a17c6a1376727134ba3d0596e3",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2484,
+  "latency_ms": 23445,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The two start-date claims are related in that they both pertain to the same individual, user_002, and involve discrepancies regarding the start date of their employment. The first claim states that Mateo's start date is 2026-02-04, while the second claim corrects this by stating that the user began on 2026-01-12.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04. My current goal is still to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The two start-date claims are related in that they both pertain to the same individual, user_002, and involve discrepancies regarding the start date of their employment. The first claim states that Mateo's start date is 2026-02-04, while the second claim corrects this by stating that the user began on 2026-01-12."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 374,
+  "position": 176,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_002",
+  "request_id": "answer:B1:qa:scaled_user_002_qa_conflict_detection_002",
+  "request_sha256": "998032257e416c07c781b27a0b3d43f61f4d97ca0192eaee82ab6a6bc3f12b84",
+  "response_id": "chatcmpl-ba35940fca6827de",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

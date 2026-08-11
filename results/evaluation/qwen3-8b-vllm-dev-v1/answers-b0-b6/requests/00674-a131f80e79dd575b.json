@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "9bea6aaf717d37f242f9e9d6e815c0cbc699902c383e752f2784473e39e0a07e",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4129,
+  "latency_ms": 39719,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "I might move to Mumbai someday, but I have made no plan.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.9,
+    "statements": [
+      "The user's supported work preferences include a focus on data products and remote work. The user has a confirmed role as a product engineer and has expressed a preference for working remotely. Additionally, the user mentioned a relocation plan to build reliable health tools, though this is not explicitly tied to their current work preferences. There is also a mention of a potential relocation plan to Mumbai, which is stated as negative, indicating no current plan."
+    ],
+    "status": "answered",
+    "summary": "The user's supported work preferences include a focus on data products and remote work. The user has a confirmed role as a product engineer and has expressed a preference for working remotely. Additionally, the user mentioned a relocation plan to build reliable health tools, though this is not explicitly tied to their current work preferences. There is also a mention of a potential relocation plan to Mumbai, which is stated as negative, indicating no current plan.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 609,
+  "position": 674,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_user_modeling_001",
+  "request_id": "answer:B5:summary:scaled_user_001_summary_user_modeling_001",
+  "request_sha256": "29ab532d22afc1151148a5788aeb3306a07099b6b692343a0387cb43bb17fd05",
+  "response_id": "chatcmpl-9d0eb9d397116668",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

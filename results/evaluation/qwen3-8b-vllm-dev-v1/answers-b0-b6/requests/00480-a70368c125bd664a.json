@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "104227099458945ca3f6a72af4547fcd7e17a51776f79eb323aae73c2ab128c2",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3182,
+  "latency_ms": 9862,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Leena will mentor Asha on the work.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Leena will mentor Asha on the work.",
+        "source_id": "scaled_user_001_email_002"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "Leena will mentor Asha on the work."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 141,
+  "position": 480,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_004",
+  "request_id": "answer:B4:qa:scaled_user_001_qa_extraction_004",
+  "request_sha256": "10ee6b4031f1a27f92df01323ea38eff34b6c9a5981ad7fb6fbf19e5ce8e4fb4",
+  "response_id": "chatcmpl-b04dbcc505920ae0",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

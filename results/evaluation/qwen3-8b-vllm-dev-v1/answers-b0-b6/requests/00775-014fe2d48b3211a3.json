@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "1a1f5fa25de9ba5cf8dbb38bb5e0e81d00345fb441d3bb57970dba5fd771ef31",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3943,
+  "latency_ms": 11046,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The work setting consistently supported for Mateo is the design researcher role at Northstar Studio.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "The work setting consistently supported for Mateo is the design researcher role at Northstar Studio."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 155,
+  "position": 775,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_user_modeling_001",
+  "request_id": "answer:B6:qa:scaled_user_002_qa_user_modeling_001",
+  "request_sha256": "fbaf73b13c52165ebed6c1669802cb2be9e63c70d2079c8791e1e252e32cb628",
+  "response_id": "chatcmpl-9205bd5fa353b781",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "a95e84f36f43ed411175d9b516111044b61e78101d04db2cd77ddda975d8edfb",
+  "user_id": "user_002"
+}

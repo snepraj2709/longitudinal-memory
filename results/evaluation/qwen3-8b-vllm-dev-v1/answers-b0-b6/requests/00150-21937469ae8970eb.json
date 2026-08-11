@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2490,
+  "latency_ms": 11751,
+  "output": {
+    "abstention_reason": null,
+    "answer": "2026-01-11",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03. My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "2026-01-11"
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 187,
+  "position": 150,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_temporal_reasoning_006",
+  "request_id": "answer:B1:qa:scaled_user_001_qa_temporal_reasoning_006",
+  "request_sha256": "8d46f946dbb5d1f8411bde7e851938d538caba406cf68bb53ab0a268bd172cc1",
+  "response_id": "chatcmpl-a478eacc030f7ab1",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

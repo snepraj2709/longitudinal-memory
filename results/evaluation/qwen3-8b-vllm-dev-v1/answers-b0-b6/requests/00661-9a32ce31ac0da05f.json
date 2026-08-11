@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "902cf502553bcfd916847ad2d2fd38dff17978d2c1e19c0739ceb83a6f7751ae",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4375,
+  "latency_ms": 10442,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The work setting consistently supported for Mateo is remote work.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "The work setting consistently supported for Mateo is remote work."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 142,
+  "position": 661,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_user_modeling_001",
+  "request_id": "answer:B5:qa:scaled_user_002_qa_user_modeling_001",
+  "request_sha256": "7954b255b758b41ad3803bfd58a5d889e7ae46cac6206f28fdba5c275a7644cd",
+  "response_id": "chatcmpl-9e923f9cd8964df6",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

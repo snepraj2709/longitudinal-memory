@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2486,
+  "latency_ms": 14751,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The earlier start-date record should be erased because user_001 corrected their start date to 2026-01-11, not 2026-02-03.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03. My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "user_001 corrected their start date to 2026-01-11, not 2026-02-03."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 235,
+  "position": 127,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_003",
+  "request_id": "answer:B1:qa:scaled_user_001_qa_conflict_detection_003",
+  "request_sha256": "48a29cea579e04099766e6c0dc470f4b9337fbb7c45c9166ee876d78fd4a60de",
+  "response_id": "chatcmpl-99e11138ee3f1fb6",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

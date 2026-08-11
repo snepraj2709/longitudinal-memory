@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "eb4582c139cdb6a33c63abc53c4f79b48bfaa2adec24d785a5cc7a6b2f6176f0",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2375,
+  "latency_ms": 20403,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The goal to build reliable health tools was mentioned as the current goal in a conversation on 2026-09-10, and there is no evidence of a prior goal explicitly stated. However, the mention of a shift in goals on 2026-05-18 indicates that the goal to build reliable health tools was a new focus at that time.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 0.75,
+    "statements": [
+      "The goal to build reliable health tools was mentioned as the current goal in a conversation on 2026-09-10, and there is no evidence of a prior goal explicitly stated. However, the mention of a shift in goals on 2026-05-18 indicates that the goal to build reliable health tools was a new focus at that time."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 315,
+  "position": 262,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_temporal_reasoning_004",
+  "request_id": "answer:B2:qa:scaled_user_001_qa_temporal_reasoning_004",
+  "request_sha256": "e75fc431f2fc6968af5b5e927d44bbaea3ea881dfb884d01231c25bcd7ef6289",
+  "response_id": "chatcmpl-b68db9cc38d92676",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

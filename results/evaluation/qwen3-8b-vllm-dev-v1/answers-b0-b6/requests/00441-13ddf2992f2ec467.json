@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "08d1ec71b0a4d180dd16fbe2cbff823739554aa02d58f9f70ad3019605cbc4d6",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 6429,
+  "latency_ms": 31136,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The repeated evidence supporting user_002's work preference is that they live in 'remote work' and have a relocation plan to 'Valencia'. Additionally, they mentioned their current goal is to improve public-service research.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "I might move to Valencia someday, but I have made no plan.",
+        "source_id": "scaled_user_002_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The repeated evidence supporting user_002's work preference is that they live in 'remote work' and have a relocation plan to 'Valencia'. Additionally, they mentioned their current goal is to improve public-service research."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 451,
+  "position": 441,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_user_modeling_009",
+  "request_id": "answer:B3:qa:scaled_user_002_qa_user_modeling_009",
+  "request_sha256": "06a79ff0e180c7b3998c077313965ce60948830a70b1d5be36c4f9f1ee05fff1",
+  "response_id": "chatcmpl-89fcaf90774e54f3",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

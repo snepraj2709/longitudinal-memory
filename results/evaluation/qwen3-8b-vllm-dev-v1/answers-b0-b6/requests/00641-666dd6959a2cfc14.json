@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "93bed06c60eb1ce0173e7b747c482b918605d1dca314d8a09323f76cbcc8f9b7",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4912,
+  "latency_ms": 10677,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Mateo accepted the design researcher role at Northstar Studio.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "Mateo accepted the design researcher role at Northstar Studio."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 144,
+  "position": 641,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_extraction_001",
+  "request_id": "answer:B5:qa:scaled_user_002_qa_extraction_001",
+  "request_sha256": "2e590b7ba6ac6007d7919b8def4fd3327ec398b91e8cbab55dd2c299b4858dc4",
+  "response_id": "chatcmpl-a435dfa42346bafe",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

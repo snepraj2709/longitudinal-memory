@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "855b4bfe87c73cd81ceb5886775e2d1d7e14d11cec734bbc399c64983a857460",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3246,
+  "latency_ms": 23262,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The employment start date for user_001 was initially recorded as 2026-02-03 based on an onboarding sheet. However, user_001 later corrected this date to 2026-01-11, indicating the start date was actually 2026-01-11. The correction was confirmed and is currently valid."
+    ],
+    "status": "answered",
+    "summary": "The employment start date for user_001 was initially recorded as 2026-02-03 based on an onboarding sheet. However, user_001 later corrected this date to 2026-01-11, indicating the start date was actually 2026-01-11. The correction was confirmed and is currently valid.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 354,
+  "position": 672,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_002",
+  "request_id": "answer:B5:summary:scaled_user_001_summary_temporal_reasoning_002",
+  "request_sha256": "6fc214a8fd47e0aa244181de6aaab552273131ac755e1126e30a52deb69312e2",
+  "response_id": "chatcmpl-9c14f3a0e71359ca",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

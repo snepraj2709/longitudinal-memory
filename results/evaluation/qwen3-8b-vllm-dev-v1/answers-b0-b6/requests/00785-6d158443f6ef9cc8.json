@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "9f01a43f075f4c6e81993d786e9c2fa5156c969a79cfc9371b83e62f639aa86d",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3007,
+  "latency_ms": 54497,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_001_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.8,
+    "statements": [
+      "The user's career goal during 2026 involved a shift in focus towards data products, with an initial positive assertion of work preference in this area. However, there was also a correction to the employment start date and uncertainty regarding a project deadline. The user also expressed feelings of exhaustion later in the year."
+    ],
+    "status": "answered",
+    "summary": "The user's career goal during 2026 involved a shift in focus towards data products, with an initial positive assertion of work preference in this area. However, there was also a correction to the employment start date and uncertainty regarding a project deadline. The user also expressed feelings of exhaustion later in the year.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 855,
+  "position": 785,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_001",
+  "request_id": "answer:B6:summary:scaled_user_001_summary_temporal_reasoning_001",
+  "request_sha256": "ae84245093d6d366365eadbab51a02f061c6d5a073cf5b6651a73c5a940b8897",
+  "response_id": "chatcmpl-b9e3243bdf9385b7",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "ff8bf7366080138f8475cb6df42e0da426aa138e62bd4cb134e1e97a139a4ab2",
+  "user_id": "user_001"
+}

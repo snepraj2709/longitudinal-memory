@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2491,
+  "latency_ms": 19780,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03. My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The start date was initially recorded as 2026-02-03 by the recruiting team, but user_001 later corrected it to 2026-01-11."
+    ],
+    "status": "answered",
+    "summary": "The start date was initially recorded as 2026-02-03 by the recruiting team, but user_001 later corrected it to 2026-01-11.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 315,
+  "position": 216,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_002",
+  "request_id": "answer:B1:summary:scaled_user_001_summary_temporal_reasoning_002",
+  "request_sha256": "66d3319ab8c0eea2dc625d53bdfc928312d751620e0a5aac6ba8bc2525996d53",
+  "response_id": "chatcmpl-897bc33a27dcd7ac",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

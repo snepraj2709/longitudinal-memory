@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "0fbd6e7b0f449424f6b33c65295b0c555be34e03ec76e51adca39133d71ea8f6",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2764,
+  "latency_ms": 12875,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The goal to build reliable health tools came after the goal to correct the employment start date.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The goal to build reliable health tools came after the goal to correct the employment start date."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 193,
+  "position": 718,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_temporal_reasoning_004",
+  "request_id": "answer:B6:qa:scaled_user_001_qa_temporal_reasoning_004",
+  "request_sha256": "18544a42654f633548a505cee29e5848d9e2de1fde8d2d75872775c6447f7ddd",
+  "response_id": "chatcmpl-bf3a41ece8689a5b",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "790f8b0cb1a12a61022f6ed0e99290a2aaf5384691dadb7b1deadd94f51c3c0a",
+  "user_id": "user_001"
+}

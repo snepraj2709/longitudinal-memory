@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "945e54583674538b6b3e368997c776bd3cd2ffa8ff6c1804ab3b0bf68253d145",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4841,
+  "latency_ms": 14835,
+  "output": {
+    "abstention_reason": null,
+    "answer": "As of March 2026, the start date visible in the sources was 2026-01-11.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "As of March 2026, the start date visible in the sources was 2026-01-11."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 211,
+  "position": 382,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_temporal_reasoning_010",
+  "request_id": "answer:B3:qa:scaled_user_001_qa_temporal_reasoning_010",
+  "request_sha256": "43af4dc99af9ef22c75561d0cbdeab750dbabb018258c560ce2e23848f1f5f64",
+  "response_id": "chatcmpl-b1370c8cdd3a7c42",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

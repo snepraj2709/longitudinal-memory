@@ -1,0 +1,80 @@
+{
+  "baseline_id": null,
+  "context_count": 10,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 1862,
+  "latency_ms": 21047,
+  "output": {
+    "judgments": [
+      {
+        "candidate_id": "035aba252306aecd676e",
+        "label": "correct",
+        "reason_codes": []
+      },
+      {
+        "candidate_id": "04dbf34eb0282816c554",
+        "label": "correct",
+        "reason_codes": []
+      },
+      {
+        "candidate_id": "2641494680cb9882409d",
+        "label": "correct",
+        "reason_codes": []
+      },
+      {
+        "candidate_id": "3473adc7c6e14c95cc3c",
+        "label": "correct",
+        "reason_codes": []
+      },
+      {
+        "candidate_id": "449de546cd939a29826e",
+        "label": "correct",
+        "reason_codes": []
+      },
+      {
+        "candidate_id": "49d5a7629a996a78f4ca",
+        "label": "correct",
+        "reason_codes": []
+      },
+      {
+        "candidate_id": "5a584ae239c6b6cb259c",
+        "label": "correct",
+        "reason_codes": []
+      },
+      {
+        "candidate_id": "686e85c5b427f91a5243",
+        "label": "correct",
+        "reason_codes": []
+      },
+      {
+        "candidate_id": "97a09e91f628fb398ee4",
+        "label": "correct",
+        "reason_codes": []
+      },
+      {
+        "candidate_id": "fca5503ece2b1f594d59",
+        "label": "correct",
+        "reason_codes": []
+      }
+    ]
+  },
+  "output_tokens": 329,
+  "position": 82,
+  "provider_attempt_count": 1,
+  "record_id": "judge_batch_0082",
+  "request_id": "judge:0082",
+  "request_sha256": "0d12fb23328c02bd0b8fa538c3bcb1f178786d06aae3d578bff2c9598cce0237",
+  "response_id": "chatcmpl-b4de966ecfaeb57d",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "judge",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

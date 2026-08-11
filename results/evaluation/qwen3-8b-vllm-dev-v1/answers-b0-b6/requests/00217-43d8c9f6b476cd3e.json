@@ -1,0 +1,69 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2491,
+  "latency_ms": 57430,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Care Map review is scheduled for 2026-08-11.",
+        "source_id": "scaled_user_001_calendar_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs. For now, I want to deepen my work in data products. I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03. My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year. I might move to Mumbai someday, but I have made no plan. The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      },
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Asha will lead Care Map. Leena will mentor Asha on the work.",
+        "source_id": "scaled_user_001_email_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "A Care Map review was scheduled for August 2026.",
+      "user_001 mentioned considering a move to Mumbai but having no plan yet, with a potential deadline of December 6, 2026."
+    ],
+    "status": "answered",
+    "summary": "The project assignment and review timeline for user_001 includes the following key events: user_001 accepted a product engineer role at Riverstone Labs in January 2026, with an initial focus on data products. In February 2026, recruiting noted Asha's start date as 2026-02-03, but this was later corrected by user_001 to 2026-01-11. In June 2026, nikhil mentioned that Asha will lead Care Map with Leena as mentor. A Care Map review was scheduled for August 2026. By September 2026, user_001 confirmed their current goal of building reliable health tools. In November 2026, user_001 mentioned considering a move to Mumbai but having no plan yet, with a potential deadline of December 6, 2026.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 919,
+  "position": 217,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_003",
+  "request_id": "answer:B1:summary:scaled_user_001_summary_temporal_reasoning_003",
+  "request_sha256": "19ed9b39a22a8e1ad6e5350000d44837f4ab5d2321b1d6955c36b0455254f8d3",
+  "response_id": "chatcmpl-920bbe93841728b8",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

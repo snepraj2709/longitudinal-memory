@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "9a581417f31a2688248226b7c06ac88d652d8044a77f77f16872e759c8be9fb9",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3569,
+  "latency_ms": 24107,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The two start-date claims are related as they both pertain to the employment start date of user_001. The first claim states the start date as '2026-02-03' based on an onboarding sheet, while the second claim corrects this date to '2026-01-11' as stated by user_001.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The two start-date claims are related as they both pertain to the employment start date of user_001. The first claim states the start date as '2026-02-03' based on an onboarding sheet, while the second claim corrects this date to '2026-01-11' as stated by user_001."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 368,
+  "position": 354,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_002",
+  "request_id": "answer:B3:qa:scaled_user_001_qa_conflict_detection_002",
+  "request_sha256": "d0c490cc7d7c20fb6d91f5bbe8a74856eb01933a30a7e06d3bb7d6045dfa786e",
+  "response_id": "chatcmpl-97ce8dc8b21c626c",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

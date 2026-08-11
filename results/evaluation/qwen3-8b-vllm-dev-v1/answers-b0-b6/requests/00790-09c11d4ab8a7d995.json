@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "ab57cb61f488dd841295070bf8987ceab7446dbe5f8151a304c5153ee02458a4",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4067,
+  "latency_ms": 50476,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-07, though I need to confirm it.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.9,
+    "statements": [
+      "The user's career goal evolved during 2026, starting with a focus on deepening work in service design. This was later corrected to a goal of improving public-service research. There is also an unresolved question about the accuracy of a project deadline mentioned by the user."
+    ],
+    "status": "answered",
+    "summary": "The user's career goal evolved during 2026, starting with a focus on deepening work in service design. This was later corrected to a goal of improving public-service research. There is also an unresolved question about the accuracy of a project deadline mentioned by the user.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 779,
+  "position": 790,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_temporal_reasoning_001",
+  "request_id": "answer:B6:summary:scaled_user_002_summary_temporal_reasoning_001",
+  "request_sha256": "52a38527fabec9b249c908e963c024788eb21a22f37b0461999a549dea1a6218",
+  "response_id": "chatcmpl-9c4e4180a619999c",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "eeac8746fe2c867567cf3a269c43c4854649c34d05d22a8569f4da5e5f4d7339",
+  "user_id": "user_002"
+}

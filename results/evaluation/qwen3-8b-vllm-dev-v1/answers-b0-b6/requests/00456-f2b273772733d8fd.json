@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "1f4c34d73b17f4c2c4dfacca9f0876dfa5fe26c4a47f58767695fa5d2d575e1a",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4085,
+  "latency_ms": 17872,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "response": "The employment start date should be trusted as 2026-01-12. This is because user_002 corrected the record, stating that they began on 2026-01-12, not 2026-02-04. The original date of 2026-02-04 is superseded by this correction.",
+    "statements": [
+      "The employment start date should be trusted as 2026-01-12. This is because user_002 corrected the record, stating that they began on 2026-01-12, not 2026-02-04. The original date of 2026-02-04 is superseded by this correction."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 269,
+  "position": 456,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_interactive_conflict_detection_001",
+  "request_id": "answer:B3:interactive:scaled_user_002_interactive_conflict_detection_001",
+  "request_sha256": "3cc1c29bcd6345b9eefd87023eb702beb316fceca793f4594f5d93dad9d82359",
+  "response_id": "chatcmpl-b45eb8e42d50fd2c",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "interactive",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

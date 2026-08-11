@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "ce4cc599a1dc789c89e76a52d55c260a8da90c71a51072034a63932770a71138",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2379,
+  "latency_ms": 9830,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Yes, one office base can be added confidently to Asha's profile.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_chat_002_message_001",
+        "quote": "I heard Asha's office base is Pune.",
+        "source_id": "scaled_user_001_chat_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "Yes, one office base can be added confidently to Asha's profile."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 150,
+  "position": 276,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_user_modeling_008",
+  "request_id": "answer:B2:qa:scaled_user_001_qa_user_modeling_008",
+  "request_sha256": "45139acce60b03f523beec230c7a17c0d3ac6f398c18f1e835e91b7846018735",
+  "response_id": "chatcmpl-a7ea840146abbb5a",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

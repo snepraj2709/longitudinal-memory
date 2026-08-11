@@ -1,0 +1,63 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "53b29b8ff38f41ab469af40636ed60a04b41b6a17c6a1376727134ba3d0596e3",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2489,
+  "latency_ms": 47035,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio. For now, I want to deepen my work in service design. I do my best focused work remotely.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch. My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04. My current goal is still to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year. I might move to Valencia someday, but I have made no plan. The deadline may be 2026-12-07, though I need to confirm it.",
+        "source_id": "scaled_user_002_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user, user_002, accepted a design researcher role at Northstar Studio in January 2026 and has been focused on service design. They have been working remotely and have expressed a desire to improve public-service research. The user corrected their start date to January 12, 2026, and mentioned that they might move to Valencia someday but have no current plans. They also noted a potential deadline of December 7, 2026, though it needs confirmation."
+    ],
+    "status": "answered",
+    "summary": "The user, user_002, accepted a design researcher role at Northstar Studio in January 2026 and has been focused on service design. They have been working remotely and have expressed a desire to improve public-service research. The user corrected their start date to January 12, 2026, and mentioned that they might move to Valencia someday but have no current plans. They also noted a potential deadline of December 7, 2026, though it needs confirmation.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 753,
+  "position": 223,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_002",
+  "request_id": "answer:B1:summary:scaled_user_002_summary_user_modeling_002",
+  "request_sha256": "4fb6c72d2ce068078014b9f376b2755e494af16a102aee8349a6c48aec289867",
+  "response_id": "chatcmpl-810824d8ac65d0a1",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

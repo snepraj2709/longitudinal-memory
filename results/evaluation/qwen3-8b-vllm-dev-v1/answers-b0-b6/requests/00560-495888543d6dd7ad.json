@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "d8214a5053686c9cc3bacf8399d72071e7cdccf57ffc49ffe5c0d75b80959b09",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4237,
+  "latency_ms": 31368,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 0.8,
+    "statements": [
+      "The user's supported work preferences include remote work, a focus on data products, and a role as a product engineer. The user has also mentioned a relocation plan to build reliable health tools, though this is not explicitly tied to a specific location. There is no clear evidence of a relocation plan to Mumbai, despite the user expressing a potential interest in moving there."
+    ],
+    "status": "answered",
+    "summary": "The user's supported work preferences include remote work, a focus on data products, and a role as a product engineer. The user has also mentioned a relocation plan to build reliable health tools, though this is not explicitly tied to a specific location. There is no clear evidence of a relocation plan to Mumbai, despite the user expressing a potential interest in moving there.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 475,
+  "position": 560,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_user_modeling_001",
+  "request_id": "answer:B4:summary:scaled_user_001_summary_user_modeling_001",
+  "request_sha256": "22d70b6a372aaa284d5c803070b58f885ec9d854a97d0fa0088353329ef3d529",
+  "response_id": "chatcmpl-8b71cff2845e145c",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2489,
+  "latency_ms": 9717,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Asha's current work includes leading the Care Map project, as she will lead it according to the information provided.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Asha will lead Care Map. Leena will mentor Asha on the work.",
+        "source_id": "scaled_user_001_email_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "Asha's current work includes leading the Care Map project, as she will lead it according to the information provided."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 154,
+  "position": 160,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_user_modeling_006",
+  "request_id": "answer:B1:qa:scaled_user_001_qa_user_modeling_006",
+  "request_sha256": "58b8c695822b3c93bac4db18e011182f6b8e152c158205cc56dba6a36566945b",
+  "response_id": "chatcmpl-82650a00fa006196",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

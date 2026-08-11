@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "34b3a2bfaace8dbcbb7f978087fe5fce43af8133c763468c9ddd04503fce8eba",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 5059,
+  "latency_ms": 10543,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Remote work",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 1.0,
+    "statements": [
+      "Remote work"
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 142,
+  "position": 532,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_extraction_006",
+  "request_id": "answer:B4:qa:scaled_user_002_qa_extraction_006",
+  "request_sha256": "a6de9c9723fc22bbf2c9c7d7d87ac99e46843549ccd979472004be47a32be298",
+  "response_id": "chatcmpl-94a1a7c226381b4a",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

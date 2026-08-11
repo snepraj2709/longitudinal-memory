@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "a9cfcc936b4305ce7e052e8b62bacde1ec5a62fb555af870c8254147ac9defea",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3276,
+  "latency_ms": 31736,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "My current goal is still to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's career goal evolved during 2026. Initially, the user expressed a desire to 'deepen my work in service design' as their current career goal. Later, the user corrected their employment start date from '2026-02-04' to '2026-01-12'. Additionally, the user mentioned that their current goal is still to 'improve public-service research'."
+    ],
+    "status": "answered",
+    "summary": "The user's career goal evolved during 2026. Initially, the user expressed a desire to 'deepen my work in service design' as their current career goal. Later, the user corrected their employment start date from '2026-02-04' to '2026-01-12'. Additionally, the user mentioned that their current goal is still to 'improve public-service research'.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 488,
+  "position": 676,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_temporal_reasoning_001",
+  "request_id": "answer:B5:summary:scaled_user_002_summary_temporal_reasoning_001",
+  "request_sha256": "123863c96d14d71b0e5c65554fd973442b54238a7a9afc99ad4223c279eb293b",
+  "response_id": "chatcmpl-b200b40662078e1d",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

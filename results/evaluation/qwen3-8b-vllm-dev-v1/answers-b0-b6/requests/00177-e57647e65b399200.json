@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "53b29b8ff38f41ab469af40636ed60a04b41b6a17c6a1376727134ba3d0596e3",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2484,
+  "latency_ms": 12859,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The earlier start-date record should be erased as the user has corrected their start date to 2026-01-12.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04. My current goal is still to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The earlier start-date record should be erased as the user has corrected their start date to 2026-01-12."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 205,
+  "position": 177,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_003",
+  "request_id": "answer:B1:qa:scaled_user_002_qa_conflict_detection_003",
+  "request_sha256": "f79a58b6ef6da0de415c0687eb0936387c88640d3974875a1e159d8f8dde889f",
+  "response_id": "chatcmpl-a6256a02d62622d7",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

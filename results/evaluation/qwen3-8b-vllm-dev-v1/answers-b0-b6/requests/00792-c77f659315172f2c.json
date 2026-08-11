@@ -1,0 +1,63 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "4342b4567cc537ffe6a8b8e8f7a6fb0a7c371a85d377fe79ec9e8e63ac65595b",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3691,
+  "latency_ms": 37879,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "I might move to Valencia someday, but I have made no plan.",
+        "source_id": "scaled_user_002_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "The user's supported work preferences include a preference for remote work, an assigned project as a design researcher at Northstar Studio, a career goal to deepen work in service design, and a correction of their employment start date to 2026-01-12. The user also mentioned a negative stance on having a relocation plan to Valencia."
+    ],
+    "status": "answered",
+    "summary": "The user's supported work preferences include a preference for remote work, an assigned project as a design researcher at Northstar Studio, a career goal to deepen work in service design, and a correction of their employment start date to 2026-01-12. The user also mentioned a negative stance on having a relocation plan to Valencia.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 584,
+  "position": 792,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_001",
+  "request_id": "answer:B6:summary:scaled_user_002_summary_user_modeling_001",
+  "request_sha256": "4f7bca06e2b8a7c1d7ddf54e870d4aeac84b726b976ca81fbc5aecce0cab5d62",
+  "response_id": "chatcmpl-93f947892bb71954",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "327ce1696822984560923cc9ab202a359608133fe05ed7d61e1bf79be9e52749",
+  "user_id": "user_002"
+}

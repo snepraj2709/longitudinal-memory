@@ -1,0 +1,18 @@
+{
+  "b6_b7_context_identity": true,
+  "b6_b7_underlying_answer_identity": true,
+  "b7_provider_request_count": 0,
+  "failure_count": 0,
+  "failures_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "gold_opened": false,
+  "logical_prediction_count": 912,
+  "oracle_opened": false,
+  "predictions_sha256": "fbcaf867904f64076dbfeca07f4f974fe11704a894229aaa9905ce8a8b1a9cc4",
+  "provider_request_count": 798,
+  "review_opened": false,
+  "schema_version": "qwen_logical_prediction_seal_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "sealed",
+  "successful_count": 912
+}

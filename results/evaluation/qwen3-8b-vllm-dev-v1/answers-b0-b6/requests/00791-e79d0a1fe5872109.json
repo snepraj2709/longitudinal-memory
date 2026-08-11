@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "8f8fb77c3db78a42caa714bc4689315986497309ba1ae9f5d683ff61b85ebc8c",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4506,
+  "latency_ms": 22466,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The employment start date for user_002 was initially recorded as 2026-02-04, but this was later corrected to 2026-01-12. The correction was made by user_002 and is considered current."
+    ],
+    "status": "answered",
+    "summary": "The employment start date for user_002 was initially recorded as 2026-02-04, but this was later corrected to 2026-01-12. The correction was made by user_002 and is considered current.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 330,
+  "position": 791,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_temporal_reasoning_002",
+  "request_id": "answer:B6:summary:scaled_user_002_summary_temporal_reasoning_002",
+  "request_sha256": "37c6f73ec81f945188fe1d7195f7b9b9e290c653e2ca2d5a6aad6167ac1a81f2",
+  "response_id": "chatcmpl-980afaa95efca428",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "c978e1bd55af26b7c6079a5f7bcda2f554b8b2f8def56437dd9e39fb176bcffc",
+  "user_id": "user_002"
+}

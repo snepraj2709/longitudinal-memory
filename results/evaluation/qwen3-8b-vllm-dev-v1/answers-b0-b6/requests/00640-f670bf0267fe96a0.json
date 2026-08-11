@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "29af7301193b0e8a2f6daca1d468796db4ce63bb8fca4325b6d41274669a4c71",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3270,
+  "latency_ms": 21347,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The corrected start date outranks the onboarding sheet because it was explicitly stated and confirmed by user_002 in a conversation, which is considered more recent and directly provided by the user. The onboarding sheet's start date is from an email and is not explicitly corrected or disputed by user_002.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The corrected start date outranks the onboarding sheet because it was explicitly stated and confirmed by user_002 in a conversation, which is considered more recent and directly provided by the user. The onboarding sheet's start date is from an email and is not explicitly corrected or disputed by user_002."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 325,
+  "position": 640,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_010",
+  "request_id": "answer:B5:qa:scaled_user_002_qa_conflict_detection_010",
+  "request_sha256": "69f1cf1c8a1004f9367305c8aa48c2dc4e2a35a815e51299684fca6947920b7f",
+  "response_id": "chatcmpl-ac50b499a4470b83",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "7d17f29dd246bcdae5d44b587c00537d8e0cd7cd6c80b902a672123570a50d5c",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 5836,
+  "latency_ms": 19131,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Lucia's move to Valencia does not conflict with Mateo's location, as there is no direct evidence indicating Mateo's current location. However, there is a mention of Mateo being in Valencia in a stale roster, and Lucia is moving to Valencia.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_chat_001_message_001",
+        "quote": "Lucia is moving to Valencia; this is about Lucia, not Mateo.",
+        "source_id": "scaled_user_002_chat_001"
+      },
+      {
+        "message_id": "scaled_user_002_chat_002_message_002",
+        "quote": "My roster lists Mateo in Valencia, but it may be stale.",
+        "source_id": "scaled_user_002_chat_002"
+      }
+    ],
+    "confidence": 0.75,
+    "statements": [
+      "Lucia's move to Valencia does not conflict with Mateo's location, as there is no direct evidence indicating Mateo's current location. However, there is a mention of Mateo being in Valencia in a stale roster, and Lucia is moving to Valencia."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 271,
+  "position": 408,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_006",
+  "request_id": "answer:B3:qa:scaled_user_002_qa_conflict_detection_006",
+  "request_sha256": "e4e9e47bd4bb7d5905b5f51e7a9123ac6cc57b6456849d75639af93e951b161a",
+  "response_id": "chatcmpl-ae04df7f8b081d96",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

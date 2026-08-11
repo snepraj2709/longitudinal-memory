@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "a7596b1c8fa7faceee20d5afaf192599c2ef2f417134b10d10ee156acde10ab7",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 6356,
+  "latency_ms": 10982,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Mateo will lead the project \"Civic Lens\".",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_email_002_message_001",
+        "quote": "Mateo will lead Civic Lens.",
+        "source_id": "scaled_user_002_email_002"
+      }
+    ],
+    "confidence": 1.0,
+    "statements": [
+      "Mateo will lead the project \"Civic Lens\"."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 145,
+  "position": 415,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_extraction_003",
+  "request_id": "answer:B3:qa:scaled_user_002_qa_extraction_003",
+  "request_sha256": "343b141746f5af61131f3060154de649686e845ad1f11fcbda575d41f3b2cb3f",
+  "response_id": "chatcmpl-9b1b57724ff755ed",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

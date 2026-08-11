@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "033d3432b8e73c653f4159c96a96d224533248e2c1d0c54051568031bf398129",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3673,
+  "latency_ms": 9379,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Mateo is moving to Valencia.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_chat_002_message_002",
+        "quote": "My roster lists Mateo in Valencia, but it may be stale.",
+        "source_id": "scaled_user_002_chat_002"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "Mateo is moving to Valencia."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 139,
+  "position": 514,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_abstention_008",
+  "request_id": "answer:B4:qa:scaled_user_002_qa_abstention_008",
+  "request_sha256": "ec57633a63ecd6319d41e0d7aeeba5491422dc8ee85200ea5605d648947152a2",
+  "response_id": "chatcmpl-886caafa207578f6",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

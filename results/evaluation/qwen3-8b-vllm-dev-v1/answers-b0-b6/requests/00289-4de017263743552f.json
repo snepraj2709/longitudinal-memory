@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "0d92876f59484a8fe766350a54048533214b40eb1942fdeb47216e3cf672bac5",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2453,
+  "latency_ms": 12729,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The start date of 2026-01-12 should be treated as current for Mateo.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The start date of 2026-01-12 should be treated as current for Mateo."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 197,
+  "position": 289,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_001",
+  "request_id": "answer:B2:qa:scaled_user_002_qa_conflict_detection_001",
+  "request_sha256": "cbcb9835e3dda4581f4393ed703c1a8fad0450718d831c878fdb0adaf87dc8be",
+  "response_id": "chatcmpl-b41cb9ad3d18f4dd",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

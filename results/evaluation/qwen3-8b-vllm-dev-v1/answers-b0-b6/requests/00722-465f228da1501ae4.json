@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "c7c07a49563e1a5e8607960a1945dc800a073299cadd13064bb61fc6b52f730e",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2739,
+  "latency_ms": 13325,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The Care Map assignment came first.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Care Map review is scheduled for 2026-08-11.",
+        "source_id": "scaled_user_001_calendar_002"
+      },
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Asha will lead Care Map.",
+        "source_id": "scaled_user_001_email_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The Care Map assignment came first."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 201,
+  "position": 722,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_temporal_reasoning_008",
+  "request_id": "answer:B6:qa:scaled_user_001_qa_temporal_reasoning_008",
+  "request_sha256": "ef63baab45e909e45f6d5ed74380706000e770168d797b8e069a996dadb07afc",
+  "response_id": "chatcmpl-879258c98b73933b",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "4de8050dcafe0371d22253a518fef4990905321aba5449248f2c20541025f64c",
+  "user_id": "user_001"
+}

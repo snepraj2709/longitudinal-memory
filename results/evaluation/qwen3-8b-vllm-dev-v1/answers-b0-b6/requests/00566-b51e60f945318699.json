@@ -1,0 +1,63 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "bb08e497a5e15223785e025cf7bd0fd784385b61dc2f6fb71a325b929515a642",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4281,
+  "latency_ms": 38248,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_002_conversation_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The history supports that user_002 has been assigned the design researcher role at Northstar Studio, has a career goal to deepen their work in service design, and lives remotely. Additionally, user_002 has a relocation plan to improve public-service research, which began in May 2026. There is also evidence that user_002 felt exhausted in May 2026."
+    ],
+    "status": "answered",
+    "summary": "The history supports that user_002 has been assigned the design researcher role at Northstar Studio, has a career goal to deepen their work in service design, and lives remotely. Additionally, user_002 has a relocation plan to improve public-service research, which began in May 2026. There is also evidence that user_002 felt exhausted in May 2026.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 583,
+  "position": 566,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_003",
+  "request_id": "answer:B4:summary:scaled_user_002_summary_user_modeling_003",
+  "request_sha256": "272193c5ebdda2163f08efb849af5e3c595e8f9be7243ca2c47d98805ff5596f",
+  "response_id": "chatcmpl-8469811cdb307c6c",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

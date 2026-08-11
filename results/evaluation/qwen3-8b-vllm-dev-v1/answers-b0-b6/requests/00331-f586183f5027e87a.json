@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "d0db7acb092180427ce2cdff37521f418c579bcf5ec3b79e9d4c8c61c49743b6",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2376,
+  "latency_ms": 34774,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Care Map review is scheduled for 2026-08-11.",
+        "source_id": "scaled_user_001_calendar_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Asha will lead Care Map.",
+        "source_id": "scaled_user_001_email_002"
+      }
+    ],
+    "confidence": 0.8,
+    "statements": [
+      "The project assignment and review process for the Care Map project involved several key steps. First, nikhil assigned the project to Asha, as indicated in an email dated 2026-06-20. Subsequently, a scheduled event for the Care Map review was set for August 11, 2026, as noted in a calendar entry. The project deadline was mentioned as possibly being December 6, 2026, though this was not confirmed. Additionally, user_001 expressed a preference for working on data products."
+    ],
+    "status": "answered",
+    "summary": "The project assignment and review process for the Care Map project involved several key steps. First, nikhil assigned the project to Asha, as indicated in an email dated 2026-06-20. Subsequently, a scheduled event for the Care Map review was set for August 11, 2026, as noted in a calendar entry. The project deadline was mentioned as possibly being December 6, 2026, though this was not confirmed. Additionally, user_001 expressed a preference for working on data products.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 547,
+  "position": 331,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_003",
+  "request_id": "answer:B2:summary:scaled_user_001_summary_temporal_reasoning_003",
+  "request_sha256": "daf54439cce2782e87794ecfc6da47297ccc0c94d6f94ae58cdd2814b11b459e",
+  "response_id": "chatcmpl-aca889894c7ccf00",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

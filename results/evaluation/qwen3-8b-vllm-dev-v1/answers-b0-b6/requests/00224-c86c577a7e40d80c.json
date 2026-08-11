@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "53b29b8ff38f41ab469af40636ed60a04b41b6a17c6a1376727134ba3d0596e3",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2492,
+  "latency_ms": 35297,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio. For now, I want to deepen my work in service design. I do my best focused work remotely.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04. My current goal is still to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year. I might move to Valencia someday, but I have made no plan. The deadline may be 2026-12-07, though I need to confirm it.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The history supports that user_002 accepted a design researcher role at Northstar Studio in January 2026 and has been focused on service design work remotely. They corrected their start date to January 12, 2026, and their current goal is to improve public-service research. They have not decided to move to Valencia and have no plans for relocation. They mentioned a potential deadline of December 7, 2026, but it needs confirmation."
+    ],
+    "status": "answered",
+    "summary": "The history supports that user_002 accepted a design researcher role at Northstar Studio in January 2026 and has been focused on service design work remotely. They corrected their start date to January 12, 2026, and their current goal is to improve public-service research. They have not decided to move to Valencia and have no plans for relocation. They mentioned a potential deadline of December 7, 2026, but it needs confirmation.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 565,
+  "position": 224,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_003",
+  "request_id": "answer:B1:summary:scaled_user_002_summary_user_modeling_003",
+  "request_sha256": "2d33029f5f66775fc202b33d97124ea804f7bdc05b12df9ee1794c62c5b2b774",
+  "response_id": "chatcmpl-80f9e5f05858a7b4",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

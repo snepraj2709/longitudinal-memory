@@ -1,0 +1,13 @@
+{
+  "b6_b7_underlying_answer_identity": true,
+  "failure_count": 0,
+  "failures_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "logical_prediction_count": 114,
+  "provider_request_count": 0,
+  "responses_sha256": "eff66364cc9fe670f21fbf3c6a3a7767a54c4e467996d363a12eaa6a8d34123c",
+  "schema_version": "qwen_b7_derivation_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "completed",
+  "successful_count": 114
+}

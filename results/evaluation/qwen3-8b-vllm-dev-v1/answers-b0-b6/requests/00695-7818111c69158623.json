@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "2bca745c5026ca35d702823145d8bb75df21fced259444d44c47305c5a9c1a56",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3126,
+  "latency_ms": 16685,
+  "output": {
+    "abstention_reason": null,
+    "answer": "2026-01-11",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "2026-01-11"
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 250,
+  "position": 695,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_001",
+  "request_id": "answer:B6:qa:scaled_user_001_qa_conflict_detection_001",
+  "request_sha256": "30007af4976ad0a2d73877593700a80b140ab1adb67b425379f7870ecc7e8fdd",
+  "response_id": "chatcmpl-be287e286ec7c493",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "c3782c981a1da77452a9f0ce202823109e412b892531af60c1e2a1cdd51ddd36",
+  "user_id": "user_001"
+}

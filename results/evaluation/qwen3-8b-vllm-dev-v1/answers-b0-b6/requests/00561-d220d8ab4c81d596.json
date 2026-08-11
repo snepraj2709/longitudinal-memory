@@ -1,0 +1,68 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "47c21d8705d1b9ce67df64fb6b67bb0f62e9005dc74cc66a6e355bda64ba717b",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4226,
+  "latency_ms": 44395,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_001_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's current work context includes a primary role as a product engineer, a work preference for data products, and a remote work arrangement. The user has corrected their employment start date to January 11, 2026. Additionally, the user reports feeling exhausted and has shifted their goal to building reliable health tools."
+    ],
+    "status": "answered",
+    "summary": "The user's current work context includes a primary role as a product engineer, a work preference for data products, and a remote work arrangement. The user has corrected their employment start date to January 11, 2026. Additionally, the user reports feeling exhausted and has shifted their goal to building reliable health tools.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 679,
+  "position": 561,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_user_modeling_002",
+  "request_id": "answer:B4:summary:scaled_user_001_summary_user_modeling_002",
+  "request_sha256": "ac2ba90d3ce063186a57a48b1776778e0e56794133d247c43a5a41e5675ac2b7",
+  "response_id": "chatcmpl-808fe31e84f1e560",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

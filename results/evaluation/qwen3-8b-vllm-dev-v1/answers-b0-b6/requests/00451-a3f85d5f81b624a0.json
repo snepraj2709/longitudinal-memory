@@ -1,0 +1,68 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "b389e8219ea1bb6a96f0ba8826ee15c025d4c4521b1c88816eba754c3666a7fb",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4542,
+  "latency_ms": 44556,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Civic Lens review is scheduled for 2026-08-12.",
+        "source_id": "scaled_user_002_calendar_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_002_conversation_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's current work context includes being assigned to the design researcher role at Northstar Studio, having a career goal to deepen their work in service design, and living remotely. Additionally, they have expressed feeling exhausted and have a relocation plan to improve public-service research. There is also a scheduled event for a Civic Lens review in 2026. No unresolved questions were identified."
+    ],
+    "status": "answered",
+    "summary": "The user's current work context includes being assigned to the design researcher role at Northstar Studio, having a career goal to deepen their work in service design, and living remotely. Additionally, they have expressed feeling exhausted and have a relocation plan to improve public-service research. There is also a scheduled event for a Civic Lens review in 2026. No unresolved questions were identified.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 680,
+  "position": 451,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_002",
+  "request_id": "answer:B3:summary:scaled_user_002_summary_user_modeling_002",
+  "request_sha256": "0d9068e3f606b61177150d0f63b7e1fa474460e58d5a40901aa040a1469d4c74",
+  "response_id": "chatcmpl-aaa1d87af7321e43",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

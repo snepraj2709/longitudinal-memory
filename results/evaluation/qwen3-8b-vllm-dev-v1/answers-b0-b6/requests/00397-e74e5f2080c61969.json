@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "34271c780b8173dbb336430eabb2dd30198e9435b8688678106ab5e1b5b65a8d",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3438,
+  "latency_ms": 9826,
+  "output": {
+    "abstention_reason": null,
+    "answer": "No, Mateo has not decided to move to Valencia.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Planning discussion only. Mateo has not decided to move to Valencia.",
+        "source_id": "scaled_user_002_calendar_001"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "No, Mateo has not decided to move to Valencia."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 136,
+  "position": 397,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_abstention_005",
+  "request_id": "answer:B3:qa:scaled_user_002_qa_abstention_005",
+  "request_sha256": "b8d2ba931fe59be649b51d6887508baefe957428c0e436cfa6a2e1396bce8228",
+  "response_id": "chatcmpl-89658fd33ec466b0",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

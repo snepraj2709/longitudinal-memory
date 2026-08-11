@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "53a72a605ea7e884f8a98248b09ef5ac065454c0795417d19696e42e099c8fbd",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4168,
+  "latency_ms": 19013,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_chat_002_message_001",
+        "quote": "I heard Mateo's office base is Madrid.",
+        "source_id": "scaled_user_002_chat_002"
+      },
+      {
+        "message_id": "scaled_user_002_chat_002_message_002",
+        "quote": "My roster lists Mateo in Valencia, but it may be stale.",
+        "source_id": "scaled_user_002_chat_002"
+      }
+    ],
+    "confidence": 0.9,
+    "response": "The two reports regarding your office base remain unresolved. One report states that your office base is Madrid, reported by a teammate, while another report indicates that your office base is Valencia, reported by Sofia. There are no additional details to resolve this discrepancy.",
+    "statements": [
+      "The two reports regarding your office base remain unresolved. One report states that your office base is Madrid, reported by a teammate, while another report indicates that your office base is Valencia, reported by Sofia. There are no additional details to resolve this discrepancy."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 281,
+  "position": 683,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_interactive_abstention_002",
+  "request_id": "answer:B5:interactive:scaled_user_002_interactive_abstention_002",
+  "request_sha256": "6f3b40e26bfeaa94aaf4bbe87cddd2c46ffef096b777760cd9336ebf5fac1988",
+  "response_id": "chatcmpl-a5bd433dc668506b",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "interactive",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

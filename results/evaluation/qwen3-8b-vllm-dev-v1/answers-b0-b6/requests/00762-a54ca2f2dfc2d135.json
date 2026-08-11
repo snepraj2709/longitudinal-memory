@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "ab397578db82cb5e1e18238fa50f8fab8bc8b7b44d203c7a0e535d413efee4c7",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3140,
+  "latency_ms": 11220,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Mateo's calendar mentioned a scheduled event titled 'Civic Lens review'.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Civic Lens review is scheduled for 2026-08-12.",
+        "source_id": "scaled_user_002_calendar_002"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "Mateo's calendar mentioned a scheduled event titled 'Civic Lens review'."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 169,
+  "position": 762,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_extraction_008",
+  "request_id": "answer:B6:qa:scaled_user_002_qa_extraction_008",
+  "request_sha256": "1ee0e3be6969d96ebe853bef6ffb24bcdddecb83b741d46ab58a38509b802c2d",
+  "response_id": "chatcmpl-86084c2bfe460ee7",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "b8c58ea87de81aea77894a2bebd58c4952e2967139fd681b1d089081b083493b",
+  "user_id": "user_002"
+}

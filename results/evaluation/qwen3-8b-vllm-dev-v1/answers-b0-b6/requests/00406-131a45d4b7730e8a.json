@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "6e24ac04676ae49aee053acf561b70edd03d1d04869f012db7dc14db29c493b0",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4523,
+  "latency_ms": 16206,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The two office bases reported for Mateo were Madrid and Valencia.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_chat_002_message_001",
+        "quote": "I heard Mateo's office base is Madrid.",
+        "source_id": "scaled_user_002_chat_002"
+      },
+      {
+        "message_id": "scaled_user_002_chat_002_message_002",
+        "quote": "My roster lists Mateo in Valencia, but it may be stale.",
+        "source_id": "scaled_user_002_chat_002"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "The two office bases reported for Mateo were Madrid and Valencia."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 239,
+  "position": 406,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_004",
+  "request_id": "answer:B3:qa:scaled_user_002_qa_conflict_detection_004",
+  "request_sha256": "1f761e60dcf2d8464fd40f0e1204d89a1d09cd9d267275384049939aff80bcf3",
+  "response_id": "chatcmpl-8421a4e9b048e711",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

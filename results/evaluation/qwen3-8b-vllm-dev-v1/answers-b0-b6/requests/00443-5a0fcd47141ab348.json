@@ -1,0 +1,68 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "a8654b5afe54fdb7907df36f427f1d7459aeeaeb660ab54a0bbeec975788bf61",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 6360,
+  "latency_ms": 99686,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_001_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.9,
+    "statements": [
+      "The user's career goal evolved throughout 2026, reflecting a shift from initial objectives to more focused aspirations. Initially, the user expressed a desire to 'build reliable health tools' (claim_6bf31ecd4ecba169d4df41c7276112d64e67b121861870ea7510f2f0e62ce253), which was later reiterated as a relocation plan. By mid-2026, the user mentioned a project deadline of '2026-12-06' (claim_5a3fc79cd548dfa66f285efa6e5ba2680c4860db6058d6e7d649fd3a5c28b6e8) with uncertainty about its accuracy. Later in the year, the user emphasized their role as a 'product engineer' (claim_a4378ac4cfc4b528ee0fb6024ed4adc121cb0035a0ba904f29833a5a5a68916e) and work preference for 'data products' (claim_666e70bf68ccbcff8fcb98bf26affce4a7f25050fdf9d9044f3270023d1e6deb). The user also mentioned feeling exhausted (claim_421465b0569ba6891d59c16f6efdbdf090e44beb3c0c17041fd8f8ee714a858f) and living remotely (claim_5328785925943677e1c4ba59f7fa36e74e7994d26869a909f648c14efc3afaf0)."
+    ],
+    "status": "answered",
+    "summary": "The user's career goal evolved throughout 2026, reflecting a shift from initial objectives to more focused aspirations. Initially, the user expressed a desire to 'build reliable health tools' (claim_6bf31ecd4ecba169d4df41c7276112d64e67b121861870ea7510f2f0e62ce253), which was later reiterated as a relocation plan. By mid-2026, the user mentioned a project deadline of '2026-12-06' (claim_5a3fc79cd548dfa66f285efa6e5ba2680c4860db6058d6e7d649fd3a5c28b6e8) with uncertainty about its accuracy. Later in the year, the user emphasized their role as a 'product engineer' (claim_a4378ac4cfc4b528ee0fb6024ed4adc121cb0035a0ba904f29833a5a5a68916e) and work preference for 'data products' (claim_666e70bf68ccbcff8fcb98bf26affce4a7f25050fdf9d9044f3270023d1e6deb). The user also mentioned feeling exhausted (claim_421465b0569ba6891d59c16f6efdbdf090e44beb3c0c17041fd8f8ee714a858f) and living remotely (claim_5328785925943677e1c4ba59f7fa36e74e7994d26869a909f648c14efc3afaf0).",
+    "unresolved_parts": []
+  },
+  "output_tokens": 1513,
+  "position": 443,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_001",
+  "request_id": "answer:B3:summary:scaled_user_001_summary_temporal_reasoning_001",
+  "request_sha256": "4dcc71bf0ef78c4d68c4e6571904e652e6cb630c40524655432b1803041e12c3",
+  "response_id": "chatcmpl-81bbc483381f3e86",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

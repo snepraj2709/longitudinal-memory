@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "1b28c8368abb1b8f03bc16669f8913f866a46c9fd7d610a735f0f109257aae16",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3123,
+  "latency_ms": 18511,
+  "output": {
+    "abstention_reason": null,
+    "answer": "No, the earlier start-date record should not be erased.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "No, the earlier start-date record should not be erased."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 283,
+  "position": 697,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_003",
+  "request_id": "answer:B6:qa:scaled_user_001_qa_conflict_detection_003",
+  "request_sha256": "f2a2187f4f2feebc2755f164c286adf3b1b85dd6364b67bf4ab50aaf84d941c6",
+  "response_id": "chatcmpl-86f3359fbe9c686b",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "e886cefab33b5f25119be2ee93575ec5cddc805d8433a7473ec60fd95e58c602",
+  "user_id": "user_001"
+}

@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "6346ed75db1154b98284ac4f057da09d3e3f8ec0ff690b8da9ed84b56b62b7bc",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2438,
+  "latency_ms": 15713,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The goal to deepen my work in service design came before the goal to improve public-service research.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The goal to deepen my work in service design came before the goal to improve public-service research."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 240,
+  "position": 312,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_temporal_reasoning_004",
+  "request_id": "answer:B2:qa:scaled_user_002_qa_temporal_reasoning_004",
+  "request_sha256": "613f94964b9dff60a4d95283c75d31cc57a0811f07c2f35d0c7e93af9bb02776",
+  "response_id": "chatcmpl-88bccdf10fbfc8fe",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

@@ -1,0 +1,14 @@
+{
+  "authoritative_metric_count": 362,
+  "composite_score": null,
+  "composite_score_null_reason": "benchmark_contract_prohibits_composite_score",
+  "execution_failure_count": 0,
+  "judge_status": "separate_uncalibrated_diagnostic",
+  "metric_count": 362,
+  "metrics_sha256": "009ed78fee884a7d6f67cf6d53230127ece5e887e04645a9f9e8ccee9ed13802",
+  "prediction_manifest_sha256": "d7fac762e1cb397bfc00ed134f7958daf38068833fc5900df09d8978b67caf22",
+  "schema_version": "qwen_scorecard_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "completed"
+}

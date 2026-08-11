@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "cd92486debaa108b74202000c9e69d16879e275145230b2d44d5908b06b7fdd2",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2367,
+  "latency_ms": 28166,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "My current goal is still to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "I might move to Valencia someday, but I have made no plan.",
+        "source_id": "scaled_user_002_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's supported work preferences include a preference for remote work, no relocation plan to Valencia, and a focus on improving public-service research and deepening work in service design."
+    ],
+    "status": "answered",
+    "summary": "The user's supported work preferences include a preference for remote work, no relocation plan to Valencia, and a focus on improving public-service research and deepening work in service design.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 441,
+  "position": 336,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_001",
+  "request_id": "answer:B2:summary:scaled_user_002_summary_user_modeling_001",
+  "request_sha256": "2d890aa6d28468db0c874c1ce700d07cdc7ddd109ce2b1c95ce318b95ae1c2eb",
+  "response_id": "chatcmpl-ad5ca8d5d395ab06",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

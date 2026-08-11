@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "4d7603f17ed2cdeffd3e543287f222a742031cd97e8b4eb6f4917e7b74560141",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 6269,
+  "latency_ms": 12183,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The work setting consistently supported for user_001 is remote work.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The work setting consistently supported for user_001 is remote work."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 155,
+  "position": 383,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_user_modeling_001",
+  "request_id": "answer:B3:qa:scaled_user_001_qa_user_modeling_001",
+  "request_sha256": "c90b97292020e3cd3db7869fb86d4b37282635f45265e3e0713f5d644a4532d5",
+  "response_id": "chatcmpl-be673ca0ca0c8146",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

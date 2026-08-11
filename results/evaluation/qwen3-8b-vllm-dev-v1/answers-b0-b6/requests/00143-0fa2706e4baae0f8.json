@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2485,
+  "latency_ms": 9589,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Kabir's move to Mumbai was mentioned in chat.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_chat_001_message_001",
+        "quote": "Kabir is moving to Mumbai; this is about Kabir, not Asha.",
+        "source_id": "scaled_user_001_chat_001"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "Kabir's move to Mumbai was mentioned in chat."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 152,
+  "position": 143,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_009",
+  "request_id": "answer:B1:qa:scaled_user_001_qa_extraction_009",
+  "request_sha256": "7b2cde481e59b801138db09282a8aeb7505193573799a56445a340acc772768f",
+  "response_id": "chatcmpl-8c5d5b3a0e964b92",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

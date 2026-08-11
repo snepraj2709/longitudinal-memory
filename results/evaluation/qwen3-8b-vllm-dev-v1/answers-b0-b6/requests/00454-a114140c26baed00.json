@@ -1,0 +1,79 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "c55b51d936f16316d40a715f8c3587f531c5e81807d110b731fd48cf6dfc1bec",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 5332,
+  "latency_ms": 93785,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Care Map review is scheduled for 2026-08-11.",
+        "source_id": "scaled_user_001_calendar_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "I might move to Mumbai someday, but I have made no plan.",
+        "source_id": "scaled_user_001_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_001_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.9,
+    "response": "Based on the provided context, there are several observed facts and unresolved questions related to user_001's career direction. Here is a summary of the key points: \n\nObserved Facts:\n- Candidate, attributed to user_001: user_001 lives in \"remote work\".\n- Candidate, attributed to user_001: user_001 has relocation plan \"Mumbai\".\n- Candidate, attributed to user_001: user_001 was uncertain: user_001 project deadline \"2026-12-06\".\n- Candidate, attributed to user_001: user_001 primary role \"product engineer\".\n- Candidate, attributed to user_001: user_001 work preference \"data products\".\n- Candidate, attributed to user_001: user_001 lives in \"remote\".\n- Candidate, attributed to user_001: user_001 has scheduled event {\"location\":null,\"title\":\"Care Map review\"}.\n\nUnresolved Questions:\n- Is this uncertain statement accurate? user_001 project deadline \"2026-12-06\".\n\nCitations:\n- The claim that user_001 lives in \"remote work\" is supported by the quote: \"Remote work has suited me throughout the year.\" from the source scaled_user_001_conversation_004.\n- The claim that user_001 has relocation plan \"Mumbai\" is supported by the quote: \"I might move to Mumbai someday, but I have made no plan.\" from the source scaled_user_001_conversation_004.\n- The claim that user_001 was uncertain about the project deadline \"2026-12-06\" is supported by the quote: \"The deadline may be 2026-12-06, though I need to confirm it.\" from the source scaled_user_001_conversation_004.\n- The claim that user_001 primary role is \"product engineer\" is supported by the quote: \"I accepted the product engineer role at Riverstone Labs.\" from the source scaled_user_001_conversation_001.\n- The claim that user_001 work preference is \"data products\" is supported by the quote: \"For now, I want to deepen my work in data products.\" from the source scaled_user_001_conversation_001.\n- The claim that user_001 lives in \"remote\" is supported by the quote: \"I do my best focused work remotely.\" from the source scaled_user_001_conversation_001.\n- The claim that user_001 has scheduled event \"Care Map review\" is supported by the quote: \"Care Map review is scheduled for 2026-08-11.\" from the source scaled_user_001_calendar_002.\n\nThe scenario indicates that the response should distinguish data products from the later goal to build reliable health tools. However, the context does not provide information about the later goal to build reliable health tools. Therefore, the response cannot address this part of the scenario.",
+    "statements": [
+      "Candidate, attributed to user_001: user_001 lives in \"remote work\".",
+      "Candidate, attributed to user_001: user_001 has relocation plan \"Mumbai\".",
+      "Candidate, attributed to user_001: user_001 was uncertain: user_001 project deadline \"2026-12-06\".",
+      "Candidate, attributed to user_001: user_001 primary role \"product engineer\".",
+      "Candidate, attributed to user_001: user_001 work preference \"data products\".",
+      "Candidate, attributed to user_001: user_001 lives in \"remote\".",
+      "Candidate, attributed to user_001: user_001 has scheduled event {\"location\":null,\"title\":\"Care Map review\"}."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 1462,
+  "position": 454,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_interactive_temporal_reasoning_002",
+  "request_id": "answer:B3:interactive:scaled_user_001_interactive_temporal_reasoning_002",
+  "request_sha256": "8c442fdc85af906872206df9866a053e9b7841426169009fc44fc921b45b44c0",
+  "response_id": "chatcmpl-b2e2a03782836dca",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "interactive",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

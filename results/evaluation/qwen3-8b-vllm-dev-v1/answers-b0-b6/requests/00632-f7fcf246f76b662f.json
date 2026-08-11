@@ -1,0 +1,49 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "f4cf68ea04f2f30e3046ad516ab1b1546904cd3d8888174c640f35e763451283",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3266,
+  "latency_ms": 39118,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The two start-date claims are related as conflicting assertions about user_002's employment start date. The first claim (claim_bcf61836860a656d9cd83e006335df1b5e3629b5a9e81fa78473e0c770746b3d) states the start date is 2026-02-04, based on an onboarding sheet record from the recruiting speaker. The second claim (claim_970eeaf1002ca58c88137980f3507eeead51c6a9f180bf96e68c8fd69654214e) corrects this to 2026-01-12, directly stated by user_002.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.9,
+    "statements": [
+      "The first claim (claim_bcf61836860a656d9cd83e006335df1b5e3629b5a9e81fa78473e0c770746b3d) states the start date is 2026-02-04, based on an onboarding sheet record from the recruiting speaker.",
+      "The second claim (claim_970eeaf1002ca58c88137980f3507eeead51c6a9f180bf96e68c8fd69654214e) corrects this to 2026-01-12, directly stated by user_002."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 606,
+  "position": 632,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_002",
+  "request_id": "answer:B5:qa:scaled_user_002_qa_conflict_detection_002",
+  "request_sha256": "a848d6d06c1ffac903f3428133c8d4b12ddaecc763b406e52d514caada9ccf43",
+  "response_id": "chatcmpl-813eae7bf1944d7f",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

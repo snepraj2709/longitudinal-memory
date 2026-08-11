@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "20a5d272e9bb02f0821b97f0d6f2b87bbffd5e47b194f014dd2f80146084ba05",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2684,
+  "latency_ms": 21615,
+  "output": {
+    "abstention_reason": null,
+    "answer": "No, Kabir's move does not conflict with Asha's location.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Planning discussion only. Asha has not decided to move to Mumbai.",
+        "source_id": "scaled_user_001_calendar_001"
+      },
+      {
+        "message_id": "scaled_user_001_chat_001_message_001",
+        "quote": "Kabir is moving to Mumbai; this is about Kabir, not Asha.",
+        "source_id": "scaled_user_001_chat_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "No, Kabir's move does not conflict with Asha's location."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 334,
+  "position": 586,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_006",
+  "request_id": "answer:B5:qa:scaled_user_001_qa_conflict_detection_006",
+  "request_sha256": "c8160f5bdca8360ae339f01c712dbc53134882b1a0d44c3831349a0cf7254143",
+  "response_id": "chatcmpl-8db3490773e95d0c",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

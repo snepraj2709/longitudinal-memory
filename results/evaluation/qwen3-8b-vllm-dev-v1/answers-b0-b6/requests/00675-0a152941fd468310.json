@@ -1,0 +1,63 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "bc5766d44597d43db870688dfaeec6cd1a63f44a59ea47468297f926c2c297e8",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3636,
+  "latency_ms": 55534,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's current work context includes a preference for working on data products, a primary role as a product engineer, and a remote work arrangement. The employment start date has been corrected to 2026-01-11, overriding an earlier recorded start date of 2026-02-03."
+    ],
+    "status": "answered",
+    "summary": "The user's current work context includes a preference for working on data products, a primary role as a product engineer, and a remote work arrangement. The employment start date has been corrected to 2026-01-11, overriding an earlier recorded start date of 2026-02-03.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 864,
+  "position": 675,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_user_modeling_002",
+  "request_id": "answer:B5:summary:scaled_user_001_summary_user_modeling_002",
+  "request_sha256": "d1c94e2201cf2595c0b254f9524f0945f68fc8e2b7b878ccdbb8cd08a35344d9",
+  "response_id": "chatcmpl-a064d7164e742beb",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

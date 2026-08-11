@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "5f92b3a07c8b0ea306172c68bf1816d49fe47045fc3afd8a2de70b7fd96b7415",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2690,
+  "latency_ms": 11600,
+  "output": {
+    "abstention_reason": null,
+    "answer": "2026-02-03",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "2026-02-03"
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 172,
+  "position": 467,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_001",
+  "request_id": "answer:B4:qa:scaled_user_001_qa_conflict_detection_001",
+  "request_sha256": "67b21e73761e6ffe4b67e7662e0603947d2d8156150e9e42ff90e6d3783c2ed5",
+  "response_id": "chatcmpl-8c4cf75d2a5eced7",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "c3a70bd6940d768f9ebfb1d33cebd60ea9998a4627630d16d5e321208385d569",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2344,
+  "latency_ms": 27760,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "I might move to Mumbai someday, but I have made no plan.",
+        "source_id": "scaled_user_001_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's supported work preferences include remote work, a focus on data products, and a goal to build reliable health tools. The user has not made any relocation plans."
+    ],
+    "status": "answered",
+    "summary": "The user's supported work preferences include remote work, a focus on data products, and a goal to build reliable health tools. The user has not made any relocation plans.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 435,
+  "position": 332,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_user_modeling_001",
+  "request_id": "answer:B2:summary:scaled_user_001_summary_user_modeling_001",
+  "request_sha256": "1f0336b707ac1e5b2d012625aa15ad056114992008469d58ffe34c68a96d6c20",
+  "response_id": "chatcmpl-ba2ad8a42885281f",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "fefc5a0c4cfe63083117ed72b894f1e57f55f8da94ad5423d6cee66273536b6c",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 5954,
+  "latency_ms": 12860,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Mateo's career focus at the start of 2026 was to deepen his work in service design.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "Mateo's career focus at the start of 2026 was to deepen his work in service design."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 171,
+  "position": 423,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_temporal_reasoning_001",
+  "request_id": "answer:B3:qa:scaled_user_002_qa_temporal_reasoning_001",
+  "request_sha256": "3909c3a4f4d56734fa21a7e58b19056c3e3fa414893d48f36fcc4f65fe3786e5",
+  "response_id": "chatcmpl-9a6d9bd0b1e4c7b9",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "6cc7cbe82124591055f50df3eab948f4155c0c247357e7c8e7eaeee5dfda00c3",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3724,
+  "latency_ms": 30225,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's current work context includes being assigned the design researcher role at Northstar Studio, with an employment start date corrected to 2026-01-12. The user's career goal is to deepen their work in service design and they live remotely."
+    ],
+    "status": "answered",
+    "summary": "The user's current work context includes being assigned the design researcher role at Northstar Studio, with an employment start date corrected to 2026-01-12. The user's career goal is to deepen their work in service design and they live remotely.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 460,
+  "position": 679,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_002",
+  "request_id": "answer:B5:summary:scaled_user_002_summary_user_modeling_002",
+  "request_sha256": "825eb75ffd740743fee7fbe38b38e33b05172aee8b7b59129224a2fd5a64c48e",
+  "response_id": "chatcmpl-8b0b358d210d90f2",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

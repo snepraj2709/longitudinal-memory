@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2507,
+  "latency_ms": 20340,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs. For now, I want to deepen my work in data products. I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch. My goal has shifted: I want to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_002"
+      }
+    ],
+    "confidence": 0.95,
+    "response": "In your career direction this year, you initially focused on deepening your work in data products after accepting the product engineer role at Riverstone Labs. However, your goal shifted later in the year to building reliable health tools, as mentioned in a conversation on 2026-05-18. This shift indicates a change from data products to health tools.",
+    "statements": [
+      "In your career direction this year, you initially focused on deepening your work in data products after accepting the product engineer role at Riverstone Labs. However, your goal shifted later in the year to building reliable health tools, as mentioned in a conversation on 2026-05-18. This shift indicates a change from data products to health tools."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 325,
+  "position": 226,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_interactive_temporal_reasoning_002",
+  "request_id": "answer:B1:interactive:scaled_user_001_interactive_temporal_reasoning_002",
+  "request_sha256": "49b026184fb82d999182228ccff5d4e007c0f04cc7a16b0326d876e181857f64",
+  "response_id": "chatcmpl-afdd25fdaf638a9c",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "interactive",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

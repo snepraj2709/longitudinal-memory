@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "f6be4a5a0d3249310b76ea44962e449409f45d0288c1ea192bfa5afa85197ccc",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3223,
+  "latency_ms": 24800,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "The user, user_002, has been assigned the project 'design researcher role at Northstar Studio' and has a career goal of 'deepen my work in service design'. The employment start date is recorded as 2026-02-04. There are no unresolved questions."
+    ],
+    "status": "answered",
+    "summary": "The user, user_002, has been assigned the project 'design researcher role at Northstar Studio' and has a career goal of 'deepen my work in service design'. The employment start date is recorded as 2026-02-04. There are no unresolved questions.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 380,
+  "position": 793,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_002",
+  "request_id": "answer:B6:summary:scaled_user_002_summary_user_modeling_002",
+  "request_sha256": "8646c2fd179583c9ed3f6ac9269b74798b98710b4162f071595e64067c0bd944",
+  "response_id": "chatcmpl-b0a089172a009b77",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "8fdb0ad4457bed72affd7433e7fb35151712f79a9d163efc2248a2ac827b6ae0",
+  "user_id": "user_002"
+}

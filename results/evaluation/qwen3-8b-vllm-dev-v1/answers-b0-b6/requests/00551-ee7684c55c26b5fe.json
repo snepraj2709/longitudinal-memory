@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "39988e745ea5b224417dc953b93e15813902e56b10fd966da712670514af8af3",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3644,
+  "latency_ms": 10428,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Mateo has an ongoing work relationship with Elias as his mentor.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_email_002_message_001",
+        "quote": "Elias will mentor Mateo on the work.",
+        "source_id": "scaled_user_002_email_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "Mateo has an ongoing work relationship with Elias as his mentor."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 149,
+  "position": 551,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_user_modeling_005",
+  "request_id": "answer:B4:qa:scaled_user_002_qa_user_modeling_005",
+  "request_sha256": "6a2144d5a118bc7c378e61dd03f9372f43544b04107cdbeb8e6c3dba838c13e4",
+  "response_id": "chatcmpl-950735d06aa41085",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

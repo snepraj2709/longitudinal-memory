@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "a5eba1f530a3858fdb8c7718984d7f6af4fc59fdf32ce6a77e981a718583b3a0",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3382,
+  "latency_ms": 9655,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Asha consistently supports a remote work setting.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "Asha consistently supports a remote work setting."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 140,
+  "position": 725,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_user_modeling_001",
+  "request_id": "answer:B6:qa:scaled_user_001_qa_user_modeling_001",
+  "request_sha256": "835dabf69bcaa0ae3d69dbf29a2ce76e5e4e6e95403dfef9f9e649d3c2bfb4df",
+  "response_id": "chatcmpl-b01637e4f7c1c453",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "b41f9be42a8466349c288b4340fc01164770d2d898db1d2a8f2fb70f7cd7ae2a",
+  "user_id": "user_001"
+}

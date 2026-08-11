@@ -1,0 +1,80 @@
+{
+  "baseline_id": null,
+  "context_count": 5,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2635,
+  "latency_ms": 23524,
+  "output": {
+    "judgments": [
+      {
+        "candidate_id": "5646477ea8d22d921ea6",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct",
+          "accurate_time",
+          "no_uncertainty"
+        ]
+      },
+      {
+        "candidate_id": "5b1c6de77dc87cd49f5d",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct",
+          "accurate_time",
+          "no_uncertainty"
+        ]
+      },
+      {
+        "candidate_id": "877de455cf34f5ec9746",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct",
+          "accurate_time",
+          "no_uncertainty"
+        ]
+      },
+      {
+        "candidate_id": "dcc908233d3f9d625280",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct",
+          "accurate_time",
+          "no_uncertainty"
+        ]
+      },
+      {
+        "candidate_id": "e73cdf2061b649f3155b",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct",
+          "accurate_time",
+          "no_uncertainty"
+        ]
+      }
+    ]
+  },
+  "output_tokens": 365,
+  "position": 54,
+  "provider_attempt_count": 1,
+  "record_id": "judge_batch_0054",
+  "request_id": "judge:0054",
+  "request_sha256": "03be82b9e61b9c0add189ce5631f2a545371a48e8f991b9842f9fc434bd4269f",
+  "response_id": "chatcmpl-b7421d264040de98",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "judge",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "56f3aa39d3e611b39953dc633cf8caacbed8c59565f30da935dfdee2cfb31f1a",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4817,
+  "latency_ms": 11776,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Asha's calendar mentioned a relocation plan to Mumbai, but it was noted that Asha has not decided to move to Mumbai yet.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Planning discussion only. Asha has not decided to move to Mumbai.",
+        "source_id": "scaled_user_001_calendar_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "Asha's calendar mentioned a relocation plan to Mumbai, but it was noted that Asha has not decided to move to Mumbai yet."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 167,
+  "position": 370,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_008",
+  "request_id": "answer:B3:qa:scaled_user_001_qa_extraction_008",
+  "request_sha256": "4fc453a683bce5666028a80b4fc646a33bd2a49808af5bc46197dec816bf0acf",
+  "response_id": "chatcmpl-b45e45a422ff188f",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

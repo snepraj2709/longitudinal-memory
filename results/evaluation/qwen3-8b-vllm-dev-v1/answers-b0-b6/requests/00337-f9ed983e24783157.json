@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "3bb6f175115a03526f22f0e3acfaeb6de8e0601b2067888c1c8306c8dc59dc35",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2481,
+  "latency_ms": 31062,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's current work context includes their employment start date, assigned project, career goal, and relocation plan. The employment start date was corrected to 2026-01-12. They are assigned to the design researcher role at Northstar Studio. Their career goal is to deepen their work in service design, and their relocation plan involves improving public-service research."
+    ],
+    "status": "answered",
+    "summary": "The user's current work context includes their employment start date, assigned project, career goal, and relocation plan. The employment start date was corrected to 2026-01-12. They are assigned to the design researcher role at Northstar Studio. Their career goal is to deepen their work in service design, and their relocation plan involves improving public-service research.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 487,
+  "position": 337,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_002",
+  "request_id": "answer:B2:summary:scaled_user_002_summary_user_modeling_002",
+  "request_sha256": "ff03d75f8a53e8f491f0e4341ab6fc4c2ab28b933c55ced2581a8021ab59d669",
+  "response_id": "chatcmpl-ba2d3250dcc61136",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

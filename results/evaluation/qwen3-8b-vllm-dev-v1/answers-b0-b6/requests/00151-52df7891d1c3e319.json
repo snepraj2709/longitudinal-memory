@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2487,
+  "latency_ms": 9880,
+  "output": {
+    "abstention_reason": null,
+    "answer": "No, the launch exhaustion did not describe a permanent state.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch. My goal has shifted: I want to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "No, the launch exhaustion did not describe a permanent state."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 157,
+  "position": 151,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_temporal_reasoning_007",
+  "request_id": "answer:B1:qa:scaled_user_001_qa_temporal_reasoning_007",
+  "request_sha256": "acdddd7b81dbf6b6185eefb061e4b986239186c7b3afacfdef0b5677b4818268",
+  "response_id": "chatcmpl-bcb5b4cd688c46ed",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

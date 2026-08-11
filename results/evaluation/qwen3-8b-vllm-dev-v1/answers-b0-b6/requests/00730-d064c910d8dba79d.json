@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "301a1a407299ca57b3d9cb9061b951dca1a6c4f469107750b20ff3af6516b7e2",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3160,
+  "latency_ms": 9937,
+  "output": {
+    "abstention_reason": null,
+    "answer": "data products",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "data products"
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 141,
+  "position": 730,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_user_modeling_006",
+  "request_id": "answer:B6:qa:scaled_user_001_qa_user_modeling_006",
+  "request_sha256": "7fddb83b225f03245fc2632e29553a54b2f28bd7f259fba88947b8842da6412e",
+  "response_id": "chatcmpl-9b512f3544323aa7",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "7a78f0d497616b00da06f4d6c5d4c5098b5fb98201560423a5806589cda6bea5",
+  "user_id": "user_001"
+}

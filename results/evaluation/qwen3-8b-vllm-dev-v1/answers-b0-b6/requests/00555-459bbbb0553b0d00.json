@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "006cb59ded9f1b507392db52f8e6bf725ba8f3f4532ca1ec2601c7ab5064547d",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4281,
+  "latency_ms": 11197,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The repeated evidence supporting Mateo's work preference is that he stated, 'Remote work has suited me throughout the year.' This indicates a preference for remote work.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "Remote work has suited me throughout the year."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 159,
+  "position": 555,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_user_modeling_009",
+  "request_id": "answer:B4:qa:scaled_user_002_qa_user_modeling_009",
+  "request_sha256": "47a8e48b06220d819b0efaa721d6b0e9c26b98c6bf48a7b0017f9a7884f38b31",
+  "response_id": "chatcmpl-80647d93bec4f518",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

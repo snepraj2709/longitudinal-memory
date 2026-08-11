@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "ae03768a1da421660df392a42d7fc2bd99c993fffaf2a7919c38ec2c12aa728d",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3968,
+  "latency_ms": 43009,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "I might move to Mumbai someday, but I have made no plan.",
+        "source_id": "scaled_user_001_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.8,
+    "response": "Based on the provided context, there are several changes in your career direction this year. You accepted a product engineer role at Riverstone Labs, which indicates a shift in your professional responsibilities. Additionally, you have expressed interest in relocating to Mumbai, suggesting potential changes in your work location or lifestyle. However, it is noted that you have been working remotely and have found it suitable throughout the year, indicating a possible balance between remote work and relocation plans.",
+    "statements": [
+      "Based on the provided context, there are several changes in your career direction this year. You accepted a product engineer role at Riverstone Labs, which indicates a shift in your professional responsibilities. Additionally, you have expressed interest in relocating to Mumbai, suggesting potential changes in your work location or lifestyle. However, it is noted that you have been working remotely and have found it suitable throughout the year, indicating a possible balance between remote work and relocation plans."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 661,
+  "position": 568,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_interactive_temporal_reasoning_002",
+  "request_id": "answer:B4:interactive:scaled_user_001_interactive_temporal_reasoning_002",
+  "request_sha256": "3a5a67dd01068bdece57c52a8b612cb5ddda9a5690fe70bbc06b9c759c620a7b",
+  "response_id": "chatcmpl-97dc1660d978f3d6",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "interactive",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

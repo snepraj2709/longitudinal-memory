@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "dcdb5c98e7e52fc676c92ab95834022a8fac4c773c27bf2767bb256b3a3dd5de",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2406,
+  "latency_ms": 9505,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Elias will mentor Mateo on the work.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_email_002_message_001",
+        "quote": "Elias will mentor Mateo on the work.",
+        "source_id": "scaled_user_002_email_002"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "Elias will mentor Mateo on the work."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 141,
+  "position": 302,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_extraction_004",
+  "request_id": "answer:B2:qa:scaled_user_002_qa_extraction_004",
+  "request_sha256": "97051c07495be957b98eeff5e07f647c61884bedc76683cb29b565f4d7f6b501",
+  "response_id": "chatcmpl-8a64b6af7686e826",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

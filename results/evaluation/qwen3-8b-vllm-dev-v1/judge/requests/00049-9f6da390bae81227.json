@@ -1,0 +1,75 @@
+{
+  "baseline_id": null,
+  "context_count": 5,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 1025,
+  "latency_ms": 20755,
+  "output": {
+    "judgments": [
+      {
+        "candidate_id": "0a2fc1a46242f1b0366f",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct_time",
+          "uncertainty_expressed"
+        ]
+      },
+      {
+        "candidate_id": "0a8bf8a9cef8b06b582e",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct_time",
+          "uncertainty_expressed"
+        ]
+      },
+      {
+        "candidate_id": "c346cdb6bd23a1147194",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct_time",
+          "uncertainty_expressed"
+        ]
+      },
+      {
+        "candidate_id": "c40ff3d97ad55baa0f57",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct_time",
+          "uncertainty_expressed"
+        ]
+      },
+      {
+        "candidate_id": "e9b732f9ea415d16a590",
+        "label": "correct",
+        "reason_codes": [
+          "faithful_to_required_events",
+          "correct_time",
+          "uncertainty_expressed"
+        ]
+      }
+    ]
+  },
+  "output_tokens": 332,
+  "position": 49,
+  "provider_attempt_count": 1,
+  "record_id": "judge_batch_0049",
+  "request_id": "judge:0049",
+  "request_sha256": "ebea39eec6e2c618057cab51300e524875fba21497aecbb7fe6c3cc7c89d480b",
+  "response_id": "chatcmpl-a2ead3c8cd5b0b30",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "judge",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "888a0e61fa38843d601d5692e80c4c88ca4604efc29a282ee9a24d240d90b51b",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3248,
+  "latency_ms": 14376,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The earlier start-date record should be updated, not erased, as user_001 corrected the employment start date to \"2026-01-11\" in a later conversation.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The earlier start-date record should be updated, not erased, as user_001 corrected the employment start date to \"2026-01-11\" in a later conversation."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 216,
+  "position": 583,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_003",
+  "request_id": "answer:B5:qa:scaled_user_001_qa_conflict_detection_003",
+  "request_sha256": "5e8c156e1d0a3dc601326c0037165f101e2d8b9108ef3ce034c3d4d95bee82af",
+  "response_id": "chatcmpl-9a8e15555d413ca1",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

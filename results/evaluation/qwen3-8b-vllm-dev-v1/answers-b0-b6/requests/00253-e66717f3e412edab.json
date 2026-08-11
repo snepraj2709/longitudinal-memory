@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "caf3e669b0ed29776a4a55be92e9ea224eba60d7a671693650726c14ee7f013b",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2387,
+  "latency_ms": 9829,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The Care Map review is scheduled for 2026-08-11.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Care Map review is scheduled for 2026-08-11.",
+        "source_id": "scaled_user_001_calendar_002"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "The Care Map review is scheduled for 2026-08-11."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 146,
+  "position": 253,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_005",
+  "request_id": "answer:B2:qa:scaled_user_001_qa_extraction_005",
+  "request_sha256": "c1999bb2ca40ac73e9cf32f38c14ca86cfabd183e682a10edffc6f5a677b00ae",
+  "response_id": "chatcmpl-bec4d0cd1adf94a2",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

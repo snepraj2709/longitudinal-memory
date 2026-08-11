@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "9c958b90ddc45bda2a6b6f382786e2dc2ad7a5656d663a2f15537fb46efec0b4",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3167,
+  "latency_ms": 21914,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_002_conversation_002"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "The history supports that user_002 has been assigned the design researcher role at Northstar Studio, and their career goal is to deepen their work in service design. Additionally, user_002 feels exhausted this month after a launch."
+    ],
+    "status": "answered",
+    "summary": "The history supports that user_002 has been assigned the design researcher role at Northstar Studio, and their career goal is to deepen their work in service design. Additionally, user_002 feels exhausted this month after a launch.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 342,
+  "position": 794,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_003",
+  "request_id": "answer:B6:summary:scaled_user_002_summary_user_modeling_003",
+  "request_sha256": "157e11969d55de3d2aa9d47a850a8307072416d13c4148ff7354ba3ab25ac398",
+  "response_id": "chatcmpl-bee7c747aefad2c2",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "d7421bc19c5214bef6577698c63a7290bda6517cd297ce188430b1dc0b91cf1a",
+  "user_id": "user_002"
+}

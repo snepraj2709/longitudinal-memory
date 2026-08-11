@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "470e74773e6624bc428b09b011360b04eda5925e4da4d261bcb3f81fbfbab3d0",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3587,
+  "latency_ms": 42187,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Care Map review is scheduled for 2026-08-11.",
+        "source_id": "scaled_user_001_calendar_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "The user_001 has a project deadline of 2026-12-06, which is uncertain. Additionally, they have a scheduled event for the Care Map review on 2026-08-11. The user also corrected their employment start date from 2026-02-03 to 2026-01-11."
+    ],
+    "status": "answered",
+    "summary": "The user_001 has a project deadline of 2026-12-06, which is uncertain. Additionally, they have a scheduled event for the Care Map review on 2026-08-11. The user also corrected their employment start date from 2026-02-03 to 2026-01-11.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 653,
+  "position": 787,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_003",
+  "request_id": "answer:B6:summary:scaled_user_001_summary_temporal_reasoning_003",
+  "request_sha256": "7c772136625fbd77089bbf932c972dd8793dcc508b97729d708b101e15815484",
+  "response_id": "chatcmpl-a7d10654a0728aeb",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "cb600fd442bf7319eca33fa75863a54e787a7eda1df3f29fe300f8e7d03d2e13",
+  "user_id": "user_001"
+}

@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "0d92876f59484a8fe766350a54048533214b40eb1942fdeb47216e3cf672bac5",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2489,
+  "latency_ms": 20177,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "response": "The correct start date is 2026-01-12. This was corrected by the user in a conversation on 2026-09-10, where they stated, 'I need to correct the start date. I began on 2026-01-12, not 2026-02-04.' The earlier date of 2026-02-04, recorded by the recruiting team, is considered superseded.",
+    "statements": [
+      "The correct start date is 2026-01-12."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 317,
+  "position": 342,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_interactive_conflict_detection_001",
+  "request_id": "answer:B2:interactive:scaled_user_002_interactive_conflict_detection_001",
+  "request_sha256": "18bbd0ae1e19f158ec4657ef56ab8dd18cfbf75e488f94bb67c2180b18e53dee",
+  "response_id": "chatcmpl-88c0d8d5c6ee580d",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "interactive",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

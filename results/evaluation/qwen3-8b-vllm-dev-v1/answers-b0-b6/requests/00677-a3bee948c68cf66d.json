@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "c126ac472c790fa9787159211c2c84c6a2ce02c7ed8e77f3657b45eee585cd03",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3280,
+  "latency_ms": 31278,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The employment start date for user_002 was initially recorded as \"2026-02-04\" based on an email from the recruiting team. However, user_002 later corrected this date to \"2026-01-12\" during a conversation, which was accepted as the current record."
+    ],
+    "status": "answered",
+    "summary": "The employment start date for user_002 was initially recorded as \"2026-02-04\" based on an email from the recruiting team. However, user_002 later corrected this date to \"2026-01-12\" during a conversation, which was accepted as the current record.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 483,
+  "position": 677,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_temporal_reasoning_002",
+  "request_id": "answer:B5:summary:scaled_user_002_summary_temporal_reasoning_002",
+  "request_sha256": "ad6039e201b60c6a27418425c47b0d30fa3e4b27dc1ffc739b25a54f0fa58735",
+  "response_id": "chatcmpl-a700f099eb49700f",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

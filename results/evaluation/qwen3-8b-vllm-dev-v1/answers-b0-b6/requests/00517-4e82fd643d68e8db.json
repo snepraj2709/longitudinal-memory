@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "a936005e34b63fd93d02b2304f9be21c64d537663df8c592b0b562602df85062",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2703,
+  "latency_ms": 11981,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The start date of 2026-02-04 should be treated as current for Mateo.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The start date of 2026-02-04 should be treated as current for Mateo."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 181,
+  "position": 517,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_001",
+  "request_id": "answer:B4:qa:scaled_user_002_qa_conflict_detection_001",
+  "request_sha256": "9c74b929ba2ef0fef18c81658c321da37f47a3d508a92d9a2113ec776f8bc1d2",
+  "response_id": "chatcmpl-b0a39b28f068e380",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "5dab245328007cbace51b2f5bd1505f3a4e231770dc0f11c05142b12aca0788a",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3183,
+  "latency_ms": 16790,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The Civic Lens assignment came first.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Civic Lens review is scheduled for 2026-08-12.",
+        "source_id": "scaled_user_002_calendar_002"
+      },
+      {
+        "message_id": "scaled_user_002_email_002_message_001",
+        "quote": "Mateo will lead Civic Lens.",
+        "source_id": "scaled_user_002_email_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The Civic Lens assignment came first."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 254,
+  "position": 544,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_temporal_reasoning_008",
+  "request_id": "answer:B4:qa:scaled_user_002_qa_temporal_reasoning_008",
+  "request_sha256": "17205f3a6b7ad2ee65aa9c1f8f6e721b2ed914e3a4df1a9ec8355a1239a874ae",
+  "response_id": "chatcmpl-a9850c2420467648",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

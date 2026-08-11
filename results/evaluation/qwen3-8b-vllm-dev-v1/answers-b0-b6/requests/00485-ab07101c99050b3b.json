@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "d32efc2f2b22911feee37fd9354f3840d99c34171ffe7f52fe2a277eadf946f9",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2680,
+  "latency_ms": 17198,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Asha's move to Mumbai was mentioned in chat.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Planning discussion only. Asha has not decided to move to Mumbai.",
+        "source_id": "scaled_user_001_calendar_001"
+      },
+      {
+        "message_id": "scaled_user_001_chat_002_message_002",
+        "quote": "My roster lists Asha in Mumbai, but it may be stale.",
+        "source_id": "scaled_user_001_chat_002"
+      },
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Asha will lead Care Map.",
+        "source_id": "scaled_user_001_email_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "Asha's move to Mumbai was mentioned in chat."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 260,
+  "position": 485,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_009",
+  "request_id": "answer:B4:qa:scaled_user_001_qa_extraction_009",
+  "request_sha256": "c40f0e7b076843fdc67c1c3fcc5145166d940a10089651e8f45a8e72b547252b",
+  "response_id": "chatcmpl-a596820c66b8c16b",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "8384433c0565681bab35415c0ba76bc334fb9babc706bda6243b4144b24ffb6a",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3131,
+  "latency_ms": 10750,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The Civic Lens review is scheduled for 2026-08-12.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Civic Lens review is scheduled for 2026-08-12.",
+        "source_id": "scaled_user_002_calendar_002"
+      }
+    ],
+    "confidence": 0.016393,
+    "statements": [
+      "The Civic Lens review is scheduled for 2026-08-12."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 155,
+  "position": 645,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_extraction_005",
+  "request_id": "answer:B5:qa:scaled_user_002_qa_extraction_005",
+  "request_sha256": "86be90d890895fc46a7e19d7d2d2c678de6d01f1ff071e8dd4a57f789ffda46d",
+  "response_id": "chatcmpl-80a48bfa304dde7d",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

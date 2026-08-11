@@ -1,0 +1,63 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "53b29b8ff38f41ab469af40636ed60a04b41b6a17c6a1376727134ba3d0596e3",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2490,
+  "latency_ms": 42898,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio. For now, I want to deepen my work in service design. I do my best focused work remotely.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch. My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04. My current goal is still to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year. I might move to Valencia someday, but I have made no plan. The deadline may be 2026-12-07, though I need to confirm it.",
+        "source_id": "scaled_user_002_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.9,
+    "statements": [
+      "The user has expressed a preference for remote work and has mentioned an interest in moving to Valencia in the future, though no specific plans have been made. They have also indicated a shift in their professional goals towards improving public-service research."
+    ],
+    "status": "answered",
+    "summary": "The user has expressed a preference for remote work and has mentioned an interest in moving to Valencia in the future, though no specific plans have been made. They have also indicated a shift in their professional goals towards improving public-service research.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 687,
+  "position": 222,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_user_modeling_001",
+  "request_id": "answer:B1:summary:scaled_user_002_summary_user_modeling_001",
+  "request_sha256": "2dc6609801b26a42cc493f6cc45a0faabe08b6310c8b354ee6211e7e840255c7",
+  "response_id": "chatcmpl-bb5726ffa6481629",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

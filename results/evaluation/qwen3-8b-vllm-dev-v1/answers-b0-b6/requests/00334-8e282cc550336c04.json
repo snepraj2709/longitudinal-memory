@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "fa7efc51ce4949f2c9f1a701d3ed0e3a8b3796e32fda353bf7af3dea650d39c2",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2482,
+  "latency_ms": 45049,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's career goal evolved during 2026, starting with a focus on deepening work in service design, then shifting to improving public-service research, while also expressing feelings of exhaustion. The employment start date was corrected from an initial date to January 12, 2026."
+    ],
+    "status": "answered",
+    "summary": "The user's career goal evolved during 2026, starting with a focus on deepening work in service design, then shifting to improving public-service research, while also expressing feelings of exhaustion. The employment start date was corrected from an initial date to January 12, 2026.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 711,
+  "position": 334,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_temporal_reasoning_001",
+  "request_id": "answer:B2:summary:scaled_user_002_summary_temporal_reasoning_001",
+  "request_sha256": "25965c8125419020ff42bb2f9df2e7ffc24902d6d84b4eb21ecde2824b33a014",
+  "response_id": "chatcmpl-955814eff3ebe806",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

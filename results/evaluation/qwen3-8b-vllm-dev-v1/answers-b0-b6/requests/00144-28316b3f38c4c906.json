@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2485,
+  "latency_ms": 11819,
+  "output": {
+    "abstention_reason": null,
+    "answer": "2026-12-06",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year. I might move to Mumbai someday, but I have made no plan. The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "2026-12-06"
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 188,
+  "position": 144,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_010",
+  "request_id": "answer:B1:qa:scaled_user_001_qa_extraction_010",
+  "request_sha256": "a407c73ba6ca5191ba92722379e870158d7a20a7cbca96b0d247b54a38c6a8e7",
+  "response_id": "chatcmpl-8cec579f35c9fd4e",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

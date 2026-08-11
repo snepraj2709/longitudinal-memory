@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "72f6329c1dd7ec20e04f9d7afe3235ea1ad786a18da67fdceeaad46926955093",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4889,
+  "latency_ms": 36620,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The two start-date claims are related through a correction relationship. The claim with the start date of '2026-01-12' (claim_970eeaf1002ca58c88137980f3507eeead51c6a9f180bf96e68c8fd69654214e) is corrected by the claim with the start date of '2026-02-04' (claim_bcf61836860a656d9cd83e006335df1b5e3629b5a9e81fa78473e0c770746b3d).",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "The claim with the start date of '2026-01-12' (claim_970eeaf1002ca58c88137980f3507eeead51c6a9f180bf96e68c8fd69654214e) is corrected by the claim with the start date of '2026-02-04' (claim_bcf61836860a656d9cd83e006335df1b5e3629b5a9e81fa78473e0c770746b3d)."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 557,
+  "position": 746,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_002",
+  "request_id": "answer:B6:qa:scaled_user_002_qa_conflict_detection_002",
+  "request_sha256": "d286fa39d042cc95da5be5246a338eb66caeb3a8e1b8b6750a76c284edc1aa73",
+  "response_id": "chatcmpl-b8844e88df237c22",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "924b2592dd1f92ee5958994f34544fa5f8687771afe2ad49e8334a29ef622756",
+  "user_id": "user_002"
+}

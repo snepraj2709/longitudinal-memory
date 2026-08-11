@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "aca8a95a06fde6383fda8912832083c9c6f2d409d1c1a0f022046fb81d110e85",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 5809,
+  "latency_ms": 10779,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Remote work",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      }
+    ],
+    "confidence": 1.0,
+    "statements": [
+      "Remote work"
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 140,
+  "position": 368,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_006",
+  "request_id": "answer:B3:qa:scaled_user_001_qa_extraction_006",
+  "request_sha256": "4197f31504ca37e94d8f816b687dce056cd57a127170ed403e8e9e83275dd77c",
+  "response_id": "chatcmpl-bae741c939d41939",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

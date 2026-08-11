@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "1c8ba10f849a40617655345ff9bf2b77645fe19050d65d555faca98b44fc0647",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3924,
+  "latency_ms": 10412,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Lucia's move to Valencia was mentioned in chat.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_chat_001_message_001",
+        "quote": "Lucia is moving to Valencia; this is about Lucia, not Mateo.",
+        "source_id": "scaled_user_002_chat_001"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "Lucia's move to Valencia was mentioned in chat."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 147,
+  "position": 421,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_extraction_009",
+  "request_id": "answer:B3:qa:scaled_user_002_qa_extraction_009",
+  "request_sha256": "114a9fdd7c1ef7064f7bd7324a40bff876bdc8ab882c12d0cf761d9ea1cead70",
+  "response_id": "chatcmpl-bcc513ea5b4b22df",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

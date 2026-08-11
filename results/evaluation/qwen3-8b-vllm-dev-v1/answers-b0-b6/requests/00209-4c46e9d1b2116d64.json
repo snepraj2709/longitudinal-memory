@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "53b29b8ff38f41ab469af40636ed60a04b41b6a17c6a1376727134ba3d0596e3",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2485,
+  "latency_ms": 9111,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Mateo will lead Civic Lens, and Elias will mentor Mateo on the work.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_email_002_message_001",
+        "quote": "Mateo will lead Civic Lens. Elias will mentor Mateo on the work.",
+        "source_id": "scaled_user_002_email_002"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "Mateo will lead Civic Lens, and Elias will mentor Mateo on the work."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 144,
+  "position": 209,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_user_modeling_005",
+  "request_id": "answer:B1:qa:scaled_user_002_qa_user_modeling_005",
+  "request_sha256": "738d9cf85421ace53ad682e9b5328e67892e335abe3e7cf4a52b9694f8f5a5a2",
+  "response_id": "chatcmpl-9b01901f2a3c7189",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

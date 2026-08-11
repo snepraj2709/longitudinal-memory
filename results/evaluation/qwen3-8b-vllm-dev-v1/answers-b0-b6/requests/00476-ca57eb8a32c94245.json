@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "31d01dd7bdcb4ba496d0569569a7c3b9804f813d8c3d1f7409f5e76f138a212d",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3282,
+  "latency_ms": 22962,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The corrected start date outranks the onboarding sheet because it was explicitly stated by user_001 in a conversation, which is considered more recent and directly sourced from the individual. The onboarding sheet's date is an assertion by recruiting, which is less direct and may not reflect the most up-to-date information.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The corrected start date outranks the onboarding sheet because it was explicitly stated by user_001 in a conversation, which is considered more recent and directly sourced from the individual. The onboarding sheet's date is an assertion by recruiting, which is less direct and may not reflect the most up-to-date information."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 351,
+  "position": 476,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_010",
+  "request_id": "answer:B4:qa:scaled_user_001_qa_conflict_detection_010",
+  "request_sha256": "58f496960032bafe6186b2fd3e7379329d17457cdb3a5840bd2f6d8001fa6faf",
+  "response_id": "chatcmpl-b696412fbf2049d6",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

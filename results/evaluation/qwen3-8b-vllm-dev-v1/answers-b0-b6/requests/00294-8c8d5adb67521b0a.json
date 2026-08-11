@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "b4ebb24139802baa63ac519991fcd7faa791d951aa409ca0282eeec3c1d6d0b2",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2410,
+  "latency_ms": 21198,
+  "output": {
+    "abstention_reason": null,
+    "answer": "No, Lucia's move does not conflict with Mateo's location.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_chat_001_message_001",
+        "quote": "Lucia is moving to Valencia; this is about Lucia, not Mateo.",
+        "source_id": "scaled_user_002_chat_001"
+      },
+      {
+        "message_id": "scaled_user_002_chat_002_message_001",
+        "quote": "I heard Mateo's office base is Madrid.",
+        "source_id": "scaled_user_002_chat_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "No, Lucia's move does not conflict with Mateo's location."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 329,
+  "position": 294,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_006",
+  "request_id": "answer:B2:qa:scaled_user_002_qa_conflict_detection_006",
+  "request_sha256": "979e4163ca52269f57ffa9b7966cca042e8ab30ddb383742d181ce94898035bc",
+  "response_id": "chatcmpl-86cb8c50e05dc3ca",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

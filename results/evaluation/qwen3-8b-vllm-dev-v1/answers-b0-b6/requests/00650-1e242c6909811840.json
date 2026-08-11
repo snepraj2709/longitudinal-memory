@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "18581532a07981d6b8bf66631525a783dba40ce4788754a0c91a2c9fd3292c33",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4393,
+  "latency_ms": 14258,
+  "output": {
+    "abstention_reason": null,
+    "answer": "2026-12-07",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-07, though I need to confirm it.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.016129,
+    "statements": [
+      "2026-12-07"
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 205,
+  "position": 650,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_extraction_010",
+  "request_id": "answer:B5:qa:scaled_user_002_qa_extraction_010",
+  "request_sha256": "f9f0101d3114db0e04e695b08ad358f1a1babb0454ee413f3ca4efe12129e0ed",
+  "response_id": "chatcmpl-915605c7c5d5bb3b",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

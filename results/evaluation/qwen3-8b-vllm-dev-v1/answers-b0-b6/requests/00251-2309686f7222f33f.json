@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "162b922f68533cd729bc69b02041bd015be5b3aec60b31dbe4b71129028785ff",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2351,
+  "latency_ms": 8599,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Asha will lead Care Map.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Asha will lead Care Map.",
+        "source_id": "scaled_user_001_email_002"
+      }
+    ],
+    "confidence": 0.015625,
+    "statements": [
+      "Asha will lead Care Map."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 132,
+  "position": 251,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_003",
+  "request_id": "answer:B2:qa:scaled_user_001_qa_extraction_003",
+  "request_sha256": "a28aa4a51d7f63745bffe097eb8d1554a0fa47dd92142244ddaf68522337c0a4",
+  "response_id": "chatcmpl-a2493fc852b825ec",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

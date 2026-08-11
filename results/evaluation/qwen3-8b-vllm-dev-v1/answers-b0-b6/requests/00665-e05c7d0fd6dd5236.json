@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "976ad347e882859e264aad946f76dc5152b754e785b7e8538215584dc79b1bfe",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3107,
+  "latency_ms": 15155,
+  "output": {
+    "abstention_reason": null,
+    "answer": "Mateo has an ongoing work relationship as the leader of the project 'Civic Lens' and has Elias as his mentor.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_email_002_message_001",
+        "quote": "Elias will mentor Mateo on the work.",
+        "source_id": "scaled_user_002_email_002"
+      },
+      {
+        "message_id": "scaled_user_002_email_002_message_001",
+        "quote": "Mateo will lead Civic Lens.",
+        "source_id": "scaled_user_002_email_002"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "Mateo has an ongoing work relationship as the leader of the project 'Civic Lens' and has Elias as his mentor."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 226,
+  "position": 665,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_user_modeling_005",
+  "request_id": "answer:B5:qa:scaled_user_002_qa_user_modeling_005",
+  "request_sha256": "c3d1f244848cb7dada1d7f0a38233d0ee8b32e9749c58b83a8097821fda60ec4",
+  "response_id": "chatcmpl-b9414f309d427ab6",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

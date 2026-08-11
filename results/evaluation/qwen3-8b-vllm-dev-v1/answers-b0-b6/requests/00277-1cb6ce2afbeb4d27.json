@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "6e3440f5a9840c10e42635e7643c41ba831e18ef414a8ac38baec9cc3b904994",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2383,
+  "latency_ms": 10237,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The repeated evidence supporting Asha's work preference is that she wants to deepen her work in data products.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The repeated evidence supporting Asha's work preference is that she wants to deepen her work in data products."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 153,
+  "position": 277,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_user_modeling_009",
+  "request_id": "answer:B2:qa:scaled_user_001_qa_user_modeling_009",
+  "request_sha256": "14d9c7c55bfadcf8c53e3da42ad015f549109e2d3d8e29b993fb07cd0e6f02c8",
+  "response_id": "chatcmpl-accf504c4c6d5589",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2492,
+  "latency_ms": 39637,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs. For now, I want to deepen my work in data products. I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch. My goal has shifted: I want to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03. My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year. I might move to Mumbai someday, but I have made no plan. The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.9,
+    "statements": [
+      "The user has expressed a preference for remote work, indicating that it has suited them throughout the year. They have not made any plans to move to Mumbai and have mentioned a potential deadline of 2026-12-06 for such a move, though they need to confirm it. Their current goal is to build reliable health tools, which has shifted from their initial focus on data products. The user also corrected their start date to 2026-01-11, contradicting an earlier record that listed it as 2026-02-03."
+    ],
+    "status": "answered",
+    "summary": "The user has expressed a preference for remote work, indicating that it has suited them throughout the year. They have not made any plans to move to Mumbai and have mentioned a potential deadline of 2026-12-06 for such a move, though they need to confirm it. Their current goal is to build reliable health tools, which has shifted from their initial focus on data products. The user also corrected their start date to 2026-01-11, contradicting an earlier record that listed it as 2026-02-03.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 634,
+  "position": 218,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_user_modeling_001",
+  "request_id": "answer:B1:summary:scaled_user_001_summary_user_modeling_001",
+  "request_sha256": "eeefb4f2f768a79df37e9e838bae7daa65349d285642e05cb539ed5714ff843e",
+  "response_id": "chatcmpl-9674c7c1f55ebece",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

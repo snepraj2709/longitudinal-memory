@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "27b07e677accb756b4fbed1d290bfae4272bb70b94afd7ae1abc09f27b3bdfce",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4886,
+  "latency_ms": 20898,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The corrected start date outranks the onboarding sheet because it was explicitly corrected by the user, indicating a more recent or accurate update. The correction is supported by the user's own statement, which is considered more reliable than the initial onboarding sheet record.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The corrected start date outranks the onboarding sheet because it was explicitly corrected by the user, indicating a more recent or accurate update. The correction is supported by the user's own statement, which is considered more reliable than the initial onboarding sheet record."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 307,
+  "position": 754,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_conflict_detection_010",
+  "request_id": "answer:B6:qa:scaled_user_002_qa_conflict_detection_010",
+  "request_sha256": "2bbefa316c3388fac4f20f513719da3ae4e3d567e4058ca63da2608b5737cda5",
+  "response_id": "chatcmpl-8536b33db8f91b59",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "955e60a45b92b9d54fed5a66d5684cadfdabf61d3782e80fdc9b24fe14302e53",
+  "user_id": "user_002"
+}

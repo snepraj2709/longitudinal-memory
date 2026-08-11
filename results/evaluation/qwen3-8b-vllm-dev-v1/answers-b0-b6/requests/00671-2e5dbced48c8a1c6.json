@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "1df44b0c383d2e844b95c3ea5ddff6a26cfe3e1db32f35b0cd69af2d24fb40c4",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3241,
+  "latency_ms": 20689,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's career goal remained consistent throughout 2026, with a focus on building reliable health tools. However, there was a correction to the employment start date from 2026-02-03 to 2026-01-11."
+    ],
+    "status": "answered",
+    "summary": "The user's career goal remained consistent throughout 2026, with a focus on building reliable health tools. However, there was a correction to the employment start date from 2026-02-03 to 2026-01-11.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 314,
+  "position": 671,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_001",
+  "request_id": "answer:B5:summary:scaled_user_001_summary_temporal_reasoning_001",
+  "request_sha256": "2c0ba85841f1a15785c87865c6c8f3d407205f29b4cdd41b265645dd355f287f",
+  "response_id": "chatcmpl-a461fabd8e7907b9",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

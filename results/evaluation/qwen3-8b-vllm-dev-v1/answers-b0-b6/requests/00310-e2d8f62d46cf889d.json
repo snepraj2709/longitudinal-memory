@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B2",
+  "context_count": 4,
+  "context_sha256": "02a1b2ce468c7d073772e0c1a7739b242185b1f546908bb9e593b9a9346d8492",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2451,
+  "latency_ms": 9930,
+  "output": {
+    "abstention_reason": null,
+    "answer": "After May, Mateo's career goal was to improve public-service research.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "After May, Mateo's career goal was to improve public-service research."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 148,
+  "position": 310,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_temporal_reasoning_002",
+  "request_id": "answer:B2:qa:scaled_user_002_qa_temporal_reasoning_002",
+  "request_sha256": "170a50258edd77017b5201105a825ca4457b4f0b333f6fea492a4af5932a04ea",
+  "response_id": "chatcmpl-86d5c1190e12021f",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

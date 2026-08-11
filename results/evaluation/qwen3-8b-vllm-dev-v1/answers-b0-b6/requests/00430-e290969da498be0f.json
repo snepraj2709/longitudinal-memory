@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "2eed6b72a649c1f399c04bcaa033debf11efb8a7398aecc9e046eaa6ef0a95fa",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4566,
+  "latency_ms": 11777,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The Civic Lens assignment came first.",
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Civic Lens review is scheduled for 2026-08-12.",
+        "source_id": "scaled_user_002_calendar_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The Civic Lens assignment came first."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 166,
+  "position": 430,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_temporal_reasoning_008",
+  "request_id": "answer:B3:qa:scaled_user_002_qa_temporal_reasoning_008",
+  "request_sha256": "fb3cc1e20a474108183f5dedc43296863949d5e1506dc08a7a796afd4510b694",
+  "response_id": "chatcmpl-936dfb2531122f92",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

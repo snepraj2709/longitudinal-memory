@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "16c132464c9fea7b78f68a8c01d6142be501ea517db1d9ee1827180909e171f6",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 5085,
+  "latency_ms": 20767,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_chat_002_message_001",
+        "quote": "I heard Mateo's office base is Madrid.",
+        "source_id": "scaled_user_002_chat_002"
+      },
+      {
+        "message_id": "scaled_user_002_chat_002_message_002",
+        "quote": "My roster lists Mateo in Valencia, but it may be stale.",
+        "source_id": "scaled_user_002_chat_002"
+      }
+    ],
+    "confidence": 0.95,
+    "response": "The two reports regarding user_002's office base remain unresolved. One report attributes the office base to Madrid, reported by a teammate, while another attributes it to Valencia, reported by Sofia. There is no consensus or resolution provided in the context records.",
+    "statements": [
+      "The two reports regarding user_002's office base remain unresolved. One report attributes the office base to Madrid, reported by a teammate, while another attributes it to Valencia, reported by Sofia. There is no consensus or resolution provided in the context records."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 300,
+  "position": 455,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_interactive_abstention_002",
+  "request_id": "answer:B3:interactive:scaled_user_002_interactive_abstention_002",
+  "request_sha256": "7cdceb8a27086e4e1f83f8da1462d1f2969fe7057cfb5b2e4fcd1146686cc73b",
+  "response_id": "chatcmpl-a1b966d6cf1e83e0",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "interactive",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

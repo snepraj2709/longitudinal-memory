@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "0580e81ee907ee19c4f217e78959b30b151db94358836111f706119c1153e2db",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3166,
+  "latency_ms": 23545,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's supported work preferences include a focus on data products and a role as a product engineer. The user has also mentioned a preference for remote work, though this claim is currently disputed."
+    ],
+    "status": "answered",
+    "summary": "The user's supported work preferences include a focus on data products and a role as a product engineer. The user has also mentioned a preference for remote work, though this claim is currently disputed.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 361,
+  "position": 788,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_user_modeling_001",
+  "request_id": "answer:B6:summary:scaled_user_001_summary_user_modeling_001",
+  "request_sha256": "95ac707fdc811830d97854f3ff99e01b3a56b37b1dba93b71c8b153aac52dd58",
+  "response_id": "chatcmpl-ac5e56c3edd39b3b",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "d4168214146d4826409f0cba0adfb442b84195cb483d8bca38a816eb5eaea9a4",
+  "user_id": "user_001"
+}

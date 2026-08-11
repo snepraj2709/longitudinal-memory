@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "2e13cec6bbc6da8b356eb62dd17d7d87484130e5df02b67f4882888e4ba9fd0c",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3603,
+  "latency_ms": 16642,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The repeated evidence supporting Asha's work preference is the statement 'For now, I want to deepen my work in data products.' This is cited in the context record with record_id 'e45e512188cf6cef903d630e78f533f2220c92e2594527bbc935ef618dccca50' and is supported by the source_id 'scaled_user_001_conversation_001'.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "The repeated evidence supporting Asha's work preference is the statement 'For now, I want to deepen my work in data products.' This is cited in the context record with record_id 'e45e512188cf6cef903d630e78f533f2220c92e2594527bbc935ef618dccca50' and is supported by the source_id 'scaled_user_001_conversation_001'."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 248,
+  "position": 733,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_user_modeling_009",
+  "request_id": "answer:B6:qa:scaled_user_001_qa_user_modeling_009",
+  "request_sha256": "ffdfc1f7141fb90d98ead0180305572b7f868de9d5f54180b1427ceba8db1980",
+  "response_id": "chatcmpl-9996822fac735327",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "ed580d0068fad3297a3961a5b0bce895d08d16559ed5992e1f7013c6d98ec698",
+  "user_id": "user_001"
+}

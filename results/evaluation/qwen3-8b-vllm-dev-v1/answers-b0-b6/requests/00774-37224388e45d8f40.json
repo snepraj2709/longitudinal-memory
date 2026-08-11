@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "72f6329c1dd7ec20e04f9d7afe3235ea1ad786a18da67fdceeaad46926955093",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4899,
+  "latency_ms": 17810,
+  "output": {
+    "abstention_reason": null,
+    "answer": "As of March 2026, the start date visible in the sources was 2026-01-12.",
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04.",
+        "source_id": "scaled_user_002_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_002_email_001_message_001",
+        "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+        "source_id": "scaled_user_002_email_001"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "As of March 2026, the start date visible in the sources was 2026-01-12."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 264,
+  "position": 774,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_qa_temporal_reasoning_010",
+  "request_id": "answer:B6:qa:scaled_user_002_qa_temporal_reasoning_010",
+  "request_sha256": "79e1f1b18d6f39bd7b2d974105344be8f563079f5e45cb16169d112401b51237",
+  "response_id": "chatcmpl-bddd44ba0969296b",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "3645c7cf072ed01947446fdbae9578229f47192e5807553bd5216c9e5eb17e28",
+  "user_id": "user_002"
+}

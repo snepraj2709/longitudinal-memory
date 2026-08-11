@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "2fb689bf39e2eac45dc53bbab76459b604eed65dc8fbb36e50294266c61c1350",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4378,
+  "latency_ms": 36101,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The two start-date claims are related through a correction relationship. The claim with the start date of 2026-01-11 (claim_619cf32778b67e7c70e9b83f2497c564f4eb2d2927a92624407df07da37c1248) corrects the claim with the start date of 2026-02-03 (claim_5d47efc6e5f54ceee5ab1631478c4b8d9926dcdd8fbef06cbf2eb10e96f50b4d).",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_email_001_message_001",
+        "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+        "source_id": "scaled_user_001_email_001"
+      }
+    ],
+    "confidence": 1,
+    "statements": [
+      "The claim with the start date of 2026-01-11 (claim_619cf32778b67e7c70e9b83f2497c564f4eb2d2927a92624407df07da37c1248) corrects the claim with the start date of 2026-02-03 (claim_5d47efc6e5f54ceee5ab1631478c4b8d9926dcdd8fbef06cbf2eb10e96f50b4d)."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 549,
+  "position": 696,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_002",
+  "request_id": "answer:B6:qa:scaled_user_001_qa_conflict_detection_002",
+  "request_sha256": "fce921a7162dee519f660d264befbfea112dcbfc853b857e09c253083df71899",
+  "response_id": "chatcmpl-83f1c414b3ffabd4",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "97d9c70b7f66116c9272c253bfd85d7ce4e6f2afdba7b8027d9e8b1cfb4dc881",
+  "user_id": "user_001"
+}

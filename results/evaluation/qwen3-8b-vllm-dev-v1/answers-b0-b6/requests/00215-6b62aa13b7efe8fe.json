@@ -1,0 +1,58 @@
+{
+  "baseline_id": "B1",
+  "context_count": 10,
+  "context_sha256": "da22db84cddba6f940749cf222f8855b2ea22f003282a92d21e94e3b2053e413",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2496,
+  "latency_ms": 36499,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs. For now, I want to deepen my work in data products. I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch. My goal has shifted: I want to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03. My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "Remote work has suited me throughout the year. I might move to Mumbai someday, but I have made no plan. The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's career goal evolved throughout 2026, starting with a focus on data products, shifting to building reliable health tools, and maintaining a preference for remote work while considering a potential move to Mumbai."
+    ],
+    "status": "answered",
+    "summary": "The user's career goal evolved throughout 2026, starting with a focus on data products, shifting to building reliable health tools, and maintaining a preference for remote work while considering a potential move to Mumbai.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 574,
+  "position": 215,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_001",
+  "request_id": "answer:B1:summary:scaled_user_001_summary_temporal_reasoning_001",
+  "request_sha256": "c5fae3283a37678fddc728cad45d56dc851fc0d1f19bd22a042cae5339fe2964",
+  "response_id": "chatcmpl-815c837c30825312",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

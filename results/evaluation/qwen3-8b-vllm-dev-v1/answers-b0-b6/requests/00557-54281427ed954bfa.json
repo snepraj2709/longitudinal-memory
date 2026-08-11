@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "b7134191ce507af83ad2716564e8640aa6efbefd1530e7d81ed03eb0534f7888",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4594,
+  "latency_ms": 30739,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      }
+    ],
+    "confidence": 0.8,
+    "statements": [
+      "The user's career goal remained consistent throughout 2026, with a focus on building reliable health tools. However, there were changes in the employment start date and project deadline, which were corrected or uncertain."
+    ],
+    "status": "answered",
+    "summary": "The user's career goal remained consistent throughout 2026, with a focus on building reliable health tools. However, there were changes in the employment start date and project deadline, which were corrected or uncertain.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 462,
+  "position": 557,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_001",
+  "request_id": "answer:B4:summary:scaled_user_001_summary_temporal_reasoning_001",
+  "request_sha256": "f4eea032d397ce0abbc463170ac70afa4543a47feba7acbf2415ace2f981f2b1",
+  "response_id": "chatcmpl-8f1f96d39300a865",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

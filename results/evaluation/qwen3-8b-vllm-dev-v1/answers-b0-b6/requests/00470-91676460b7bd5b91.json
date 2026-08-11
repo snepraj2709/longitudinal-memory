@@ -1,0 +1,48 @@
+{
+  "baseline_id": "B4",
+  "context_count": 4,
+  "context_sha256": "cc5cf002104626fc66545edea324ba72d57a2e8aa2c6c96a851453c34584058a",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3188,
+  "latency_ms": 15775,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The two office bases reported for Asha were Pune and Mumbai.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_chat_002_message_001",
+        "quote": "I heard Asha's office base is Pune.",
+        "source_id": "scaled_user_001_chat_002"
+      },
+      {
+        "message_id": "scaled_user_001_chat_002_message_002",
+        "quote": "My roster lists Asha in Mumbai, but it may be stale.",
+        "source_id": "scaled_user_001_chat_002"
+      }
+    ],
+    "confidence": 0.99,
+    "statements": [
+      "The two office bases reported for Asha were Pune and Mumbai."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 244,
+  "position": 470,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_conflict_detection_004",
+  "request_id": "answer:B4:qa:scaled_user_001_qa_conflict_detection_004",
+  "request_sha256": "95f01fa97aa54beda1da04532b702d32f8e2b094b38f2f368636a913f766a2a1",
+  "response_id": "chatcmpl-bc8e34e4f29dca0a",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

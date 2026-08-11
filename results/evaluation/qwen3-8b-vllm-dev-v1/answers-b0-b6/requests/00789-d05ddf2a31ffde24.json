@@ -1,0 +1,53 @@
+{
+  "baseline_id": "B6",
+  "context_count": 4,
+  "context_sha256": "2008186f8786c2ffc36db5ce5350d1bf95fc16c3fc0c19a44ddc8f79aea51952",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 2710,
+  "latency_ms": 32115,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in data products.",
+        "source_id": "scaled_user_001_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_001_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's current work context includes a stated preference for working with data products, as expressed in a conversation on 2026-01-08. Additionally, the user reported feeling exhausted in May 2026 after a product launch. There is a correction to the employment start date from 2026-02-03 to 2026-01-11, which was confirmed by the user. No unresolved questions were identified."
+    ],
+    "status": "answered",
+    "summary": "The user's current work context includes a stated preference for working with data products, as expressed in a conversation on 2026-01-08. Additionally, the user reported feeling exhausted in May 2026 after a product launch. There is a correction to the employment start date from 2026-02-03 to 2026-01-11, which was confirmed by the user. No unresolved questions were identified.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 510,
+  "position": 789,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_user_modeling_002",
+  "request_id": "answer:B6:summary:scaled_user_001_summary_user_modeling_002",
+  "request_sha256": "06a93959cd902863ab74650c3e652b4451bdf4e3456761f719fd913877f8bda1",
+  "response_id": "chatcmpl-a8844f6ea63ba650",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "c790a37a855f2e70b04e4478b8aa32f52f40b3c7b12522500af337ba834a2f72",
+  "user_id": "user_001"
+}

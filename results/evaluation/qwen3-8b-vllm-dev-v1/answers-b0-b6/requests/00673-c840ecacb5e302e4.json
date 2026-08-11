@@ -1,0 +1,59 @@
+{
+  "baseline_id": "B5",
+  "context_count": 4,
+  "context_sha256": "5edd1f244ae7465223d1646901e408bd645a837144648c0126441368926321c5",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3213,
+  "latency_ms": 40390,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Care Map review is scheduled for 2026-08-11.",
+        "source_id": "scaled_user_001_calendar_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-06, though I need to confirm it.",
+        "source_id": "scaled_user_001_conversation_004"
+      },
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Asha will lead Care Map.",
+        "source_id": "scaled_user_001_email_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "A scheduled event titled 'Care Map review' is set for 2026-08-11, according to a calendar entry.",
+      "user_001 corrected their employment start date from 2026-02-03 to 2026-01-11 and mentioned their relocation plan of building reliable health tools."
+    ],
+    "status": "answered",
+    "summary": "The project assignment and review sequence for user_001 involves the following key points: (1) user_001 was assigned to lead the 'Care Map' project, as stated by nikhil in an email. (2) A scheduled event titled 'Care Map review' is set for 2026-08-11, according to a calendar entry. (3) The project deadline was mentioned as possibly being 2026-12-06, though it remains uncertain. (4) user_001 corrected their employment start date from 2026-02-03 to 2026-01-11 and mentioned their relocation plan of building reliable health tools.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 627,
+  "position": 673,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_003",
+  "request_id": "answer:B5:summary:scaled_user_001_summary_temporal_reasoning_003",
+  "request_sha256": "3e63c3970e64972bc861c61a0dbd53a5cf42e03ac2609ad3b2b611584fb40c53",
+  "response_id": "chatcmpl-8afefdf8796cf0f6",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

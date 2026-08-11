@@ -1,0 +1,110 @@
+{
+  "baseline_id": null,
+  "context_count": 10,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 1524,
+  "latency_ms": 38633,
+  "output": {
+    "judgments": [
+      {
+        "candidate_id": "2fbb32b5ed58bc617881",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      },
+      {
+        "candidate_id": "308f608aeee03e7c00ce",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      },
+      {
+        "candidate_id": "38ce204b8359b3ac6acf",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      },
+      {
+        "candidate_id": "621f1721b483fb581146",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      },
+      {
+        "candidate_id": "63ce8f1e3e35544a113a",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      },
+      {
+        "candidate_id": "69634ac7d17a6db2f7cd",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      },
+      {
+        "candidate_id": "6e83bae0b593a0b5ffbe",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      },
+      {
+        "candidate_id": "75c5b4907b5386f858d8",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      },
+      {
+        "candidate_id": "cd88d2a406bc7dcf3077",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      },
+      {
+        "candidate_id": "e90cb54cedc8f067166b",
+        "label": "correct",
+        "reason_codes": [
+          "reference_answer_matches_response",
+          "should_abstain_is_true"
+        ]
+      }
+    ]
+  },
+  "output_tokens": 618,
+  "position": 70,
+  "provider_attempt_count": 1,
+  "record_id": "judge_batch_0070",
+  "request_id": "judge:0070",
+  "request_sha256": "1434e5f4102e2d3fec0a7a865c6433863eb43332c6111c507e6f4d6670390c3d",
+  "response_id": "chatcmpl-94afdf6533fd8ce6",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "judge",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

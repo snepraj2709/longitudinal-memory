@@ -1,0 +1,100 @@
+{
+  "baseline_id": null,
+  "context_count": 10,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 1610,
+  "latency_ms": 35121,
+  "output": {
+    "judgments": [
+      {
+        "candidate_id": "4879e912ea7a94f1f703",
+        "label": "correct",
+        "reason_codes": [
+          "abstention_justified"
+        ]
+      },
+      {
+        "candidate_id": "63e869c6cc341f6f167f",
+        "label": "correct",
+        "reason_codes": [
+          "answer_matches_reference"
+        ]
+      },
+      {
+        "candidate_id": "6b6705c23e55d98ab04b",
+        "label": "correct",
+        "reason_codes": [
+          "abstention_justified"
+        ]
+      },
+      {
+        "candidate_id": "9f1d5bd4c81fca2ad0d5",
+        "label": "correct",
+        "reason_codes": [
+          "abstention_justified"
+        ]
+      },
+      {
+        "candidate_id": "c65f41ca5b2f09a7b4a1",
+        "label": "correct",
+        "reason_codes": [
+          "answer_matches_reference"
+        ]
+      },
+      {
+        "candidate_id": "cb556068e1864648f266",
+        "label": "correct",
+        "reason_codes": [
+          "answer_matches_reference"
+        ]
+      },
+      {
+        "candidate_id": "cb9478f6a0e2ea323404",
+        "label": "correct",
+        "reason_codes": [
+          "abstention_justified"
+        ]
+      },
+      {
+        "candidate_id": "d556f04fe0fc2f069de8",
+        "label": "correct",
+        "reason_codes": [
+          "abstention_justified"
+        ]
+      },
+      {
+        "candidate_id": "dc684793cd445f8a742d",
+        "label": "correct",
+        "reason_codes": [
+          "answer_matches_reference"
+        ]
+      },
+      {
+        "candidate_id": "e633119ed41c1dea240c",
+        "label": "correct",
+        "reason_codes": [
+          "answer_matches_reference"
+        ]
+      }
+    ]
+  },
+  "output_tokens": 559,
+  "position": 46,
+  "provider_attempt_count": 1,
+  "record_id": "judge_batch_0046",
+  "request_id": "judge:0046",
+  "request_sha256": "c3951bca3dd66aa9fd1941a521f5eb58607962328b812a91d7b673d0fea5c5cd",
+  "response_id": "chatcmpl-bc89cc696bb2619f",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "judge",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

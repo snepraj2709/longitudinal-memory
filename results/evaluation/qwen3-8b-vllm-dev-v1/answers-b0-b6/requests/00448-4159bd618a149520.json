@@ -1,0 +1,63 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "08d1ec71b0a4d180dd16fbe2cbff823739554aa02d58f9f70ad3019605cbc4d6",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 6438,
+  "latency_ms": 53526,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "For now, I want to deepen my work in service design.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_001_message_001",
+        "quote": "I accepted the design researcher role at Northstar Studio.",
+        "source_id": "scaled_user_002_conversation_001"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "My goal has shifted: I want to improve public-service research.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_002_message_001",
+        "quote": "This month I feel exhausted after the launch.",
+        "source_id": "scaled_user_002_conversation_002"
+      },
+      {
+        "message_id": "scaled_user_002_conversation_004_message_001",
+        "quote": "The deadline may be 2026-12-07, though I need to confirm it.",
+        "source_id": "scaled_user_002_conversation_004"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The user's career goal evolved throughout 2026, starting with a focus on improving public-service research, then shifting to deepening work in service design, and later involving a project deadline uncertainty. The user also mentioned relocation plans and remote work preferences."
+    ],
+    "status": "answered",
+    "summary": "The user's career goal evolved throughout 2026, starting with a focus on improving public-service research, then shifting to deepening work in service design, and later involving a project deadline uncertainty. The user also mentioned relocation plans and remote work preferences.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 795,
+  "position": 448,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_summary_temporal_reasoning_001",
+  "request_id": "answer:B3:summary:scaled_user_002_summary_temporal_reasoning_001",
+  "request_sha256": "096bc5a8b17d5ac49c33153281bbba29f8ee9a285f48125e4d0e6ba23b4ebdd2",
+  "response_id": "chatcmpl-898fe0719909182a",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

@@ -1,0 +1,63 @@
+{
+  "baseline_id": "B3",
+  "context_count": 4,
+  "context_sha256": "b98af08b3501fe9daa0eadce569d30f000c5bb4e507f9450fcf09a2b7d5d5d0d",
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 4075,
+  "latency_ms": 42204,
+  "output": {
+    "abstention_reason": null,
+    "citations": [
+      {
+        "message_id": null,
+        "quote": "Care Map review is scheduled for 2026-08-11.",
+        "source_id": "scaled_user_001_calendar_002"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_conversation_003_message_001",
+        "quote": "My current goal is still to build reliable health tools.",
+        "source_id": "scaled_user_001_conversation_003"
+      },
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Asha will lead Care Map.",
+        "source_id": "scaled_user_001_email_002"
+      },
+      {
+        "message_id": "scaled_user_001_email_002_message_001",
+        "quote": "Leena will mentor Asha on the work.",
+        "source_id": "scaled_user_001_email_002"
+      }
+    ],
+    "confidence": 0.95,
+    "statements": [
+      "The project assignment and review sequence for user_001 involves several key points. First, user_001 corrected their employment start date to 2026-01-11. They also mentioned a relocation plan to build reliable health tools. Additionally, user_001 leads the Care Map project and has mentor Leena. A scheduled event titled 'Care Map review' is set for 2026-08-11. These facts are attributed to user_001 or nikhil based on the provided context."
+    ],
+    "status": "answered",
+    "summary": "The project assignment and review sequence for user_001 involves several key points. First, user_001 corrected their employment start date to 2026-01-11. They also mentioned a relocation plan to build reliable health tools. Additionally, user_001 leads the Care Map project and has mentor Leena. A scheduled event titled 'Care Map review' is set for 2026-08-11. These facts are attributed to user_001 or nikhil based on the provided context.",
+    "unresolved_parts": []
+  },
+  "output_tokens": 654,
+  "position": 445,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_summary_temporal_reasoning_003",
+  "request_id": "answer:B3:summary:scaled_user_001_summary_temporal_reasoning_003",
+  "request_sha256": "050d1da3296b621270454495de890b9349adc4e1fbe8c678c042d77efbb1095b",
+  "response_id": "chatcmpl-b0124a0345b171cd",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "summary",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}
