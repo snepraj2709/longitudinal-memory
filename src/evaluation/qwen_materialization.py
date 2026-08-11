@@ -203,6 +203,8 @@ def write_materialization(result: MaterializationResult, output_dir: Path) -> No
         "status": "completed" if not result.failures else "completed_with_failures",
         "context_count": len(result.contexts),
         "failure_count": len(result.failures),
+        "contexts_sha256": _file_sha(output_dir / "contexts.jsonl"),
+        "failures_sha256": _file_sha(output_dir / "failures.jsonl"),
         "database_counts": dict(sorted(result.database_counts.items())),
         "b7_provider_request_count": 0,
         "b6_b7_context_identity": all(
@@ -840,6 +842,15 @@ def _context(
 
 
 def _source_context_record(source: Mapping[str, object]) -> dict[str, object]:
+    evidence = []
+    for message in source["messages"]:
+        evidence.append({
+            "source_id": source["source_id"],
+            "message_id": message["message_id"],
+            "speaker_id": message["speaker_id"],
+            "quote": message["text"],
+            "support_type": "source_history",
+        })
     return {
         "record_kind": "source",
         "user_id": source["user_id"],
@@ -848,6 +859,7 @@ def _source_context_record(source: Mapping[str, object]) -> dict[str, object]:
         "created_at": source["created_at"],
         "content": source["content"],
         "messages": source["messages"],
+        "evidence": evidence,
     }
 
 

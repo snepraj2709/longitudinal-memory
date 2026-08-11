@@ -63,6 +63,7 @@ class ExecutionJob:
     response_format: Mapping[str, object]
     max_output_tokens: int
     validator: Validator
+    local_metadata: Mapping[str, object] | None = None
 
     @property
     def request_sha256(self) -> str:
@@ -81,6 +82,7 @@ class ExecutionJob:
             "user_prompt": self.user_prompt,
             "response_format": self.response_format,
             "max_output_tokens": self.max_output_tokens,
+            "local_metadata": self.local_metadata,
         })
 
 
@@ -593,17 +595,20 @@ def _client_factory(
     *, base_url: str, model: str, api_key: str | None,
 ) -> ClientFactory:
     def create(job: ExecutionJob) -> VLLMClient:
+        judge = job.task == "judge"
         return VLLMClient(
             base_url=base_url,
             model=model,
             api_key=api_key,
-            temperature=float(SAMPLING["temperature"]),
+            temperature=0.0 if judge else float(SAMPLING["temperature"]),
             max_output_tokens=job.max_output_tokens,
             text_format=job.response_format,
             payload_options={
+                **({} if judge else {
                 "top_p": SAMPLING["top_p"],
                 "top_k": SAMPLING["top_k"],
                 "presence_penalty": SAMPLING["presence_penalty"],
+                }),
                 "seed": SAMPLING["seed"],
                 "chat_template_kwargs": {"enable_thinking": False},
             },

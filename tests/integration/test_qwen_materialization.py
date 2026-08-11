@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -140,6 +141,7 @@ class QwenMaterializationIntegrationTests(unittest.TestCase):
         }
         self.assertTrue(all(not item.context_records for item in by_baseline["B0"]))
         self.assertTrue(all(len(item.context_records) == 2 for item in by_baseline["B1"]))
+        self.assertTrue(all(record["evidence"] for item in by_baseline["B1"] for record in item.context_records))
         self.assertNotIn("user_002", json.dumps([asdict(item) for item in by_baseline["B1"]]))
         self.assertTrue(all({row["record_kind"] for row in item.context_records} <= {"atomic"} for item in by_baseline["B2"]))
         self.assertTrue(all({row["record_kind"] for row in item.context_records} <= {"session"} for item in by_baseline["B3"]))
@@ -157,6 +159,11 @@ class QwenMaterializationIntegrationTests(unittest.TestCase):
             first_output = Path(directory) / "first"
             write_materialization(first, first_output)
             first_bytes = {path.name: path.read_bytes() for path in first_output.iterdir()}
+            first_manifest = json.loads((first_output / "manifest.json").read_text())
+            self.assertEqual(
+                first_manifest["contexts_sha256"],
+                hashlib.sha256((first_output / "contexts.jsonl").read_bytes()).hexdigest(),
+            )
             self.connection.execute("DROP SCHEMA public CASCADE")
             self.connection.execute("CREATE SCHEMA public")
             second = self._run()

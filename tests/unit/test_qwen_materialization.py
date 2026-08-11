@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -56,6 +57,8 @@ class QwenMaterializationUnitTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 write_materialization(result, output)
             self.assertEqual(asdict(result)["split"], "development")
+            manifest = json.loads((output / "manifest.json").read_text())
+            self.assertIn("contexts_sha256", manifest)
 
 
 if __name__ == "__main__":
