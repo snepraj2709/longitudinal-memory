@@ -1,0 +1,69 @@
+{
+  "api_key_persisted": false,
+  "deployment": {
+    "base_url": "http://127.0.0.1:16006",
+    "concurrency": 1,
+    "context_length": 8192,
+    "dashboard_cost_inr": null,
+    "delete_after_pilot": true,
+    "deleted_after_pilot": false,
+    "deployment_id": "jarvis-469049-r_2da85df7-ssh-tunnel",
+    "framework": "vllm",
+    "gpu": "L4",
+    "model": "qwen3-8b-vllm",
+    "path": "jarvis_l4_24gb",
+    "region": "IN2",
+    "storage_gb": 100,
+    "temperature": 0
+  },
+  "elapsed_seconds": 106.501948,
+  "execution_manifest": {
+    "failure_count": 0,
+    "failures_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gold_opened": false,
+    "input_tokens": 14335,
+    "oracle_opened": false,
+    "output_tokens": 1653,
+    "planned_request_count": 12,
+    "provider_request_count": 12,
+    "raw_invalid_output_persisted": false,
+    "responses_sha256": "e2ca84f89f7bf44be440280534d034d110e59ea654af8d3964c78df463c9f1a6",
+    "retryable_http_status_codes": [
+      408,
+      429,
+      502,
+      503,
+      504
+    ],
+    "review_opened": false,
+    "schema_version": "qwen_vllm_compatibility_batch_v1",
+    "series_id": "qwen3-8b-vllm-pilot-v1",
+    "split": "development",
+    "status": "completed",
+    "successful_count": 12,
+    "task": "mixed",
+    "transport_retry_count": 0,
+    "worker_count": 1
+  },
+  "pilot_id": "qwen3-8b-vllm-pilot-v1",
+  "provider": "openai_compatible_vllm",
+  "request_scope": {
+    "actual_request_count": 12,
+    "failure_count": 0,
+    "planned_request_count": 12,
+    "provider_request_count": 12,
+    "retryable_http_status_codes": [
+      408,
+      429,
+      502,
+      503,
+      504
+    ],
+    "successful_count": 12
+  },
+  "schema_version": "qwen_vllm_pilot_receipt_v1",
+  "scored_replacement_for_full_v2": false,
+  "scoring_status": "compatibility_only_not_scored",
+  "series_id": "qwen3-8b-vllm-pilot-v1",
+  "status": "completed"
+}

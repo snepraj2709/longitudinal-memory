@@ -1,0 +1,43 @@
+{
+  "baseline_id": "B6",
+  "context_count": 1,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 718,
+  "latency_ms": 10212,
+  "output": {
+    "abstention_reason": null,
+    "answer": "The user accepted the product engineer role at Riverstone Labs.",
+    "citations": [
+      {
+        "message_id": "scaled_user_001_conversation_001_message_001",
+        "quote": "I accepted the product engineer role at Riverstone Labs. For now, I want to deepen my work in data products. I do my best focused work remotely.",
+        "source_id": "scaled_user_001_conversation_001"
+      }
+    ],
+    "confidence": 0.8,
+    "statements": [
+      "The user accepted the product engineer role at Riverstone Labs."
+    ],
+    "status": "answered",
+    "unresolved_parts": []
+  },
+  "output_tokens": 162,
+  "position": 7,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_qa_extraction_001",
+  "request_id": "compat:B6:qa",
+  "request_sha256": "a9182b9bf028337d242ebe7f7daf9cf11ace0e6177f53d5fd0735e8dc3afab4e",
+  "response_id": "chatcmpl-852923bda07c7fe7",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-pilot-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "qa",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": "a5d69a9e727131dd563d00a30e75ca85c7521746aede3981460c994d1d7a2506",
+  "user_id": "user_001"
+}
