@@ -120,6 +120,11 @@ def build_extraction_jobs(
     root = repo_root.resolve()
     selected = select_runtime(root, split)
     registry = load_predicate_registry(root / REGISTRY)
+    boolean_predicates = {
+        definition.predicate
+        for definition in registry.definitions
+        if definition.object_shape == "boolean"
+    }
     names = {str(row["user_id"]): str(row["display_name"]) for row in selected["users"]}
     system_prompt = get_atomic_extraction_system_prompt("atomic-extraction-v3", registry=registry)
     raw_format = atomic_extraction_text_format(registry)
@@ -133,7 +138,8 @@ def build_extraction_jobs(
         )
 
         def validate(raw: str, metadata: OpenAIResponseMetadata, *, item=adapted) -> Mapping[str, object]:
-            result = validate_atomic_response(item, raw, metadata, registry=registry)
+            normalized = _normalize_qwen_extraction_response(raw, boolean_predicates)
+            result = validate_atomic_response(item, normalized, metadata, registry=registry)
             return {"claims": [asdict(claim) for claim in result.claims]}
 
         jobs.append(ExecutionJob(
@@ -154,6 +160,33 @@ def build_extraction_jobs(
             series_id=series_id,
         ))
     return tuple(jobs)
+
+
+def _normalize_qwen_extraction_response(
+    raw: str,
+    boolean_predicates: set[str],
+) -> str:
+    """Coerce Qwen's JSON-schema-valid string booleans for boolean predicates."""
+
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        return raw
+    if not isinstance(parsed, dict) or not isinstance(parsed.get("claims"), list):
+        return raw
+    changed = False
+    for record in parsed["claims"]:
+        if not isinstance(record, dict):
+            continue
+        if record.get("predicate") not in boolean_predicates:
+            continue
+        value = record.get("object")
+        if isinstance(value, str) and value.strip().lower() in {"true", "false"}:
+            record["object"] = value.strip().lower() == "true"
+            changed = True
+    if not changed:
+        return raw
+    return json.dumps(parsed, ensure_ascii=False, sort_keys=True)
 
 
 def build_answer_jobs(

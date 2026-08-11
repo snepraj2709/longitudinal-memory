@@ -89,6 +89,36 @@ class QwenExecutionTests(unittest.TestCase):
         self.assertEqual(len(frozen), 80)
         self.assertTrue(all(job.task == "extraction" for job in development + frozen))
 
+    def test_extraction_validator_coerces_qwen_string_booleans(self) -> None:
+        job = next(
+            item
+            for item in build_extraction_jobs(ROOT, "development", series_id="qwen3-8b-vllm-dev-v1")
+            if item.record_id == "scaled_user_001_conversation_002"
+        )
+        raw = json.dumps({
+            "claims": [{
+                "claim_id": "claim_001",
+                "subject_id": "user_001",
+                "speaker_id": "user_001",
+                "predicate": "feels_exhausted",
+                "object": "true",
+                "polarity": "positive",
+                "epistemic_status": "asserted",
+                "valid_from": "2026-05-18T09:30:00+00:00",
+                "valid_to": None,
+                "confidence": 1,
+                "evidence": [{
+                    "source_id": "scaled_user_001_conversation_002",
+                    "message_id": "scaled_user_001_conversation_002_message_001",
+                    "quote": "This month I feel exhausted after the launch.",
+                }],
+            }],
+        })
+
+        output = job.validator(raw, OpenAIResponseMetadata("response", "qwen3-8b-vllm", 1, 1, 2))
+
+        self.assertIs(output["claims"][0]["object"], True)
+
     def test_concurrent_atomic_checkpoints_are_composed_in_plan_order(self) -> None:
         active = {"current": 0, "maximum": 0, "lock": threading.Lock()}
         with tempfile.TemporaryDirectory() as directory:
