@@ -1,0 +1,434 @@
+{
+  "build_input_sha256": "b75f65abb92dde68febb15fedaa96affee5b34e94bfde3a642c56183e7e7dab6",
+  "bundle_version": "demo-v1",
+  "cases": [
+    {
+      "answer": {
+        "abstention_reason": null,
+        "body": "May 18, 2026",
+        "confidence": 1,
+        "evidence": [
+          "conv_004:msg_conv_004_002"
+        ],
+        "status": "answered"
+      },
+      "as_of": "2026-09-30T23:59:59+05:30",
+      "capability": "temporal_reasoning",
+      "case_id": "temporal_003",
+      "difficulty": "cross_session",
+      "memory_states": [
+        {
+          "evidence": [
+            "conv_003:msg_conv_003_004"
+          ],
+          "label": "Earlier report",
+          "status": "historical",
+          "value": "Aryan started on May 11."
+        },
+        {
+          "evidence": [
+            "conv_004:msg_conv_004_001"
+          ],
+          "label": "Questioned report",
+          "status": "disputed",
+          "value": "Maya repeats the May 11 date to Aryan."
+        },
+        {
+          "evidence": [
+            "conv_004:msg_conv_004_002"
+          ],
+          "label": "Current fact",
+          "status": "corrected",
+          "value": "Aryan started on May 18."
+        }
+      ],
+      "question": "What is the corrected date for Aryan's job start in Bengaluru?",
+      "review": {
+        "expected_answer": "May 18, 2026.",
+        "explanation": "The answer applies Aryan’s May 18 correction, but its citation trail omits the original May 11 report and the message that prompted the correction.",
+        "failure_type": "missed_evidence",
+        "result": "correct"
+      },
+      "source_events": [
+        {
+          "evidence_id": "conv_003:msg_conv_003_004",
+          "message_id": "msg_conv_003_004",
+          "observed_at": "2026-05-10T20:16:38+05:30",
+          "source_id": "conv_003",
+          "source_type": "conversation",
+          "speaker": "Ankita",
+          "text": "Rhea told me Aryan is joining his Bengaluru job tomorrow, on the 11th."
+        },
+        {
+          "evidence_id": "conv_004:msg_conv_004_001",
+          "message_id": "msg_conv_004_001",
+          "observed_at": "2026-05-28T18:10:00+05:30",
+          "source_id": "conv_004",
+          "source_type": "conversation",
+          "speaker": "Maya",
+          "text": "Ankita said you started here on May 11. I kept wondering if being in the same city might change things for us."
+        },
+        {
+          "evidence_id": "conv_004:msg_conv_004_002",
+          "message_id": "msg_conv_004_002",
+          "observed_at": "2026-05-28T18:10:32+05:30",
+          "source_id": "conv_004",
+          "source_type": "conversation",
+          "speaker": "Aryan",
+          "text": "I actually joined on the 18th, not the 11th. But Maya, I don't want to restart the relationship."
+        }
+      ],
+      "summary": "A second-hand date is replaced by Aryan's direct correction.",
+      "title": "A corrected date"
+    },
+    {
+      "answer": {
+        "abstention_reason": null,
+        "body": "No, Pravin did not reject Maya's first Kids Spark project. His feedback was that the positioning needed work, not a rejection of the project.",
+        "confidence": 1,
+        "evidence": [
+          "email_004:msg_email_004_003"
+        ],
+        "status": "answered"
+      },
+      "as_of": "2026-09-30T23:59:59+05:30",
+      "capability": "conflict_detection",
+      "case_id": "conflict_002",
+      "difficulty": "cross_source",
+      "memory_states": [
+        {
+          "evidence": [
+            "conv_007:msg_conv_007_001"
+          ],
+          "label": "Maya's interpretation",
+          "status": "historical",
+          "value": "Maya felt Pravin rejected the project."
+        },
+        {
+          "evidence": [
+            "email_004:msg_email_004_003"
+          ],
+          "label": "Pravin's clarification",
+          "status": "corrected",
+          "value": "The positioning needed work; the project was not rejected."
+        },
+        {
+          "evidence": [
+            "conv_007:msg_conv_007_001",
+            "email_004:msg_email_004_003"
+          ],
+          "label": "Resolved view",
+          "status": "current",
+          "value": "Pravin did not reject Kids Spark, although Maya experienced the feedback that way."
+        }
+      ],
+      "question": "Did Pravin reject Maya's first Kids Spark project?",
+      "review": {
+        "expected_answer": "No. Maya initially experienced the response as rejection, but Pravin later clarified that the positioning needed work and that he had not rejected the project.",
+        "explanation": "The answer uses Pravin’s clarification correctly but omits Maya’s earlier statement that she experienced his response as a rejection.",
+        "failure_type": "missed_evidence",
+        "result": "correct"
+      },
+      "source_events": [
+        {
+          "evidence_id": "conv_007:msg_conv_007_001",
+          "message_id": "msg_conv_007_001",
+          "observed_at": "2026-07-03T20:00:00+05:30",
+          "source_id": "conv_007",
+          "source_type": "conversation",
+          "speaker": "Maya",
+          "text": "I'm doing my marketing work, but I don't feel the same about it after the Kids Spark project. Pravin basically rejected what I made."
+        },
+        {
+          "evidence_id": "email_004:msg_email_004_003",
+          "message_id": "msg_email_004_003",
+          "observed_at": "2026-07-23T16:10:00+05:30",
+          "source_id": "email_004",
+          "source_type": "email",
+          "speaker": "Pravin",
+          "text": "Yesterday's review was much clearer. My June feedback was that the positioning needed work; it was not a rejection of the project. The revised flow gives us something we can test."
+        }
+      ],
+      "summary": "The system preserves Maya's experience while resolving the project status.",
+      "title": "Experience versus fact"
+    },
+    {
+      "answer": {
+        "abstention_reason": null,
+        "body": "Maya's career direction changed from starting as a Marketing Associate in April to transferring into a full-time Product Associate role by the end of September.",
+        "confidence": 1,
+        "evidence": [
+          "email_001:msg_email_001_001",
+          "email_004:msg_email_004_004",
+          "email_006:msg_email_006_004"
+        ],
+        "status": "answered"
+      },
+      "as_of": "2026-09-30T23:59:59+05:30",
+      "capability": "user_modeling",
+      "case_id": "user_modeling_001",
+      "difficulty": "longitudinal",
+      "memory_states": [
+        {
+          "evidence": [
+            "conv_002:msg_conv_002_003"
+          ],
+          "label": "April",
+          "status": "historical",
+          "value": "Maya was unsure about marketing and planned to try it."
+        },
+        {
+          "evidence": [
+            "conv_005:msg_conv_005_002"
+          ],
+          "label": "June",
+          "status": "historical",
+          "value": "She began enjoying marketing."
+        },
+        {
+          "evidence": [
+            "conv_008:msg_conv_008_002",
+            "email_004:msg_email_004_004"
+          ],
+          "label": "July",
+          "status": "historical",
+          "value": "She moved to a 40% product, 60% marketing allocation."
+        },
+        {
+          "evidence": [
+            "conv_011:msg_conv_011_003",
+            "email_006:msg_email_006_004"
+          ],
+          "label": "September",
+          "status": "current",
+          "value": "She chose product and received an October 1 transfer."
+        }
+      ],
+      "question": "How did Maya's career direction change from April to the end of September?",
+      "review": {
+        "expected_answer": "In April, Maya was unsure about marketing and planned to try it before deciding. She enjoyed it after settling in, then became more interested in product while building Kids Spark. By September she had chosen product, and a full-time transfer was approved for October 1.",
+        "explanation": "The answer captures the marketing-to-product direction, but it skips the intermediate changes and says Maya started in April even though the cited offer gives May 4.",
+        "failure_type": "missed_evidence",
+        "result": "partial"
+      },
+      "source_events": [
+        {
+          "evidence_id": "email_001:msg_email_001_001",
+          "message_id": "msg_email_001_001",
+          "observed_at": "2026-04-09T10:00:00+05:30",
+          "source_id": "email_001",
+          "source_type": "email",
+          "speaker": "Kavya",
+          "text": "Hi Maya, we are pleased to confirm your offer for the Marketing Associate role at Infinity Learn in Bengaluru. Your joining date is Monday, May 4, 2026. Please reply by April 16 to accept the offer."
+        },
+        {
+          "evidence_id": "conv_002:msg_conv_002_003",
+          "message_id": "msg_conv_002_003",
+          "observed_at": "2026-04-25T21:01:02+05:30",
+          "source_id": "conv_002",
+          "source_type": "conversation",
+          "speaker": "Maya",
+          "text": "I still don't know if marketing is for me. I'll give it a proper try and decide after I've actually done the work."
+        },
+        {
+          "evidence_id": "conv_005:msg_conv_005_002",
+          "message_id": "msg_conv_005_002",
+          "observed_at": "2026-06-09T11:00:24+05:30",
+          "source_id": "conv_005",
+          "source_type": "conversation",
+          "speaker": "Maya",
+          "text": "Much better. I've started having lunch with the team, and I'm finally enjoying the marketing work instead of counting the hours."
+        },
+        {
+          "evidence_id": "email_004:msg_email_004_004",
+          "message_id": "msg_email_004_004",
+          "observed_at": "2026-07-27T14:00:00+05:30",
+          "source_id": "email_004",
+          "source_type": "email",
+          "speaker": "Sapna",
+          "text": "From July 27, Maya will spend 40 percent of her time supporting Kids Spark as a product associate and 60 percent on marketing. We will revisit the split when the product has enough work for a larger allocation."
+        },
+        {
+          "evidence_id": "conv_008:msg_conv_008_002",
+          "message_id": "msg_conv_008_002",
+          "observed_at": "2026-07-29T20:30:43+05:30",
+          "source_id": "conv_008",
+          "source_type": "conversation",
+          "speaker": "Maya",
+          "text": "The second review with Sapna and Pravin went well. I'm officially helping Sapna as a product associate on Kids Spark now."
+        },
+        {
+          "evidence_id": "conv_011:msg_conv_011_003",
+          "message_id": "msg_conv_011_003",
+          "observed_at": "2026-09-05T18:31:10+05:30",
+          "source_id": "conv_011",
+          "source_type": "conversation",
+          "speaker": "Maya",
+          "text": "You're right. I've decided I want product, so I'll ask her for a real path into the team."
+        },
+        {
+          "evidence_id": "email_006:msg_email_006_004",
+          "message_id": "msg_email_006_004",
+          "observed_at": "2026-09-29T12:00:00+05:30",
+          "source_id": "email_006",
+          "source_type": "email",
+          "speaker": "Kavya",
+          "text": "Maya's transfer to the product team is approved. She will report to Sapna as a Product Associate from October 1, 2026. Her marketing handoff will close on September 30."
+        }
+      ],
+      "summary": "A preference develops over months instead of being treated as permanent.",
+      "title": "A changing career direction"
+    },
+    {
+      "answer": {
+        "abstention_reason": "There is no direct or indirect evidence in the supplied history specifying Maya's college subject or field of study.",
+        "body": "The history does not establish what subject Maya studied in college.",
+        "confidence": 0,
+        "evidence": [],
+        "status": "abstained"
+      },
+      "as_of": "2026-09-30T23:59:59+05:30",
+      "capability": "abstention",
+      "case_id": "abstention_001",
+      "difficulty": "missing_fact",
+      "memory_states": [
+        {
+          "evidence": [
+            "conv_002:msg_conv_002_005"
+          ],
+          "label": "Available evidence",
+          "status": "current",
+          "value": "Maya mentions finishing college, but no source names her subject."
+        },
+        {
+          "evidence": [],
+          "label": "College subject",
+          "status": "unknown",
+          "value": "Unknown from the available history."
+        }
+      ],
+      "question": "What subject did Maya study in college?",
+      "review": {
+        "expected_answer": "The available source history does not say what subject Maya studied.",
+        "explanation": "The model abstained because the source history does not contain the answer.",
+        "failure_type": null,
+        "result": "correct"
+      },
+      "source_events": [
+        {
+          "evidence_id": "conv_002:msg_conv_002_005",
+          "message_id": "msg_conv_002_005",
+          "observed_at": "2026-04-25T21:01:58+05:30",
+          "source_id": "conv_002",
+          "source_type": "conversation",
+          "speaker": "Maya",
+          "text": "That's a very big maybe. Right now I just need to finish college and survive my first month."
+        }
+      ],
+      "summary": "The benchmark rewards refusing to infer a missing college subject.",
+      "title": "Evidence is absent"
+    }
+  ],
+  "runs": [
+    {
+      "cost": "$0.4399284",
+      "input_tokens": 536405,
+      "model": "GPT-4.1 mini extraction + GPT-4.1 answers",
+      "note": "Extraction completed. B0 answer attempts produced no valid predictions or score.",
+      "output_tokens": 26921,
+      "requests": 149,
+      "series_id": "openai-gpt41-v1",
+      "status": "interrupted_not_scored"
+    },
+    {
+      "cost": "INR 0",
+      "input_tokens": 0,
+      "model": "Qwen/Qwen3.5-27B-FP8",
+      "note": "Pinned and ready for a separately approved JarvisLabs run.",
+      "output_tokens": 0,
+      "requests": 0,
+      "series_id": "qwen35-27b-fp8-v1",
+      "status": "configured_not_run"
+    }
+  ],
+  "schema_version": "demo_bundle_v1",
+  "scorecards": [
+    {
+      "abstention_precision": 1.0,
+      "answer_accuracy": 0.92,
+      "baseline_id": "B1",
+      "evidence_recall": 0.5,
+      "failures": 0,
+      "label": "Full history",
+      "latency_ms": null,
+      "recall_at_10": null,
+      "status": "pilot_scored"
+    },
+    {
+      "abstention_precision": null,
+      "answer_accuracy": null,
+      "baseline_id": "B2",
+      "evidence_recall": null,
+      "failures": 0,
+      "label": "Atomic memory",
+      "latency_ms": 10.521,
+      "recall_at_10": 1.0,
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": null,
+      "answer_accuracy": null,
+      "baseline_id": "B3",
+      "evidence_recall": null,
+      "failures": 0,
+      "label": "Session summaries",
+      "latency_ms": 8.863,
+      "recall_at_10": 1.0,
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": null,
+      "answer_accuracy": null,
+      "baseline_id": "B4",
+      "evidence_recall": null,
+      "failures": 0,
+      "label": "Hybrid retrieval",
+      "latency_ms": 13.439,
+      "recall_at_10": 0.975,
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": null,
+      "answer_accuracy": null,
+      "baseline_id": "B5",
+      "evidence_recall": null,
+      "failures": null,
+      "label": "Conflict aware",
+      "latency_ms": null,
+      "recall_at_10": null,
+      "status": "not_scored"
+    },
+    {
+      "abstention_precision": 0.25,
+      "answer_accuracy": null,
+      "baseline_id": "B6",
+      "evidence_recall": null,
+      "failures": null,
+      "label": "Lifecycle aware",
+      "latency_ms": null,
+      "recall_at_10": null,
+      "status": "development_partial"
+    },
+    {
+      "abstention_precision": 0.25,
+      "answer_accuracy": null,
+      "baseline_id": "B7",
+      "evidence_recall": null,
+      "failures": null,
+      "label": "Evidence gated",
+      "latency_ms": null,
+      "recall_at_10": null,
+      "status": "development_partial"
+    }
+  ]
+}
