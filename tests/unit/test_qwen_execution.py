@@ -12,6 +12,7 @@ from evaluation.qwen_execution import (
     ExecutionJob,
     QwenExecutionError,
     TransportRetryLedger,
+    _evidence_index,
     _normalize_qwen_answer_response,
     build_extraction_jobs,
     derive_b7_records,
@@ -160,6 +161,38 @@ class QwenExecutionTests(unittest.TestCase):
 
         self.assertIsNone(normalized["abstention_reason"])
         self.assertEqual(normalized["citations"][0]["quote"], exact_quote)
+
+    def test_answer_validator_normalizes_qwen_calendar_message_ids(self) -> None:
+        evidence = _evidence_index([{
+            "record_kind": "source",
+            "source_id": "scaled_user_001_calendar_002",
+            "content": "Care Map review is scheduled for 2026-08-11.",
+            "evidence": [],
+        }])
+
+        normalized = _normalize_qwen_answer_response(
+            {
+                "status": "answered",
+                "answer": "The Care Map review is scheduled for 2026-08-11.",
+                "confidence": 1,
+                "statements": ["The Care Map review is scheduled for 2026-08-11."],
+                "citations": [{
+                    "source_id": "scaled_user_001_calendar_002",
+                    "message_id": "scaled_user_001_calendar_002_message_001",
+                    "quote": "Care Map review is scheduled for 2026-08-11.",
+                }],
+                "unresolved_parts": [],
+                "abstention_reason": "",
+            },
+            "qa",
+            evidence,
+        )
+
+        self.assertIsNone(normalized["citations"][0]["message_id"])
+        self.assertEqual(
+            normalized["citations"][0]["quote"],
+            "Care Map review is scheduled for 2026-08-11.",
+        )
 
     def test_concurrent_atomic_checkpoints_are_composed_in_plan_order(self) -> None:
         active = {"current": 0, "maximum": 0, "lock": threading.Lock()}

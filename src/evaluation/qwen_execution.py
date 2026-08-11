@@ -327,16 +327,27 @@ def _normalize_qwen_citations(
             candidate
             for candidate in evidence_index
             if candidate[0] == source_id
-            and candidate[1] == key[1]
+            and _qwen_message_id_matches(candidate[1], key[1], source_id)
             and (quote in candidate[2] or candidate[2] in quote)
         ]
         if len(candidates) == 1:
             fixed = dict(citation)
+            fixed["message_id"] = candidates[0][1]
             fixed["quote"] = candidates[0][2]
             normalized.append(fixed)
         else:
             normalized.append(citation)
     return normalized
+
+
+def _qwen_message_id_matches(
+    expected: str | None,
+    actual: str | None,
+    source_id: str,
+) -> bool:
+    if expected == actual:
+        return True
+    return expected is None and actual == f"{source_id}_message_001"
 
 
 def execute_jobs(
@@ -704,6 +715,15 @@ def _evidence_index(
         evidence = record.get("evidence", [])
         if not isinstance(evidence, list):
             raise QwenExecutionError("context evidence is malformed")
+        if not evidence and record.get("record_kind") == "source":
+            source_id = record.get("source_id")
+            content = record.get("content")
+            if isinstance(source_id, str) and isinstance(content, str) and content.strip():
+                result[(source_id, None, content)] = {
+                    "source_id": source_id,
+                    "message_id": None,
+                    "quote": content,
+                }
         for item in evidence:
             if not isinstance(item, Mapping):
                 raise QwenExecutionError("context evidence item is malformed")
