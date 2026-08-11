@@ -48,6 +48,10 @@ class VLLMModelMismatchError(VLLMResponseError):
     """Raised when the vLLM server resolves to a different model snapshot."""
 
 
+class VLLMTransportError(VLLMResponseError):
+    """Raised only when a request failed before any response body was received."""
+
+
 @dataclass(frozen=True)
 class _VLLMTransportResponse:
     body: Mapping[str, object]
@@ -190,7 +194,9 @@ class VLLMClient:
                 provider_reason=provider_reason,
             ) from error
         except URLError as error:
-            raise VLLMResponseError(f"vLLM API request failed: {error.reason}") from error
+            raise VLLMTransportError(f"vLLM API request failed: {error.reason}") from error
+        except TimeoutError as error:
+            raise VLLMTransportError("vLLM API request timed out before a response") from error
 
         try:
             parsed = json.loads(response_body)
