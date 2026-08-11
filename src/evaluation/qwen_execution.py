@@ -271,8 +271,7 @@ def _normalize_qwen_answer_response(
         return value
     if value.get("status") != "abstained":
         normalized = dict(value)
-        if normalized.get("abstention_reason") == "":
-            normalized["abstention_reason"] = None
+        normalized["abstention_reason"] = None
         body = normalized.get(body_field)
         statements = normalized.get("statements")
         if isinstance(body, str) and body.strip() and isinstance(statements, list):

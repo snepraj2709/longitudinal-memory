@@ -164,6 +164,40 @@ class QwenExecutionTests(unittest.TestCase):
         self.assertEqual(normalized["unresolved_parts"], [])
         self.assertEqual(normalized["citations"][0]["quote"], exact_quote)
 
+    def test_answer_validator_clears_non_abstained_reason(self) -> None:
+        normalized = _normalize_qwen_answer_response(
+            {
+                "status": "disputed",
+                "answer": "Neither reported office base is authoritative.",
+                "confidence": 0.5,
+                "statements": [
+                    "Asha's office base is reported as Pune.",
+                    "Asha's office base is reported as Mumbai.",
+                ],
+                "citations": [
+                    {
+                        "source_id": "scaled_user_001_chat_002",
+                        "message_id": "scaled_user_001_chat_002_message_001",
+                        "quote": "I heard Asha's office base is Pune.",
+                    },
+                    {
+                        "source_id": "scaled_user_001_chat_002",
+                        "message_id": "scaled_user_001_chat_002_message_002",
+                        "quote": "My roster lists Asha in Mumbai, but it may be stale.",
+                    },
+                ],
+                "unresolved_parts": [
+                    "The validity of the reported office bases is disputed.",
+                ],
+                "abstention_reason": "Both claims are disputed.",
+            },
+            "qa",
+        )
+
+        self.assertEqual(normalized["statements"], ["Neither reported office base is authoritative."])
+        self.assertIsNone(normalized["abstention_reason"])
+        self.assertEqual(normalized["status"], "disputed")
+
     def test_answer_validator_normalizes_qwen_calendar_message_ids(self) -> None:
         evidence = _evidence_index([{
             "record_kind": "source",
