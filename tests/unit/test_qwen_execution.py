@@ -135,6 +135,32 @@ class QwenExecutionTests(unittest.TestCase):
         self.assertEqual(normalized["answer"], "The context records are empty.")
         self.assertEqual(normalized["unresolved_parts"], [])
 
+    def test_answer_validator_normalizes_qwen_citation_substrings(self) -> None:
+        exact_quote = (
+            "I need to correct the start date. I began on 2026-01-11, not "
+            "2026-02-03. My current goal is still to build reliable health tools."
+        )
+        normalized = _normalize_qwen_answer_response(
+            {
+                "status": "answered",
+                "answer": "Asha began on 2026-01-11.",
+                "confidence": 0.95,
+                "statements": ["Asha began on 2026-01-11."],
+                "citations": [{
+                    "source_id": "scaled_user_001_conversation_003",
+                    "message_id": "scaled_user_001_conversation_003_message_001",
+                    "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
+                }],
+                "unresolved_parts": [],
+                "abstention_reason": "",
+            },
+            "qa",
+            {("scaled_user_001_conversation_003", "scaled_user_001_conversation_003_message_001", exact_quote): object()},
+        )
+
+        self.assertIsNone(normalized["abstention_reason"])
+        self.assertEqual(normalized["citations"][0]["quote"], exact_quote)
+
     def test_concurrent_atomic_checkpoints_are_composed_in_plan_order(self) -> None:
         active = {"current": 0, "maximum": 0, "lock": threading.Lock()}
         with tempfile.TemporaryDirectory() as directory:

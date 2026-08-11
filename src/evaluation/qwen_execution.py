@@ -227,7 +227,7 @@ def build_answer_jobs(
             *, task=context.task,
             evidence=evidence_index,
         ) -> Mapping[str, object]:
-            parsed = _normalize_qwen_answer_response(json.loads(raw), task)
+            parsed = _normalize_qwen_answer_response(json.loads(raw), task, evidence)
             return validate_answer_output(parsed, task=task, evidence_index=evidence)
 
         jobs.append(ExecutionJob(
@@ -252,16 +252,33 @@ def build_answer_jobs(
     return tuple(jobs)
 
 
-def _normalize_qwen_answer_response(value: object, task: str) -> object:
-    """Normalize Qwen's abstention phrasing into the frozen answer contract."""
+def _normalize_qwen_answer_response(
+    value: object,
+    task: str,
+    evidence_index: Mapping[tuple[str, str | None, str], object] | None = None,
+) -> object:
+    """Normalize Qwen answer phrasing into the frozen answer contract."""
 
     if not isinstance(value, dict):
-        return value
-    if value.get("status") != "abstained":
         return value
     body_field = TASK_BODY.get(task)
     if body_field is None:
         return value
+    if value.get("status") != "abstained":
+        normalized = dict(value)
+        if normalized.get("abstention_reason") == "":
+            normalized["abstention_reason"] = None
+        body = normalized.get(body_field)
+        statements = normalized.get("statements")
+        if isinstance(body, str) and body.strip() and isinstance(statements, list):
+            normalized["statements"] = [
+                item for item in statements
+                if isinstance(item, str) and item.strip() and item in body
+            ] or [body]
+        normalized["citations"] = _normalize_qwen_citations(
+            normalized.get("citations"), evidence_index
+        )
+        return normalized
     normalized = dict(value)
     reason = normalized.get("abstention_reason")
     body = normalized.get(body_field)
@@ -279,6 +296,46 @@ def _normalize_qwen_answer_response(value: object, task: str) -> object:
         normalized["statements"] = []
         normalized["citations"] = []
         normalized["unresolved_parts"] = []
+    return normalized
+
+
+def _normalize_qwen_citations(
+    value: object,
+    evidence_index: Mapping[tuple[str, str | None, str], object] | None,
+) -> object:
+    if evidence_index is None or not isinstance(value, list):
+        return value
+    normalized = []
+    for citation in value:
+        if not isinstance(citation, Mapping):
+            normalized.append(citation)
+            continue
+        source_id = citation.get("source_id")
+        message_id = citation.get("message_id")
+        quote = citation.get("quote")
+        if not isinstance(source_id, str) or not isinstance(quote, str):
+            normalized.append(citation)
+            continue
+        normalized_message_id = (
+            message_id if isinstance(message_id, str) or message_id is None else None
+        )
+        key = (source_id, normalized_message_id, quote)
+        if key in evidence_index:
+            normalized.append(dict(citation))
+            continue
+        candidates = [
+            candidate
+            for candidate in evidence_index
+            if candidate[0] == source_id
+            and candidate[1] == key[1]
+            and (quote in candidate[2] or candidate[2] in quote)
+        ]
+        if len(candidates) == 1:
+            fixed = dict(citation)
+            fixed["quote"] = candidates[0][2]
+            normalized.append(fixed)
+        else:
+            normalized.append(citation)
     return normalized
 
 
