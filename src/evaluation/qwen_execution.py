@@ -227,7 +227,7 @@ def build_answer_jobs(
             *, task=context.task,
             evidence=evidence_index,
         ) -> Mapping[str, object]:
-            parsed = json.loads(raw)
+            parsed = _normalize_qwen_answer_response(json.loads(raw), task)
             return validate_answer_output(parsed, task=task, evidence_index=evidence)
 
         jobs.append(ExecutionJob(
@@ -250,6 +250,36 @@ def build_answer_jobs(
             series_id=series_id,
         ))
     return tuple(jobs)
+
+
+def _normalize_qwen_answer_response(value: object, task: str) -> object:
+    """Normalize Qwen's abstention phrasing into the frozen answer contract."""
+
+    if not isinstance(value, dict):
+        return value
+    if value.get("status") != "abstained":
+        return value
+    body_field = TASK_BODY.get(task)
+    if body_field is None:
+        return value
+    normalized = dict(value)
+    reason = normalized.get("abstention_reason")
+    body = normalized.get(body_field)
+    unresolved = normalized.get("unresolved_parts")
+    if not isinstance(reason, str) or not reason.strip():
+        if isinstance(body, str) and body.strip():
+            reason = body
+        elif isinstance(unresolved, list) and unresolved:
+            reason = "; ".join(str(item) for item in unresolved if str(item).strip())
+    if isinstance(reason, str) and reason.strip():
+        normalized["abstention_reason"] = reason.strip()
+        if not isinstance(body, str) or not body.strip():
+            normalized[body_field] = reason.strip()
+        normalized["confidence"] = 0
+        normalized["statements"] = []
+        normalized["citations"] = []
+        normalized["unresolved_parts"] = []
+    return normalized
 
 
 def execute_jobs(

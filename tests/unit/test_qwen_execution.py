@@ -12,6 +12,7 @@ from evaluation.qwen_execution import (
     ExecutionJob,
     QwenExecutionError,
     TransportRetryLedger,
+    _normalize_qwen_answer_response,
     build_extraction_jobs,
     derive_b7_records,
     execute_jobs,
@@ -118,6 +119,21 @@ class QwenExecutionTests(unittest.TestCase):
         output = job.validator(raw, OpenAIResponseMetadata("response", "qwen3-8b-vllm", 1, 1, 2))
 
         self.assertIs(output["claims"][0]["object"], True)
+
+    def test_answer_validator_normalizes_qwen_abstentions(self) -> None:
+        normalized = _normalize_qwen_answer_response({
+            "status": "abstained",
+            "answer": "",
+            "confidence": 0,
+            "statements": [],
+            "citations": [],
+            "unresolved_parts": ["Which university did Asha attend?"],
+            "abstention_reason": "The context records are empty.",
+        }, "qa")
+
+        self.assertEqual(normalized["status"], "abstained")
+        self.assertEqual(normalized["answer"], "The context records are empty.")
+        self.assertEqual(normalized["unresolved_parts"], [])
 
     def test_concurrent_atomic_checkpoints_are_composed_in_plan_order(self) -> None:
         active = {"current": 0, "maximum": 0, "lock": threading.Lock()}
