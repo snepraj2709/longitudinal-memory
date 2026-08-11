@@ -10,6 +10,7 @@ from pathlib import Path
 import time
 from typing import Mapping, Sequence
 
+from .frozen_run_contracts import FrozenRunError
 from .openai_client import OpenAIResponseMetadata
 from .qwen_execution import (
     ClientFactory,
@@ -72,11 +73,12 @@ def run_serverless_pilot(
     if len(jobs) != expected:
         raise QwenServerlessPilotError(f"compatibility job count changed: {len(jobs)}, expected {expected}")
     started = monotonic()
+    normalized_base_url = _normalize_base_url(base_url)
     manifest = _execute_serverless_jobs(
         jobs,
         output_dir=output / "compatibility",
         client_factory=client_factory or _client_factory(
-            base_url=base_url,
+            base_url=normalized_base_url,
             model=model,
             api_key=api_key,
             temperature=float(config["temperature"]),
@@ -94,7 +96,7 @@ def run_serverless_pilot(
         "provider": config["provider"],
         "deployment": {
             "deployment_id": deployment_id,
-            "base_url": _normalize_base_url(base_url),
+            "base_url": normalized_base_url,
             "model": model,
             "framework": framework,
             "gpu": gpu,
@@ -234,8 +236,15 @@ def _execute_serverless_one(
             stage = "transport" if error.status_code in retryable_response_statuses else "provider"
             record = _failure_record(job, attempts, retries, monotonic() - began, stage, code)
             break
-        except (json.JSONDecodeError, ValueError, TypeError) as error:
-            record = _failure_record(job, attempts, retries, monotonic() - began, "validation", type(error).__name__)
+        except (json.JSONDecodeError, ValueError, TypeError, FrozenRunError) as error:
+            record = _failure_record(
+                job,
+                attempts,
+                retries,
+                monotonic() - began,
+                "validation",
+                _safe_validation_code(error),
+            )
             break
         except Exception as error:
             stage = "validation" if not isinstance(error, QwenExecutionError) else "execution"
@@ -331,8 +340,10 @@ def _output_root(repo_root: Path, output_root: Path | None, config: Mapping[str,
 
 def _normalize_base_url(value: str) -> str:
     base_url = value.rstrip("/")
-    if not base_url.endswith("/v1"):
-        raise QwenServerlessPilotError("vLLM base URL must end with /v1")
+    if not base_url:
+        raise QwenServerlessPilotError("vLLM base URL must be non-empty")
+    if base_url.endswith("/v1"):
+        return base_url[:-3].rstrip("/")
     return base_url
 
 
@@ -341,6 +352,15 @@ def _require_paid_serverless_confirmation(value: str) -> None:
         raise QwenServerlessPilotError(
             f"paid vLLM requests require --confirm-paid-serverless {PAID_SERVERLESS_CONFIRMATION}"
         )
+
+
+def _safe_validation_code(error: Exception) -> str:
+    text = str(error).strip()
+    if not text:
+        return type(error).__name__
+    safe = "".join(char.lower() if char.isalnum() else "_" for char in text)
+    safe = "_".join(part for part in safe.split("_") if part)
+    return safe[:120] or type(error).__name__
 
 
 def _read_env_file(path: Path | None) -> Mapping[str, str]:

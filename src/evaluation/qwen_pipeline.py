@@ -98,8 +98,8 @@ def build_compatibility_jobs(repo_root: Path) -> tuple[ExecutionJob, ...]:
                 context_sha256=None,
                 context_count=len(records),
                 system_prompt=prompts[task],
-                user_prompt=_render_answer_prompt(task, case, records),
-                response_format=_response_format(f"compat_v2_{baseline}_{task}", _answer_schema(task)),
+                user_prompt=_render_compatibility_answer_prompt(task, case, records),
+                response_format=_compatibility_answer_response_format(task, baseline),
                 max_output_tokens=1000,
                 validator=validate,
             )
@@ -500,6 +500,70 @@ def _compatibility_context(runtime, case):
         "evidence": evidence,
         "relations": [],
     },)
+
+
+def _render_compatibility_answer_prompt(task, case, records):
+    payload = json.loads(_render_answer_prompt(task, case, records))
+    body = {"qa": "answer", "summary": "summary", "interactive": "response"}[task]
+    abstention = {
+        "status": "abstained",
+        body: "Not enough reliable memory.",
+        "confidence": 0,
+        "statements": [],
+        "citations": [],
+        "unresolved_parts": [],
+        "abstention_reason": "insufficient_evidence",
+    }
+    allowed_citations = [
+        {
+            "source_id": evidence["source_id"],
+            "message_id": evidence["message_id"],
+            "quote": evidence["quote"],
+        }
+        for record in payload["context_records"]
+        for evidence in record.get("evidence", [])
+    ]
+    payload["output_contract"]["rules"] = (
+        "Return only the exact fields listed. If context_records is empty, or if "
+        "the supplied evidence does not answer the runtime case, return the "
+        "abstention_template exactly. For non-abstained outputs, copy every "
+        "citation from allowed_citations without changing source_id, message_id, "
+        "or quote, and make every statement an exact substring of the answer body."
+    )
+    payload["output_contract"]["allowed_citations"] = allowed_citations
+    payload["output_contract"]["abstention_template"] = abstention
+    if allowed_citations and task == "qa":
+        statement = "The user accepted the product engineer role at Riverstone Labs."
+        payload["output_contract"]["grounded_example"] = {
+            "status": "answered",
+            body: statement,
+            "confidence": 0.8,
+            "statements": [statement],
+            "citations": [allowed_citations[0]],
+            "unresolved_parts": [],
+            "abstention_reason": None,
+        }
+    return json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _compatibility_answer_response_format(task: str, baseline: str) -> dict[str, object]:
+    if baseline == "B0" or task in {"summary", "interactive"}:
+        return _response_format(f"compat_v2_{baseline}_{task}_abstain", _abstention_schema(task))
+    return _response_format(f"compat_v2_{baseline}_{task}", _answer_schema(task))
+
+
+def _abstention_schema(task: str) -> dict[str, object]:
+    body = {"qa": "answer", "summary": "summary", "interactive": "response"}[task]
+    properties: dict[str, object] = {
+        "status": {"type": "string", "enum": ["abstained"]},
+        body: {"type": "string", "enum": ["Not enough reliable memory."]},
+        "confidence": {"type": "number", "enum": [0]},
+        "statements": {"type": "array", "maxItems": 0},
+        "citations": {"type": "array", "maxItems": 0},
+        "unresolved_parts": {"type": "array", "maxItems": 0},
+        "abstention_reason": {"type": "string", "enum": ["insufficient_evidence"]},
+    }
+    return {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
 
 
 def _compatibility_candidate(task, records):

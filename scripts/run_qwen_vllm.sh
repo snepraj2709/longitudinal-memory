@@ -11,14 +11,15 @@ MAX_NUM_SEQS="${MAX_NUM_SEQS:-4}"
 GPU_MEMORY_UTILIZATION="${GPU_MEMORY_UTILIZATION:-0.90}"
 PORT="${PORT:-6006}"
 VLLM_BIN="${VLLM_BIN:-vllm}"
+export VLLM_USE_V2_MODEL_RUNNER="${VLLM_USE_V2_MODEL_RUNNER:-0}"
 
 exec "${VLLM_BIN}" serve "${MODEL_ID}" \
   --served-model-name "${MODEL_ALIAS}" \
   --host 0.0.0.0 \
   --port "${PORT}" \
-  --api-key "${VLLM_API_KEY}" \
   --tensor-parallel-size 1 \
   --gpu-memory-utilization "${GPU_MEMORY_UTILIZATION}" \
+  --enforce-eager \
   --seed 42 \
   --generation-config vllm \
   --reasoning-parser qwen3 \

@@ -36,13 +36,52 @@ class QwenPipelineTests(unittest.TestCase):
         self.assertNotIn("acceptable_answers", payload)
         self.assertNotIn("qwen35-27b-fp8-v2", payload)
 
+    def test_compatibility_answer_prompts_include_abstention_and_allowed_citations(self) -> None:
+        jobs = build_compatibility_jobs(ROOT)
+        b0_qa = next(job for job in jobs if job.request_id == "compat:B0:qa")
+        b6_qa = next(job for job in jobs if job.request_id == "compat:B6:qa")
+        b6_summary = next(job for job in jobs if job.request_id == "compat:B6:summary")
+
+        b0_prompt = json.loads(b0_qa.user_prompt)
+        self.assertEqual(b0_prompt["context_records"], [])
+        self.assertEqual(b0_prompt["output_contract"]["abstention_template"], {
+            "status": "abstained",
+            "answer": "Not enough reliable memory.",
+            "confidence": 0,
+            "statements": [],
+            "citations": [],
+            "unresolved_parts": [],
+            "abstention_reason": "insufficient_evidence",
+        })
+        self.assertEqual(b0_prompt["output_contract"]["allowed_citations"], [])
+        b0_schema = b0_qa.response_format["json_schema"]["schema"]["properties"]
+        self.assertEqual(b0_schema["status"]["enum"], ["abstained"])
+        self.assertEqual(b0_schema["citations"]["maxItems"], 0)
+
+        b6_prompt = json.loads(b6_qa.user_prompt)
+        self.assertGreater(len(b6_prompt["output_contract"]["allowed_citations"]), 0)
+        self.assertIn("grounded_example", b6_prompt["output_contract"])
+        citation = b6_prompt["output_contract"]["allowed_citations"][0]
+        self.assertEqual(set(citation), {"source_id", "message_id", "quote"})
+        b6_schema = b6_qa.response_format["json_schema"]["schema"]["properties"]
+        self.assertEqual(b6_schema["status"]["enum"], ["answered", "abstained", "disputed", "partially_answered"])
+
+        summary_prompt = json.loads(b6_summary.user_prompt)
+        self.assertNotIn("grounded_example", summary_prompt["output_contract"])
+        summary_schema = b6_summary.response_format["json_schema"]["schema"]["properties"]
+        self.assertEqual(summary_schema["status"]["enum"], ["abstained"])
+        self.assertEqual(summary_schema["unresolved_parts"]["maxItems"], 0)
+
     def test_server_command_matches_pinned_vllm_cli(self) -> None:
         script = (ROOT / "scripts/run_qwen_vllm.sh").read_text(encoding="utf-8")
         self.assertIn("MODEL_ID=\"${MODEL_ID:-Qwen/Qwen3-8B}\"", script)
         self.assertIn("MODEL_ALIAS=\"${MODEL_ALIAS:-qwen3-8b-vllm}\"", script)
         self.assertIn("MAX_MODEL_LEN=\"${MAX_MODEL_LEN:-8192}\"", script)
+        self.assertIn("VLLM_API_KEY=\"${VLLM_API_KEY:-${QWEN_VLLM_API_KEY:-}}\"", script)
+        self.assertIn("VLLM_USE_V2_MODEL_RUNNER=\"${VLLM_USE_V2_MODEL_RUNNER:-0}\"", script)
         self.assertIn("exec \"${VLLM_BIN}\" serve \"${MODEL_ID}\"", script)
-        self.assertIn("--api-key \"${VLLM_API_KEY}\"", script)
+        self.assertNotIn("--api-key", script)
+        self.assertIn("--enforce-eager", script)
         self.assertIn("--reasoning-parser qwen3", script)
         self.assertIn("--language-model-only", script)
         self.assertNotIn("--task generate", script)

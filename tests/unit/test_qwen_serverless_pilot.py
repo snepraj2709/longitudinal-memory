@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from evaluation.openai_client import OpenAIResponseMetadata
+from evaluation.frozen_run_contracts import FrozenRunError
 from evaluation.qwen_execution import ExecutionJob, TransportRetryLedger
 from evaluation.qwen_serverless_pilot import (
     PAID_SERVERLESS_CONFIRMATION,
@@ -94,7 +95,7 @@ class QwenServerlessPilotTests(unittest.TestCase):
                         paid_serverless_confirmation=PAID_SERVERLESS_CONFIRMATION,
                     )
         factory.assert_called_once_with(
-            base_url="https://in2.example/openai/deploy_123/v1",
+            base_url="https://in2.example/openai/deploy_123",
             model="qwen3-8b-vllm",
             api_key="secret",
             temperature=0.0,
@@ -106,6 +107,7 @@ class QwenServerlessPilotTests(unittest.TestCase):
         self.assertFalse(receipt["api_key_persisted"])
         self.assertEqual(receipt["series_id"], "qwen3-8b-vllm-pilot-v1")
         self.assertEqual(receipt["deployment"]["model"], "qwen3-8b-vllm")
+        self.assertEqual(receipt["deployment"]["base_url"], "https://in2.example/openai/deploy_123")
         self.assertEqual(receipt["deployment"]["concurrency"], 1)
         self.assertEqual(receipt["deployment"]["context_length"], 8192)
         self.assertEqual(receipt["deployment"]["temperature"], 0)
@@ -178,6 +180,35 @@ class QwenServerlessPilotTests(unittest.TestCase):
         self.assertEqual(manifest["provider_request_count"], 1)
         self.assertEqual(row["failure_stage"], "provider")
         self.assertEqual(row["failure_code"], "http_400")
+
+    def test_vllm_executor_records_sanitized_validation_failure_code(self) -> None:
+        attempts = {"count": 0}
+
+        def call():
+            attempts["count"] += 1
+            return json.dumps({"status": "answered"}), OpenAIResponseMetadata(
+                "response_1", "qwen3-8b-vllm", 10, 5, 15
+            )
+
+        def validate(_raw: str, _metadata) -> object:
+            raise FrozenRunError("answer citation is outside the supplied context")
+
+        job = _job(1)
+        job = ExecutionJob(**{**job.__dict__, "validator": validate})
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = _execute_serverless_jobs(
+                (job,),
+                output_dir=Path(directory),
+                client_factory=lambda _job: _Client(call),
+                retry_ledger=TransportRetryLedger(1),
+                retryable_response_statuses=(408, 429, 502, 503, 504),
+            )
+            row = json.loads(next((Path(directory) / "requests").glob("*.json")).read_text())
+        self.assertEqual(attempts["count"], 1)
+        self.assertEqual(manifest["provider_request_count"], 1)
+        self.assertEqual(manifest["transport_retry_count"], 0)
+        self.assertEqual(row["failure_stage"], "validation")
+        self.assertEqual(row["failure_code"], "answer_citation_is_outside_the_supplied_context")
 
 
 if __name__ == "__main__":
