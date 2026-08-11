@@ -109,7 +109,12 @@ class SessionSummaryRepository:
         evidence: list[SummaryEvidence] = []
         for row in rows:
             claim_id = row["claim_id"]
-            links = linked.get(claim_id, ()) if row["lifecycle_status"] == "disputed" else ()
+            if row["lifecycle_status"] == "disputed":
+                links = linked.get(claim_id, ())
+                if not links:
+                    continue
+            else:
+                links = ()
             evidence.append(
                 SummaryEvidence(
                     evidence_id=_stable_id(
