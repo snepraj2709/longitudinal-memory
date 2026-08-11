@@ -52,6 +52,7 @@ RESULT_ROOT = Path("results/evaluation/qwen35-27b-fp8-v2")
 DATABASE_URL = "postgresql://storage_test:storage_test@127.0.0.1:55432/longitudinal_memory"
 SERVER_SCRIPT = Path("scripts/run_qwen_vllm.sh")
 SECRET_FILE = Path(".qwen-secrets.env")
+PAID_EXECUTION_CONFIRMATION = "qwen35-27b-fp8-v2-paid-gpu-approved"
 GOLD_PATHS = {
     "claims": Path("data/scaled-v1/gold/claims.jsonl"),
     "qa": Path("data/scaled-v1/gold/qa.jsonl"),
@@ -150,9 +151,11 @@ def run_pipeline(
     repo_root: Path,
     secret_file: Path,
     output_root: Path,
+    paid_execution_confirmation: str,
 ) -> Mapping[str, object]:
     """Execute approved stages and guarantee Jarvis cleanup before returning."""
 
+    _require_paid_execution_confirmation(paid_execution_confirmation)
     root = repo_root.resolve()
     output = output_root if output_root.is_absolute() else root / output_root
     _local_preflight(root, output)
@@ -187,6 +190,23 @@ def run_pipeline(
                     secret_file=secret_file if secret_file.is_absolute() else root / secret_file,
                     server_script=root / SERVER_SCRIPT,
                 )
+                manager.download_model_metadata(
+                    model_id=str(config["model"]["hugging_face_id"]),
+                    revision=str(config["model"]["revision"]),
+                )
+                manager.start_server(preflight=True)
+                endpoint = manager.endpoint()
+                dummy_model = _wait_for_server(
+                    endpoint, secrets["VLLM_API_KEY"],
+                    expected_alias=str(config["model"]["model_alias"]),
+                    budget=stage1_budget, server_alive=manager.server_alive,
+                    timeout_seconds=600,
+                )
+                manager.stop_server()
+                manager.events.append({
+                    "event": "dummy_engine_preflight_passed",
+                    "exact_model_alias": dummy_model["exact_model_alias"],
+                })
                 manager.download_model(
                     model_id=str(config["model"]["hugging_face_id"]),
                     revision=str(config["model"]["revision"]),
@@ -624,6 +644,13 @@ def _local_preflight(root, output):
             raise QwenPipelineError("Qwen v2 output root contains non-attempt run artifacts")
 
 
+def _require_paid_execution_confirmation(value: str) -> None:
+    if value != PAID_EXECUTION_CONFIRMATION:
+        raise QwenPipelineError(
+            "paid GPU execution is locked; fresh approval and the exact confirmation are required"
+        )
+
+
 def _historical_gpu_cost(output: Path) -> float:
     receipts = list((output / "lifecycle").glob("attempt-*/lifecycle.json"))
     legacy = output / "lifecycle/lifecycle.json"
@@ -710,11 +737,13 @@ def main() -> None:
     parser.add_argument("--repo-root", default=".")
     parser.add_argument("--secret-file", default=SECRET_FILE.as_posix())
     parser.add_argument("--output", default=RESULT_ROOT.as_posix())
+    parser.add_argument("--confirm-paid-gpu", required=True)
     args = parser.parse_args()
     result = run_pipeline(
         repo_root=Path(args.repo_root),
         secret_file=Path(args.secret_file),
         output_root=Path(args.output),
+        paid_execution_confirmation=args.confirm_paid_gpu,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
 

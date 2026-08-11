@@ -5,8 +5,10 @@ The decision-complete implementation and execution contract is [qwen-implementat
 ## Series status
 
 - `qwen35-27b-fp8-v1` is a historical, unrun scaffold. Preserve it as `superseded_not_run`; do not start its runner.
-- `qwen35-27b-fp8-v2` is the only approved execution series.
+- `qwen35-27b-fp8-v2` is the only permitted execution series, but paid execution is paused.
 - `openai-gpt41-v1` remains `interrupted_not_scored` and must not be resumed or used as Qwen input.
+
+Eight setup attempts on 2026-08-11 spent INR 39.69 and produced no provider response. All instances were destroyed. A new GPU attempt requires fresh approval; the earlier execution approval is no longer valid.
 
 ## Resource policy
 
@@ -25,6 +27,15 @@ jl resources --json
 ```
 
 Authentication must succeed without exposing a token. Then follow sections 3 through 17 of [qwen-implementation.md](qwen-implementation.md) in order. Do not improvise a direct `jl create` or invoke `scripts/run_qwen_vllm.sh` outside the v2 lifecycle wrapper.
+
+The wrapper also requires this explicit command-line lock after fresh approval:
+
+```bash
+PYTHONPATH=src python -m evaluation.qwen_pipeline \
+  --confirm-paid-gpu qwen35-27b-fp8-v2-paid-gpu-approved
+```
+
+Before the full model download, the wrapper must pass the Python 3.12 FlashInfer import check and a metadata-only dummy-weight engine boot. Failure at either gate destroys the instance without attempting the 30.9 GB download.
 
 The wrapper must keep one accepted instance running across approved stages, checkpoint every response, download recoverable artifacts, destroy the instance on every exit path, and verify that it no longer exists. Pausing is not final cleanup.
 

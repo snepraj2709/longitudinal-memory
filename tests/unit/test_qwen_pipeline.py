@@ -7,9 +7,11 @@ import unittest
 
 from evaluation.qwen_pipeline import (
     QwenPipelineError,
+    PAID_EXECUTION_CONFIRMATION,
     _historical_gpu_cost,
     _manager_cost,
     _next_attempt_id,
+    _require_paid_execution_confirmation,
     build_compatibility_jobs,
 )
 
@@ -41,6 +43,8 @@ class QwenPipelineTests(unittest.TestCase):
         self.assertIn("--max-model-len 16384", script)
         self.assertIn("--reasoning-parser qwen3", script)
         self.assertIn("--language-model-only", script)
+        self.assertIn("--load-format dummy", script)
+        self.assertIn("qwen35-27b-fp8-v2-metadata", script)
         self.assertNotIn("--task generate", script)
         self.assertNotIn("--api-key", script)
 
@@ -77,6 +81,11 @@ class QwenPipelineTests(unittest.TestCase):
                 return {"gpu_cost_inr": 3.96, "observed_account_spend_inr": 4.77}
 
         self.assertEqual(_manager_cost(Manager()), 4.77)
+
+    def test_paid_execution_requires_exact_fresh_confirmation(self) -> None:
+        with self.assertRaisesRegex(QwenPipelineError, "paid GPU execution is locked"):
+            _require_paid_execution_confirmation("")
+        _require_paid_execution_confirmation(PAID_EXECUTION_CONFIRMATION)
 
 
 if __name__ == "__main__":

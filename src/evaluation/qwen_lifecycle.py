@@ -38,6 +38,7 @@ VLLM_BUILD = {
     ),
 }
 REMOTE_MODEL_DIR = "/home/qwen35-27b-fp8-v2-model"
+REMOTE_METADATA_DIR = "/home/qwen35-27b-fp8-v2-metadata"
 REMOTE_PYTHON = "/home/qwen-v2-env/bin/python"
 
 
@@ -348,12 +349,13 @@ class JarvisManager(AbstractContextManager["JarvisManager"]):
             raise JarvisLifecycleError("pinned vLLM installation failed; diagnostic saved")
         verify = self.runner((
             "jl", "exec", str(machine_id), "--", REMOTE_PYTHON, "-c",
-            "import sys,vllm; print(sys.version_info[:2], vllm.__version__)",
+            "import array,sys,vllm; import flashinfer.comm.fd_exchange; "
+            "print(sys.version_info[:2], vllm.__version__, array.array[int])",
         ))
-        expected = f"(3, 12) {VLLM_BUILD['version']}"
+        expected = f"(3, 12) {VLLM_BUILD['version']} array.array[int]"
         if verify.returncode != 0 or verify.stdout.strip() != expected:
             self._write_install_failure(revision, verify)
-            raise JarvisLifecycleError("installed vLLM build does not match the frozen version")
+            raise JarvisLifecycleError("pinned vLLM and FlashInfer runtime preflight failed")
         self.events.append({
             "event": "vllm_installed",
             "at": _utc(self.clock()),
@@ -363,16 +365,86 @@ class JarvisManager(AbstractContextManager["JarvisManager"]):
             "wheel_url_sha256": sha256(VLLM_BUILD["wheel"].encode("utf-8")).hexdigest(),
         })
 
-    def start_server(self) -> None:
+    def start_server(self, *, preflight: bool = False) -> None:
         machine_id = self._require_machine()
+        mode = "preflight" if preflight else "production"
         command = (
             "set -a; . /home/.qwen-v2.env; set +a; "
             "chmod 700 /home/run_qwen_vllm.sh; "
-            "nohup /home/run_qwen_vllm.sh >/home/qwen-v2-server.log 2>&1 "
+            f"nohup setsid /home/run_qwen_vllm.sh {mode} >/home/qwen-v2-server.log 2>&1 "
             "</dev/null & echo $! >/home/qwen-v2-server.pid"
         )
         self._ok(("jl", "exec", str(machine_id), "--", "sh", "-lc", command), "vLLM startup")
-        self.events.append({"event": "server_started", "at": _utc(self.clock())})
+        self.events.append({
+            "event": "server_started", "at": _utc(self.clock()), "mode": mode,
+        })
+
+    def stop_server(self) -> None:
+        machine_id = self._require_machine()
+        command = (
+            "if test -s /home/qwen-v2-server.pid; then "
+            "pid=$(cat /home/qwen-v2-server.pid); kill -TERM -- -\"$pid\" 2>/dev/null || true; "
+            "for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do "
+            "kill -0 \"$pid\" 2>/dev/null || break; sleep 1; done; "
+            "kill -KILL -- -\"$pid\" 2>/dev/null || true; fi; "
+            "rm -f /home/qwen-v2-server.pid"
+        )
+        self._ok(("jl", "exec", str(machine_id), "--", "sh", "-lc", command), "vLLM stop")
+        self.events.append({"event": "server_stopped", "at": _utc(self.clock())})
+
+    def download_model_metadata(self, *, model_id: str, revision: str) -> Mapping[str, object]:
+        """Download config/tokenizer files only for a dummy-weight engine boot."""
+
+        if model_id != "Qwen/Qwen3.5-27B-FP8" or not re.fullmatch(r"[0-9a-f]{40}", revision):
+            raise JarvisLifecycleError("model metadata identity is outside the frozen contract")
+        machine_id = self._require_machine()
+        python = (
+            "import json,os; from pathlib import Path; "
+            "from huggingface_hub import snapshot_download; from transformers import AutoTokenizer; "
+            f"path=snapshot_download(repo_id=\"{model_id}\",revision=\"{revision}\","
+            f"local_dir=\"{REMOTE_METADATA_DIR}\",token=os.environ[\"HF_TOKEN\"],"
+            "ignore_patterns=[\"*.safetensors\",\"*.bin\",\"*.pt\"]); "
+            "tok=AutoTokenizer.from_pretrained(path); "
+            "files=sorted((p.relative_to(path).as_posix(),p.stat().st_size) "
+            "for p in Path(path).rglob(\"*\") if p.is_file()); "
+            "assert files and not any(name.endswith((\".safetensors\",\".bin\",\".pt\")) "
+            "for name,_ in files); "
+            "print(json.dumps({\"file_count\":len(files),\"total_bytes\":sum(x[1] for x in files),"
+            "\"tokenizer_class\":type(tok).__name__,\"tokenizer_size\":len(tok)},sort_keys=True))"
+        )
+        command = (
+            "set -a; . /home/.qwen-v2.env; set +a; "
+            f"{REMOTE_PYTHON} -c '{python}' >/home/qwen-v2-metadata-download.log 2>&1"
+        )
+        download = self.runner((
+            "jl", "exec", str(machine_id), "--", "sh", "-lc", command,
+        ))
+        if download.returncode != 0:
+            diagnostic = self.runner((
+                "jl", "exec", str(machine_id), "--", "sh", "-lc",
+                "set -a; . /home/.qwen-v2.env; set +a; "
+                "python3 -c 'import os; from pathlib import Path; "
+                "text=Path(\"/home/qwen-v2-metadata-download.log\").read_text(errors=\"replace\"); "
+                "text=text.replace(os.environ[\"HF_TOKEN\"], \"[REDACTED]\"); "
+                "print(text.replace(os.environ[\"VLLM_API_KEY\"], \"[REDACTED]\")[-30000:])'",
+            ))
+            self._write_remote_failure("model-metadata-failure.json", diagnostic)
+            raise JarvisLifecycleError("pinned model metadata or tokenizer preflight failed")
+        result = self.runner((
+            "jl", "exec", str(machine_id), "--", "sh", "-lc",
+            "tail -n 1 /home/qwen-v2-metadata-download.log",
+        ))
+        try:
+            receipt = json.loads(result.stdout.strip().splitlines()[-1])
+        except (IndexError, json.JSONDecodeError) as error:
+            raise JarvisLifecycleError("model metadata receipt is invalid") from error
+        if not isinstance(receipt, Mapping) or receipt.get("tokenizer_size") != 248077:
+            raise JarvisLifecycleError("metadata tokenizer does not match the frozen model")
+        self.events.append({
+            "event": "model_metadata_downloaded", "at": _utc(self.clock()),
+            "model_id": model_id, "revision": revision, **receipt,
+        })
+        return receipt
 
     def download_model(self, *, model_id: str, revision: str) -> Mapping[str, object]:
         if model_id != "Qwen/Qwen3.5-27B-FP8" or not re.fullmatch(r"[0-9a-f]{40}", revision):

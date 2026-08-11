@@ -16,6 +16,10 @@ The approved run is bounded by all of these conditions:
 
 Stop before creating an instance if authentication fails, neither approved resource is available below its ceiling, or any model, revision, provider, region, resource class, budget, dataset, branch, Railway plan, or deployment target differs. A change to any of those terms needs a new explicit approval.
 
+Execution is paused after eight setup attempts on 2026-08-11. They spent INR 39.69 in total and produced zero provider responses. Every instance was destroyed. The first seven attempts failed during setup; the eighth was stopped during model download after the user withdrew approval for further paid debugging. Do not start another instance from the earlier approval.
+
+A retry now needs fresh approval and the exact `--confirm-paid-gpu qwen35-27b-fp8-v2-paid-gpu-approved` argument. The confirmation is an operator safety lock, not a substitute for approval in the conversation.
+
 ## 2. Historical series
 
 Do not modify or combine these series:
@@ -210,19 +214,29 @@ The rates observed on 2026-08-11 were INR 112.59/hour for H100 spot and INR 93.9
 
 The lifecycle wrapper, not an operator's memory, owns cleanup. It must install `EXIT`, `INT`, and `TERM` traps immediately after recording the machine ID. The trap stops local workers, downloads all completed checkpoints and logs, destroys the instance, and verifies through both `jl list --json` and `jl get <id> --json` that the instance no longer exists. Pausing is not accepted as cleanup.
 
-The server must bind to `0.0.0.0:6006` and use:
+The PyTorch template uses Python 3.10. The pinned vLLM build installs FlashInfer `0.6.16.post3`, whose `array.array[int]` annotation fails under that interpreter. Create an isolated Python 3.12 environment from conda-forge and install the exact vLLM wheel there. Before downloading model weights, require all of these checks:
+
+1. Import the pinned vLLM version and `flashinfer.comm.fd_exchange` under Python 3.12.
+2. Download only the pinned model config and tokenizer files. Weight files must remain excluded.
+3. Start the complete vLLM engine with `--load-format dummy`, a 1,024-token context, and one sequence.
+4. Confirm that `/v1/models` reports only `qwen35-27b-fp8-v2`.
+5. Stop the whole dummy-server process group before downloading the 30.9 GB model snapshot.
+
+The production server must bind to `0.0.0.0:6006` and use:
 
 ```text
---revision 97f5941bf617e31c5e237364a8602ce3f03a551a
 --served-model-name qwen35-27b-fp8-v2
---task generate
 --max-model-len 16384
 --tensor-parallel-size 1
 --max-num-seqs 16
 --gpu-memory-utilization 0.90
 --seed 42
 --generation-config vllm
+--reasoning-parser qwen3
+--language-model-only
 ```
+
+The model revision is enforced during the separate Hugging Face snapshot download. The server loads that sealed local directory. Do not pass the removed `--task generate` flag.
 
 Store the API key only in process environment. Confirm `/v1/models` reports exactly the expected alias before the first request. Record server startup time, model revision, vLLM revision, GPU name, driver, CUDA version, and `nvidia-smi` output with credential fields removed.
 

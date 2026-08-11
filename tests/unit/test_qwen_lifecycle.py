@@ -14,6 +14,7 @@ from evaluation.qwen_lifecycle import (
     JarvisManager,
     LiveBudgetController,
     REMOTE_MODEL_DIR,
+    REMOTE_METADATA_DIR,
     VLLM_BUILD,
     select_approved_offer,
     stage_one_gate,
@@ -133,8 +134,10 @@ class QwenLifecycleTests(unittest.TestCase):
 
         def runner(command):
             commands.append(tuple(command))
-            if command[-1] == "import sys,vllm; print(sys.version_info[:2], vllm.__version__)":
-                return CommandResult(0, "(3, 12) " + str(VLLM_BUILD["version"]) + "\n", "")
+            if "import flashinfer.comm.fd_exchange" in command[-1]:
+                return CommandResult(
+                    0, "(3, 12) " + str(VLLM_BUILD["version"]) + " array.array[int]\n", "",
+                )
             return CommandResult(0, "Python 3.12\ntorch cuda\nRTX PRO 6000\n", "")
 
         manager = JarvisManager(artifact_dir=Path("unused"), runner=runner)
@@ -146,6 +149,8 @@ class QwenLifecycleTests(unittest.TestCase):
         self.assertIn(str(VLLM_BUILD["wheel"]), install[-1])
         self.assertIn("/home/qwen-v2-env/bin/python", install[-1])
         self.assertNotIn("git+https", install[-1])
+        verify = next(command for command in commands if "flashinfer.comm.fd_exchange" in command[-1])
+        self.assertIn("array.array[int]", verify[-1])
 
     def test_install_failure_saves_sanitized_tail(self) -> None:
         def runner(command):
@@ -198,6 +203,46 @@ class QwenLifecycleTests(unittest.TestCase):
         self.assertIn("97f5941bf617e31c5e237364a8602ce3f03a551a", download)
         self.assertIn(REMOTE_MODEL_DIR, download)
         self.assertIn('os.environ["HF_TOKEN"]', download)
+
+    def test_metadata_preflight_excludes_weights_and_checks_tokenizer(self) -> None:
+        commands = []
+
+        def runner(command):
+            commands.append(tuple(command))
+            if command[-1].startswith("tail -n 1"):
+                return CommandResult(
+                    0, '{"file_count":12,"tokenizer_class":"Qwen2Tokenizer",'
+                    '"tokenizer_size":248077,"total_bytes":1000}\n', "",
+                )
+            return CommandResult(0, "", "")
+
+        manager = JarvisManager(artifact_dir=Path("unused"), runner=runner)
+        manager.machine_id = 321
+        receipt = manager.download_model_metadata(
+            model_id="Qwen/Qwen3.5-27B-FP8",
+            revision="97f5941bf617e31c5e237364a8602ce3f03a551a",
+        )
+        self.assertEqual(receipt["tokenizer_size"], 248077)
+        download = commands[0][-1]
+        self.assertIn(REMOTE_METADATA_DIR, download)
+        self.assertIn("ignore_patterns", download)
+        self.assertIn("*.safetensors", download)
+
+    def test_preflight_server_uses_dummy_weights_and_can_be_stopped(self) -> None:
+        commands = []
+
+        def runner(command):
+            commands.append(tuple(command))
+            return CommandResult(0, "", "")
+
+        manager = JarvisManager(artifact_dir=Path("unused"), runner=runner)
+        manager.machine_id = 321
+        manager.start_server(preflight=True)
+        manager.stop_server()
+        self.assertIn("run_qwen_vllm.sh preflight", commands[0][-1])
+        self.assertIn("nohup setsid", commands[0][-1])
+        self.assertIn("qwen-v2-server.pid", commands[1][-1])
+        self.assertIn("kill -TERM -- -", commands[1][-1])
 
     def test_watchdog_invokes_cleanup_when_reserve_is_exhausted(self) -> None:
         now = [100.0]
