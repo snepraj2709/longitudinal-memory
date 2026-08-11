@@ -57,10 +57,14 @@ Verify the deployment with:
 
 ```bash
 curl --fail https://longitudinal-memory-benchmark.up.railway.app/healthz
+curl --fail https://longitudinal-memory-benchmark.up.railway.app/api/runs
+curl --fail https://longitudinal-memory-benchmark.up.railway.app/api/scorecards
 curl --fail https://longitudinal-memory-benchmark.up.railway.app/api/demo/cases
 ```
 
 Check that responses include `X-Robots-Tag: noindex, nofollow, noarchive`, unsupported API methods return 405, and Railway has no provider credentials configured.
+
+Latest hosted verification: on 2026-08-12, Railway deployment `a431b0d8-609b-47da-9cd4-fa7e265a5b11` reported `SUCCESS`. `/healthz`, `/api/runs`, and `/api/scorecards` passed with the completed `qwen3-8b-vllm-dev-v1` run and B0-B7 Qwen rows visible. A Playwright desktop smoke check against the hosted Scorecard page passed.
 
 ## Rebuild the public bundle
 
