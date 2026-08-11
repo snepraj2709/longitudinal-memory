@@ -278,7 +278,7 @@ Definition of done:
 - B6/B7 comparison shows whether the answerability gate changes outputs.
 - Full tests or an explicitly scoped safe complement pass in a clean worktree.
 
-### 6.7 Can Pratyush run or inspect the project?
+### 6.7 Can someone run or inspect the project?
 
 Inspectability: **Not ready for external review**.
 
@@ -340,4 +340,4 @@ Implement a conservative claim-promotion path and rerun a tiny B2-B4 memory-answ
 
 Classification: **Not ready for external review**.
 
-Pratyush can inspect the repository, result artifacts, and generated audit docs. He should not be expected to run the full project without help today. The fastest credible external demo is a deterministic local audit command that avoids paid APIs, prints existing evidence-backed metrics, and points to two or three representative failure rows.
+A user can inspect the repository, result artifacts, and generated audit docs. He should not be expected to run the full project without help today. The fastest credible external demo is a deterministic local audit command that avoids paid APIs, prints existing evidence-backed metrics, and points to two or three representative failure rows.
