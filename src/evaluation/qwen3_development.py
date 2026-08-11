@@ -268,7 +268,21 @@ def _execution_metadata(
 
 
 def _load_gold(root: Path) -> Mapping[str, Sequence[Mapping[str, object]]]:
-    return {name: _jsonl(root / path) for name, path in GOLD_PATHS.items()}
+    development_users = {"user_001", "user_002"}
+    values: dict[str, Sequence[Mapping[str, object]]] = {}
+    for name, path in GOLD_PATHS.items():
+        rows = _jsonl(root / path)
+        if name == "claims":
+            values[name] = [
+                row for row in rows
+                if row.get("user_id") in development_users
+            ]
+        else:
+            values[name] = [
+                row for row in rows
+                if row.get("split") == "development"
+            ]
+    return values
 
 
 def _load_contexts(path: Path):

@@ -10,6 +10,7 @@ from evaluation.openai_client import OpenAIResponseMetadata
 from evaluation.qwen3_development import (
     PAID_RUN_CONFIRMATION,
     Qwen3DevelopmentError,
+    _load_gold,
     load_config,
     run_development,
 )
@@ -47,6 +48,15 @@ class Qwen3DevelopmentTests(unittest.TestCase):
         self.assertEqual(config["model"]["model_alias"], "qwen3-8b-vllm")
         self.assertEqual(config["runtime"]["client_concurrency"], 1)
         self.assertEqual(config["runtime"]["temperature"], 0)
+        self.assertTrue(config["workload"]["retry_validation_failures"])
+
+    def test_gold_loader_filters_to_development_split(self) -> None:
+        references = _load_gold(ROOT)
+        for task in ("qa", "summary", "interactive"):
+            self.assertTrue(references[task])
+            self.assertEqual({row["split"] for row in references[task]}, {"development"})
+            self.assertLess(len(references[task]), 500)
+        self.assertEqual({row["user_id"] for row in references["claims"]}, {"user_001", "user_002"})
 
     def test_model_alias_must_match_config(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -133,6 +143,7 @@ class Qwen3DevelopmentTests(unittest.TestCase):
             execute.call_args_list[1].kwargs["retryable_http_statuses"],
             (408, 429, 502, 503, 504, 520),
         )
+        self.assertTrue(execute.call_args_list[1].kwargs["retry_validation_failures"])
         self.assertEqual(run_judge.call_args.kwargs["workers"], 1)
         self.assertEqual(
             run_judge.call_args.kwargs["retryable_http_statuses"],
