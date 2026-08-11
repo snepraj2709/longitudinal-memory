@@ -253,6 +253,24 @@ class VLLMClientTests(unittest.TestCase):
         self.assertEqual(raised.exception.provider_param, "input")
         self.assertEqual(raised.exception.provider_reason, "json_instruction_missing")
 
+    def test_context_length_http_error_is_categorized_without_raw_prompt(self) -> None:
+        server = self.fake_server(
+            status=400,
+            payload={
+                "error": {
+                    "message": "This model's maximum context length is 8192 tokens.",
+                    "type": "invalid_request_error",
+                    "param": "messages",
+                    "code": None,
+                }
+            },
+        )
+
+        with self.assertRaises(VLLMResponseError) as raised:
+            self.client(server).complete(system_prompt="system", user_prompt="user")
+
+        self.assertEqual(raised.exception.provider_reason, "context_length_exceeded")
+
     def test_paces_second_request_by_minimum_interval(self) -> None:
         server = self.fake_server()
         sleeps: list[float] = []

@@ -80,6 +80,7 @@ def run_development(
         client_factory=factory,
         retry_ledger=retry_ledger,
         workers=1,
+        retryable_http_statuses=tuple(config["workload"]["retryable_http_statuses"]),
     )
     expected_extraction = int(config["workload"]["extraction_provider_requests"])
     if extraction["successful_count"] != expected_extraction:
@@ -112,6 +113,7 @@ def run_development(
         client_factory=factory,
         retry_ledger=retry_ledger,
         workers=1,
+        retryable_http_statuses=tuple(config["workload"]["retryable_http_statuses"]),
     )
 
     b7_dir = output / "answers-b7"
@@ -151,6 +153,7 @@ def run_development(
         model=model,
         temperature=0.0,
         workers=1,
+        retryable_http_statuses=tuple(config["workload"]["retryable_http_statuses"]),
     )
 
     elapsed = time.monotonic() - started

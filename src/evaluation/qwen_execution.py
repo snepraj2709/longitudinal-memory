@@ -371,6 +371,7 @@ def execute_jobs(
     before_attempt: AttemptGate | None = None,
     after_attempt: AttemptComplete | None = None,
     monotonic: Callable[[], float] = time.monotonic,
+    retryable_http_statuses: Sequence[int] = (),
 ) -> Mapping[str, object]:
     """Execute missing jobs and seal an ordered batch after every job is terminal."""
 
@@ -387,6 +388,7 @@ def execute_jobs(
     request_dir = output_dir / "requests"
     request_dir.mkdir(exist_ok=True)
     ledger = retry_ledger or TransportRetryLedger()
+    retryable_statuses = frozenset(int(status) for status in retryable_http_statuses)
     prior = _load_terminal_records(request_dir, ordered)
     missing = [item for item in ordered if item.request_id not in prior]
     gate = before_attempt or (lambda _job, _retry: None)
@@ -402,6 +404,7 @@ def execute_jobs(
                 gate,
                 complete,
                 monotonic,
+                retryable_statuses,
             ): job
             for job in missing
         }
@@ -589,6 +592,7 @@ def _execute_one(
     before_attempt: AttemptGate,
     after_attempt: AttemptComplete,
     monotonic: Callable[[], float],
+    retryable_http_statuses: frozenset[int],
 ) -> None:
     attempts = 0
     retries = 0
@@ -631,6 +635,9 @@ def _execute_one(
             record = _failure_record(job, attempts, retries, monotonic() - began, "model_mismatch", "returned_model_mismatch")
             break
         except VLLMResponseError as error:
+            if error.status_code in retryable_http_statuses and ledger.claim():
+                retries += 1
+                continue
             code = f"http_{error.status_code}" if error.status_code is not None else "provider_response_error"
             record = _failure_record(job, attempts, retries, monotonic() - began, "provider", code)
             break

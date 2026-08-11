@@ -329,6 +329,29 @@ class QwenExecutionTests(unittest.TestCase):
             self.assertEqual(row["failure_stage"], "provider")
             self.assertEqual(row["failure_code"], "http_400")
 
+    def test_explicit_retryable_http_status_retries_through_shared_ledger(self) -> None:
+        attempts = {"request_1": 0, "request_2": 0}
+
+        def factory(job):
+            def call():
+                attempts[job.request_id] += 1
+                if attempts[job.request_id] == 1:
+                    raise VLLMResponseError("temporary edge failure", status_code=520)
+                return _success()
+            return _Client(call)
+
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = execute_jobs(
+                (_job(1), _job(2)),
+                output_dir=Path(directory) / "batch",
+                client_factory=factory,
+                retry_ledger=TransportRetryLedger(1),
+                retryable_http_statuses=(520,),
+            )
+            self.assertEqual(sum(attempts.values()), 3)
+            self.assertEqual(manifest["transport_retry_count"], 1)
+            self.assertEqual(manifest["failure_count"], 1)
+
     def test_checkpoint_request_hash_mismatch_stops_resume(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "batch"

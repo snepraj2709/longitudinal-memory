@@ -129,7 +129,15 @@ class Qwen3DevelopmentTests(unittest.TestCase):
         self.assertEqual(answer_jobs.call_args.kwargs["series_id"], "qwen3-8b-vllm-dev-v1")
         self.assertEqual(execute.call_args_list[0].kwargs["workers"], 1)
         self.assertEqual(execute.call_args_list[1].kwargs["workers"], 1)
+        self.assertEqual(
+            execute.call_args_list[1].kwargs["retryable_http_statuses"],
+            (408, 429, 502, 503, 504, 520),
+        )
         self.assertEqual(run_judge.call_args.kwargs["workers"], 1)
+        self.assertEqual(
+            run_judge.call_args.kwargs["retryable_http_statuses"],
+            (408, 429, 502, 503, 504, 520),
+        )
         self.assertEqual(run_judge.call_args.kwargs["temperature"], 0.0)
         self.assertEqual(score.call_args.kwargs["series_id"], "qwen3-8b-vllm-dev-v1")
         self.assertEqual(result["status"], "completed")

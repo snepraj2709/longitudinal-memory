@@ -105,6 +105,7 @@ def materialize_qwen_contexts(
     root = repo_root.resolve()
     if config_path is None:
         load_qwen_v2_config(root)
+    context_record_limit = _context_record_limit(root, config_path)
     _validate_runtime(split, runtime, extraction_rows)
     _require_clean_database(connection)
     apply_migrations(connection, root / "migrations")
@@ -141,6 +142,7 @@ def materialize_qwen_contexts(
             {"B2": "B2", "B3": "B3", "B4": "B4"},
             "candidate_extraction",
             series_id,
+            context_record_limit=context_record_limit,
         )
     )
     _drop_index_snapshots(connection)
@@ -157,6 +159,7 @@ def materialize_qwen_contexts(
             {"B5": "B4"},
             "persisted_temporal_lifecycle",
             series_id,
+            context_record_limit=context_record_limit,
         )
     )
     _drop_index_snapshots(connection)
@@ -186,6 +189,7 @@ def materialize_qwen_contexts(
         {"B6": "B4"},
         "persisted_conflict_resolution",
         series_id,
+        context_record_limit=context_record_limit,
     )
     contexts.extend(b6_contexts)
     contexts.extend(_b7_contexts(b6_contexts))
@@ -585,6 +589,7 @@ def _retrieved_contexts(
     baseline_map: Mapping[str, str],
     snapshot: str,
     series_id: str = SERIES_ID,
+    context_record_limit: int | None = None,
 ) -> tuple[ContextPackage, ...]:
     repository = RetrievalSearchRepository(connection)
     baseline_config = load_baseline_config(root / BASELINE_CONFIG_PATH)
@@ -613,6 +618,8 @@ def _retrieved_contexts(
                     baseline_config=baseline_config,
                 )
                 records = _hydrate_context_records(connection, result)
+                if context_record_limit is not None:
+                    records = records[:context_record_limit]
                 contexts.append(
                     _context(
                         split,
@@ -626,6 +633,19 @@ def _retrieved_contexts(
                     )
                 )
     return tuple(contexts)
+
+
+def _context_record_limit(root: Path, config_path: Path | None) -> int | None:
+    if config_path is None:
+        return None
+    config = json.loads((root / config_path).read_text(encoding="utf-8"))
+    runtime = config.get("runtime")
+    if not isinstance(runtime, Mapping) or "answer_context_record_limit" not in runtime:
+        return None
+    value = runtime["answer_context_record_limit"]
+    if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+        raise QwenMaterializationError("answer_context_record_limit must be a positive integer")
+    return value
 
 
 def _hydrate_context_records(connection: object, result: object) -> tuple[dict[str, object], ...]:

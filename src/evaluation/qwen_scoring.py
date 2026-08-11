@@ -350,6 +350,7 @@ def run_judge(
     model: str | None = None,
     temperature: float | None = None,
     workers: int = 8,
+    retryable_http_statuses: Sequence[int] = (),
 ) -> Mapping[str, object]:
     """Verify prediction sealing before opening references and invoking the judge."""
 
@@ -373,6 +374,7 @@ def run_judge(
         before_attempt=before_attempt,
         after_attempt=after_attempt,
         workers=workers,
+        retryable_http_statuses=retryable_http_statuses,
     )
     diagnostic = {
         **result,

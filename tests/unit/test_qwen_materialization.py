@@ -11,6 +11,7 @@ from evaluation.qwen_materialization import (
     MaterializationResult,
     QwenMaterializationError,
     _b7_contexts,
+    _context_record_limit,
     _validate_runtime,
     write_materialization,
 )
@@ -67,6 +68,15 @@ class QwenMaterializationUnitTests(unittest.TestCase):
             write_materialization(result, output, series_id="qwen3-8b-vllm-dev-v1")
             manifest = json.loads((output / "manifest.json").read_text())
         self.assertEqual(manifest["series_id"], "qwen3-8b-vllm-dev-v1")
+
+    def test_context_record_limit_is_loaded_from_qwen3_config(self) -> None:
+        self.assertEqual(
+            _context_record_limit(
+                Path.cwd(),
+                Path("configs/evaluation/qwen3_8b_vllm_development_v1.json"),
+            ),
+            4,
+        )
 
 
 if __name__ == "__main__":

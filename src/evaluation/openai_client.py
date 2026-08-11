@@ -319,6 +319,8 @@ def _provider_message_category(value: object) -> str | None:
     if not isinstance(value, str):
         return None
     message = value.lower()
+    if any(token in message for token in ("context length", "too long", "maximum length")):
+        return "context_length_exceeded"
     if "json" in message and any(token in message for token in ("mention", "must", "contain")):
         return "json_instruction_missing"
     if any(token in message for token in ("safety", "flagged", "usage polic")):

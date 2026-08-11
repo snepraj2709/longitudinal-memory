@@ -13,6 +13,7 @@
     "task": "text"
   },
   "runtime": {
+    "answer_context_record_limit": 4,
     "client_concurrency": 1,
     "engine": "vllm",
     "fallback_gpus": [
@@ -31,6 +32,7 @@
     "judge_provider_requests": 112,
     "logical_predictions": 912,
     "maximum_transport_retries": 25,
+    "retryable_http_statuses": [408, 429, 502, 503, 504, 520],
     "total_provider_requests": 930
   },
   "output": {
