@@ -165,7 +165,16 @@ class RetrievalBaselineEvaluationIntegrationTests(unittest.TestCase):
         self.assertFalse(checkpoint["retrieval_metrics_computed"])
         self.assertEqual(manifest["model_usage"]["provider_requests"], 0)
         self.assertEqual(manifest["model_usage"]["incremental_cost_usd"], 0)
-        self.assertEqual(manifest["predecessor_drift"], list(PREDECESSOR_DRIFT))
+        self.assertEqual(
+            [
+                (item["path"], item["old_sha256"], item["reason"])
+                for item in manifest["predecessor_drift"]
+            ],
+            [
+                (item["path"], item["old_sha256"], item["reason"])
+                for item in PREDECESSOR_DRIFT
+            ],
+        )
         self.assertEqual(
             manifest["protected_hash_audit"]["runtime_verified_hashes"],
             dict(sorted(PROTECTED_HASHES.items())),

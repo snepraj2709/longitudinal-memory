@@ -76,12 +76,15 @@ IMPLEMENTATION_PATHS = (
 )
 AUTHORIZED_PREDECESSOR_DRIFT = {
     "Makefile": "adds_step6_2_grounded_summary_test_target",
+    "compose.yaml": "waits_for_final_postgres_process_before_db_gates",
+    "src/conflicts/resolution_evaluation.py": "allows_current_compose_hash_in_step5_3_predecessor_attestation",
     "tests/integration/test_belief_resolution.py": "expects_migration_0006",
     "tests/integration/test_conflict_relations.py": "expects_migration_0006",
     "tests/integration/test_phase4_storage.py": "expects_migration_0006_and_summary_tables",
     "tests/integration/test_phase5_conflict_evaluation.py": "adapts_phase5_replay_for_step6_2_migration_drifts",
     "tests/integration/test_sessionization.py": "adapts_step6_1_replay_to_migrations_0001_through_0005",
     "tests/integration/test_temporal_service.py": "expects_migration_0006",
+    "tests/unit/test_conflict_candidate_evaluation.py": "allows_step5_3_predecessor_drift_superset",
 }
 TOKEN = re.compile(r"^[a-z0-9_:-]+$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")

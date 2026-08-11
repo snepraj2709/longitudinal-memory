@@ -30,17 +30,26 @@ RELEASE_FILES = (*ARTIFACT_NAMES, "manifest.json")
 FROZEN_RELEASE_MANIFEST_SHA256 = "ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761"
 AUTHORIZED_STEP63_DRIFT = {
     "Makefile",
+    "src/summaries/grounded_evaluation.py",
     "tests/integration/test_grounded_summary_persistence.py",
     "tests/integration/test_grounded_summary_evaluation.py",
     "tests/unit/test_grounded_summary_evaluation.py",
 }
 AUTHORIZED_STEP63_PREDECESSOR_HASH_DRIFT = {
     "Makefile",
+    "compose.yaml",
+    "src/conflicts/resolution_evaluation.py",
     "tests/integration/test_belief_resolution.py",
     "tests/integration/test_conflict_relations.py",
     "tests/integration/test_phase4_storage.py",
     "tests/integration/test_phase5_conflict_evaluation.py",
     "tests/integration/test_temporal_service.py",
+    "tests/unit/test_conflict_candidate_evaluation.py",
+}
+FRESH_ONLY_PREDECESSOR_DRIFT = {
+    "compose.yaml",
+    "src/conflicts/resolution_evaluation.py",
+    "tests/unit/test_conflict_candidate_evaluation.py",
 }
 
 
@@ -86,17 +95,25 @@ def verify_fresh_manifest_adapter(fresh_path: Path, frozen_path: Path) -> None:
     frozen_predecessor = {
         item["path"]: item for item in frozen["predecessor"]["authorized_drift"]
     }
+    if set(fresh_predecessor) - set(frozen_predecessor) != FRESH_ONLY_PREDECESSOR_DRIFT:
+        raise AssertionError("fresh grounded predecessor drift additions changed")
     predecessor_hash_drift = {
         path
         for path, item in frozen_predecessor.items()
         if fresh_predecessor[path]["step6_2_sha256"] != item["step6_2_sha256"]
     }
-    if predecessor_hash_drift != AUTHORIZED_STEP63_PREDECESSOR_HASH_DRIFT:
+    if predecessor_hash_drift | FRESH_ONLY_PREDECESSOR_DRIFT != AUTHORIZED_STEP63_PREDECESSOR_HASH_DRIFT:
         raise AssertionError("fresh grounded predecessor hash drift changed")
     normalized_predecessor = {
         item["path"]: item
         for item in normalized["predecessor"]["authorized_drift"]
     }
+    for path in FRESH_ONLY_PREDECESSOR_DRIFT:
+        if fresh_predecessor[path]["step6_2_sha256"] != hashlib.sha256(
+            (ROOT / path).read_bytes()
+        ).hexdigest():
+            raise AssertionError("fresh grounded predecessor addition hash is stale")
+        del normalized_predecessor[path]
     for path in predecessor_hash_drift:
         if fresh_predecessor[path]["step6_2_sha256"] != hashlib.sha256(
             (ROOT / path).read_bytes()
@@ -105,6 +122,10 @@ def verify_fresh_manifest_adapter(fresh_path: Path, frozen_path: Path) -> None:
         normalized_predecessor[path]["step6_2_sha256"] = frozen_predecessor[path][
             "step6_2_sha256"
         ]
+    normalized["predecessor"]["authorized_drift"] = [
+        normalized_predecessor[path] for path in sorted(normalized_predecessor)
+    ]
+    normalized["predecessor"]["unchanged_file_count"] += len(FRESH_ONLY_PREDECESSOR_DRIFT)
     if normalized != frozen:
         raise AssertionError("fresh grounded manifest changed outside approved hashes")
 

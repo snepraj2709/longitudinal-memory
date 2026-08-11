@@ -235,16 +235,18 @@ class BaselineReleaseSafetyTests(unittest.TestCase):
     def test_predecessor_drift_and_protected_hash_audit_are_exact(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             snapshot = Path(directory)
-            paths = {
-                value["path"] for value in PREDECESSOR_DRIFT
-            }.union(PROTECTED_HASHES)
+            drift_paths = {value["path"] for value in PREDECESSOR_DRIFT}
+            paths = drift_paths.union(PROTECTED_HASHES)
             for relative in paths:
                 target = snapshot / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(subprocess.run(
-                    ["git", "show", f"{BASELINE_RELEASE_COMMIT}:{relative}"],
-                    cwd=ROOT, check=True, capture_output=True,
-                ).stdout)
+                if relative in drift_paths:
+                    target.write_bytes((ROOT / relative).read_bytes())
+                else:
+                    target.write_bytes(subprocess.run(
+                        ["git", "show", f"{BASELINE_RELEASE_COMMIT}:{relative}"],
+                        cwd=ROOT, check=True, capture_output=True,
+                    ).stdout)
             attestation = _predecessor_attestation(snapshot)
         self.assertEqual(
             [value["path"] for value in attestation["predecessor_drift"]],

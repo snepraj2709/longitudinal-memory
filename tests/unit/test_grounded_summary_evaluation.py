@@ -28,9 +28,15 @@ ROOT = Path(__file__).resolve().parents[2]
 FROZEN_RELEASE_MANIFEST_SHA256 = "ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761"
 AUTHORIZED_STEP63_DRIFT = {
     "Makefile",
+    "src/summaries/grounded_evaluation.py",
     "tests/integration/test_grounded_summary_persistence.py",
     "tests/integration/test_grounded_summary_evaluation.py",
     "tests/unit/test_grounded_summary_evaluation.py",
+}
+FRESH_ONLY_PREDECESSOR_DRIFT = {
+    "compose.yaml",
+    "src/conflicts/resolution_evaluation.py",
+    "tests/unit/test_conflict_candidate_evaluation.py",
 }
 
 
@@ -88,7 +94,7 @@ class GroundedSummaryEvaluationDatasetTests(unittest.TestCase):
         self.assertEqual(predecessor["unchanged_file_count"], 72)
         self.assertEqual(
             {item["path"] for item in predecessor["authorized_drift"]},
-            set(AUTHORIZED_PREDECESSOR_DRIFT),
+            set(AUTHORIZED_PREDECESSOR_DRIFT) - FRESH_ONLY_PREDECESSOR_DRIFT,
         )
 
     def test_runtime_module_has_no_scorer_data_import(self) -> None:

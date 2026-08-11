@@ -45,6 +45,9 @@ EXPECTED = {
 STEP62_MANIFEST_SHA256 = "ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761"
 AUTHORIZED_PREDECESSOR_DRIFT = {
     "Makefile": "adds_step6_3_durative_claim_test_target",
+    "compose.yaml": "pins_current_pgvector_storage_service_for_step6_3_gates",
+    "src/conflicts/resolution_evaluation.py": "adapts_predecessor_hashes_for_migration_0007",
+    "src/summaries/grounded_evaluation.py": "adapts_frozen_step6_2_release_attestation",
     "tests/integration/test_belief_resolution.py": "expects_migration_0007",
     "tests/integration/test_conflict_relations.py": "expects_migration_0007",
     "tests/integration/test_grounded_summary_persistence.py": "expects_migration_0007",
@@ -52,6 +55,7 @@ AUTHORIZED_PREDECESSOR_DRIFT = {
     "tests/integration/test_phase4_storage.py": "expects_migration_0007_and_durative_tables",
     "tests/integration/test_phase5_conflict_evaluation.py": "adapts_predecessor_hashes_for_migration_0007",
     "tests/integration/test_temporal_service.py": "expects_migration_0007",
+    "tests/unit/test_conflict_candidate_evaluation.py": "adapts_phase5_candidate_evaluation_hashes",
     "tests/unit/test_grounded_summary_evaluation.py": "adapts_frozen_step6_2_release_attestation",
 }
 ARTIFACT_NAMES = (

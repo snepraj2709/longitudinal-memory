@@ -57,11 +57,13 @@ ARTIFACT_NAMES = (
     "findings.md",
 )
 STEP62_AUTHORIZED_DRIFT = {
-    "Makefile": "6c7f965049ab12d4bb5339ddd2a75b701e318abc424be91a7e5d3c46e1dc7e6f",
+    "Makefile": "52a770e43af6e6e4611e42d4156de2621b1e1bc452200c7e8874fb26c0b2525d",
+    "src/conflicts/resolution_evaluation.py": "079391e232b061e551464e9366c5cab001ec07809623b13406868cef0c09f712",
     "tests/integration/test_belief_resolution.py": "597d429b639357dfea2b4fabbed22d0dc7cee41464a2ec798fafe7b88577f702",
     "tests/integration/test_conflict_relations.py": "2639bb343f909957b438ca36e61bcf0f874f2a47bed3c6e27d13310a80f4dd5a",
     "tests/integration/test_phase4_storage.py": "4cecbde7b2e8d53dfad3b246d2a68cdf208cfce0ab87938da7c4d4c1722b8e4d",
     "tests/integration/test_temporal_service.py": "7edf89c34684dd29b84022d4250ef82957758bca306278bf9f9aad942db7e24e",
+    "tests/unit/test_conflict_candidate_evaluation.py": "4c77aae7b72a26413c7b846b0975b502f5e9d8ef1c0b1716c000180ced795373",
 }
 
 
@@ -297,6 +299,10 @@ def _step53_attestation():
             "reason": (
                 "adds_step6_2_grounded_summary_target"
                 if relative == "Makefile"
+                else "allows_current_compose_hash_in_step5_3_predecessor_attestation"
+                if relative == "src/conflicts/resolution_evaluation.py"
+                else "allows_step5_3_predecessor_drift_superset"
+                if relative == "tests/unit/test_conflict_candidate_evaluation.py"
                 else "adapts_migration_expectation_for_0007_durative_claims"
             ),
         }

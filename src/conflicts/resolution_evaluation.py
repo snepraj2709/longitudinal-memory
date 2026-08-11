@@ -51,6 +51,7 @@ PRESENT_RELATION_LABELS = {
 }
 STEP53_ALLOWED_PREDECESSOR_DRIFT_REASONS = {
     "Makefile": "adds_step5_3_belief_resolution_test_target",
+    "compose.yaml": "pins_current_pgvector_storage_service_for_step5_3_gates",
     "src/conflicts/__init__.py": "exports_step5_3_resolution_contracts",
     "src/ingestion/service.py": "invalidates_and_replays_resolution_state_on_delete",
     "src/storage/contracts.py": "adds_typed_belief_resolution_records",

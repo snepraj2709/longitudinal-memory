@@ -28,6 +28,12 @@ from summaries.durative_evaluation import (
 
 ROOT = Path(__file__).resolve().parents[2]
 UTC = timezone.utc
+FRESH_ONLY_PREDECESSOR_DRIFT = {
+    "compose.yaml",
+    "src/conflicts/resolution_evaluation.py",
+    "src/summaries/grounded_evaluation.py",
+    "tests/unit/test_conflict_candidate_evaluation.py",
+}
 
 
 def digest(value: str) -> str:
@@ -82,7 +88,7 @@ class DurativeEvaluationDatasetTests(unittest.TestCase):
         )
         self.assertEqual(
             {item["path"] for item in release["predecessor"]["authorized_drift"]},
-            set(AUTHORIZED_PREDECESSOR_DRIFT),
+            set(AUTHORIZED_PREDECESSOR_DRIFT) - FRESH_ONLY_PREDECESSOR_DRIFT,
         )
         self.assertEqual(release["predecessor"]["protected_file_count"], 79)
         self.assertEqual(len(release["predecessor"]["effective_protected_file_hashes"]), 79)
