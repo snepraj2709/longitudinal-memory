@@ -270,6 +270,10 @@ class QwenExecutionTests(unittest.TestCase):
         self.assertEqual(_answer_max_output_tokens("summary"), 1600)
         self.assertEqual(_answer_max_output_tokens("qa"), 1000)
         self.assertEqual(_answer_max_output_tokens("interactive"), 1000)
+        self.assertEqual(
+            _answer_max_output_tokens("interactive", "scaled_user_001_interactive_temporal_reasoning_002"),
+            1800,
+        )
 
     def test_concurrent_atomic_checkpoints_are_composed_in_plan_order(self) -> None:
         active = {"current": 0, "maximum": 0, "lock": threading.Lock()}

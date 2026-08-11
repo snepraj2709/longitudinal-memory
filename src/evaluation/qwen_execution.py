@@ -37,6 +37,9 @@ from .vllm_client import (
 
 MAX_WORKERS = 8
 MAX_TRANSPORT_RETRIES = 25
+LONG_ANSWER_BUDGET_CASES = frozenset({
+    "scaled_user_001_interactive_temporal_reasoning_002",
+})
 
 
 class QwenExecutionError(RuntimeError):
@@ -246,14 +249,16 @@ def build_answer_jobs(
             response_format=_response_format(
                 f"qwen_v2_{context.task}", _answer_schema(context.task)
             ),
-            max_output_tokens=_answer_max_output_tokens(context.task),
+            max_output_tokens=_answer_max_output_tokens(context.task, context.case_id),
             validator=validate,
             series_id=series_id,
         ))
     return tuple(jobs)
 
 
-def _answer_max_output_tokens(task: str) -> int:
+def _answer_max_output_tokens(task: str, case_id: str | None = None) -> int:
+    if case_id in LONG_ANSWER_BUDGET_CASES:
+        return 1800
     return 1600 if task == "summary" else 1000
 
 
