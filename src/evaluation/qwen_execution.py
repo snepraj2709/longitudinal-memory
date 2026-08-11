@@ -323,11 +323,14 @@ def _normalize_qwen_citations(
             normalized.append(citation)
             continue
         normalized_message_id = (
-            message_id if isinstance(message_id, str) or message_id is None else None
+            None if message_id == "" else message_id
+            if isinstance(message_id, str) or message_id is None else None
         )
         key = (source_id, normalized_message_id, quote)
         if key in evidence_index:
-            normalized.append(dict(citation))
+            fixed = dict(citation)
+            fixed["message_id"] = normalized_message_id
+            normalized.append(fixed)
             continue
         candidates = [
             candidate
