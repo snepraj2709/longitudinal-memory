@@ -12,6 +12,7 @@ from evaluation.qwen_execution import (
     ExecutionJob,
     QwenExecutionError,
     TransportRetryLedger,
+    _answer_max_output_tokens,
     _evidence_index,
     _normalize_qwen_answer_response,
     build_extraction_jobs,
@@ -194,6 +195,11 @@ class QwenExecutionTests(unittest.TestCase):
             normalized["citations"][0]["quote"],
             "Care Map review is scheduled for 2026-08-11.",
         )
+
+    def test_summary_answers_have_larger_output_budget(self) -> None:
+        self.assertEqual(_answer_max_output_tokens("summary"), 1600)
+        self.assertEqual(_answer_max_output_tokens("qa"), 1000)
+        self.assertEqual(_answer_max_output_tokens("interactive"), 1000)
 
     def test_concurrent_atomic_checkpoints_are_composed_in_plan_order(self) -> None:
         active = {"current": 0, "maximum": 0, "lock": threading.Lock()}

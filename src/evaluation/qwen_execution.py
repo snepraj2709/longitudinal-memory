@@ -245,11 +245,15 @@ def build_answer_jobs(
             response_format=_response_format(
                 f"qwen_v2_{context.task}", _answer_schema(context.task)
             ),
-            max_output_tokens=1000,
+            max_output_tokens=_answer_max_output_tokens(context.task),
             validator=validate,
             series_id=series_id,
         ))
     return tuple(jobs)
+
+
+def _answer_max_output_tokens(task: str) -> int:
+    return 1600 if task == "summary" else 1000
 
 
 def _normalize_qwen_answer_response(
