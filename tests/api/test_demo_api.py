@@ -41,12 +41,20 @@ class DemoApiTests(unittest.TestCase):
     def test_run_and_scorecard_endpoints(self) -> None:
         runs = self.client.get("/api/runs")
         self.assertEqual([item["series_id"] for item in runs.json()], [
-            "openai-gpt41-v1", "qwen35-27b-fp8-v1",
+            "openai-gpt41-v1",
+            "qwen35-27b-fp8-v1",
+            "qwen3-8b-vllm-dev-v1",
         ])
         scorecards = self.client.get("/api/scorecards")
-        self.assertEqual([item["baseline_id"] for item in scorecards.json()], [
-            "B1", "B2", "B3", "B4", "B5", "B6", "B7",
+        qwen_rows = [
+            item
+            for item in scorecards.json()
+            if item["series_id"] == "qwen3-8b-vllm-dev-v1"
+        ]
+        self.assertEqual([item["baseline_id"] for item in qwen_rows], [
+            "B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7",
         ])
+        self.assertTrue(all(item["status"] == "development_scored" for item in qwen_rows))
 
     def test_write_methods_are_rejected(self) -> None:
         for method in ("post", "put", "patch", "delete"):

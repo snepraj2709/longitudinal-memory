@@ -17,21 +17,21 @@ The project evaluates memory from conversation transcripts, chat, email, and cal
 
 ## Current status
 
-This snapshot describes commit `5002450`. It distinguishes implemented component work from completed benchmark evidence. A component marked development-tested has not necessarily been run as a full B0-B7 ablation.
+This snapshot describes the project after the committed Qwen3-8B development run. It distinguishes implemented component work from completed benchmark evidence. A component marked development-tested has not necessarily been run as a full hidden-test ablation.
 
 | Phase | Status | What exists |
 | --- | --- | --- |
 | 1. Benchmark contract | Complete | The pilot and scaled contracts, ontology, releases, cases, and user-level split are frozen at their documented scopes. |
 | 2. Full-history baseline | Scored at pilot scope | B1 answered all 25 Pilot v0 questions from source history and returned evidence. |
-| 3. Atomic extraction | Scored at pilot scope | The reviewed 10-source v2 pilot extracted and scored atomic claims. The scaled OpenAI extraction is historical and unscored; the Qwen scaled extraction has not run. |
+| 3. Atomic extraction | Scored at pilot and Qwen development scope | The reviewed 10-source v2 pilot extracted and scored atomic claims. Qwen3-8B development extraction completed structurally, but claim precision and recall were both 0. The scaled OpenAI extraction remains historical and unscored. |
 | 4. Bi-temporal versioning | Implemented and development-tested | PostgreSQL persistence, idempotent ingestion, valid-time and transaction-time transitions, lifecycle handling, and component scoring exist. They have not been exercised in a complete scaled ablation. |
 | 5. Conflict detection | Implemented and development-tested | Candidate linking, checked relation persistence, deterministic belief resolution, and component evaluation exist. They have not been exercised in a complete scaled ablation. |
-| 6. Session summaries | Implemented and development-tested | Sessionization, grounded summary contracts, durative claims, and component evaluation exist. No complete scaled Qwen summary release exists. |
-| 7. Dual retrieval | Implemented and development-tested | Atomic and session indexes, query planning, pre-search filters, B2-B4 fusion, and component evaluation exist. No complete scaled B2-B4 Qwen release exists. |
-| 8. Grounded answering | Partial | Evidence-package and answer contracts exist. The development release structurally abstained on all available B2-B4 cases; B5-B6 answer evidence is incomplete and no scaled Qwen answers exist. |
-| 9. Abstention gate | Partial | The deterministic gate, thresholds, and matched four-case B6/B7 development comparison exist. Both baselines abstained on all four cases, so over-abstention remains unresolved and the 16 frozen cases remain deferred. |
-| 10. Ablations | In progress | Steps 10.1 and 10.2 are complete. OpenAI Step 10.3 is `interrupted_not_scored`; the old Qwen3.5 plans are historical and unrun; Qwen3-8B on vLLM is next. Step 10.4 is pending measured Qwen results. |
-| 11. UI and deployment | Read-only slice deployed | The deterministic FastAPI and React demo runs locally and is live on Railway. It replays sanitized artifacts and currently presents partial historical results, not a completed Qwen benchmark. |
+| 6. Session summaries | Implemented and development-tested | Sessionization, grounded summary contracts, durative claims, and component evaluation exist. Qwen3-8B development B3 completed and is scored, but hidden-test coverage is still absent. |
+| 7. Dual retrieval | Implemented and development-tested | Atomic and session indexes, query planning, pre-search filters, B2-B4 fusion, and component evaluation exist. Qwen3-8B development B2-B4 completed and is scored. |
+| 8. Grounded answering | Development Qwen run complete | Evidence-package and answer contracts exist. Qwen3-8B development B0-B6 produced 798/798 valid answer records with zero execution failures. Answer correctness remains weak and should be analysed rather than hidden. |
+| 9. Abstention gate | Development Qwen run complete | The deterministic B7 gate ran on top of B6 and produced 114/114 derived records with B6/B7 identity preserved. It is development evidence, not a final hidden-test result. |
+| 10. Ablations | Development Qwen complete, broader comparison incomplete | Steps 10.1 and 10.2 are complete. OpenAI Step 10.3 is `interrupted_not_scored`; old Qwen3.5 plans are historical and unrun. `qwen3-8b-vllm-dev-v1` completed development B0-B7 with a sealed scorecard and separate uncalibrated judge diagnostics. |
+| 11. UI and deployment | Read-only slice deployed | The deterministic FastAPI and React demo runs locally and is live on Railway. It replays sanitized artifacts and now presents the completed Qwen3-8B development B0-B7 scorecard alongside historical OpenAI and Qwen3.5 states. |
 
 ### Phase 2 evidence
 
@@ -72,7 +72,7 @@ The current Phase 3 runner also stops on a failed call and refuses a non-empty r
 
 ### Next implementation
 
-Run the Qwen3-8B vLLM pilot under the updated execution contract in [Qwen implementation](qwen-implementation.md). The pilot must prove request shape, schema validity, retries, checkpointing, and measured cost through an OpenAI-compatible endpoint. A full scored Qwen comparison still must materialize B2-B7 through the real PostgreSQL-backed Phase 4-7 services, preserve the OpenAI and historical Qwen3.5 artifacts, publish reproducible scores, and then update the read-only demo.
+Analyse the completed Qwen3-8B development scorecard in [Qwen implementation](qwen-implementation.md) and `results/evaluation/qwen3-8b-vllm-dev-v1/`. The next benchmark work is not another infrastructure pilot; it is failure analysis, targeted benchmark fixes if the contract is wrong, and then a separately approved hidden-test run. Preserve the OpenAI and historical Qwen3.5 artifacts unchanged.
 
 ## How the phases connect
 
@@ -724,13 +724,13 @@ The OpenAI series is `interrupted_not_scored`. Its 100-request `gpt-4.1-mini-202
 
 The recorded OpenAI spend is `$0.4399284` across 149 requests, 536,405 input tokens, and 26,921 output tokens. Execution was paused before the projected `$91.2131728` hard maximum, approximately `$100`; the project did not spend `$100`. OpenAI execution remains disabled. Any future restart requires a new series, output directory, corrected JSON contract, and separate cost approval.
 
-`qwen35-27b-fp8-v1` and `qwen35-27b-fp8-v2` are historical Qwen3.5 planning work and must not run. The next paid work is a Qwen3-8B vLLM pilot on JarvisLabs L4. Any full scored Qwen comparison must regenerate extraction and all downstream artifacts under a new output root; it must not reuse the completed OpenAI extraction.
+`qwen35-27b-fp8-v1` and `qwen35-27b-fp8-v2` are historical Qwen3.5 planning work and must not run. `qwen3-8b-vllm-dev-v1` regenerated extraction and all downstream artifacts under its own output root through JarvisLabs L4 vLLM; it did not reuse the completed OpenAI extraction. Any future Qwen run must use a new output root unless it is an exact resume of a known incomplete attempt.
 
 ### Step 10.4: Publish the scorecard
 
 Report by baseline, capability, task, source type, difficulty, split, and answerability. Do not publish one composite score.
 
-Step 10.4 is pending. The current demo exposes completed pilot and development evidence plus explicit missing and failed states, but no Qwen series has been run or scored. Publish only complete Qwen batches and mark every incomplete or failed batch explicitly.
+Step 10.4 now has a completed Qwen3-8B development scorecard. The current demo exposes completed pilot and development evidence plus explicit missing and failed states. It includes Qwen3-8B development B0-B7 rows and keeps old Qwen3.5 and interrupted OpenAI states separate. Publish only complete Qwen batches and mark every incomplete or failed batch explicitly.
 
 The final presentation must show:
 
@@ -757,7 +757,7 @@ Phase 10 exits when all planned baselines have final or clearly failed manifests
 
 Build a local deployable application with FastAPI, React, and TypeScript. Use the same services and result artifacts as the evaluation pipeline; the UI must not implement its own memory rules.
 
-The current implementation is a narrower, read-only demonstration slice. It provides a three-panel artifact explorer, run and scorecard views, deterministic bundle generation, one-command local startup, and a single Docker image. It is deployed at [longitudinal-memory-benchmark.up.railway.app](https://longitudinal-memory-benchmark.up.railway.app). The hosted service has no GPU, database, provider credentials, write endpoint, or live model execution. It currently presents partial historical evidence and must be regenerated after Qwen v2 scoring.
+The current implementation is a narrower, read-only demonstration slice. It provides a three-panel artifact explorer, run and scorecard views, deterministic bundle generation, one-command local startup, and a single Docker image. It is deployed at [longitudinal-memory-benchmark.up.railway.app](https://longitudinal-memory-benchmark.up.railway.app). The hosted service has no GPU, database, provider credentials, write endpoint, or live model execution. It now presents the completed Qwen3-8B development scorecard alongside partial historical evidence.
 
 Expected code areas:
 

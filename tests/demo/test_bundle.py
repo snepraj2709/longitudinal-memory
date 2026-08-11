@@ -30,9 +30,16 @@ class DemoBundleTests(unittest.TestCase):
         self.assertEqual(len(bundle["cases"]), 4)
         self.assertEqual(
             [run["series_id"] for run in bundle["runs"]],
-            ["openai-gpt41-v1", "qwen35-27b-fp8-v1"],
+            ["openai-gpt41-v1", "qwen35-27b-fp8-v1", "qwen3-8b-vllm-dev-v1"],
         )
         self.assertEqual(bundle["runs"][0]["status"], "interrupted_not_scored")
+        self.assertEqual(bundle["runs"][2]["status"], "completed")
+        qwen_rows = [
+            row for row in bundle["scorecards"]
+            if row["series_id"] == "qwen3-8b-vllm-dev-v1"
+        ]
+        self.assertEqual([row["baseline_id"] for row in qwen_rows], [f"B{index}" for index in range(8)])
+        self.assertTrue(all(row["status"] == "development_scored" for row in qwen_rows))
 
 
 if __name__ == "__main__":

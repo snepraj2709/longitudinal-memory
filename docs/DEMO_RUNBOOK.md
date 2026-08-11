@@ -2,7 +2,7 @@
 
 ## What this demo shows
 
-The app shows how the benchmark represents source history, changing memory state, retrieved evidence, answers, abstentions, and review failures. It replays committed pilot and development artifacts. It does not run a model, query a database, or claim that the frozen B0-B7 comparison is complete.
+The app shows how the benchmark represents source history, changing memory state, retrieved evidence, answers, abstentions, and review failures. It replays committed pilot, development, and Qwen3-8B scorecard artifacts. It does not run a model, query a database, or claim that the frozen B0-B7 comparison is complete for every provider.
 
 ## Local start
 
@@ -26,16 +26,18 @@ make test-demo
 2. Open **Experience versus fact**. Show that Maya's interpretation is preserved while Pravin's clarification resolves the project status.
 3. Open **A changing career direction**. Show the April, June, July, and September states. The B1 answer gets the direction right but skips the intermediate trajectory and says the role started in April instead of May 4.
 4. Open **Evidence is absent**. Show that the system abstains instead of inferring Maya's college subject.
-5. Open **Scorecard**. Compare B1 answer quality with B2-B4 retrieval metrics, then point out B6/B7 over-abstention. Keep the interrupted OpenAI run and unrun Qwen series separate.
+5. Open **Scorecard**. Compare B1 answer quality with B2-B4 retrieval metrics, then point out B6/B7 over-abstention. Show the completed `qwen3-8b-vllm-dev-v1` B0-B7 development rows separately from the interrupted OpenAI run and historical unrun Qwen3.5 series.
 
 ## Honest labels
 
 - `openai-gpt41-v1`: `interrupted_not_scored`. Historical cost is `$0.4399284`. Extraction completed, but B0 produced no valid prediction or score.
 - `qwen35-27b-fp8-v1`: `configured_not_run`. Its current cost and request count are zero.
+- `qwen3-8b-vllm-dev-v1`: `completed`. It ran Qwen/Qwen3-8B through JarvisLabs L4 vLLM, produced B0-B7 development artifacts, sealed 912 logical predictions, recorded 930 provider requests, and had zero execution failures. Judge diagnostics are separate and uncalibrated.
 - B1: scored on the 25-case pilot.
 - B2-B4: retrieval-only development scores.
 - B6-B7: partial four-case abstention evaluation.
-- B5: not scored in the demo bundle.
+- Historical-development B5: not scored in the older component bundle.
+- Qwen3 rows: scored on the development split for B0-B7. They are not a final hidden test-set result.
 
 There is no composite score and no direct model-superiority claim.
 

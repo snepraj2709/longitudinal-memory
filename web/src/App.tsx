@@ -74,6 +74,7 @@ type Run = {
 }
 
 type Scorecard = {
+  series_id: string
   baseline_id: string
   label: string
   status: string
@@ -164,6 +165,9 @@ function App() {
   const filteredScores = scorecards.filter((item) =>
     (scoreFilter === 'all' || item.status === scoreFilter)
     && (baselineFilter === 'all' || item.baseline_id === baselineFilter),
+  )
+  const baselineOptions = Array.from(
+    new Map(scorecards.map((score) => [score.baseline_id, score.label])).entries(),
   )
 
   const restartReplay = () => {
@@ -289,7 +293,7 @@ function App() {
           <section className="scorecard-header">
             <div><span className="eyebrow">Step 10.4 status</span><h1>Benchmark evidence, without a composite score</h1><p>Development results, incomplete work, execution failures, token use, and cost remain separate.</p></div>
             <div className="score-filters">
-              <div className="filter-control"><label htmlFor="baseline-filter">Baseline</label><div className="select-wrap"><select id="baseline-filter" value={baselineFilter} onChange={(event) => setBaselineFilter(event.target.value)}><option value="all">B0-B7</option>{scorecards.map((score) => <option key={score.baseline_id} value={score.baseline_id}>{score.baseline_id} - {score.label}</option>)}</select><ChevronDown size={15} /></div></div>
+              <div className="filter-control"><label htmlFor="baseline-filter">Baseline</label><div className="select-wrap"><select id="baseline-filter" value={baselineFilter} onChange={(event) => setBaselineFilter(event.target.value)}><option value="all">B0-B7</option>{baselineOptions.map(([baseline, label]) => <option key={baseline} value={baseline}>{baseline} - {label}</option>)}</select><ChevronDown size={15} /></div></div>
               <div className="filter-control"><label htmlFor="score-filter">Status</label><div className="select-wrap"><select id="score-filter" value={scoreFilter} onChange={(event) => setScoreFilter(event.target.value)}><option value="all">All statuses</option><option value="pilot_scored">Pilot scored</option><option value="development_scored">Development scored</option><option value="development_partial">Partial</option><option value="not_scored">Not scored</option></select><ChevronDown size={15} /></div></div>
             </div>
           </section>
@@ -298,8 +302,8 @@ function App() {
           </section>
           <section className="score-table-wrap">
             <table className="score-table">
-              <thead><tr><th>Baseline</th><th>Status</th><th>Answer accuracy</th><th>Evidence recall</th><th>Recall@10</th><th>Abstention precision</th><th>Mean latency</th><th>Failures</th></tr></thead>
-              <tbody>{filteredScores.map((score) => <tr key={score.baseline_id}><td><b>{score.baseline_id}</b><span>{score.label}</span></td><td><StatusTag value={score.status} /></td><td>{percent(score.answer_accuracy)}</td><td>{percent(score.evidence_recall)}</td><td>{percent(score.recall_at_10)}</td><td>{percent(score.abstention_precision)}</td><td>{score.latency_ms === null ? 'Not measured' : `${score.latency_ms.toFixed(1)} ms`}</td><td>{score.failures ?? 'Not reported'}</td></tr>)}</tbody>
+              <thead><tr><th>Series</th><th>Baseline</th><th>Status</th><th>Answer accuracy</th><th>Evidence recall</th><th>Recall@10</th><th>Abstention precision</th><th>Mean latency</th><th>Failures</th></tr></thead>
+              <tbody>{filteredScores.map((score) => <tr key={`${score.series_id}:${score.baseline_id}`}><td><b>{score.series_id}</b></td><td><b>{score.baseline_id}</b><span>{score.label}</span></td><td><StatusTag value={score.status} /></td><td>{percent(score.answer_accuracy)}</td><td>{percent(score.evidence_recall)}</td><td>{percent(score.recall_at_10)}</td><td>{percent(score.abstention_precision)}</td><td>{score.latency_ms === null ? 'Not measured' : `${score.latency_ms.toFixed(1)} ms`}</td><td>{score.failures ?? 'Not reported'}</td></tr>)}</tbody>
             </table>
             {filteredScores.length === 0 && <div className="empty-state"><Search size={22} /><span>No baselines match this filter.</span></div>}
           </section>

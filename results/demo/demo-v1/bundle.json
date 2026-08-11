@@ -1,5 +1,5 @@
 {
-  "build_input_sha256": "b75f65abb92dde68febb15fedaa96affee5b34e94bfde3a642c56183e7e7dab6",
+  "build_input_sha256": "7cada5cf35ae39b5c19fc55f7b39abe290053e7d30761fcbfcb143c7df5560ec",
   "bundle_version": "demo-v1",
   "cases": [
     {
@@ -349,6 +349,16 @@
       "requests": 0,
       "series_id": "qwen35-27b-fp8-v1",
       "status": "configured_not_run"
+    },
+    {
+      "cost": "INR 97.5664",
+      "input_tokens": 2653791,
+      "model": "Qwen/Qwen3-8B",
+      "note": "Completed Qwen3-8B development B0-B7 via JarvisLabs L4 vLLM. Judge diagnostics are separate and uncalibrated.",
+      "output_tokens": 193672,
+      "requests": 930,
+      "series_id": "qwen3-8b-vllm-dev-v1",
+      "status": "completed"
     }
   ],
   "schema_version": "demo_bundle_v1",
@@ -362,6 +372,7 @@
       "label": "Full history",
       "latency_ms": null,
       "recall_at_10": null,
+      "series_id": "historical-development",
       "status": "pilot_scored"
     },
     {
@@ -373,6 +384,7 @@
       "label": "Atomic memory",
       "latency_ms": 10.521,
       "recall_at_10": 1.0,
+      "series_id": "historical-development",
       "status": "development_scored"
     },
     {
@@ -384,6 +396,7 @@
       "label": "Session summaries",
       "latency_ms": 8.863,
       "recall_at_10": 1.0,
+      "series_id": "historical-development",
       "status": "development_scored"
     },
     {
@@ -395,6 +408,7 @@
       "label": "Hybrid retrieval",
       "latency_ms": 13.439,
       "recall_at_10": 0.975,
+      "series_id": "historical-development",
       "status": "development_scored"
     },
     {
@@ -406,6 +420,7 @@
       "label": "Conflict aware",
       "latency_ms": null,
       "recall_at_10": null,
+      "series_id": "historical-development",
       "status": "not_scored"
     },
     {
@@ -417,6 +432,7 @@
       "label": "Lifecycle aware",
       "latency_ms": null,
       "recall_at_10": null,
+      "series_id": "historical-development",
       "status": "development_partial"
     },
     {
@@ -428,7 +444,104 @@
       "label": "Evidence gated",
       "latency_ms": null,
       "recall_at_10": null,
+      "series_id": "historical-development",
       "status": "development_partial"
+    },
+    {
+      "abstention_precision": 0.18421052631578946,
+      "answer_accuracy": 0.2,
+      "baseline_id": "B0",
+      "evidence_recall": 0.0,
+      "failures": 0,
+      "label": "No memory",
+      "latency_ms": null,
+      "recall_at_10": null,
+      "series_id": "qwen3-8b-vllm-dev-v1",
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": 0.7192982456140351,
+      "answer_accuracy": 0.24,
+      "baseline_id": "B1",
+      "evidence_recall": 0.5209580838323353,
+      "failures": 0,
+      "label": "Full history",
+      "latency_ms": null,
+      "recall_at_10": null,
+      "series_id": "qwen3-8b-vllm-dev-v1",
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": 0.6052631578947368,
+      "answer_accuracy": 0.23,
+      "baseline_id": "B2",
+      "evidence_recall": 0.40119760479041916,
+      "failures": 0,
+      "label": "Atomic memory",
+      "latency_ms": null,
+      "recall_at_10": 0.7442307692307693,
+      "series_id": "qwen3-8b-vllm-dev-v1",
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": 0.6491228070175439,
+      "answer_accuracy": 0.23,
+      "baseline_id": "B3",
+      "evidence_recall": 0.41317365269461076,
+      "failures": 0,
+      "label": "Session summaries",
+      "latency_ms": null,
+      "recall_at_10": 0.7269230769230769,
+      "series_id": "qwen3-8b-vllm-dev-v1",
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": 0.5789473684210527,
+      "answer_accuracy": 0.25,
+      "baseline_id": "B4",
+      "evidence_recall": 0.3473053892215569,
+      "failures": 0,
+      "label": "Hybrid retrieval",
+      "latency_ms": null,
+      "recall_at_10": 0.6721153846153847,
+      "series_id": "qwen3-8b-vllm-dev-v1",
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": 0.5877192982456141,
+      "answer_accuracy": 0.25,
+      "baseline_id": "B5",
+      "evidence_recall": 0.3592814371257485,
+      "failures": 0,
+      "label": "Conflict aware",
+      "latency_ms": null,
+      "recall_at_10": 0.7003205128205128,
+      "series_id": "qwen3-8b-vllm-dev-v1",
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": 0.6228070175438597,
+      "answer_accuracy": 0.25,
+      "baseline_id": "B6",
+      "evidence_recall": 0.40718562874251496,
+      "failures": 0,
+      "label": "Lifecycle aware",
+      "latency_ms": null,
+      "recall_at_10": 0.6942307692307692,
+      "series_id": "qwen3-8b-vllm-dev-v1",
+      "status": "development_scored"
+    },
+    {
+      "abstention_precision": 0.6228070175438597,
+      "answer_accuracy": 0.25,
+      "baseline_id": "B7",
+      "evidence_recall": 0.40718562874251496,
+      "failures": 0,
+      "label": "Evidence gated",
+      "latency_ms": null,
+      "recall_at_10": 0.6942307692307692,
+      "series_id": "qwen3-8b-vllm-dev-v1",
+      "status": "development_scored"
     }
   ]
 }

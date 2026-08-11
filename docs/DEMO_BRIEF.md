@@ -21,11 +21,13 @@ That is the reliability problem I want the benchmark to expose. A Personal AI ca
 
 The current retrieval development scorecard is also deliberately separate from answer quality. B2 and B3 achieved Recall@10 of 1.0, while B4 achieved 0.975. B6 and B7 abstained on all four cases in their small development evaluation: abstention recall was 1.0, but precision was 0.25. The system avoided false answers by refusing too much.
 
+The Qwen3-8B development run is now complete for B0-B7. It used JarvisLabs L4, vLLM, an OpenAI-compatible endpoint, temperature 0, 930 provider requests, and recorded INR 97.5664 GPU cost. It produced 912 sealed logical predictions, zero execution failures, and a deterministic scorecard with no composite score. Its separate judge diagnostic completed 112 blinded requests but remains uncalibrated and non-authoritative.
+
 ## What is not complete
 
-The frozen B0-B7 model comparison is not finished. The historical OpenAI Step 10.3 run is preserved as `interrupted_not_scored`. GPT-4.1-mini extraction completed, but GPT-4.1 B0 attempts produced no valid prediction or score. Recorded historical spend is `$0.4399284`; OpenAI execution remains disabled.
+The frozen B0-B7 model comparison is not finished for every provider. The historical OpenAI Step 10.3 run is preserved as `interrupted_not_scored`. GPT-4.1-mini extraction completed, but GPT-4.1 B0 attempts produced no valid prediction or score. Recorded historical spend is `$0.4399284`; OpenAI execution remains disabled.
 
-The old Qwen3.5 plans are now historical planning evidence and must not run. The next paid work should be a small Qwen3-8B vLLM pilot on JarvisLabs L4, exposed through an OpenAI-compatible API. No GPU instance, vLLM endpoint, or paid Qwen request has been started.
+The old Qwen3.5 plans are historical planning evidence and must not run. Qwen3-8B has one completed development scorecard, not a final test-set claim.
 
 ## Why this matters
 
@@ -43,6 +45,6 @@ For a local run:
 make demo
 ```
 
-Then open `http://127.0.0.1:8000`. A complete walkthrough of three cases, baseline status, failure evidence, and unfinished benchmark work takes under ten minutes in either version.
+Then open `http://127.0.0.1:8000`. A complete walkthrough of three cases, Qwen3-8B B0-B7 status, historical OpenAI failure evidence, and remaining benchmark work takes under ten minutes in either version.
 
 The benchmark is ready for a focused technical review of its design, current evidence, and remaining product risks.

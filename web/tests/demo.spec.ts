@@ -35,12 +35,13 @@ test('switches baselines, filters status, and shows an empty state', async ({ pa
   await page.goto('/')
   await page.getByRole('button', { name: 'Scorecard' }).click()
   await expect(page.getByText('openai-gpt41-v1')).toBeVisible()
+  await expect(page.getByText('qwen3-8b-vllm-dev-v1')).toBeVisible()
   await page.getByLabel('Baseline').selectOption('B7')
-  await expect(page.getByRole('cell', { name: 'B7 Evidence gated' })).toBeVisible()
+  await expect(page.getByRole('row', { name: /qwen3-8b-vllm-dev-v1 B7 Evidence gated/ })).toBeVisible()
   await page.getByLabel('Status').selectOption('pilot_scored')
   await expect(page.getByText('No baselines match this filter.')).toBeVisible()
   await page.getByLabel('Baseline').selectOption('all')
-  await expect(page.getByRole('cell', { name: 'B1 Full history' })).toBeVisible()
+  await expect(page.getByRole('row', { name: /historical-development B1 Full history/ })).toBeVisible()
 })
 
 test('renders the API error state', async ({ page }) => {

@@ -24,6 +24,8 @@ RETRIEVAL_SCORES = Path("results/retrieval/retrieval-quality-development-v1/scor
 ABSTENTION_SCORES = Path("results/abstention/b7-evaluation-development-v1/scorecard.json")
 OPENAI_RUN = Path("results/evaluation/openai-step10.3-interrupted-v1/manifest.json")
 QWEN_CONFIG = Path("configs/evaluation/qwen35_27b_fp8_v1.json")
+QWEN3_RUN = Path("results/evaluation/qwen3-8b-vllm-dev-v1/run-manifest.json")
+QWEN3_METRICS = Path("results/evaluation/qwen3-8b-vllm-dev-v1/scores/metrics.jsonl")
 DEFAULT_OUTPUT = Path("results/demo/demo-v1/bundle.json")
 
 
@@ -106,6 +108,7 @@ def _scorecards(root: Path) -> list[dict[str, object]]:
     b1 = _json(root / B1_SCORES)
     retrieval = _json(root / RETRIEVAL_SCORES)
     abstention = _json(root / ABSTENTION_SCORES)
+    qwen3_metrics = _jsonl(root / QWEN3_METRICS)
     overall = {
         str(row["baseline_id"]): row
         for row in retrieval["quality_rows"]
@@ -118,6 +121,7 @@ def _scorecards(root: Path) -> list[dict[str, object]]:
     }
     rows = [
         {
+            "series_id": "historical-development",
             "baseline_id": "B1",
             "label": "Full history",
             "status": "pilot_scored",
@@ -136,6 +140,7 @@ def _scorecards(root: Path) -> list[dict[str, object]]:
             if item["baseline_id"] == baseline and item["slice_dimension"] == "overall"
         )
         rows.append({
+            "series_id": "historical-development",
             "baseline_id": baseline,
             "label": {"B2": "Atomic memory", "B3": "Session summaries", "B4": "Hybrid retrieval"}[baseline],
             "status": "development_scored",
@@ -148,6 +153,7 @@ def _scorecards(root: Path) -> list[dict[str, object]]:
         })
     for baseline in ("B5", "B6", "B7"):
         rows.append({
+            "series_id": "historical-development",
             "baseline_id": baseline,
             "label": {"B5": "Conflict aware", "B6": "Lifecycle aware", "B7": "Evidence gated"}[baseline],
             "status": "development_partial" if baseline in ("B6", "B7") else "not_scored",
@@ -159,7 +165,51 @@ def _scorecards(root: Path) -> list[dict[str, object]]:
             "latency_ms": None,
             "failures": None,
         })
+    labels = {
+        "B0": "No memory",
+        "B1": "Full history",
+        "B2": "Atomic memory",
+        "B3": "Session summaries",
+        "B4": "Hybrid retrieval",
+        "B5": "Conflict aware",
+        "B6": "Lifecycle aware",
+        "B7": "Evidence gated",
+    }
+    for baseline in labels:
+        rows.append({
+            "series_id": "qwen3-8b-vllm-dev-v1",
+            "baseline_id": baseline,
+            "label": labels[baseline],
+            "status": "development_scored",
+            "answer_accuracy": _weighted_metric(qwen3_metrics, baseline, "strict_correctness"),
+            "evidence_recall": _weighted_metric(qwen3_metrics, baseline, "source_message_recall"),
+            "abstention_precision": _weighted_metric(qwen3_metrics, baseline, "abstention_accuracy"),
+            "recall_at_10": _weighted_metric(qwen3_metrics, baseline, "recall_at_10"),
+            "latency_ms": None,
+            "failures": int(_metric_numerator(qwen3_metrics, baseline, "execution_failures") or 0),
+        })
     return rows
+
+
+def _metric_numerator(rows: list[dict[str, object]], baseline: str, metric: str) -> float | None:
+    selected = [
+        row for row in rows
+        if row["baseline_id"] == baseline and row["metric"] == metric and int(row["denominator"]) > 0
+    ]
+    if not selected:
+        return None
+    return sum(float(row["numerator"]) for row in selected)
+
+
+def _weighted_metric(rows: list[dict[str, object]], baseline: str, metric: str) -> float | None:
+    selected = [
+        row for row in rows
+        if row["baseline_id"] == baseline and row["metric"] == metric and int(row["denominator"]) > 0
+    ]
+    denominator = sum(float(row["denominator"]) for row in selected)
+    if denominator == 0:
+        return None
+    return sum(float(row["numerator"]) for row in selected) / denominator
 
 
 def build_bundle(repo_root: Path) -> dict[str, object]:
@@ -202,8 +252,10 @@ def build_bundle(repo_root: Path) -> dict[str, object]:
         })
     openai = _json(root / OPENAI_RUN)
     qwen = _json(root / QWEN_CONFIG)
+    qwen3 = _json(root / QWEN3_RUN)
     inputs = [CONFIG, QUESTIONS, ANSWERS, PREDICTIONS, FAILURES, *SOURCES, B1_SCORES,
-              RETRIEVAL_SCORES, ABSTENTION_SCORES, OPENAI_RUN, QWEN_CONFIG]
+              RETRIEVAL_SCORES, ABSTENTION_SCORES, OPENAI_RUN, QWEN_CONFIG, QWEN3_RUN,
+              QWEN3_METRICS]
     input_digest = sha256()
     for path in inputs:
         raw = (root / path).read_bytes()
@@ -234,6 +286,16 @@ def build_bundle(repo_root: Path) -> dict[str, object]:
                 "output_tokens": 0,
                 "cost": "INR 0",
                 "note": "Pinned and ready for a separately approved JarvisLabs run.",
+            },
+            {
+                "series_id": qwen3["series_id"],
+                "model": qwen3["model"]["hugging_face_id"],
+                "status": qwen3["status"],
+                "requests": qwen3["execution_metadata"]["provider_request_count"],
+                "input_tokens": qwen3["execution_metadata"]["input_tokens"],
+                "output_tokens": qwen3["execution_metadata"]["output_tokens"],
+                "cost": f"INR {qwen3['execution_metadata']['gpu_cost_inr']:.4f}",
+                "note": "Completed Qwen3-8B development B0-B7 via JarvisLabs L4 vLLM. Judge diagnostics are separate and uncalibrated.",
             },
         ],
         "scorecards": _scorecards(root),

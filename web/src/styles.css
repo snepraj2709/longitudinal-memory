@@ -67,7 +67,7 @@ input[type="range"] { width: 100%; accent-color: #176b50; }
 .memory-copy small { color: #7a847d; }
 
 .status-tag { display: inline-flex; max-width: 190px; align-items: center; border-radius: 3px; padding: 3px 6px; background: #e9edea; color: #52605a; font-size: 9px; line-height: 1.2; font-weight: 800; text-transform: uppercase; white-space: normal; }
-.status-current, .status-corrected, .status-pilot_scored, .status-development_scored { color: #155a43; background: #dff0e7; }
+.status-current, .status-corrected, .status-pilot_scored, .status-development_scored, .status-completed { color: #155a43; background: #dff0e7; }
 .status-historical { color: #52605a; background: #e8ece9; }
 .status-disputed, .status-interrupted_not_scored, .status-development_partial { color: #8a4f00; background: #fff0d6; }
 .status-unknown, .status-not_scored, .status-configured_not_run { color: #695191; background: #eee7f7; }
