@@ -206,9 +206,27 @@ class QwenExecutionTests(unittest.TestCase):
             "qa",
             evidence,
         )
+        claim_message_id = _normalize_qwen_answer_response(
+            {
+                "status": "answered",
+                "answer": "The Care Map review is scheduled for 2026-08-11.",
+                "confidence": 1,
+                "statements": ["The Care Map review is scheduled for 2026-08-11."],
+                "citations": [{
+                    "source_id": "scaled_user_001_calendar_002",
+                    "message_id": "claim_123",
+                    "quote": "Care Map review is scheduled for 2026-08-11.",
+                }],
+                "unresolved_parts": [],
+                "abstention_reason": "",
+            },
+            "qa",
+            evidence,
+        )
 
         self.assertIsNone(normalized["citations"][0]["message_id"])
         self.assertIsNone(empty_message_id["citations"][0]["message_id"])
+        self.assertIsNone(claim_message_id["citations"][0]["message_id"])
         self.assertEqual(
             normalized["citations"][0]["quote"],
             "Care Map review is scheduled for 2026-08-11.",

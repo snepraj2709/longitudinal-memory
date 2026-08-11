@@ -356,7 +356,9 @@ def _qwen_message_id_matches(
 ) -> bool:
     if expected == actual:
         return True
-    return expected is None and actual == f"{source_id}_message_001"
+    if expected is None:
+        return actual is None or isinstance(actual, str)
+    return False
 
 
 def execute_jobs(
