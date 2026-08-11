@@ -311,6 +311,32 @@ class QwenExecutionTests(unittest.TestCase):
             self.assertEqual(row["failure_stage"], "validation")
             self.assertNotIn("invalid secret raw", json.dumps(row))
 
+    def test_validation_failure_retries_only_when_explicitly_enabled(self) -> None:
+        calls = []
+
+        def validator(raw, _metadata):
+            calls.append(raw)
+            if len(calls) == 1:
+                raise ValueError("invalid secret raw")
+            return json.loads(raw)
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "batch"
+            manifest = execute_jobs(
+                (_job(1, validator=validator),),
+                output_dir=output,
+                client_factory=lambda _job: _Client(_success),
+                retry_ledger=TransportRetryLedger(1),
+                retry_validation_failures=True,
+            )
+            row = json.loads(next((output / "requests").glob("*.json")).read_text())
+            self.assertEqual(len(calls), 2)
+            self.assertEqual(row["status"], "succeeded")
+            self.assertEqual(row["transport_retry_count"], 1)
+            self.assertEqual(manifest["successful_count"], 1)
+            self.assertEqual(manifest["failure_count"], 0)
+            self.assertEqual(manifest["transport_retry_count"], 1)
+
     def test_http_response_error_is_not_retried(self) -> None:
         calls = []
         with tempfile.TemporaryDirectory() as directory:

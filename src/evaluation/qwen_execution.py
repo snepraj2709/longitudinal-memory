@@ -21,6 +21,7 @@ from extraction.scaled_source import _adapt_source
 from extraction.schema import atomic_extraction_text_format
 
 from .frozen_answer_contracts import TASK_BODY, validate_answer_output
+from .frozen_run_contracts import FrozenRunError
 from .openai_client import OpenAIResponseMetadata
 from .qwen_benchmark import PROMPTS, REGISTRY, SAMPLING, _render_answer_prompt, select_runtime
 from .qwen_compatibility import _answer_schema, _response_format
@@ -372,6 +373,7 @@ def execute_jobs(
     after_attempt: AttemptComplete | None = None,
     monotonic: Callable[[], float] = time.monotonic,
     retryable_http_statuses: Sequence[int] = (),
+    retry_validation_failures: bool = False,
 ) -> Mapping[str, object]:
     """Execute missing jobs and seal an ordered batch after every job is terminal."""
 
@@ -405,6 +407,7 @@ def execute_jobs(
                 complete,
                 monotonic,
                 retryable_statuses,
+                retry_validation_failures,
             ): job
             for job in missing
         }
@@ -593,6 +596,7 @@ def _execute_one(
     after_attempt: AttemptComplete,
     monotonic: Callable[[], float],
     retryable_http_statuses: frozenset[int],
+    retry_validation_failures: bool,
 ) -> None:
     attempts = 0
     retries = 0
@@ -641,7 +645,10 @@ def _execute_one(
             code = f"http_{error.status_code}" if error.status_code is not None else "provider_response_error"
             record = _failure_record(job, attempts, retries, monotonic() - began, "provider", code)
             break
-        except (json.JSONDecodeError, ValueError, TypeError) as error:
+        except (json.JSONDecodeError, ValueError, TypeError, FrozenRunError) as error:
+            if retry_validation_failures and ledger.claim():
+                retries += 1
+                continue
             record = _failure_record(job, attempts, retries, monotonic() - began, "validation", type(error).__name__)
             break
         except Exception as error:

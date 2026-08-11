@@ -114,6 +114,7 @@ def run_development(
         retry_ledger=retry_ledger,
         workers=1,
         retryable_http_statuses=tuple(config["workload"]["retryable_http_statuses"]),
+        retry_validation_failures=bool(config["workload"].get("retry_validation_failures", False)),
     )
 
     b7_dir = output / "answers-b7"
