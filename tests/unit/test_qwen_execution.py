@@ -152,7 +152,7 @@ class QwenExecutionTests(unittest.TestCase):
                     "message_id": "scaled_user_001_conversation_003_message_001",
                     "quote": "I need to correct the start date. I began on 2026-01-11, not 2026-02-03.",
                 }],
-                "unresolved_parts": [],
+                "unresolved_parts": ["Extra unresolved text."],
                 "abstention_reason": "",
             },
             "qa",
@@ -160,6 +160,7 @@ class QwenExecutionTests(unittest.TestCase):
         )
 
         self.assertIsNone(normalized["abstention_reason"])
+        self.assertEqual(normalized["unresolved_parts"], [])
         self.assertEqual(normalized["citations"][0]["quote"], exact_quote)
 
     def test_answer_validator_normalizes_qwen_calendar_message_ids(self) -> None:

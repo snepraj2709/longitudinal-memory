@@ -275,6 +275,8 @@ def _normalize_qwen_answer_response(
                 item for item in statements
                 if isinstance(item, str) and item.strip() and item in body
             ] or [body]
+        if normalized.get("status") == "answered":
+            normalized["unresolved_parts"] = []
         normalized["citations"] = _normalize_qwen_citations(
             normalized.get("citations"), evidence_index
         )
