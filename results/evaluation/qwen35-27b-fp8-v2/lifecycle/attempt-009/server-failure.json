@@ -1,0 +1,61 @@
+{
+  "affected_layer": "jarvis_vllm_lifecycle",
+  "artifact_hashes": {
+    "failures_jsonl_sha256": "4578b67f97de65629986073efcc0b401c6be94276360e199065fff47754d824e",
+    "lifecycle_json_sha256": "c14b5be656983107048c9138e86e29a5026cbf7d821b1d45bc77ba063ea98b9c",
+    "pipeline_json_sha256": "a972c6679f77f42fe76273004aeb902c782fe3468e8b8146e4c25d4ede811f4a",
+    "stage1_receipt_json_sha256": "fdbc431365381690f8cb32e892217966e1228f500954e7ed2cd983869c70bef4"
+  },
+  "attempt_id": "attempt-009",
+  "completed_checkpoints": [
+    "created RTX-PRO6000 IN1 spot container",
+    "installed pinned vLLM in isolated Python 3.12",
+    "passed metadata-only dummy engine preflight",
+    "downloaded pinned model snapshot",
+    "downloaded Stage 1 checkpoints",
+    "destroyed instance and verified absence"
+  ],
+  "cost": {
+    "account_spend_inr": 15.88,
+    "pipeline_total_gpu_cost_inr": 55.57,
+    "prior_gpu_cost_inr": 39.69
+  },
+  "failure_report_schema": "qwen_attempt_failure_v1",
+  "fix": {
+    "local_regression_test": "tests.unit.test_qwen_lifecycle.QwenLifecycleTests.test_preflight_server_uses_dummy_weights_and_can_be_stopped",
+    "summary": "Hardened stop_server to terminate the pidfile process group, direct vLLM processes, EngineCore children, and any process listening on port 6006 before starting production."
+  },
+  "minimal_reproduction": [
+    "Start metadata-only dummy vLLM on port 6006.",
+    "Run the old stop_server implementation.",
+    "Start production vLLM on the same port.",
+    "Observe production startup fails to bind or Stage 1 requests reach the wrong server."
+  ],
+  "proven_root_cause": "The dummy vLLM server was not fully terminated before production startup. The wrapper stdout showed production startup failed with OSError: [Errno 98] Address already in use, and Stage 1 then recorded 12 failed compatibility requests.",
+  "raw_invalid_output_persisted": false,
+  "root_cause_unproven": false,
+  "sanitization": {
+    "credential_values_recorded": false,
+    "provider_urls_recorded": false,
+    "raw_invalid_output_recorded": false
+  },
+  "series_id": "qwen35-27b-fp8-v2",
+  "stage1": {
+    "failure_count": 12,
+    "failure_codes": {
+      "JSONDecodeError": 3,
+      "http_400": 9
+    },
+    "gate_reasons": [
+      "compatibility_responses_not_12_of_12"
+    ],
+    "gold_opened": false,
+    "oracle_opened": false,
+    "planned_request_count": 12,
+    "provider_request_count": 12,
+    "review_opened": false,
+    "successful_count": 0
+  },
+  "symptom": "Stage 1 compatibility completed with 0 successful responses and failed the 12/12 validity gate.",
+  "timestamp_utc": "2026-08-11T11:52:19.593149Z"
+}

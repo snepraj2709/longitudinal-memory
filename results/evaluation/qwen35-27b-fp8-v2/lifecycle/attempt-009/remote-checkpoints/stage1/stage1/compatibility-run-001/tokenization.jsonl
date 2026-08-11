@@ -1,0 +1,12 @@
+{"position":1,"request_id":"extraction:scaled_user_001_conversation_001","token_count":3558,"tokenizer_seconds":0.293587}
+{"position":2,"request_id":"extraction:scaled_user_001_email_001","token_count":3547,"tokenizer_seconds":0.293044}
+{"position":3,"request_id":"extraction:scaled_user_001_chat_001","token_count":3538,"tokenizer_seconds":0.244757}
+{"position":4,"request_id":"compat:B0:qa","token_count":251,"tokenizer_seconds":0.188631}
+{"position":5,"request_id":"compat:B0:summary","token_count":265,"tokenizer_seconds":0.198927}
+{"position":6,"request_id":"compat:B0:interactive","token_count":276,"tokenizer_seconds":0.187467}
+{"position":7,"request_id":"compat:B6:qa","token_count":412,"tokenizer_seconds":0.197642}
+{"position":8,"request_id":"compat:B6:summary","token_count":426,"tokenizer_seconds":0.186742}
+{"position":9,"request_id":"compat:B6:interactive","token_count":437,"tokenizer_seconds":0.187077}
+{"position":10,"request_id":"compat:judge:qa","token_count":216,"tokenizer_seconds":0.195386}
+{"position":11,"request_id":"compat:judge:summary","token_count":225,"tokenizer_seconds":0.172823}
+{"position":12,"request_id":"compat:judge:interactive","token_count":241,"tokenizer_seconds":0.183167}

@@ -1,0 +1,34 @@
+{
+  "budget": {
+    "active_reservations": 0,
+    "cleanup_reserve_seconds": 600.0,
+    "cumulative_cap_inr": 200.0,
+    "elapsed_billable_seconds": 518.090867,
+    "hourly_rate_inr": 93.96,
+    "measured_cost_inr": 13.522172,
+    "prior_cost_inr": 39.69,
+    "prior_stage_cost_inr": 39.69,
+    "projected_request_seconds": 52.583187,
+    "stage": 1,
+    "stage_cap_inr": 200.0,
+    "total_cumulative_cost_inr": 53.212172,
+    "total_stage_cost_inr": 53.212172
+  },
+  "gate": {
+    "passed": false,
+    "reasons": [
+      "compatibility_responses_not_12_of_12"
+    ],
+    "stage": 1
+  },
+  "remote_provenance": {
+    "cuda": "13.0",
+    "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+    "vllm": "0.26.1rc1.dev602+g65b7662d3",
+    "vllm_install": "vllm @ https://wheels.vllm.ai/65b7662d3fcb773afaf751ab29ac6960a0cf011d/vllm-0.26.1rc1.dev602%2Bg65b7662d3-cp38-abi3-manylinux_2_28_x86_64.whl#sha256=5bea2dbbc4371870a924558373d31f9d6a71969455ef9505fad91b60cc0990f0"
+  },
+  "result_status": "completed_with_failures",
+  "schema_version": "qwen_stage_receipt_v2",
+  "series_id": "qwen35-27b-fp8-v2",
+  "stage": 1
+}

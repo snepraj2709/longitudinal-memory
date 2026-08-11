@@ -243,6 +243,9 @@ class QwenLifecycleTests(unittest.TestCase):
         self.assertIn("nohup setsid", commands[0][-1])
         self.assertIn("qwen-v2-server.pid", commands[1][-1])
         self.assertIn("kill -TERM -- -", commands[1][-1])
+        self.assertIn("/proc/net/tcp", commands[1][-1])
+        self.assertIn("PORT_HEX", commands[1][-1])
+        self.assertIn("VLLM::EngineCore", commands[1][-1])
 
     def test_watchdog_invokes_cleanup_when_reserve_is_exhausted(self) -> None:
         now = [100.0]

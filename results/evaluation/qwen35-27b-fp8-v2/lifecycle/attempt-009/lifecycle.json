@@ -1,0 +1,130 @@
+{
+  "account_balance_after_inr": 4855.33,
+  "account_balance_before_inr": 4871.21,
+  "created_at": "2026-08-11T11:41:57.542570Z",
+  "destroyed_at": "2026-08-11T11:52:19.593149Z",
+  "destruction_verified": true,
+  "elapsed_billable_seconds": 622.046559,
+  "events": [
+    {
+      "account_response_sha256": "ad1def9dbde9c846683b2c54e50ebd5e68b98e0c958edb9d5c4041af48033535",
+      "at": "2026-08-11T11:41:53.672419Z",
+      "event": "preflight",
+      "gpu_inventory_sha256": "8b8a862b90d105044c4c696334a390fdf6bd38a2b046ec789dc31f6db7b843a7",
+      "resource_inventory_sha256": "5fb707a29c16311d7d17f35ba5039c049d76af04b2fce3c353502e80a444f88f",
+      "selected_offer": {
+        "free_devices": 7,
+        "gpu": "RTX-PRO6000-96GB",
+        "region": "IN1",
+        "spot_rate_inr_per_hour": 93.96,
+        "workload_type": "container"
+      }
+    },
+    {
+      "at": "2026-08-11T11:41:57.542570Z",
+      "event": "created",
+      "machine_id": 468875,
+      "offer": {
+        "free_devices": 7,
+        "gpu": "RTX-PRO6000-96GB",
+        "region": "IN1",
+        "spot_rate_inr_per_hour": 93.96,
+        "workload_type": "container"
+      }
+    },
+    {
+      "at": "2026-08-11T11:42:00.451788Z",
+      "environment": "Python 3.12.13\n2.9.1+cu130 13.0\nNVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+      "event": "install_environment_recorded"
+    },
+    {
+      "at": "2026-08-11T11:43:54.812563Z",
+      "event": "vllm_installed",
+      "python": "3.12",
+      "revision": "65b7662d3fcb773afaf751ab29ac6960a0cf011d",
+      "version": "0.26.1rc1.dev602+g65b7662d3",
+      "wheel_url_sha256": "c85af8d1a08986a45d02bd5fc78119678bd4c6e17bb244f2fa6500435e71a8c5"
+    },
+    {
+      "at": "2026-08-11T11:44:03.827807Z",
+      "event": "server_files_uploaded",
+      "server_script_sha256": "83b40b74b9100dd31b535551be72ee054aab56301cda296d5c604f54355300ae"
+    },
+    {
+      "at": "2026-08-11T11:44:14.090013Z",
+      "event": "model_metadata_downloaded",
+      "file_count": 45,
+      "model_id": "Qwen/Qwen3.5-27B-FP8",
+      "revision": "97f5941bf617e31c5e237364a8602ce3f03a551a",
+      "tokenizer_class": "Qwen2Tokenizer",
+      "tokenizer_size": 248077,
+      "total_bytes": 23223568
+    },
+    {
+      "at": "2026-08-11T11:44:15.943191Z",
+      "event": "server_started",
+      "mode": "preflight"
+    },
+    {
+      "at": "2026-08-11T11:48:20.427624Z",
+      "event": "server_stopped"
+    },
+    {
+      "event": "dummy_engine_preflight_passed",
+      "exact_model_alias": true
+    },
+    {
+      "at": "2026-08-11T11:49:25.526184Z",
+      "event": "model_downloaded",
+      "file_count": 78,
+      "manifest_sha256": "ea353505019fe5d3f41a19d760937e5759baa27da9bcede3a1b217a67cf617a7",
+      "model_id": "Qwen/Qwen3.5-27B-FP8",
+      "revision": "97f5941bf617e31c5e237364a8602ce3f03a551a",
+      "tokenizer_class": "Qwen2Tokenizer",
+      "tokenizer_size": 248077,
+      "total_bytes": 30890107252
+    },
+    {
+      "at": "2026-08-11T11:49:27.483608Z",
+      "event": "server_started",
+      "mode": "production"
+    },
+    {
+      "at": "2026-08-11T11:49:39.910516Z",
+      "event": "remote_provenance_recorded",
+      "receipt_sha256": "38fbaaed5dcd11c60cfa612a87322e9046508c484a2d0f590a2e379f359e2e81"
+    },
+    {
+      "at": "2026-08-11T11:50:47.044365Z",
+      "event": "artifacts_mirrored",
+      "remote_name": "stage1"
+    },
+    {
+      "at": "2026-08-11T11:50:56.609093Z",
+      "event": "checkpoint_download",
+      "failure_code": null,
+      "succeeded": true
+    },
+    {
+      "at": "2026-08-11T11:51:02.193895Z",
+      "event": "destroy_requested",
+      "succeeded": true
+    },
+    {
+      "at": "2026-08-11T11:52:19.593149Z",
+      "event": "destruction_verified"
+    }
+  ],
+  "gpu_cost_inr": 16.235415,
+  "machine_id": 468875,
+  "observed_account_spend_inr": 15.88,
+  "offer": {
+    "free_devices": 7,
+    "gpu": "RTX-PRO6000-96GB",
+    "region": "IN1",
+    "spot_rate_inr_per_hour": 93.96,
+    "workload_type": "container"
+  },
+  "schema_version": "qwen_jarvis_lifecycle_v2",
+  "series_id": "qwen35-27b-fp8-v2"
+}
