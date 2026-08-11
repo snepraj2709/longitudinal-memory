@@ -40,6 +40,9 @@ VLLM_BUILD = {
 REMOTE_MODEL_DIR = "/home/qwen35-27b-fp8-v2-model"
 REMOTE_METADATA_DIR = "/home/qwen35-27b-fp8-v2-metadata"
 REMOTE_PYTHON = "/home/qwen-v2-env/bin/python"
+MODEL_SNAPSHOT_FILE_COUNT = 53
+MODEL_SNAPSHOT_TOTAL_BYTES = 30890107251
+MODEL_SNAPSHOT_MANIFEST_SHA256 = "408630ab60971347c2aa06e73ea2642a6bab043c894d886e25a1bc2d326a16a7"
 
 
 class JarvisLifecycleError(RuntimeError):
@@ -515,7 +518,8 @@ class JarvisManager(AbstractContextManager["JarvisManager"]):
             f"local_dir=\"{REMOTE_MODEL_DIR}\",token=os.environ[\"HF_TOKEN\"]); "
             "tok=AutoTokenizer.from_pretrained(path); "
             "files=sorted((p.relative_to(path).as_posix(),p.stat().st_size) "
-            "for p in Path(path).rglob(\"*\") if p.is_file()); "
+            "for p in Path(path).rglob(\"*\") if p.is_file() "
+            "and not p.relative_to(path).as_posix().startswith(\".cache/\")); "
             "payload={\"file_count\":len(files),\"total_bytes\":sum(x[1] for x in files),"
             "\"manifest_sha256\":hashlib.sha256(json.dumps(files,separators=(\",\",\":\")).encode()).hexdigest(),"
             "\"tokenizer_class\":type(tok).__name__,\"tokenizer_size\":len(tok)}; "
@@ -547,8 +551,14 @@ class JarvisManager(AbstractContextManager["JarvisManager"]):
             receipt = json.loads(result.stdout.strip().splitlines()[-1])
         except (IndexError, json.JSONDecodeError) as error:
             raise JarvisLifecycleError("model download receipt is invalid") from error
-        if not isinstance(receipt, Mapping) or receipt.get("tokenizer_size") != 248077:
-            raise JarvisLifecycleError("downloaded tokenizer does not match the frozen model")
+        if not isinstance(receipt, Mapping) or (
+            receipt.get("file_count") != MODEL_SNAPSHOT_FILE_COUNT
+            or receipt.get("total_bytes") != MODEL_SNAPSHOT_TOTAL_BYTES
+            or receipt.get("manifest_sha256") != MODEL_SNAPSHOT_MANIFEST_SHA256
+            or receipt.get("tokenizer_class") != "Qwen2Tokenizer"
+            or receipt.get("tokenizer_size") != 248077
+        ):
+            raise JarvisLifecycleError("downloaded model snapshot does not match the frozen contract")
         self.events.append({
             "event": "model_downloaded",
             "at": _utc(self.clock()),

@@ -13,6 +13,8 @@ from evaluation.qwen_lifecycle import (
     JarvisLifecycleError,
     JarvisManager,
     LiveBudgetController,
+    MODEL_SNAPSHOT_MANIFEST_SHA256,
+    MODEL_SNAPSHOT_TOTAL_BYTES,
     REMOTE_MODEL_DIR,
     REMOTE_METADATA_DIR,
     VLLM_BUILD,
@@ -189,7 +191,14 @@ class QwenLifecycleTests(unittest.TestCase):
         def runner(command):
             commands.append(tuple(command))
             if command[-1].startswith("tail -n 1"):
-                return CommandResult(0, 'Executing on 321\n{"file_count":20,"manifest_sha256":"abc","tokenizer_class":"TokenizersBackend","tokenizer_size":248077,"total_bytes":30}\n', "")
+                return CommandResult(
+                    0,
+                    'Executing on 321\n{"file_count":53,'
+                    f'"manifest_sha256":"{MODEL_SNAPSHOT_MANIFEST_SHA256}",'
+                    '"tokenizer_class":"Qwen2Tokenizer","tokenizer_size":248077,'
+                    f'"total_bytes":{MODEL_SNAPSHOT_TOTAL_BYTES}}}\n',
+                    "",
+                )
             return CommandResult(0, "", "")
 
         manager = JarvisManager(artifact_dir=Path("unused"), runner=runner)
@@ -202,7 +211,29 @@ class QwenLifecycleTests(unittest.TestCase):
         download = commands[0][-1]
         self.assertIn("97f5941bf617e31c5e237364a8602ce3f03a551a", download)
         self.assertIn(REMOTE_MODEL_DIR, download)
+        self.assertIn('startswith(".cache/")', download)
         self.assertIn('os.environ["HF_TOKEN"]', download)
+
+    def test_model_download_rejects_snapshot_drift(self) -> None:
+        def runner(command):
+            if command[-1].startswith("tail -n 1"):
+                return CommandResult(
+                    0,
+                    '{"file_count":54,'
+                    f'"manifest_sha256":"{MODEL_SNAPSHOT_MANIFEST_SHA256}",'
+                    '"tokenizer_class":"Qwen2Tokenizer","tokenizer_size":248077,'
+                    f'"total_bytes":{MODEL_SNAPSHOT_TOTAL_BYTES}}}\n',
+                    "",
+                )
+            return CommandResult(0, "", "")
+
+        manager = JarvisManager(artifact_dir=Path("unused"), runner=runner)
+        manager.machine_id = 321
+        with self.assertRaisesRegex(JarvisLifecycleError, "frozen contract"):
+            manager.download_model(
+                model_id="Qwen/Qwen3.5-27B-FP8",
+                revision="97f5941bf617e31c5e237364a8602ce3f03a551a",
+            )
 
     def test_metadata_preflight_excludes_weights_and_checks_tokenizer(self) -> None:
         commands = []
