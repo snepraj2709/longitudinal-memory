@@ -1,12 +1,14 @@
 # Implementation audit
 
+> Update, 2026-08-11: the demo described as missing in this audit now exists. `make demo` builds a deterministic sanitized bundle, compiles the React explorer, and starts a read-only FastAPI service. Docker and Railway configuration are present. The historical OpenAI run is labeled `interrupted_not_scored`; the pinned Qwen series is configured but has not run. No hosted deployment, Jarvis instance, or paid provider call has been made. The remainder of this document preserves the earlier audit snapshot and its test evidence.
+
 ## 1. Executive snapshot
 
 This repository is an evaluation-first longitudinal memory project. It has more than a README-level prototype: it contains frozen benchmark data, schema validators, a full-history B1 pilot baseline, extraction runs, PostgreSQL storage and lifecycle code, deterministic conflict and retrieval pipelines, evidence package construction, answerability mechanics, and a partially attempted frozen B0-B7 comparison.
 
 The strongest verified claim is narrow: the project can expose longitudinal memory failures with evidence-backed scoring. The clearest evidence is the B1 pilot run: 25 QA cases, 23 strict correct answers, 24 lenient correct answers, zero execution failures, 12 reviewed reasoning failures, and one unsupported date claim in `results/pilot/b1-full-history/`.
 
-The project is not founder-ready as a one-command external demo. There is no README, no `.env.example`, no UI, no hosted deployment, and the full local suite currently fails six hash/topology tests because the worktree contains uncommitted Step 10.3 changes. The deterministic validators and one Docker-backed retrieval gate did pass during this audit.
+The project was not ready as a one-command external demo. There was no README, no `.env.example`, no UI, and no hosted deployment. The full local suite failed seven hash/topology tests, and the Docker-backed retrieval gate could not run in this audit because Docker was not running. The deterministic validators, smoke dry-run, and atomic extraction safety dry-run did pass.
 
 ## 2. Repository architecture
 
@@ -19,11 +21,11 @@ The repository is organized around an evaluation pipeline rather than a product 
 | Benchmark v1 and scaled data | `data/benchmark-v1/`, `data/scaled-v1/`, `schemas/scaled-v1/` | Working and verified by validators |
 | B1 full-history baseline | `src/evaluation/b1_full_history.py`, `results/pilot/b1-full-history/` | Working and verified from committed results |
 | Atomic extraction | `src/extraction/`, `results/phase3/` | Implemented; dry-run verified; paid run results inspected |
-| PostgreSQL storage and ingestion | `src/storage/`, `src/ingestion/`, `migrations/0001` through `0003` | Implemented; live coverage indirectly verified through retrieval gate |
+| PostgreSQL storage and ingestion | `src/storage/`, `src/ingestion/`, `migrations/0001` through `0003` | Implemented; PostgreSQL live checks require Docker |
 | Temporal lifecycle and evaluation | `src/temporal/`, `src/evaluation/temporal.py`, `results/phase4/` | Implemented but only development-set verified |
 | Conflict detection and resolution | `src/conflicts/`, `results/conflicts/` | Partially implemented; development examples are small |
 | Summaries and durative claims | `src/summaries/`, `results/summaries/` | Partially implemented; structural checks, not product-quality summaries |
-| Retrieval | `src/retrieval/`, `results/retrieval/` | Working and runtime-verified for B2-B4 on development data |
+| Retrieval | `src/retrieval/`, `results/retrieval/` | Implemented with committed B2-B4 metrics; live rerun blocked by Docker daemon |
 | Grounded answering | `src/answering/`, `results/answering/` | Partially implemented; current memory answer run abstains structurally |
 | Abstention | `src/abstention/`, `results/abstention/` | Partially implemented; B7 development run has 0 coverage |
 | UI/deployment | no frontend, no package manifest, no deployment config | Missing |
@@ -80,8 +82,8 @@ Representative query: `temporal_003`, "What is the corrected date for Aryan's jo
 | `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python` | Passed | 10 users, 100 sources, 500 QA, 50 summaries, 20 interactive cases, dataset SHA-256 `746756cb...`. |
 | `make validate-benchmark-v1 PYTHON=.venv-storage/bin/python` | Passed | 50 QA, 5 summaries, 2 interactive scenarios, 30 gold claims. |
 | `make validate-load-corpus PYTHON=.venv-storage/bin/python` | Passed | 2,000 users and 500,000 source events declared in load corpus. |
-| `make test PYTHON=.venv-storage/bin/python` | Failed | 1,093 tests ran, 6 failures, 160 skips. Failures were allowlist/hash topology tests affected by current uncommitted drift. |
-| `make test-retrieval-baselines PYTHON=.venv-storage/bin/python` | Passed after Docker permission | 132 tests passed against disposable PostgreSQL and cleaned up Docker resources. Retrieval development summary used 8 queries, 24 results, 0 runtime failures, and 63 quality rows. |
+| `make test PYTHON=.venv-storage/bin/python` | Failed | 1,093 tests ran, 7 failures, 160 skips. Failures were allowlist/hash topology assertions against the current tracked tree. |
+| `make test-retrieval-baselines PYTHON=.venv-storage/bin/python` | Failed before tests | Docker daemon was unavailable: `dial unix /Users/snehaprajapati/.docker/run/docker.sock: connect: no such file or directory`. |
 | `make analyze-atomic-v2 PYTHON=.venv-storage/bin/python` | Failed safely | Refused to overwrite non-empty `results/phase3/atomic-extraction-v2-failure-analysis-v1`. |
 | `make dry-run-atomic-safety PYTHON=.venv-storage/bin/python` | Passed | Made zero provider calls; printed cost and source-transmission plan for 10 pilot extraction requests. |
 | `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv-storage/bin/python -m evaluation.smoke --dry-run` | Passed | Built five smoke prompts; each used 72 observations and made no model call. |
@@ -90,16 +92,19 @@ Memory-answer quality development metrics show 24 abstentions, 0 citations, 0 fa
 
 B6 and B7 development evaluation metrics are identical on this checkout: coverage 0/4, abstention precision 0.250000, abstention recall 1.0, unnecessary abstention rate 1.0, and false answer rate 0.0.
 
+The committed retrieval quality scorecard reports 8 queries, 24 B2-B4 results, 0 runtime failures, 200 relevance annotations, 0 provider requests, and overall B2/B3/B4 Recall@10 of 1.000000, 1.000000, and 0.975000. Because Docker was unavailable, those committed metrics were inspected rather than freshly regenerated in this audit.
+
 The full test failure should not be hidden. The failing tests are:
 
 - `integration.test_answer_quality_evaluation.AnswerQualityIntegrationTests.test_predecessor_hashes_and_tracked_diff_are_exact`
 - `integration.test_answerability.AnswerabilityIntegrationTests.test_exact_allowlist_and_protected_hashes`
 - `integration.test_b6_b7_comparison_prerequisite.B6B7ComparisonPrerequisiteStaticIntegrationTests.test_committed_prerequisite_and_live_evaluation_topology_are_exact`
 - `integration.test_comparison_freeze.ComparisonFreezeIntegrationTests.test_protected_hashes_and_exact_live_additions`
+- `integration.test_frozen_preflight.FrozenPreflightIntegrationTests.test_exact_interrupted_openai_recovery_path_allowlist`
 - `integration.test_interactive_answering_v2.InteractiveInputV2IntegrationTests.test_committed_prerequisite_and_live_evaluation_topology_are_exact`
 - `integration.test_memory_answer.MemoryAnswerIntegrationTests.test_predecessor_bytes_and_allowlist_are_exact`
 
-These failures compare the current dirty worktree against earlier authorized-drift lists. They do not prove the retrieval or storage code is broken, but they do block a clean founder demo.
+These failures compare the current tracked tree and deliverable docs against earlier authorized-drift lists and protected hashes. They do not prove the retrieval or storage code is broken, but they do block a clean external demo.
 
 ## 6. Seven audit questions
 
@@ -108,14 +113,14 @@ These failures compare the current dirty worktree against earlier authorized-dri
 | Component | Status | Evidence | Limitation |
 | --- | --- | --- | --- |
 | Data generation and fixtures | Working and verified | `data/pilot/`, `data/benchmark-v1/`, `data/scaled-v1/`; validators passed | Synthetic data only; no real audio/transcript ingestion |
-| Ingestion | Implemented but not fully runtime-verified in this audit | `src/ingestion/service.py`, `migrations/0002_ingestion_reprocessing.sql`; covered indirectly by retrieval live gate | The broad ingestion Docker target was not separately run in this audit |
+| Ingestion | Implemented but not fully runtime-verified in this audit | `src/ingestion/service.py`, `migrations/0002_ingestion_reprocessing.sql`; unit tests passed inside `make test` | PostgreSQL integration targets require Docker, which was unavailable |
 | Memory extraction | Partially implemented | `src/extraction/`, `results/phase3/`; dry-run safety passed | Current scaled development extraction has F1 `0.307692`, unsupported-memory rate `0.454545`, valid-time accuracy `0.0` |
 | Temporal representation | Working and verified on development cases | `results/phase4/step4.4-temporal-evaluation-v1/scores.json` has 12 predictions and no failures | Mean interval IoU is `0.027027`; cases are small and development-only |
-| Retrieval | Working and verified | `make test-retrieval-baselines` passed 132 tests; `results/retrieval/retrieval-quality-development-v1/scorecard.json` scores B2-B4 | B5/B6 are not represented in memory-answer quality |
+| Retrieval | Implemented; committed metrics inspected | `results/retrieval/retrieval-quality-development-v1/scorecard.json` scores B2-B4; live rerun blocked by Docker daemon | B5/B6 are not represented in memory-answer quality |
 | Answer generation | Partially implemented | B1 answer baseline works; `src/answering/memory_answer.py` exists | Memory-answer release produces structural abstentions, no answered memory cases |
 | Evaluation | Working and verified | B1, extraction, temporal, conflict, retrieval, answering and abstention scorecards exist | Not all evaluations are clean-room or full-scale |
 | Reporting/interface | Partially implemented | Markdown and JSON result reports under `results/` | No interactive UI |
-| Testing | Partially passing | Validators and retrieval gate pass | Full suite fails six drift-sensitive tests |
+| Testing | Partially passing | Validators, smoke dry-run, and extraction safety dry-run pass | Full suite fails seven drift-sensitive tests; Docker gate could not run |
 | Deployment | Missing | No `README`, `package.json`, `Dockerfile`, hosted config, or UI directory | Not externally runnable as a product demo |
 
 ### 6.2 Which longitudinal-memory failures can the project expose?
@@ -275,7 +280,7 @@ Definition of done:
 
 ### 6.7 Can Pratyush run or inspect the project?
 
-Inspectability: **Not founder-ready**.
+Inspectability: **Not ready for external review**.
 
 Current blockers:
 
@@ -283,7 +288,7 @@ Current blockers:
 - No `.env.example`.
 - No one-command demo.
 - No frontend or debugging UI.
-- Full suite fails six drift-sensitive tests in the current worktree.
+- Full suite fails seven drift-sensitive topology/hash tests against the current tracked tree.
 - Docker-backed tests need local Docker access.
 - Some paid OpenAI paths are intentionally closed or approval-gated.
 - The currently attempted frozen OpenAI B0 run is historical failure evidence, not a benchmark result.
@@ -312,7 +317,7 @@ Smallest checklist to make it inspectable in under ten minutes:
 | B1 failures are mostly missed evidence | `results/pilot/b1-full-history/failure_summary.json`, `failure_analysis.jsonl` |
 | Expected answers store acceptable answers, abstention, and evidence | `data/pilot/evaluation/eval_answer.jsonl` |
 | Scaled benchmark validates | `make validate-scaled-benchmark` output |
-| Retrieval B2-B4 is implemented and live-tested | `make test-retrieval-baselines`, `src/retrieval/baselines.py`, `results/retrieval/retrieval-quality-development-v1/scorecard.json` |
+| Retrieval B2-B4 is implemented and has committed metrics | `src/retrieval/baselines.py`, `results/retrieval/retrieval-quality-development-v1/scorecard.json`; live rerun blocked by Docker |
 | Memory answering currently abstains structurally | `results/answering/memory-answer-quality-development-v1/scorecard.json` |
 | B7 does not improve coverage yet | `results/abstention/b7-evaluation-development-v1/scorecard.json` |
 | OpenAI frozen comparison is interrupted, not scored | `results/evaluation/openai-step10.3-interrupted-v1/findings.md` |
@@ -320,9 +325,8 @@ Smallest checklist to make it inspectable in under ten minutes:
 
 ## 8. Honest limitations
 
-- The current worktree is dirty. I did not revert or edit existing application/result changes.
 - Full `make test` fails in the current state.
-- The Docker-backed retrieval gate passed, but not every Docker target was rerun in this audit.
+- Docker was not running, so PostgreSQL-backed retrieval and storage gates were not rerun in this audit.
 - Existing OpenAI spend/results are historical artifacts. I made no provider calls.
 - Several later metrics are development-only and nonblind.
 - B7 currently demonstrates safety mechanics and over-abstention, not useful answer coverage.
@@ -332,8 +336,8 @@ Smallest checklist to make it inspectable in under ten minutes:
 
 Implement a conservative claim-promotion path and rerun a tiny B2-B4 memory-answer development evaluation. This is the shortest path from "we can retrieve evidence" to "we can answer with memory and prove the citations". It also gives a meaningful demo for an ambient Personal AI product: the system should answer when evidence is strong, preserve corrections, and abstain only when the evidence cannot support the answer.
 
-## 10. Founder-readiness assessment
+## 10. External review readiness
 
-Classification: **Not founder-ready**.
+Classification: **Not ready for external review**.
 
 Pratyush can inspect the repository, result artifacts, and generated audit docs. He should not be expected to run the full project without help today. The fastest credible external demo is a deterministic local audit command that avoids paid APIs, prints existing evidence-backed metrics, and points to two or three representative failure rows.

@@ -46,7 +46,7 @@ June:
 “Orion is not retaining users. I may join a company working on personal AI.”
 
 August:
-“I want to join Thine and work on longitudinal memory.”
+“I want to work on longitudinal memory systems.”
 
 Later correction:
 “I started considering AI startups in February, not March.”

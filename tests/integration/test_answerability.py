@@ -401,7 +401,7 @@ class AnswerabilityIntegrationTests(unittest.TestCase):
                 ["git", "ls-files", "--others", "--exclude-standard"],
                 cwd=ROOT, check=True, capture_output=True, text=True,
             ).stdout.splitlines()
-            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_") and not path.startswith("docs/THINE_")
+            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_")
         ]
         actual = tuple(sorted(set(tracked).union(untracked)))
         self.assertEqual(actual, STEP102_AUTHORIZED_DRIFT)

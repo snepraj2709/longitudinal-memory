@@ -195,7 +195,7 @@ class InteractiveInputV2IntegrationTests(unittest.TestCase):
                 ["git", "ls-files", "--others", "--exclude-standard"],
                 cwd=ROOT, check=True, capture_output=True, text=True,
             ).stdout.splitlines()
-            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_") and not path.startswith("docs/THINE_")
+            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_")
         ]
         self.assertEqual(
             sorted(set(tracked).union(untracked)),

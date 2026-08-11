@@ -1602,3 +1602,17 @@ Status: complete
 - Neither B0 attempt produced a usable answer, and neither is part of a score denominator.
 - No Qwen model, tokenizer, vLLM server, Jarvis instance, development pilot, or Qwen-tokenized preflight exists yet.
 - The next step receives the immutable recovery manifest and the existing checkpoint contracts. It must add a provider-neutral private-vLLM seam and pass local fake-server tests before any Jarvis instance is created.
+
+## Demo and Qwen execution scaffold
+
+Status: implemented locally; external execution pending separate approval
+
+- Added the `qwen35-27b-fp8-v1` frozen configuration with exact model and vLLM revisions, non-thinking sampling, strict task schemas, one RTX-PRO6000 target, a 16,384-token context, and INR 200/300/1,000 stage caps.
+- Added a private vLLM client extension, model/authentication mismatch handling, strict structured payloads, runtime tokenization, per-response fsynced checkpoints, immutable manifests, no automatic invalid-output retry, and the Stage 3 validity/reserve gate. A resumable runner selects exactly 932 development and 3,728 test requests, regenerates Qwen extraction first, and then builds B0-B7 contexts from those Qwen claims.
+- Generated a 12-request Stage 1 pack from runtime-only development inputs: three extraction, three B0 QA, three B0 summary, and three B0 interactive requests. It contains no scorer gold, oracle record, review queue, or OpenAI prediction reuse.
+- Added a deterministic sanitized bundle and read-only FastAPI endpoints for cases, runs, scorecards, and health. Runtime code reads only the generated bundle.
+- Added a responsive React/TypeScript explorer with chronological replay, memory lifecycle states, evidence inspection, abstention and failure explanations, baseline filtering, incomplete run status, and desktop/mobile layouts.
+- Added `make demo`, focused demo tests, one Docker image, Docker Compose service, and Railway-ready health configuration. The hosted image needs no GPU, database, API key, or provider call.
+- Historical OpenAI artifacts and their hashes remain unchanged. The demo reports the series as `interrupted_not_scored`, 149 requests, 536,405 input tokens, 26,921 output tokens, and `$0.4399284` recorded spend.
+- Step 10.4 is not complete: the demo scorecard presents existing complete development batches and explicit gaps, but no Qwen benchmark has been run or scored.
+- No JarvisLabs instance, paid run, Railway deployment, or public URL was created in this implementation step.
