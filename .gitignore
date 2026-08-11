@@ -1,4 +1,5 @@
 .env
+.qwen-secrets.env
 node_modules
 __pycache__
 .venv-demo

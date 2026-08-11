@@ -1,0 +1,72 @@
+{
+  "billing_reconciliation": {
+    "account_balance_after_inr": 4907.73,
+    "account_balance_before_inr": 4910.9,
+    "observed_account_spend_inr": 3.17,
+    "reconciled_at": "2026-08-11T09:04:49Z"
+  },
+  "lifecycle": {
+    "created_at": "2026-08-11T08:55:09.656949Z",
+    "destroyed_at": "2026-08-11T08:57:06.498203Z",
+    "destruction_verified": true,
+    "elapsed_billable_seconds": 116.841801,
+    "events": [
+      {
+        "account_response_sha256": "a3e4aef804569edc960bc391c03845e67ebcf2315571f5c3859784d90d3446ec",
+        "at": "2026-08-11T08:55:05.799287Z",
+        "event": "preflight",
+        "gpu_inventory_sha256": "7c619d4ad0a325ead212cbc0ba3c3e0a1b654068029849650befbb0daa7f2653",
+        "resource_inventory_sha256": "3ef7d19e5ace8897a55a4629c3f35c25822c964b744e63537d67289b9c38c671",
+        "selected_offer": {
+          "free_devices": 7,
+          "gpu": "RTX-PRO6000-96GB",
+          "region": "IN1",
+          "spot_rate_inr_per_hour": 93.96,
+          "workload_type": "container"
+        }
+      },
+      {
+        "at": "2026-08-11T08:55:09.656949Z",
+        "event": "created",
+        "machine_id": 468754,
+        "offer": {
+          "free_devices": 7,
+          "gpu": "RTX-PRO6000-96GB",
+          "region": "IN1",
+          "spot_rate_inr_per_hour": 93.96,
+          "workload_type": "container"
+        }
+      },
+      {
+        "at": "2026-08-11T08:57:00.103140Z",
+        "event": "checkpoint_download",
+        "failure_code": "download_failed",
+        "succeeded": false
+      },
+      {
+        "at": "2026-08-11T08:57:03.962894Z",
+        "event": "destroy_requested",
+        "succeeded": true
+      },
+      {
+        "at": "2026-08-11T08:57:06.498203Z",
+        "event": "destruction_verified"
+      }
+    ],
+    "gpu_cost_inr": 3.049571,
+    "machine_id": 468754,
+    "offer": {
+      "free_devices": 7,
+      "gpu": "RTX-PRO6000-96GB",
+      "region": "IN1",
+      "spot_rate_inr_per_hour": 93.96,
+      "workload_type": "container"
+    },
+    "schema_version": "qwen_jarvis_lifecycle_v2",
+    "series_id": "qwen35-27b-fp8-v2"
+  },
+  "schema_version": "qwen_pipeline_run_v2",
+  "series_id": "qwen35-27b-fp8-v2",
+  "stages": {},
+  "status": "failed_or_budget_stopped"
+}

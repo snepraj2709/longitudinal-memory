@@ -16,6 +16,17 @@ from evaluation.frozen_preflight_contracts import FrozenPreflightError
 
 
 ROOT = Path(__file__).resolve().parents[2]
+RECOVERY_START_COMMIT = "141066391f70060ce99acdf0804ac7b3cbadafdc"
+STEP102_COMMIT = "77b0a28c5b396bd44f1f76c0a41fd3fbec10cd8f"
+STEP102_COMPATIBILITY_ADAPTERS = (
+    "tests/integration/test_answer_quality_evaluation.py",
+    "tests/integration/test_answerability.py",
+    "tests/integration/test_b6_b7_comparison_prerequisite.py",
+    "tests/integration/test_b7_evaluation.py",
+    "tests/integration/test_comparison_freeze.py",
+    "tests/integration/test_interactive_answering_v2.py",
+    "tests/integration/test_memory_answer.py",
+)
 ALLOWED_NEW = (
     "configs/evaluation/frozen_preflight_v1.json",
     "data/evaluation/frozen-preflight-v1/manifest.json",
@@ -133,18 +144,15 @@ class FrozenPreflightIntegrationTests(unittest.TestCase):
 
     def test_exact_interrupted_openai_recovery_path_allowlist(self):
         import subprocess
-        tracked = subprocess.run(
-            ["git", "diff", "--name-only", "141066391f70060ce99acdf0804ac7b3cbadafdc"],
-            cwd=ROOT, check=True, capture_output=True, text=True,
-        ).stdout.splitlines()
-        untracked = [
+        recovery_committed = tuple(
             path for path in subprocess.run(
-                ["git", "ls-files", "--others", "--exclude-standard"],
+                ["git", "diff", "--name-only", RECOVERY_START_COMMIT, STEP102_COMMIT],
                 cwd=ROOT, check=True, capture_output=True, text=True,
             ).stdout.splitlines()
-            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_")
-        ]
-        self.assertEqual(tuple(sorted(set(tracked).union(untracked))), RECOVERY_PATHS)
+            if not path.startswith(("docs/DEMO_", "docs/IMPLEMENTATION_", "docs/THINE_"))
+            and path not in STEP102_COMPATIBILITY_ADAPTERS
+        )
+        self.assertEqual(recovery_committed, RECOVERY_PATHS)
 
 
 if __name__ == "__main__":

@@ -45,6 +45,7 @@ class QwenExecutionError(RuntimeError):
 Validator = Callable[[str, OpenAIResponseMetadata], Mapping[str, object]]
 ClientFactory = Callable[["ExecutionJob"], object]
 AttemptGate = Callable[["ExecutionJob", bool], None]
+AttemptComplete = Callable[["ExecutionJob", bool, float], None]
 
 
 @dataclass(frozen=True)
@@ -216,6 +217,7 @@ def execute_jobs(
     retry_ledger: TransportRetryLedger | None = None,
     workers: int = MAX_WORKERS,
     before_attempt: AttemptGate | None = None,
+    after_attempt: AttemptComplete | None = None,
     monotonic: Callable[[], float] = time.monotonic,
 ) -> Mapping[str, object]:
     """Execute missing jobs and seal an ordered batch after every job is terminal."""
@@ -236,6 +238,7 @@ def execute_jobs(
     prior = _load_terminal_records(request_dir, ordered)
     missing = [item for item in ordered if item.request_id not in prior]
     gate = before_attempt or (lambda _job, _retry: None)
+    complete = after_attempt or (lambda _job, _retry, _seconds: None)
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = {
             executor.submit(
@@ -245,6 +248,7 @@ def execute_jobs(
                 client_factory,
                 ledger,
                 gate,
+                complete,
                 monotonic,
             ): job
             for job in missing
@@ -425,6 +429,7 @@ def _execute_one(
     client_factory: ClientFactory,
     ledger: TransportRetryLedger,
     before_attempt: AttemptGate,
+    after_attempt: AttemptComplete,
     monotonic: Callable[[], float],
 ) -> None:
     attempts = 0
@@ -432,7 +437,9 @@ def _execute_one(
     began = monotonic()
     while True:
         attempts += 1
-        before_attempt(job, retries > 0)
+        retrying = retries > 0
+        before_attempt(job, retrying)
+        attempt_began = monotonic()
         try:
             raw, metadata = client_factory(job).complete_with_metadata(
                 system_prompt=job.system_prompt,
@@ -476,6 +483,8 @@ def _execute_one(
             stage = "validation" if not isinstance(error, QwenExecutionError) else "execution"
             record = _failure_record(job, attempts, retries, monotonic() - began, stage, type(error).__name__)
             break
+        finally:
+            after_attempt(job, retrying, max(0.0, monotonic() - attempt_began))
     path = request_dir / f"{job.position:05d}-{sha256(job.request_id.encode()).hexdigest()[:16]}.json"
     _write_exclusive_atomic(path, json.dumps(record, indent=2, sort_keys=True).encode("utf-8") + b"\n")
 

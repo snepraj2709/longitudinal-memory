@@ -12,12 +12,15 @@ from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
 from .qwen_execution import (
+    AttemptComplete,
+    AttemptGate,
     ExecutionJob,
     _client_factory,
     _load_contexts,
     _response_format,
     _write_or_verify,
     execute_jobs,
+    TransportRetryLedger,
 )
 from .qwen_materialization import ContextPackage, TASK_KEYS
 from .qwen_v2_contract import SERIES_ID, load_qwen_v2_config
@@ -329,6 +332,9 @@ def run_judge(
     output_dir: Path,
     base_url: str,
     api_key: str | None,
+    retry_ledger: TransportRetryLedger | None = None,
+    before_attempt: AttemptGate | None = None,
+    after_attempt: AttemptComplete | None = None,
 ) -> Mapping[str, object]:
     """Verify prediction sealing before opening references and invoking the judge."""
 
@@ -344,6 +350,9 @@ def run_judge(
             model=str(config["model"]["model_alias"]),
             api_key=api_key,
         ),
+        retry_ledger=retry_ledger,
+        before_attempt=before_attempt,
+        after_attempt=after_attempt,
     )
     diagnostic = {
         **result,

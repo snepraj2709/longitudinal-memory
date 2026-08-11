@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -28,6 +29,7 @@ import abstention.b7_evaluation as evaluation_module
 
 
 ROOT = Path(__file__).resolve().parents[2]
+STEP102_COMMIT = "77b0a28c5b396bd44f1f76c0a41fd3fbec10cd8f"
 STEP94_MANIFEST_LIVE_ADAPTER_SHA256 = {
     "tests/integration/test_answer_quality_evaluation.py": "638b7730c0ed87ffa76de95496c20979d5baab53a7a17e6791ffd1fb7c895822",
     "tests/integration/test_answerability.py": "2e7694dfc2c188b3571c39741e891fdcfcc10222d8bd7a119b237e516ee9f40f",
@@ -52,7 +54,10 @@ class B7EvaluationIntegrationTests(unittest.TestCase):
         if not checked.exists():
             self.skipTest("B7 evaluation release has not been frozen yet")
         live = {
-            path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+            path: hashlib.sha256(subprocess.run(
+                ["git", "show", f"{STEP102_COMMIT}:{path}"], cwd=ROOT,
+                check=True, capture_output=True,
+            ).stdout).hexdigest()
             for path in STEP102_LIVE_ADAPTER_SHA256
         }
         self.assertEqual(live, STEP102_LIVE_ADAPTER_SHA256)

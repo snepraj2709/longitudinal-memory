@@ -1,7 +1,7 @@
 PYTHON ?= python3
 DEMO_PYTHON ?= .venv-demo/bin/python
 
-.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization test-grounded-summaries test-durative-claims test-retrieval-index test-retrieval-planning test-retrieval-baselines test-qwen-materialization validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety demo demo-data demo-build test-demo
+.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization test-grounded-summaries test-durative-claims test-retrieval-index test-retrieval-planning test-retrieval-baselines test-qwen-materialization test-qwen-v2 validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety demo demo-data demo-build test-demo
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -164,6 +164,17 @@ test-qwen-materialization:
 	STORAGE_DATABASE_URL=postgresql://storage_test:storage_test@127.0.0.1:55432/longitudinal_memory \
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \
 		tests.integration.test_qwen_materialization -v
+
+test-qwen-v2:
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \
+		tests.unit.test_qwen_v2_contract \
+		tests.unit.test_qwen_materialization \
+		tests.unit.test_qwen_execution \
+		tests.unit.test_qwen_scoring \
+		tests.unit.test_qwen_lifecycle \
+		tests.unit.test_qwen_pipeline \
+		tests.unit.test_vllm_client -v
+	$(MAKE) test-qwen-materialization PYTHON=$(PYTHON)
 
 test-ingestion:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \

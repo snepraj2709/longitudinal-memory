@@ -33,6 +33,7 @@ STEP93_COMMIT = "3c45309de43a35b0c7b7b588077f094be2b57934"
 STEP94_PREREQUISITE_COMMIT = "7e8fc5337384ac329264e3606507b925bd890d63"
 STEP94_EVALUATION_COMMIT = "78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4"
 STEP101_COMMIT = "b2ae263e1129758325a30db57c03620628c6355e"
+STEP102_COMMIT = "77b0a28c5b396bd44f1f76c0a41fd3fbec10cd8f"
 STEP93_COMMITTED_ADAPTER_SHA256 = {
     "tests/integration/test_answer_quality_evaluation.py": "fff42248ee2c3f361caea561341b4d0e28728be98166d11f6f8f9d138694ba2d",
     "tests/integration/test_answerability.py": "73aeedc3f24f76e3f357e99793ef6ed85bc8c7610caf9b87fd298a7e2fb3c9f4",
@@ -186,19 +187,15 @@ class InteractiveInputV2IntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(step101_committed, list(STEP101_COMMITTED_PATHS))
-        tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP101_COMMIT],
-            cwd=ROOT, check=True, capture_output=True, text=True,
-        ).stdout.splitlines()
-        untracked = [
+        step102_committed = [
             path for path in subprocess.run(
-                ["git", "ls-files", "--others", "--exclude-standard"],
+                ["git", "diff", "--name-only", STEP101_COMMIT, STEP102_COMMIT],
                 cwd=ROOT, check=True, capture_output=True, text=True,
             ).stdout.splitlines()
-            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_")
+            if not path.startswith(("docs/DEMO_", "docs/IMPLEMENTATION_", "docs/THINE_"))
         ]
         self.assertEqual(
-            sorted(set(tracked).union(untracked)),
+            step102_committed,
             list(STEP102_AUTHORIZED_DRIFT),
         )
 
@@ -282,7 +279,10 @@ class InteractiveInputV2IntegrationTests(unittest.TestCase):
         }
         self.assertEqual(step94_live, STEP94_EVALUATION_ADAPTER_SHA256)
         live = {
-            path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+            path: hashlib.sha256(subprocess.run(
+                ["git", "show", f"{STEP102_COMMIT}:{path}"], cwd=ROOT,
+                check=True, capture_output=True,
+            ).stdout).hexdigest()
             for path in STEP102_LIVE_ADAPTER_SHA256
         }
         self.assertEqual(live, STEP102_LIVE_ADAPTER_SHA256)

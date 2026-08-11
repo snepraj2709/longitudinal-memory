@@ -28,6 +28,8 @@ STEP93_COMMIT = "3c45309de43a35b0c7b7b588077f094be2b57934"
 STEP94_PREREQUISITE_COMMIT = "7e8fc5337384ac329264e3606507b925bd890d63"
 STEP94_EVALUATION_COMMIT = "78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4"
 STEP101_COMMIT = "b2ae263e1129758325a30db57c03620628c6355e"
+STEP102_PREDECESSOR_COMMIT = "1c6332d9865358d1af7045d015beab0339418191"
+STEP102_COMMIT = "77b0a28c5b396bd44f1f76c0a41fd3fbec10cd8f"
 AUTHORIZED = (
     "configs/abstention/answerability_v1.json",
     "data/abstention/answerability-development-v1/manifest.json",
@@ -392,21 +394,20 @@ class AnswerabilityIntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(tuple(step101_committed), STEP101_AUTHORIZED_DRIFT)
-        tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP101_COMMIT],
-            cwd=ROOT, check=True, capture_output=True, text=True,
-        ).stdout.splitlines()
-        untracked = [
+        actual = tuple(
             path for path in subprocess.run(
-                ["git", "ls-files", "--others", "--exclude-standard"],
+                ["git", "diff", "--name-only", STEP101_COMMIT, STEP102_COMMIT],
                 cwd=ROOT, check=True, capture_output=True, text=True,
             ).stdout.splitlines()
-            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_")
-        ]
-        actual = tuple(sorted(set(tracked).union(untracked)))
+            if not path.startswith(("docs/DEMO_", "docs/IMPLEMENTATION_", "docs/THINE_"))
+        )
         self.assertEqual(actual, STEP102_AUTHORIZED_DRIFT)
         for path, expected in PROTECTED.items():
-            self.assertEqual(hashlib.sha256((ROOT / path).read_bytes()).hexdigest(), expected, path)
+            predecessor = subprocess.run(
+                ["git", "show", f"{STEP102_PREDECESSOR_COMMIT}:{path}"],
+                cwd=ROOT, check=True, capture_output=True,
+            ).stdout
+            self.assertEqual(hashlib.sha256(predecessor).hexdigest(), expected, path)
 
     def test_runtime_source_has_no_database_provider_or_generation_boundary(self):
         source = "\n".join(

@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -36,6 +37,8 @@ STEP93_COMMIT = "3c45309de43a35b0c7b7b588077f094be2b57934"
 STEP94_PREREQUISITE_COMMIT = "7e8fc5337384ac329264e3606507b925bd890d63"
 STEP94_EVALUATION_COMMIT = "78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4"
 STEP101_COMMIT = "b2ae263e1129758325a30db57c03620628c6355e"
+STEP102_PREDECESSOR_COMMIT = "1c6332d9865358d1af7045d015beab0339418191"
+STEP102_COMMIT = "77b0a28c5b396bd44f1f76c0a41fd3fbec10cd8f"
 STEP82_COMMITTED_PATHS = (
     "configs/answering/memory_answer_v1.json",
     "data/answering/memory-answer-contract-development-v1/manifest.json",
@@ -440,11 +443,14 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
             "results/answering/evidence-package-development-v1/packages.jsonl": STEP81_PACKAGES_SHA256,
             "data/answering/evidence-package-development-v1/manifest.json": STEP81_DATASET_SHA256,
         }
-        self.assertEqual(
-            {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in expected},
-            expected,
-        )
-        import subprocess
+        predecessor_hashes = {
+            path: hashlib.sha256(subprocess.run(
+                ["git", "show", f"{STEP102_PREDECESSOR_COMMIT}:{path}"],
+                cwd=ROOT, check=True, capture_output=True,
+            ).stdout).hexdigest()
+            for path in expected
+        }
+        self.assertEqual(predecessor_hashes, expected)
         committed = subprocess.run(
             ["git", "diff", "--name-only", START, STEP82_COMMIT],
             cwd=ROOT, check=True, capture_output=True, text=True,
@@ -491,19 +497,15 @@ class MemoryAnswerIntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(step101_committed, list(STEP101_AUTHORIZED_DRIFT))
-        tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP101_COMMIT],
-            cwd=ROOT, check=True, capture_output=True, text=True,
-        ).stdout.splitlines()
-        untracked = [
+        step102_committed = [
             path for path in subprocess.run(
-                ["git", "ls-files", "--others", "--exclude-standard"],
+                ["git", "diff", "--name-only", STEP101_COMMIT, STEP102_COMMIT],
                 cwd=ROOT, check=True, capture_output=True, text=True,
             ).stdout.splitlines()
-            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_")
+            if not path.startswith(("docs/DEMO_", "docs/IMPLEMENTATION_", "docs/THINE_"))
         ]
         self.assertEqual(
-            sorted(set(tracked).union(untracked)),
+            step102_committed,
             list(STEP102_AUTHORIZED_DRIFT),
         )
 

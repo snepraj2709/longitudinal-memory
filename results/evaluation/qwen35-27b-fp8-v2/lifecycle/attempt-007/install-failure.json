@@ -1,0 +1,7 @@
+{
+  "diagnostic": "CondaToSNonInteractiveError: Terms of Service have not been accepted for the following channels. Please accept or remove them before proceeding:\n    - https://repo.anaconda.com/pkgs/main\n    - https://repo.anaconda.com/pkgs/r\n\nTo accept these channels' Terms of Service, run the following commands:\n    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main\n    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r\n\nFor information on safely removing channels from your conda configuration,\nplease see the official documentation:\n\n    https://www.anaconda.com/docs/tools/working-with-conda/channels",
+  "returncode": 0,
+  "revision": "65b7662d3fcb773afaf751ab29ac6960a0cf011d",
+  "schema_version": "qwen_vllm_install_failure_v1",
+  "series_id": "qwen35-27b-fp8-v2"
+}

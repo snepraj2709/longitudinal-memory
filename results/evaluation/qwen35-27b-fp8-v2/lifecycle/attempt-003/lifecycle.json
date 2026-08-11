@@ -1,0 +1,84 @@
+{
+  "account_balance_after_inr": 4898.2,
+  "account_balance_before_inr": 4902.96,
+  "created_at": "2026-08-11T09:12:03.015466Z",
+  "destroyed_at": "2026-08-11T09:14:16.599837Z",
+  "destruction_verified": true,
+  "elapsed_billable_seconds": 133.584232,
+  "events": [
+    {
+      "account_response_sha256": "b98ba4b230658139a005c0f002aa2d4812a8ea29aae1ed2cb856fd3e52783a31",
+      "at": "2026-08-11T09:11:59.024072Z",
+      "event": "preflight",
+      "gpu_inventory_sha256": "7c619d4ad0a325ead212cbc0ba3c3e0a1b654068029849650befbb0daa7f2653",
+      "resource_inventory_sha256": "3ef7d19e5ace8897a55a4629c3f35c25822c964b744e63537d67289b9c38c671",
+      "selected_offer": {
+        "free_devices": 7,
+        "gpu": "RTX-PRO6000-96GB",
+        "region": "IN1",
+        "spot_rate_inr_per_hour": 93.96,
+        "workload_type": "container"
+      }
+    },
+    {
+      "at": "2026-08-11T09:12:03.015466Z",
+      "event": "created",
+      "machine_id": 468767,
+      "offer": {
+        "free_devices": 7,
+        "gpu": "RTX-PRO6000-96GB",
+        "region": "IN1",
+        "spot_rate_inr_per_hour": 93.96,
+        "workload_type": "container"
+      }
+    },
+    {
+      "at": "2026-08-11T09:12:05.764513Z",
+      "environment": "Python 3.10.20\n2.11.0+cu130 13.0\nNVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+      "event": "install_environment_recorded"
+    },
+    {
+      "at": "2026-08-11T09:13:29.089510Z",
+      "event": "vllm_installed",
+      "revision": "65b7662d3fcb773afaf751ab29ac6960a0cf011d",
+      "version": "0.26.1rc1.dev602+g65b7662d3",
+      "wheel_url_sha256": "c85af8d1a08986a45d02bd5fc78119678bd4c6e17bb244f2fa6500435e71a8c5"
+    },
+    {
+      "at": "2026-08-11T09:13:38.469854Z",
+      "event": "server_files_uploaded",
+      "server_script_sha256": "e01155835ff396861ce7131d9eb239aa7a350d8a204184a79f5f143943f9393a"
+    },
+    {
+      "at": "2026-08-11T09:13:40.333111Z",
+      "event": "server_started"
+    },
+    {
+      "at": "2026-08-11T09:14:05.902262Z",
+      "event": "checkpoint_download",
+      "failure_code": "download_failed",
+      "succeeded": false
+    },
+    {
+      "at": "2026-08-11T09:14:11.536173Z",
+      "event": "destroy_requested",
+      "succeeded": true
+    },
+    {
+      "at": "2026-08-11T09:14:16.599837Z",
+      "event": "destruction_verified"
+    }
+  ],
+  "gpu_cost_inr": 3.486548,
+  "machine_id": 468767,
+  "observed_account_spend_inr": 4.76,
+  "offer": {
+    "free_devices": 7,
+    "gpu": "RTX-PRO6000-96GB",
+    "region": "IN1",
+    "spot_rate_inr_per_hour": 93.96,
+    "workload_type": "container"
+  },
+  "schema_version": "qwen_jarvis_lifecycle_v2",
+  "series_id": "qwen35-27b-fp8-v2"
+}

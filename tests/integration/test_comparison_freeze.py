@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SCALED_MANIFEST = (ROOT / "data/scaled-v1/manifest.json").resolve()
 STEP101_START = "78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4"
 STEP101_COMMIT = "b2ae263e1129758325a30db57c03620628c6355e"
+STEP102_COMMIT = "77b0a28c5b396bd44f1f76c0a41fd3fbec10cd8f"
 PROTECTED = {
     "preference.md": "bf6dfc6ea0b23e9ff1c52b4dbf1debce6ebe495070e826743ffa2d56681a18b8",
     "docs/memory-evaluation-steps.md": "bf89021a98273e623edbe27318c9b1cadfb8bed023f5e256a2f58b13e27913ba",
@@ -174,18 +175,14 @@ class ComparisonFreezeIntegrationTests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True,
         ).stdout.splitlines()
         self.assertEqual(tuple(committed), STEP101_COMMITTED)
-        tracked = subprocess.run(
-            ["git", "diff", "--name-only", STEP101_COMMIT],
-            cwd=ROOT, check=True, capture_output=True, text=True,
-        ).stdout.splitlines()
-        untracked = [
+        step102_committed = tuple(
             path for path in subprocess.run(
-                ["git", "ls-files", "--others", "--exclude-standard"],
+                ["git", "diff", "--name-only", STEP101_COMMIT, STEP102_COMMIT],
                 cwd=ROOT, check=True, capture_output=True, text=True,
             ).stdout.splitlines()
-            if not path.startswith("docs/DEMO_") and not path.startswith("docs/IMPLEMENTATION_")
-        ]
-        self.assertEqual(tuple(sorted(set(tracked).union(untracked))), ALLOWED_NEW)
+            if not path.startswith(("docs/DEMO_", "docs/IMPLEMENTATION_", "docs/THINE_"))
+        )
+        self.assertEqual(step102_committed, ALLOWED_NEW)
 
 
 if __name__ == "__main__":

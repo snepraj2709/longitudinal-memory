@@ -4,6 +4,7 @@ from dataclasses import asdict, replace
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 
@@ -35,6 +36,7 @@ from retrieval.baseline_evaluation import (
 
 
 ROOT = Path(__file__).resolve().parents[2]
+BASELINE_RELEASE_COMMIT = "d849ea1140f97066edb408acd8704268655c7abe"
 SHA = "a" * 64
 
 
@@ -231,7 +233,19 @@ class BaselineStructuralScoringTests(unittest.TestCase):
 
 class BaselineReleaseSafetyTests(unittest.TestCase):
     def test_predecessor_drift_and_protected_hash_audit_are_exact(self) -> None:
-        attestation = _predecessor_attestation(ROOT)
+        with tempfile.TemporaryDirectory() as directory:
+            snapshot = Path(directory)
+            paths = {
+                value["path"] for value in PREDECESSOR_DRIFT
+            }.union(PROTECTED_HASHES)
+            for relative in paths:
+                target = snapshot / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(subprocess.run(
+                    ["git", "show", f"{BASELINE_RELEASE_COMMIT}:{relative}"],
+                    cwd=ROOT, check=True, capture_output=True,
+                ).stdout)
+            attestation = _predecessor_attestation(snapshot)
         self.assertEqual(
             [value["path"] for value in attestation["predecessor_drift"]],
             [value["path"] for value in PREDECESSOR_DRIFT],

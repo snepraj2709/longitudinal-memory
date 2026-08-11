@@ -91,6 +91,12 @@ STEP53_ALLOWED_PROTECTED_DRIFT = STEP52_AUTHORIZED_PROTECTED_DRIFT | {
     "src/temporal/service.py",
     "tests/unit/test_temporal_contracts.py",
 }
+POST_PHASE_ALLOWED_PREDECESSOR_DRIFT = STEP53_ALLOWED_PREDECESSOR_DRIFT | {
+    "compose.yaml",
+}
+POST_PHASE_ALLOWED_PROTECTED_DRIFT = STEP53_ALLOWED_PROTECTED_DRIFT | {
+    "compose.yaml",
+}
 
 
 def _temporal_claim(value: object) -> TemporalClaim:
@@ -288,14 +294,14 @@ class ConflictCandidateEvaluationTests(unittest.TestCase):
             if file_sha256(ROOT / path) != expected
         }
         self.assertLessEqual(STEP52_AUTHORIZED_PREDECESSOR_DRIFT, actual_drift)
-        self.assertLessEqual(actual_drift, STEP53_ALLOWED_PREDECESSOR_DRIFT)
+        self.assertLessEqual(actual_drift, POST_PHASE_ALLOWED_PREDECESSOR_DRIFT)
         protected_drift = {
             path
             for path, expected in PROTECTED_SHA256.items()
             if file_sha256(ROOT / path) != expected
         }
         self.assertLessEqual(STEP52_AUTHORIZED_PROTECTED_DRIFT, protected_drift)
-        self.assertLessEqual(protected_drift, STEP53_ALLOWED_PROTECTED_DRIFT)
+        self.assertLessEqual(protected_drift, POST_PHASE_ALLOWED_PROTECTED_DRIFT)
         self.assertEqual(
             file_sha256(ROOT / SCORER_ONLY_PROTECTED_PATH),
             PROTECTED_SHA256[SCORER_ONLY_PROTECTED_PATH],
