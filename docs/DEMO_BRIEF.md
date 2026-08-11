@@ -4,7 +4,7 @@ A longitudinal memory benchmark for an ambient Personal AI that receives convers
 
 ## The working demonstration
 
-The repository now has a read-only demo explorer that runs locally with `make demo`. The same Docker image is ready to host as one unlisted Railway service without a GPU or database.
+The read-only demo is available at [longitudinal-memory-benchmark.up.railway.app](https://longitudinal-memory-benchmark.up.railway.app) and runs locally with `make demo`. The Railway service uses the same Docker image and needs no GPU or database.
 
 The first screen is the benchmark itself, not a product landing page. It shows source history, memory state over time, retrieved evidence, the generated answer or abstention, and the human review. Four guided cases cover:
 
@@ -35,10 +35,14 @@ This project starts with those failure modes as evaluation contracts. The UI mak
 
 ## How to inspect it
 
+Open [longitudinal-memory-benchmark.up.railway.app](https://longitudinal-memory-benchmark.up.railway.app) for the hosted demo.
+
+For a local run:
+
 ```bash
 make demo
 ```
 
-Then open `http://127.0.0.1:8000`. A complete walkthrough of three cases, baseline status, failure evidence, and unfinished benchmark work takes under ten minutes.
+Then open `http://127.0.0.1:8000`. A complete walkthrough of three cases, baseline status, failure evidence, and unfinished benchmark work takes under ten minutes in either version.
 
 The benchmark is ready for a focused technical review of its design, current evidence, and remaining product risks.

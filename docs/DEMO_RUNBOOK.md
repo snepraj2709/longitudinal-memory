@@ -47,15 +47,15 @@ docker compose up --build demo
 
 The image serves the same app at `http://127.0.0.1:8000`. Its runtime contains the sanitized bundle, compiled React assets, and FastAPI only. It does not include benchmark gold, oracle data, review files, source corpora, provider credentials, or a write endpoint.
 
-## Railway-ready image
+## Hosted Railway demo
 
-`Dockerfile` and `railway.toml` define a single service with `/healthz`. The service needs no volume, database, GPU, or environment secret. Deployment is deliberately not performed by local setup; it requires separate approval.
+The hosted demo is available at [longitudinal-memory-benchmark.up.railway.app](https://longitudinal-memory-benchmark.up.railway.app). `Dockerfile` and `railway.toml` define the single service and its `/healthz` check. The service needs no volume, database, GPU, or environment secret.
 
-After an approved deployment, verify:
+Verify the deployment with:
 
 ```bash
-curl --fail https://<service-domain>/healthz
-curl --fail https://<service-domain>/api/demo/cases
+curl --fail https://longitudinal-memory-benchmark.up.railway.app/healthz
+curl --fail https://longitudinal-memory-benchmark.up.railway.app/api/demo/cases
 ```
 
 Check that responses include `X-Robots-Tag: noindex, nofollow, noarchive`, unsupported API methods return 405, and Railway has no provider credentials configured.

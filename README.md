@@ -4,6 +4,8 @@ This repository evaluates whether an AI memory system can preserve changing fact
 
 ## Demo
 
+The hosted read-only demo is available at [longitudinal-memory-benchmark.up.railway.app](https://longitudinal-memory-benchmark.up.railway.app).
+
 Start the complete read-only explorer with one command:
 
 ```bash

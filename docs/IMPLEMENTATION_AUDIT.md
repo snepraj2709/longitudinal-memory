@@ -1,6 +1,6 @@
 # Implementation audit
 
-> Update, 2026-08-11: the demo described as missing in this audit now exists. `make demo` builds a deterministic sanitized bundle, compiles the React explorer, and starts a read-only FastAPI service. Docker and Railway configuration are present. The historical OpenAI run is labeled `interrupted_not_scored`; the pinned Qwen series is configured but has not run. No hosted deployment, Jarvis instance, or paid provider call has been made. The remainder of this document preserves the earlier audit snapshot and its test evidence.
+> Update, 2026-08-11: the demo described as missing in this audit now exists locally and at [longitudinal-memory-benchmark.up.railway.app](https://longitudinal-memory-benchmark.up.railway.app). `make demo` builds a deterministic sanitized bundle, compiles the React explorer, and starts a read-only FastAPI service. The historical OpenAI run is labeled `interrupted_not_scored`; the pinned Qwen series is configured but has not run. The hosted demo uses frozen artifacts only; no Jarvis instance or paid provider call was started. The remainder of this document preserves the earlier audit snapshot and its test evidence.
 
 ## 1. Executive snapshot
 

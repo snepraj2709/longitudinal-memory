@@ -1615,4 +1615,5 @@ Status: implemented locally; external execution pending separate approval
 - Added `make demo`, focused demo tests, one Docker image, Docker Compose service, and Railway-ready health configuration. The hosted image needs no GPU, database, API key, or provider call.
 - Historical OpenAI artifacts and their hashes remain unchanged. The demo reports the series as `interrupted_not_scored`, 149 requests, 536,405 input tokens, 26,921 output tokens, and `$0.4399284` recorded spend.
 - Step 10.4 is not complete: the demo scorecard presents existing complete development batches and explicit gaps, but no Qwen benchmark has been run or scored.
-- No JarvisLabs instance, paid run, Railway deployment, or public URL was created in this implementation step.
+- After separate approval, the artifact-only demo was deployed from branch `testing` at commit `b924d8a` to [longitudinal-memory-benchmark.up.railway.app](https://longitudinal-memory-benchmark.up.railway.app).
+- No JarvisLabs instance, paid benchmark run, GPU, database, API key, or provider execution was added to the hosted service.
