@@ -1,6 +1,7 @@
 PYTHON ?= python3
+DEMO_PYTHON ?= .venv-demo/bin/python
 
-.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization test-grounded-summaries test-durative-claims test-retrieval-index test-retrieval-planning test-retrieval-baselines validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety
+.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization test-grounded-summaries test-durative-claims test-retrieval-index test-retrieval-planning test-retrieval-baselines validate-benchmark-v1 validate-scaled-benchmark validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety demo demo-data demo-build test-demo
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -174,3 +175,28 @@ analyze-atomic-v2:
 
 dry-run-atomic-safety:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m extraction.run_atomic --dry-run
+
+.venv-demo/.ready: requirements-demo.txt
+	python3 -m venv .venv-demo
+	.venv-demo/bin/pip install -r requirements-demo.txt
+	touch $@
+
+web/node_modules/.ready: web/package.json web/package-lock.json
+	npm --prefix web install
+	touch $@
+
+demo-data: .venv-demo/.ready
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(DEMO_PYTHON) -m demo.bundle --repo-root .
+
+demo-build: web/node_modules/.ready
+	npm --prefix web run build
+
+demo: .venv-demo/.ready demo-build demo-data
+	PYTHONPATH=src $(DEMO_PYTHON) -m uvicorn api.app:app --host 127.0.0.1 --port $${PORT:-8000}
+
+test-demo: .venv-demo/.ready demo-data
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(DEMO_PYTHON) -m unittest \
+		tests.demo.test_bundle tests.api.test_demo_api \
+		tests.unit.test_vllm_client tests.unit.test_qwen_series \
+		tests.unit.test_qwen_compatibility tests.unit.test_qwen_preflight \
+		tests.unit.test_qwen_benchmark -v

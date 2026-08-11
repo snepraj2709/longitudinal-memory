@@ -1,0 +1,14 @@
+.git
+.env
+.venv*
+**/__pycache__
+node_modules
+web/node_modules
+web/dist
+data
+docs
+tests
+results/**
+!results/demo/
+!results/demo/demo-v1/
+!results/demo/demo-v1/bundle.json
