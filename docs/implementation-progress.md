@@ -1,0 +1,1619 @@
+# Implementation progress
+
+## Phase 3, Step 3.5: Produce Phase 4 input
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `f9cd3cd5e6dd60981aed57b73afd4ab52b03d7e5`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Commit message: `memory: produce Phase 4 development claim input`
+- The worktree was clean after the final commit check.
+
+### Inputs and frozen contracts
+
+- Dataset: `scaled_v1`, development split, SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`
+- Runtime users: `data/scaled-v1/runtime/users.jsonl`, SHA-256 `13e118ad1e8ecda61616eec51d6ff896ee37321f48a8c187d6c460af898cc3ef`
+- Runtime sources: `data/scaled-v1/runtime/sources.jsonl`, SHA-256 `a5cbdf38faf22689726c5d5998ea58e2b9e8a19acfae9318511064b5e29235de`
+- Development gold: SHA-256 `a74aa1e2f07b238ee837dfea80f0562c1a2c9fb81f02fa6b168dd0e3290cfff3`. The runner opens it only after all 20 development predictions exist.
+- Qualification prompt: SHA-256 `57ec5307bf3cdf691e303ccd65602a0d3856f95b442c8408e44fd74e9d05ac5b`
+- Full prompt: SHA-256 `1a6a371a73b043807249a4c130b5b309b8a29fbcbea34f6c2e912f6eded38e59`
+- Schema: SHA-256 `f694616f02143cc4e5595fe0658b100f29562c9c4d4df716af362fa10989aac1`
+- Predicate registry v2: 70 predicates, canonical SHA-256 `5cb9ba2f2b7a81aa2ce61d52d9425fbf1f2d39964a3a66286d5679ebb2e5175d`, file SHA-256 `15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1`
+- The legacy v1 registry and the frozen v3 extraction prompt kept their canonical hashes, `64991ee0b9e52e61d5238b2c404447d22d633e3adf0fb858757dd2fa5c574b4d` and `e399c3c6108cf2103e844f762c8b34339f5a096a16bd5c91c5a5500c6482bff2` respectively.
+- Guidance: `step-3.5-guidance-v1`, envelope SHA-256 `f0625309517640cf48611a88cf126bb9f00e88dc6a186f846d73cb522a19ca75`
+- Recovery guidance: `step-3.5-recovery-guidance-v1`, envelope SHA-256 `bb84b4c8bef85be389675832b2c106f2fce2a10dc30e6e3f7e1aedd66d265501`
+- Fallback guidance: `step-3.5-gpt41-fallback-guidance-v1`, envelope SHA-256 `016f94919f46184994849fc46dd63b3259d6054096cffde210f9324799090f86`
+
+### Implementation
+
+- Added a development-only source loader for `user_001` and `user_002`. It stops before parsing test-user records and sends only participant entities and adapted source observations to the provider.
+- Added the exact Phase 4 claim contract, canonical claim IDs, strict source-result rejection, exact quote and evidence checks, time-precision checks, and user-scoped provenance validation.
+- Added deterministic development scoring, including user, source-type, and predicate slices with explicit null denominators.
+- Added frozen qualification, recovery, and GPT-4.1 fallback runners. They enforce exact request order, requested and returned model snapshots, zero retries, cumulative cost ceilings, checkpoint integrity, and immutable completed resume.
+- Added the pinned `tiktoken==0.13.0` request-body counter with a 256-token reserve for every request.
+- Extended the existing prompt, schema, source, atomic validation, and run-safety modules through parameterised paths. Legacy prompt and registry behaviour remains covered by its original tests.
+- Added focused tests for the source adapter, claim boundary, scorer, qualification and recovery runner, fallback runner, and immutable resume.
+
+### Paid execution
+
+The original qualification stopped after one GPT-4.1 request returned no usable output. It charged 5,023 input tokens and 1,200 reserved output tokens, or exactly `$0.0196460`. It did not open gold and was not retried.
+
+The recovery qualification made eight requests. GPT-4.1 used 17,130 input and 930 output tokens for exactly `$0.0417000`. GPT-4.1 mini used 17,130 input and 999 output tokens for exactly `$0.0084504`. The mini calendar result at qualification position 4 failed the frozen output contract after a provider response. The failure was preserved as validation, was not retried, and prevented qualification scoring and the original final run. Recovery cost was exactly `$0.0501504`.
+
+The approved fallback reused the four compatible GPT-4.1 recovery predictions and made the remaining 16 GPT-4.1 requests in original source order. Those new requests used 68,398 input and 3,106 output tokens, costing exactly `$0.1616440`.
+
+Across the three attempts, 25 provider requests were charged with zero retries. GPT-4.1 used 90,551 input and 5,236 output tokens. GPT-4.1 mini used 17,130 input and 999 output tokens. Exact cumulative spend was `$0.2314404`, below the fallback authorization ceiling of `$0.3839604`.
+
+### Tests and contract checks
+
+- Focused Step 3.5 suite: 32 tests passed. After the final completed-resume integrity change, the fallback and runner subset passed 23 tests in 7.617 seconds.
+- `make validate-scaled-benchmark`: passed with 10 users, 100 sources, 160 claims, 500 QA cases, 50 summaries, and 20 interactive cases.
+- `make test`: 339 tests passed in 51.788 seconds.
+- Python compilation, `git diff --check`, and `git diff --cached --check`: passed.
+- Completed fallback resume: verified all nine artifact hashes, returned 20 predictions, made zero provider calls, and changed zero bytes.
+- The runtime source order was exactly 20 sources: ten for `user_001`, followed by ten for `user_002`. Predictions retained positions 1 through 20 in that order.
+- The final release has 20 successful source results, 33 canonical claims, 33 exact evidence links, and zero execution or persistence failures. All claims and the reverse evidence index revalidated.
+- Runtime prompts and provider payloads contain no gold, oracle, review, lifecycle, profile, task, or split fields. Frozen test users were not opened or transmitted.
+- Requested, resolved, and returned final models are all `gpt-4.1-2025-04-14`.
+- `preference.md`, `docs/memory-evaluation-steps.md`, `data/scaled-v1`, the v1 predicate registry, Phase 3 source and gold data, the protected Phase 3 v2 result, and B1 remained unchanged from the starting commit.
+- The changed-file and staged secret scans found no API key, private key, `.env`, or secret-shaped token.
+
+### Scorecard
+
+The final development scorecard compares 33 predicted claims with 32 reviewed claims.
+
+| Measure | Result |
+| --- | ---: |
+| Claim precision | 0.303030 |
+| Claim recall | 0.312500 |
+| Claim F1 | 0.307692 |
+| Provenance-span precision | 0.272727 |
+| Provenance-span recall | 0.281250 |
+| Subject accuracy | 1.000000 |
+| Speaker accuracy | 1.000000 |
+| Predicate accuracy | 0.620690 |
+| Object accuracy | 0.482759 |
+| Polarity accuracy | 0.896552 |
+| Epistemic-status accuracy | 0.655172 |
+| Valid-time accuracy | 0.000000 |
+| Unsupported-memory rate | 0.454545 |
+
+### Failures and limitations
+
+- The qualification failures remain in their immutable v1 and v2 result directories. A provider no-output failure is kept separate from the later mini validation failure.
+- Extraction quality is weak. Only 10 of 32 reviewed claims matched, 15 of 33 predictions were unsupported, provenance recall was 0.281250, and no aligned claim received a matching valid-time value.
+- The result covers two synthetic development users. It does not measure frozen test performance and was not tuned against test users.
+- Four final predictions are byte-compatible outputs reused from the recovery qualification. The manifest records their source positions, request hashes, model, and predecessor hashes.
+- Phase 4 must treat this as measured development input, not as evidence that extraction quality meets a research target. The structural handoff is valid, but downstream work must preserve the scorecard and allow claims to be replayed or replaced under a later extractor version.
+
+### Artifacts and hashes
+
+- Original qualification: `results/phase3/atomic-extraction-step35-model-qualification-v1`, manifest SHA-256 `a0d0dfba7016e6db2401f5ac075a414048c12c1f7636bf6242283a4688113d70`
+- Recovery qualification: `results/phase3/atomic-extraction-step35-model-qualification-v2`, manifest SHA-256 `e1670f586131e0c285a70f17f0acf510f3a56b58dbf12c95581a5aff52b95cd7`
+- Phase 4 development input: `results/phase3/phase4-input-development-gpt41-fallback-v1`, manifest SHA-256 `f5127cfdb7720ecf84e320da613396d11d71629b709813e2e25ea2ab00df0876`
+- Claims: `claims.jsonl`, SHA-256 `509c51229eb8a6e13e898a28fec594d0118c29b6f5a93fc917fb0d1af34b4ff7`
+- Scores: `scores.json`, SHA-256 `76c96cc9590da0ac40d31a6ff5ab1d96e3decacb732a9bfc9b531e58e8750b4b`
+- Evidence index: `evidence_index.json`, SHA-256 `311107940b64e22d9ba8af77e17d04e17f4298e8b5797e6f7234261e852ca0b6`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+
+### Next-step input
+
+Phase 4 receives the immutable `claims.jsonl`, predicate registry v2, manifest, reverse evidence index, scorecard, and known-limitations file from `phase4-input-development-gpt41-fallback-v1`.
+
+Step 4.1 has not started. It still requires separate approval.
+
+## Phase 4, Step 4.1: Add storage and migrations
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `a768f6292d0c1404876ba1273ecbbd25829f9ed8`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-4.1-guidance-v1`, envelope SHA-256 `104d11223157154be066b61357cf7e75d62fbccc415f034722750a46cfed0af0`
+- Commit message: `storage: add Phase 4 PostgreSQL schema`
+- The worktree was clean after the final commit check.
+
+### Implementation
+
+- Added one checksum-bound SQL migration and a small advisory-lock migration runner. Reapplying the same migration is a no-op; changing an applied migration's bytes is an error.
+- Added eight domain tables: `memory_users`, `source_events`, `source_spans`, `extraction_versions`, `processing_attempts`, `claims`, `claim_versions`, and `evidence_links`. The runner also owns `schema_migrations`.
+- Added typed, frozen Python records and a parameter-bound repository. The repository inserts and reads records without committing the caller's transaction.
+- Added composite `(user_id, id)` foreign keys for sources, spans, claims, versions, and evidence. Cross-user evidence cannot satisfy these keys.
+- Added database checks for enums, confidence ranges, JSON shapes, stable IDs, exact span offsets, valid-time representation, transaction interval order, idempotency keys, and one open version per claim.
+- Source and claim deletion uses `ON DELETE RESTRICT`. Step 4.2 still owns deletion propagation and reprocessing behaviour.
+- The reviewer changed unknown valid-time membership so null boundaries do not match a date. Date and timestamp query representations can no longer cross. The reviewer also moved the Docker cleanup trap ahead of container startup.
+
+### Schema and dependency pins
+
+- Migration: `migrations/0001_phase4_storage.sql`, SHA-256 `6f8a84ce1f78adeccfd7ff15d830dbcf844c34159a0ed34ce11cea4313e95359`
+- PostgreSQL image: `pgvector/pgvector:0.8.6-pg16@sha256:84a355869251af1a3379cfc9fa7b4dbf962c03f642a4bb7b339a203925071c43`
+- Python driver: `psycopg[binary]==3.3.4`
+- Requirements file SHA-256: `d375af9a0f805ccfd0fbf9a4943cfc6f44b4d7371e6a2376f6b8318d3c73e3d6`
+- Compose file SHA-256: `c53c4d37a256e2203f32566a3196c246cd5b2bb67ad8e1839095c9c1c8b0f51a`
+- PostgreSQL reported pgvector `0.8.6`. The schema enables the extension but has no embedding column, vector dimension, or vector index.
+
+### Phase 3 handoff check
+
+The PostgreSQL integration test loaded all 20 development source records and all 33 Phase 3 claims in one transaction. It preserved the canonical claim IDs, created 33 candidate versions and 33 evidence links, and left `memory_kind`, `sensitivity`, and `belief_confidence` null. The test then rolled back the transaction and confirmed that every loaded domain table was empty.
+
+The weak Phase 3 scorecard remains unchanged: precision `0.303030`, recall `0.312500`, F1 `0.307692`, unsupported-memory rate `15/33`, and valid-time accuracy `0.000000`. Step 4.1 did not filter, promote, repair, or rescore a claim.
+
+### Tests and contract checks
+
+- `make test-storage PYTHON=.venv-storage/bin/python`: 16 tests passed, including seven tests against disposable PostgreSQL 16 with pgvector 0.8.6.
+- `make validate-scaled-benchmark`: passed with the frozen `scaled_v1` counts and dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test`: 355 tests passed in 23.166 seconds. The seven Docker-only tests were skipped in this command and passed in `make test-storage`.
+- Clean and repeated migration, checksum drift, typed round trips, stable-ID conflicts, duplicate idempotency, cross-user references, unknown references, invalid JSON, offset and enum checks, interval order, one-open-version uniqueness, and transaction rollback all passed.
+- Valid time is inclusive. Transaction time includes its start and excludes its end. Unknown valid time does not imply current membership.
+- The protected Phase 3 manifest, claims, evidence index, scores, failures, and predicate registry kept their recorded hashes.
+- Runtime storage code reads no gold or oracle files and makes no model calls. Step 4.1 used zero OpenAI requests, tokens, and cost.
+- The changed-file secret scan found no API key, private key, `.env`, or secret-shaped token.
+- The disposable Docker container, network, and volumes were absent after the storage test.
+
+### Limitations
+
+- This step provides schema and record access only. It does not implement ingestion acknowledgement, retries, reprocessing, lifecycle transitions, `as_of` queries, conflict resolution, deletion propagation, retrieval, or embeddings.
+- Lifecycle values beyond `candidate` are schema vocabulary for later steps. This step does not promote claims or decide what is current.
+- The integration load is a rollback proof, not a retained development database or a performance measurement.
+- Phase 3 extraction quality remains the limiting input quality and must stay visible in later temporal results.
+
+### Next-step input
+
+Step 4.2 receives the versioned SQL migration, typed storage records, checksum migration runner, transaction-scoped repository, pinned disposable PostgreSQL configuration, and the 20-source/33-claim rollback test.
+
+Step 4.2 has not started. It still requires separate implementation and review.
+
+## Phase 4, Step 4.2: Add idempotent ingestion and reprocessing
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `5e1d042360d4e084324f8ca258c601ef90dfd293`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-4.2-guidance-v1`, envelope SHA-256 `0fefea8634648673692bd65a39a9f71248bb6c302bd7ee8828e77360a34c8894`
+- Commit message: `ingestion: add idempotent source reprocessing`
+- The worktree was clean after the final commit check.
+
+### Implementation
+
+- Added migration `0002` for worker leases, retry state, claim-to-extraction records, transactional outbox events, and content-free source tombstones. Composite keys keep every source, claim, attempt, and evidence reference within one user.
+- Added typed ingestion requests and results, deterministic attempt and outbox IDs, and short error codes that do not include source content.
+- Added one-transaction source ingestion. An exact replay is a no-op. Changed content or a reused identity is rejected, while the same idempotency key remains valid for a different user.
+- Added PostgreSQL `SKIP LOCKED` worker leasing, expired-lease recovery, retry classification, reprocessing under a new extraction version, and atomic claim, evidence, attempt, and outbox writes. Existing canonical claims are reused without overwriting them.
+- Added evidence-aware source deletion. Claims with remaining evidence are retained and queued for recomputation. Claims with no evidence are removed. Repeated deletion is a no-op.
+- Updated storage reads so runtime source, span, attempt, claim, version, extraction, outbox, and tombstone lookups require the owning user where applicable.
+- Added unit and disposable PostgreSQL tests. During review, the concurrent duplicate-ingest case was made explicit and the result manifest was extended to bind the findings file.
+
+### Tests and contract checks
+
+- `make test-ingestion PYTHON=.venv-storage/bin/python`: 5 tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 tests passed, including 16 tests against disposable PostgreSQL 16 with pgvector 0.8.6.
+- `make validate-scaled-benchmark`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test`: 369 tests passed in 24.214 seconds. The 16 database tests skipped in this command passed in `make test-storage`.
+- Two concurrent copies of one ingest request produced one source, one attempt, and one outbox event.
+- The development replay loaded 20 sources and 33 unchanged candidate claims twice. Counts stayed at 20 sources, 20 attempts, 33 claims, 33 candidate versions, 33 claim-extraction records, and 33 evidence links, with no duplicate derived records.
+- Worker rollback, expired-lease recovery, non-retryable validation failures, same-extractor no-op, new-extractor reuse, out-of-order timestamps, cross-user access, sole-evidence deletion, shared-evidence recomputation, and repeat deletion passed against PostgreSQL.
+- `git diff --check`, the unstaged and staged diff checks, the changed-file secret scan, all 22 manifest-bound hashes, and Docker cleanup passed.
+
+### Protected inputs and costs
+
+- Migration `0001` kept SHA-256 `6f8a84ce1f78adeccfd7ff15d830dbcf844c34159a0ed34ce11cea4313e95359`.
+- `compose.yaml` and `requirements-storage.txt` kept SHA-256 `c53c4d37a256e2203f32566a3196c246cd5b2bb67ad8e1839095c9c1c8b0f51a` and `d375af9a0f805ccfd0fbf9a4943cfc6f44b4d7371e6a2376f6b8318d3c73e3d6`.
+- The protected Phase 3 manifest, claims, evidence index, scores, failures, predicate registry, and scaled runtime inputs kept their recorded hashes.
+- Step 4.2 loaded no gold or oracle data. It made zero OpenAI requests, used zero tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Migration `migrations/0002_ingestion_reprocessing.sql`: SHA-256 `52900567c16e67c654d6fb845b615043beb5d9bf68851eb58231c5740a41253b`.
+- Result manifest `results/phase4/step4.2-ingestion-v1/manifest.json`: SHA-256 `5c5e27587642af9115e0b5454292afb4b211043ec641b57b97c91573f0796ed2`.
+- Findings `results/phase4/step4.2-ingestion-v1/findings.md`: SHA-256 `097af6341fd97031ef27802f2bfe79263e60fb377926bb811e94ff07e141010d`.
+- This step does not run an extractor, publish outbox events, update an index, resolve conflicts, assign lifecycle states, or answer temporal queries.
+- The 33 development claims retain the weak Phase 3 scorecard. This step does not filter, repair, promote, or rescore them.
+
+### Next-step input
+
+Step 4.3 receives user-scoped source and claim records, immutable extraction mappings, retryable processing attempts, pending outbox events, content-free tombstones, and deterministic deletion-recompute events. Step 4.3 has not started and still requires a separate implementation and review.
+
+## Phase 4, Step 4.3: Add temporal version transitions
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `c50103c878c2c5a1d98d287d352b6ffca3a61719`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-4.3-guidance-v1`, envelope SHA-256 `9a9687396f0a77f9ab3939e0202b89376290118493c62731a6dd6f0e80e2be16`
+- Commit message: `temporal: add deterministic lifecycle queries`
+- The worktree was clean after the final commit check.
+
+### Implementation
+
+- Added migration `0003` with valid-time snapshots on claim versions, non-overlapping transaction intervals, lifecycle transition audit rows, and `claim_lifecycle_changed` outbox events. The incremental migration keeps an existing version's status and confidence while copying its valid time from the claim.
+- Added explicit lifecycle requests for the approved transition matrix. The caller supplies the target status, reason, idempotency key, confidence, and aware timestamp. The service does not infer a status or replacement.
+- Each change closes one open transaction interval and inserts an immutable successor. Repeating the same request returns the saved result. Reusing its key with different inputs fails.
+- Added atomic corrections that supersede one claim and promote an explicit same-user candidate replacement to `confirmed` or `current`.
+- Added user-scoped bitemporal reads. Transaction intervals are start-inclusive and end-exclusive. Valid-time bounds are inclusive, and date values never mix with timestamp values.
+- Queries hide versions and evidence recorded after the cutoff. Source deletion and tombstones dominate historical reconstruction, while claims with other visible evidence remain available.
+- Null `memory_kind` development claims cannot be promoted. All 33 Phase 3 claims remain candidates.
+
+### Review corrections
+
+- Lifecycle audit foreign keys now prove that both version IDs belong to the audit row's user and claim. PostgreSQL rejects a version from another claim owned by the same user.
+- The SQL and typed boundaries reject `candidate` as a transition target.
+- Added an incremental `0002` to `0003` regression that preserves a previously promoted version and its valid-time snapshot.
+- Updated the 33-claim rollback load to preserve each claim's valid-time snapshot on its candidate version.
+- Moved shared valid-time validation and interval membership into one storage helper instead of keeping separate claim and version copies.
+- Expanded the immutable result manifest to bind every implementation and test file, the findings, and every required protected input.
+
+### Files changed
+
+`Makefile`, `migrations/0003_temporal_lifecycle.sql`, `src/temporal`, the narrow storage and ingestion extensions, temporal unit and PostgreSQL integration tests, the Phase 4 storage regression, the Step 4.3 manifest and findings, and this ledger entry.
+
+### Tests and contract checks
+
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 tests passed against disposable PostgreSQL 16.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 storage and ingestion tests passed against disposable PostgreSQL 16.
+- `make validate-scaled-benchmark`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test`: 384 tests were discovered in 24.909 seconds; 359 passed and 25 database tests skipped. Those 25 passed in the Docker targets.
+- The transition matrix, terminal states, deterministic IDs, replay and drift handling, aware timestamps, valid-time boundaries, transaction boundaries, null time, and date/timestamp separation passed.
+- PostgreSQL covered clean and repeated migration, incremental backfill, non-overlap, exact boundary queries, concurrent identical and competing requests, stale rollback, normal endings, corrections, cross-user rejection, late-source visibility, deletion dominance, and atomic outbox/audit writes.
+- `git diff --check`, the staged and unstaged checks, the secret scan, all 26 manifest-bound hashes, and Docker cleanup passed.
+
+### Protected inputs and costs
+
+- Migrations `0001` and `0002`, `compose.yaml`, `requirements-storage.txt`, the Step 4.2 manifest and findings, the Phase 3 manifest, claims, evidence index, scores and failures, predicate registry v2, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 4.3 opened no benchmark gold, oracle data, or frozen test-user input. It made zero OpenAI requests, used zero tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Migration `migrations/0003_temporal_lifecycle.sql`: SHA-256 `2d4e888b262e3dab1a86464fa9de6d33d8818d8978004c5923a5a5e69226fc8e`.
+- Result manifest `results/phase4/step4.3-temporal-lifecycle-v1/manifest.json`: SHA-256 `68a527421761dcdc960862f39f589c0283a274e062afe6ca86dc01bbce1c67ad`.
+- Findings `results/phase4/step4.3-temporal-lifecycle-v1/findings.md`: SHA-256 `274b79a17d589474b70683aa77cbb2936ba0eb3d8fd5a8e4bd4c77887a6f9250`.
+- This step does not classify conflicts, infer lifecycle status, repair extraction, add embeddings, or score temporal accuracy. Step 4.4 owns reviewed temporal cases and scoring.
+- Deleting the last source evidence removes the unsupported claim and its lifecycle audit rows. The content-free tombstone remains.
+
+### Next-step input
+
+Step 4.4 receives the checksum-bound temporal migration, explicit lifecycle service, immutable transition audit, transactional outbox events, and user-scoped bitemporal query interface. Step 4.4 has not started and still requires a separate implementation and review.
+
+## Phase 4, Step 4.4: Evaluate temporal behavior
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `21ebed2b1d06b623deee2b9b0f72ee45d0ff71d3`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-4.4-guidance-v1`, envelope SHA-256 `294fd04ec604e94f79fe1e276342c15bf1b515b1ecce5c865eee98e8c6d2cb50`
+- Commit message: `eval: add temporal behavior scorecard`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added 12 reviewed development cases, six each for `user_001` and `user_002`. Every source reference resolves through the development-only loader, and every evidence quote and speaker matches its source observation.
+- Kept runtime cases and gold expectations in separate files. The runner writes one prediction or sanitized failure for every runtime case before it hashes or opens gold.
+- Covered correction visibility before, at, and after the transaction cutoff; repeated evidence; a normal change to historical status; approximate dates; time-zone normalization; out-of-order ingestion; separate valid periods; inclusive valid endpoints; shared-endpoint overlap; and half-open transaction boundaries.
+- Added strict runtime, gold, prediction, failure, and scorecard records. Runtime imports have no path to scaled gold, oracle data, or review queues.
+- Added deterministic event-ordering, date-normalization and precision, interval-relation, interval-IoU, current-state, historical-state, and correction-visibility scores. Every score records its denominator; a zero denominator returns null with a reason.
+- Added a clean-database precondition, immutable result-directory checks, protected-input hashes, and byte-stable JSON output. The reviewer also corrected current, historical, and correction scoring to compare exact sets without depending on database row order.
+- Added unit and disposable PostgreSQL tests, including two clean runs that compare all six emitted artifact files byte for byte and a regression that rejects an already populated database.
+
+### Results
+
+The evaluator produced 12 predictions and no failures. Event ordering, date normalization and precision, interval relation, current-state selection, historical-state selection, and correction visibility each scored `1.000000`.
+
+Mean interval IoU was `0.027027` with a denominator of one. This is the exact inclusive overlap for the reviewed shared-endpoint pair: one overlapping day across a 37-day union. The small value is preserved as measured rather than treated as a failed or omitted case.
+
+### Tests and contract checks
+
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 tests passed against disposable PostgreSQL 16.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed against disposable PostgreSQL 16.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed against disposable PostgreSQL 16.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with the frozen `scaled_v1` counts and dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 404 tests were discovered in 24.843 seconds; 374 passed and 30 database tests skipped. Those 30 passed in the Docker targets above.
+- The 12-case run repeated byte-identically from a second clean database. The existing 20-source, 33-candidate Phase 3 handoff also replayed twice without changing counts.
+- Gold sequencing, exact source ownership, source order, cross-user rejection, time-zone equivalence, inclusive valid time, half-open transaction time, failure denominators, immutable output refusal, protected hashes, secret scanning, diff checks, and Docker cleanup passed.
+- Migrations `0001` through `0003`, production storage, ingestion, extraction, and temporal code, the Step 4.3 release, the scaled release, the Phase 3 handoff, the predicate registry, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 4.4 made zero model requests, used zero tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Dataset manifest: `data/phase4/temporal-development-v1/manifest.json`, SHA-256 `785f17876b56ebdf29b8765e104e0160c19befae5271687869e4db9726034f8e`
+- Runtime cases: `runtime/cases.jsonl`, SHA-256 `4c67e1a01f0513512f9c1c3d65bacf8a943f66d037c369182a24adae9b656416`
+- Reviewed gold: `gold/cases.jsonl`, SHA-256 `1afce9b37f441925826b0511c8e32b004d825b29e2c8d614f10a5c7ca04ceefa`
+- Result manifest: `results/phase4/step4.4-temporal-evaluation-v1/manifest.json`, SHA-256 `8f7cc49fbe5620094c618eaaaa98c27ce7a337fdb2747ca9918d8bcfe6d4d644`
+- Predictions: `predictions.jsonl`, SHA-256 `641e2b1221f6b0123c7521b95b997fa7d4a321faf7aa49f4fc8ab1713726c8b1`
+- Scores: `scores.json`, SHA-256 `23ce6b37522e1367d91e72959b3acfb1a6558597a2667f53c0da9bd970a53d9e`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Run metadata: `run.json`, SHA-256 `1613ed40d8e9a73c2263aa651400e2240fda9a3ca46174e76d903d49e44cb285`
+- Findings: `findings.md`, SHA-256 `1317ef934f24f8b3f7eb08b49703bde0bc23855ae1cde4e419d1d223d047159f`
+- This is a 12-case deterministic development evaluation, not a production workload or frozen-test result. Interval IoU has one case, so its mean is descriptive rather than broad evidence.
+- The fixtures exercise explicit lifecycle commands. They do not infer lifecycle changes, classify conflicts, repair the weak Phase 3 claims, or modify the stored development claim set.
+
+### Next-step input
+
+Phase 5 receives the protected relational store and temporal query interface together with the immutable Step 4.4 runtime cases, reviewed gold, predictions, scorecard, manifest, and documented limitations. Step 5 has not started and still requires separate approval.
+
+## Phase 5, Step 5.1: Generate conflict candidates
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `f0f658a356179f363f31a21bab146b446b144f72`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-5.1-guidance-v1`, envelope SHA-256 `e14a27ee4e7f5b2ddb58ca986aa61f4fbe523a974dbc0c0d1adddd1d5c3b92ec`
+- Commit message: `conflicts: add deterministic candidate linking`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added eight reviewed development cases, four each for `user_001` and `user_002`. Every claim points to evidence owned by a protected Step 4.4 runtime claim. The runtime file contains no required pairs, relation labels, scaled gold, oracle data, review queues, or test users.
+- Added a frozen candidate-linker configuration bound to predicate registry v2. It uses complete normalized string leaves, subject IDs, inclusive finite-time overlap or a gap of at most 90 days, and token Jaccard over the predicate, predicate family, and canonical object.
+- Added deterministic candidate generation with the three approved rules. Every result involves an incoming claim, uses lexically ordered claim IDs, records all visible source IDs, and has a stable SHA-256 pair ID. The linker neither ranks candidates nor assigns a relation type.
+- Added user-scoped PostgreSQL reads through the existing temporal service. Source visibility, transaction visibility, lifecycle eligibility, evidence support, and deletion effects are applied before features are computed.
+- Added separate runtime and scorer-only gold loaders. The evaluator writes one prediction or sanitized failure for every case before it hashes or opens gold. It refuses a nonempty output path and produces byte-stable artifacts from clean database runs.
+- During review, the pure generator was corrected to reject mixed-user claim or version inputs before feature computation instead of silently dropping them. A regression covers both ownership mismatches.
+- During review, the immutable result manifest was expanded to bind all 42 protected inputs. The runner checks the 41 non-gold inputs before execution and defers the prior scorer-only gold hash until after this step's outcomes have been persisted and scored.
+
+### Results
+
+The evaluator produced eight predictions and no failures. It returned all eight reviewed required pairs from ten possible same-user pairs, for candidate recall `1.000000` and pair reduction `0.200000`. It generated no cross-user pair.
+
+The signal counts were six same-subject pairs, six same-family pairs, eight shared-entity pairs, three temporal overlaps, two pairs within the 90-day gap, one approximate-time pair, and four pairs at or above the lexical threshold. These are descriptive counts, not precision estimates.
+
+### Tests and contract checks
+
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 tests passed, including six against disposable PostgreSQL 16.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed against disposable PostgreSQL 16.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed against disposable PostgreSQL 16.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed against disposable PostgreSQL 16.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 433 tests were discovered in 25.144 seconds; 397 passed and 36 database tests skipped. Those database paths passed in the Docker targets above.
+- Exact lexical and 90-day thresholds, inclusive endpoints, mixed and unknown time, repeated evidence, source-ID completeness, user isolation before feature work, deletion visibility, failure denominators, gold sequencing, immutable output refusal, and two clean byte-identical runs passed.
+- `git diff --check`, the staged and unstaged checks, the changed-file secret scan, all 42 protected hashes, all seven implementation hashes, all five artifact hashes, and Docker cleanup passed.
+
+### Protected inputs and costs
+
+- Migrations `0001` through `0003`, storage, ingestion and temporal services, the complete Step 4.4 dataset and result, the Step 4.2 and Step 4.3 handoffs, the Phase 3 claim input, the scaled runtime identity, predicate registry v2, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 5.1 made zero model requests, used zero tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Candidate configuration: `configs/conflicts/candidate_linker_v1.json`, SHA-256 `c21fe89467f64d31098f42940cb0b7a62d8a213bd93d7ac04d1d91f2280d9f7f`
+- Dataset manifest: `data/conflicts/candidate-development-v1/manifest.json`, SHA-256 `9dd85b3bf49d04ebdd3e0f3a6ea05da4b01fff9901be0d5d9019272bc728f2bb`
+- Runtime cases: `runtime/cases.jsonl`, SHA-256 `19aa0171b3ce655f06725e4c555a8e0a5d4b3c9c3c25bc9cc3d7de35e4368a33`
+- Reviewed required-pair gold: `gold/required_pairs.jsonl`, SHA-256 `e22bff6a26c34ede3b57076d9bddf74849cbd7f62b3a39457ecf30976559c924`
+- Result manifest: `results/conflicts/candidate-generation-development-v1/manifest.json`, SHA-256 `e089dd87b4361982988cd6df37a150e678f3b9245c1a14a007f90202de6b6c18`
+- Predictions: `predictions.jsonl`, SHA-256 `2d8d0c790c3aa136735b2ac8bb1f2fcca5eeeb9732acca2af5b4dd5dd35870ae`
+- Scores: `scores.json`, SHA-256 `57dc7c12e6e3665978862158fd8d592c86481479778d00546c6f742fe05214fa`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- This is an eight-pair deterministic development check, not a production workload or frozen-test result. Candidate recall measures whether required pairs survive linking. It does not estimate precision.
+- This step proposes pairs only. It does not persist a relation, classify a conflict, resolve a belief, change lifecycle state, or use embeddings or a model.
+
+### Next-step input
+
+Step 5.2 receives the frozen candidate-linker configuration, `CandidateRequest`, `CandidatePair` and signal contracts, the deterministic development dataset, and the immutable candidate-generation scorecard. Step 5.2 has not started and still requires separate implementation and review.
+
+## Phase 5, Step 5.2: Classify and persist checked relations
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `4780c85a05d6397d24abe15de96f6c3979867f33`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-5.2-guidance-v1`, envelope SHA-256 `212dd69b414fab36987c917cc1c6a05bf2828b8abf9c7fa657afb7fc0838767b`
+- Commit message: `conflicts: classify and persist checked relations`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added a frozen deterministic classifier for eight labels: hard contradiction, temporal change, explicit correction, refinement, source disagreement, retraction, unresolved ambiguity, and unrelated. The precedence order is explicit, and every decision records the exact candidate pair, claim versions, evidence snapshot, rule version, and transaction cutoff.
+- The classifier accepts only canonical Step 5.1 pairs for the same user. It checks lifecycle and transaction visibility, source ingestion time, exact evidence ownership, predicate registry v2 compatibility, object shape, valid-time representation, and structured correction targets before applying a rule.
+- Added migration `0004` and typed repository records for conflict decisions, claim relations, and decision evidence. Composite foreign keys enforce user ownership. Stable IDs make exact replay a no-op and changed input a conflict, while one transaction prevents partial decisions, relations, or evidence.
+- Storage accepts the full nine-relation ontology. The v1 classifier emits only `contradicts`, `corrects`, `refines`, and `same_topic_as`; it never emits `supersedes`. Symmetric stored relations use canonical claim order.
+- Source deletion removes decisions, relations, and cited evidence before deleting spans. It schedules one content-free, ID-only recomputation event only when both claims still have evidence. It does not change lifecycle state.
+- Added eight reviewed development cases from the exact Step 5.1 candidate output, four per development user. Runtime cases contain no relation expectations. The evaluator persists all predictions and failures, closes runtime resources, and only then hashes and opens the separate gold file.
+- Added deterministic scoring for overall labels, supported-label precision, recall and F1, exact relation sets, relation direction, failures, unresolved cases, execution mode, and cross-user relations. Missing denominators are null and carry a reason.
+
+### Review corrections
+
+- Expanded the storage and SQL relation vocabulary from the four v1 outputs to all nine ontology relations. Added coverage for future relation types and canonical `same_event_as` storage while keeping classifier output restricted to v1's four relations.
+- Bound classifier input to `candidate_linker_v1` so a pair produced under another linker version cannot be reinterpreted under this frozen rule set.
+- Regenerated only the affected dataset and result manifest bindings. A clean-database evaluator run reproduced predictions, failures, scores, run metadata, and findings byte for byte.
+
+### Results
+
+The evaluator produced eight predictions and no failures. Overall label accuracy, macro F1 across the three represented labels, and exact relation-set accuracy were each `1.000000`. One of eight cases was unresolved, for an unresolved rate of `0.125000`. The release contains no directed gold relation, so direction accuracy is null with reason `no_directed_gold_relations`.
+
+The represented labels are six unrelated cases, one temporal change, and one unresolved ambiguity. The other five labels remain explicitly not evaluated. This step made no model call or lifecycle decision.
+
+### Tests and contract checks
+
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 tests passed, including eight tests against disposable PostgreSQL 16.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected Step 5.1 tests passed, including six against disposable PostgreSQL 16.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected Step 4.4 tests passed against disposable PostgreSQL 16.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed against disposable PostgreSQL 16.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed against disposable PostgreSQL 16.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 462 tests were discovered in 24.613 seconds; 418 passed and 44 database tests skipped. Those database paths passed in the Docker targets above.
+- Rule precedence, all eight labels, registry compatibility, inclusive valid time, half-open transaction time, unknown and mixed time, explicit target direction, exact evidence snapshots, cross-user rejection, stable IDs, replay and drift handling, rollback, deletion recomputation, gold sequencing, failure denominators, and immutable outputs passed.
+- The Step 5.1 release replayed through the current migrations with the same predictions, failures, and scores. The protected Step 4.4 release also kept its recorded prediction, failure, score, run, findings, and manifest hashes.
+- `git diff --check`, staged and unstaged checks, manifest self-verification, predecessor drift checks, the changed-file secret scan, and Docker cleanup passed.
+
+### Protected inputs and costs
+
+- The Step 5.1 manifest kept SHA-256 `e089dd87b4361982988cd6df37a150e678f3b9245c1a14a007f90202de6b6c18`. Its predictions, empty failures, and scores kept SHA-256 values `2d8d0c790c3aa136735b2ac8bb1f2fcca5eeeb9732acca2af5b4dd5dd35870ae`, `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`, and `57dc7c12e6e3665978862158fd8d592c86481479778d00546c6f742fe05214fa`.
+- The protected Step 4.4 manifest, predictions, failures, scores, run, and findings kept their recorded hashes. Migrations `0001` through `0003`, the Step 4.3 and Step 4.2 releases, Phase 3 claims and evidence, scaled runtime identity, predicate registry v2, `preference.md`, and the roadmap also remained unchanged.
+- Step 5.2 made zero OpenAI requests, used zero tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Classifier configuration: `configs/conflicts/relation_classifier_v1.json`, SHA-256 `fab3171a55ad21e25e303e89f44e57b7d0b926eb8f82283ce1dcb910d8960659`
+- Migration: `migrations/0004_conflict_relations.sql`, SHA-256 `d48a4c3902b59f9fc83f3497cedc65c964de25c4edb3b1fd53a04e3afaa1e5c3`
+- Dataset manifest: `data/conflicts/relation-development-v1/manifest.json`, SHA-256 `690694179f910a93fd536d082e7abd4c48cf76d9216959211189833af9f72d5a`
+- Runtime cases: `runtime/cases.jsonl`, SHA-256 `9a298284bc25a155954be6e20e7807541f9638fbfd50640060878b7a73b5fe0e`
+- Reviewed gold: `gold/cases.jsonl`, SHA-256 `0e245546cab7b85cffa83fa3ef05fe860ea6a230891718f36dfe44851fa42d74`
+- Result manifest: `results/conflicts/relation-classification-development-v1/manifest.json`, SHA-256 `2f29edd580957192cc7808e2e4a454b7fa7c0b89bfc9ea3851efbf9e1c76179e`
+- Predictions: `predictions.jsonl`, SHA-256 `f41a15fa83df9602c0536976aaebbc7aef9d7e33d1353f057dbeb52a6b3cf201`
+- Scores: `scores.json`, SHA-256 `4efc0bbc243e9bca92898da6aeabf7d0693ef479b7cfeef39afb647c2ecd49bd`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- This is an eight-pair deterministic development check. Five labels and directed relation accuracy have no development denominator, so the perfect represented-label scores do not estimate production accuracy.
+- This step records checked classification and relation facts only. It does not select a current belief, mutate lifecycle state, rank source authority, embed or retrieve memory, call a model, or implement Step 5.3.
+
+### Next-step input
+
+Step 5.3 receives canonical candidate pairs, immutable conflict decisions, full-vocabulary relation storage, exact evidence snapshots, user-scoped repository reads, and the deterministic Step 5.2 development scorecard. Step 5.3 has not started and still requires separate implementation and review.
+
+## Phase 5, Step 5.3: Resolve temporal beliefs deterministically
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `56ce3125886af28625808b31c6b412aa62ae1c9f`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-5.3-guidance-v1`, envelope SHA-256 `8bbaf5c53358858027db6f5a6eda383c6c8cc47dae80f36a5228fe1b8ed6bea8`
+- Commit message: `conflicts: resolve temporal beliefs deterministically`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added a frozen resolver configuration and a deterministic planner for every Step 5.2 label. The request carries only user, decision, time, idempotency, and resolver identifiers; the service loads the decision, claim versions, relations, authority inputs, and exact evidence from PostgreSQL.
+- Exclusion runs before conflict policy. Restricted, hypothetical, wrong-subject, deleted, and unsupported claims cannot become current. Authority must come from an exact, current, source-backed official record with matching speaker, subject, predicate, spans, and time scope. Belief confidence remains null.
+- Added migration `0005` and typed repository records for resolutions, ordered lifecycle actions, evidence lineage, and resolver provenance on new `supersedes` relations. Composite foreign keys retain user ownership, stable IDs support exact replay, and lifecycle, audit, relation, and outbox writes share one transaction.
+- Added the single approved lifecycle edge, `candidate -> historical`, and a transaction-scoped temporal transition seam. No other Step 4.3 transition changed.
+- Source deletion now invalidates directly affected resolutions, rewinds the complete resolver-owned suffix to its baseline, removes the deleted decision lineage, and replays eligible surviving decisions in stable order. Any rewind or replay failure rolls back the whole deletion.
+- Added eight development cases derived only from the protected Step 5.2 runtime and predictions, four per development user. Predictions and sanitized failures are written and runtime resources are closed before the separate reviewed gold file is hashed or opened.
+- During review, the resolver was corrected so an already terminal `superseded` or `excluded` replacement cannot be selected as current or recorded as an active replacement. A focused regression covers the selection, relation, and replacement-action fields.
+
+### Results
+
+The evaluator produced eight deterministic predictions and no failures. It recorded four no-change outcomes, two exclusions for non-user subjects, one temporal resolution that preserved the existing historical/current state without a redundant action, and one unresolved ambiguity that left both claims disputed.
+
+Exact outcome, exact action, current selection, historical preservation, dispute handling, no-change handling, and evidence-trace coverage each scored `1.000000`. Supersession is not evaluated because the fixed input has no correction, refinement, or retraction case. All eight predictions were deterministic, no cross-user action was recorded, and belief confidence remained null.
+
+### Tests and contract checks
+
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 tests passed, including 13 against disposable PostgreSQL 16.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 protected Step 5.2 tests passed.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected Step 5.1 tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected Step 4.4 tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 508 tests were discovered in 25.487 seconds; 451 passed and 57 database tests skipped. Every skipped database group passed in the Docker targets above.
+- The review covered all policy branches, exact relation direction, authority scope, terminal-state handling, null and mixed time, user and transaction visibility, deterministic IDs, exact replay and drift rejection, rollback, three deletion rewind/replay paths, gold sequencing, failure denominators, immutable outputs, and two clean byte-identical evaluator runs.
+- `git diff --check`, staged and unstaged checks, the changed-file secret and leakage scans, 23 implementation hashes, 58 predecessor hashes with exactly 13 authorized changes, result-manifest self-verification, and Docker cleanup passed.
+
+### Protected inputs and costs
+
+- Migrations `0001` through `0004`, the Step 5.2 configuration, dataset and release, the Step 5.1 and Phase 4 releases, storage and temporal predecessor interfaces outside the authorized seams, Phase 3 claims and evidence, the scaled runtime identity, predicate registry v2, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 5.3 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Resolver configuration: `configs/conflicts/belief_resolver_v1.json`, SHA-256 `9cd5ac711da1ec11f0528852845f42e9da7f2050d088bd51ad7e12cf8e9356c6`
+- Migration: `migrations/0005_belief_resolution.sql`, SHA-256 `641588e4a05a6c20bc5513fe1c0a41825ba9ed0379bf2de50a64c339732f59cb`
+- Dataset manifest: `data/conflicts/belief-resolution-development-v1/manifest.json`, SHA-256 `0c0903606fe25793c9c76f4eb699f5a59c75f294075e4547bb69812e809768d7`
+- Runtime cases: `runtime/cases.jsonl`, SHA-256 `f2d92261abd6a7bf49616068e7738ea4929cf8bcfaf0a85f1ec5252558421692`
+- Reviewed gold: `gold/cases.jsonl`, SHA-256 `f76b7bafd0a1796a0a7474cc222384c3f81716c44d5b5db71e29472b9a659276`
+- Result manifest: `results/conflicts/belief-resolution-development-v1/manifest.json`, SHA-256 `df01c8fbf9494e3f2eb0898e6f2c18aae3ee1cc57e8b2e3fe39ab0006e9f887d`
+- Predictions: `predictions.jsonl`, SHA-256 `f9250461eac63627f564f8d811b4964e1912da439b5a5e055c5d062b243f5596`
+- Scores: `scores.json`, SHA-256 `030f3db4a64be821b1e5d45a538e896bbf5ee04bab571536a836812a7c72ec29`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Run metadata: `run.json`, SHA-256 `c85ce29f65785f50eab16cd8ee0607c7668c7a3bc618d9bc86f30315474e752e`
+- Findings: `findings.md`, SHA-256 `630d9fe87380fe271a231f9588542d9a0a7035791a52f1dcb90ef42cd86371fb`
+- This is an eight-case deterministic development check. Five conflict labels and supersession have no development denominator, so the exact represented-case scores do not estimate production accuracy.
+- Unsupported lifecycle transitions remain fail-closed. In particular, the resolver does not add `confirmed -> historical`; Step 5.3 changes only the approved `candidate -> historical` edge.
+
+### Next-step input
+
+Step 5.4 receives the frozen resolver policy, checksum-bound resolution schema, user-scoped atomic service, deletion rewind/replay semantics, and immutable belief-resolution scorecard. Step 5.4 has not started and still requires separate implementation and review.
+
+## Phase 5, Step 5.4: Evaluate conflicts
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `5dd1eed3fd61a99eb1c234b08651b38fe9e34067`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-5.4-guidance-v1`, envelope SHA-256 `512dcbffc4d6b8dab30ba9c55045bb0b22eb8fea16942f9b9c50ea61896043e3`
+- Commit message: `eval: freeze Phase 5 conflict scorecard`
+- The worktree was clean after the final commit check.
+
+### Dataset and evaluator
+
+- Added one eight-case Phase 5 development view, with four cases for each development user. It binds only the protected Step 5.1 candidate runtime, Step 5.2 relation runtime, and Step 5.3 resolution runtime.
+- Runtime loading checks the exact case order, users, pairs, decision snapshots, and cross-stage continuity without opening or hashing gold. The scorer opens only the three corresponding Step 5 gold files after every fresh prediction or sanitized failure has been written and the database and runtime resources are closed.
+- The integration runner starts from a clean PostgreSQL database, applies migrations `0001` through `0005`, and runs the candidate linker, relation classifier, and belief resolver through their current production services. It does not load predecessor predictions. Every case stops at its first failed stage, and extra candidates or changed snapshots become visible failures.
+- The scorecard reports each component separately. It includes candidate recall, conflict-pair precision, recall and F1, type accuracy, false contradiction rate, correction links, current and historical belief selection, superseded preservation, unresolved disputes, evidence lineage, failures, cross-user output, and execution mode. It has no composite score.
+- The result path is immutable. A nonempty directory is rejected, and two clean database runs produced byte-identical artifacts.
+
+### Review corrections
+
+- Changed evidence coverage to require an exact source-ID set. The earlier subset check could have credited a prediction with extra provenance. A regression now proves that an unexpected source lowers coverage.
+- Changed the two empty-denominator reasons to the frozen values `no_reviewed_correction_links` and `no_reviewed_superseded_claims`.
+- Added explicit F1 accounting checks. The perfect fixed set is represented as numerator `4` over denominator `4`; adding one false positive changes it to `4/5`.
+
+### Results
+
+The fresh run produced eight deterministic predictions and no failures. Candidate recall was `8/8`. Conflict-pair precision, recall, and F1 were each `1.000000` over two reviewed positive pairs, and conflict-type accuracy was `2/2`. The false contradiction rate was `0/8`.
+
+Current belief selection, historical preservation, unresolved-dispute handling, and exact evidence lineage each scored `1.000000`, with denominators `1`, `1`, `1`, and `8`. The dataset has no reviewed correction link or superseded claim, so those two metrics are null with their recorded reasons. The run produced no cross-user output, made no model call, and used no fallback.
+
+### Tests and contract checks
+
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 tests passed against disposable PostgreSQL 16 after the review corrections and artifact rebind.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected candidate tests passed.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 protected relation tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 protected resolver tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 526 tests were discovered in 23.787 seconds; 464 passed and 62 database tests skipped. Every skipped database group passed in the sequential Docker targets above.
+- Gold sequencing, fresh service execution, failure stop points, exact evidence lineage, F1 denominators, deletion and replay behavior, downstream temporal views, immutable output refusal, and two clean byte-identical runs passed.
+- `git diff --check`, staged and unstaged inspection, result-manifest self-verification, the changed-file secret and leakage scans, all 68 effective protected hashes, and Docker cleanup passed. The Makefile test target was the only authorized predecessor-file change.
+
+### Protected inputs and costs
+
+- Production code, migrations `0001` through `0005`, configurations, the complete Step 5.1 through Step 5.3 datasets and releases, Phase 4 releases, Phase 3 claims and evidence, scaled runtime identity, predicate registry v2, `preference.md`, and the roadmap kept their recorded hashes.
+- Step 5.4 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Dataset manifest: `data/conflicts/phase5-evaluation-development-v1/manifest.json`, SHA-256 `62be6e153e74e7263d14303dd09f09a2ca4820efa766ec44375c96487bccff77`
+- Result manifest: `results/conflicts/phase5-conflict-evaluation-development-v1/manifest.json`, SHA-256 `35f37c3ef5f4a45739df200e64053a5d35552dec264336bb6bca3b701fb850ff`
+- Predictions: `predictions.jsonl`, SHA-256 `0655f923dc99a592dec1731f7c04409304108def6d647c024bebecf53eb2021b`
+- Scores: `scores.json`, SHA-256 `c1524091183d2fe5fb152523ae92f24600bdb4e743aecc1d3c9d76ffc186366c`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Run metadata: `run.json`, SHA-256 `43aacc222959492916499d43bc9110d61fd948de4bc7d4dd8e5d020e7654d880`
+- Findings: `findings.md`, SHA-256 `e72c3643fe6ab7f9c702959f229951e0c45efe3ab16d55be59e0b6d16bfe6409`
+- This is an eight-case deterministic development evaluation. It contains two conflict-positive pairs and no correction or supersession example, so the exact scores do not estimate production accuracy.
+- The evaluator measures the frozen Phase 5 pipeline. It does not add conflict policy, change lifecycle state, call a model, or inspect frozen test users.
+
+### Next-step input
+
+Phase 6 receives the protected Phase 5 candidate, relation, resolution, and component scorecards, together with exact user-scoped provenance and current-belief state. Phase 6.1 has not started and still requires its own implementation and review.
+
+## Phase 6, Step 6.1: Compute deterministic session boundaries
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `548b12750142eb07c8749f0a8f7834ba4c7b7c3b`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-6.1-guidance-v1`, envelope SHA-256 `bdbf7a891369104061b675a9c0754de573444e9eeca27972da6c98b6c863f09f`
+- Commit message: `summary: add deterministic session boundaries`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added a frozen session-boundary configuration and typed contracts for user-scoped, transaction-cutoff reads. Sessions are computed from live source events; this step adds no migration or session table.
+- Conversation and calendar sources form single-source sessions. Email uses `source_events.session_id`, then `metadata.thread_id`, and falls back to the source itself. Conflicting declared email keys fail without exposing either value, and subject text is never used.
+- Chat uses the declared session ID before a metadata thread ID. Declared and unthreaded chats never mix. Unthreaded chats share a session when the gap is at most 1,800 seconds and split at 1,801 seconds.
+- Stable session definition IDs bind the user, source type, boundary rule and internal key. Membership hashes bind the ordered sources, time range, user and as-of cutoff. Raw thread values are not written to output artifacts.
+- PostgreSQL reads require a user and aware as-of time, apply `ingested_at <= as_of`, and order by produced time and source ID. Deletion is reflected on the next read, and earlier as-of views remain reproducible.
+- Added a development loader that reads only the first 20 scaled source records and first two user records. The prefix parser stops before the next record. Runtime code does not load scaled gold, oracle data, review queues or test users.
+- Added unit and live PostgreSQL coverage, an immutable development result, a focused Makefile target, and the narrow Step 5.4 replay adapter. The adapter permits exactly two predecessor drifts: the Makefile target and its own replay test.
+
+### Results
+
+The release contains 20 deterministic sessions from 20 development sources, split evenly between `user_001` and `user_002`. The type counts are eight conversation sessions and four each for email, chat and calendar. Source coverage is `20/20`; failures, invalid sessions, duplicate sources and cross-user outputs are all zero.
+
+The frozen development sources happen to have unique declared thread IDs, so the release does not exercise multi-source grouping. The live fixtures cover the 1,800-second boundary, declared-key precedence, late ingestion, deletion, bridge recomputation, last-member removal and tombstones.
+
+### Tests and contract checks
+
+- `make test-sessionization PYTHON=.venv-storage/bin/python`: 33 tests passed against disposable PostgreSQL 16.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected candidate tests passed.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 protected relation tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 protected resolver tests passed.
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 protected Phase 5 evaluator tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 559 tests were discovered in 30.823 seconds; 492 passed and 67 database tests skipped. Every skipped database group passed in the sequential Docker targets above.
+- Exact boundary inclusivity, declared-key precedence and conflicts, user and as-of filtering before grouping, stable IDs and hashes, deletion-derived recomputation, prefix isolation, immutable output refusal, and two clean byte-identical runs passed.
+- `git diff --check`, staged and unstaged inspection, result self-verification, the changed-file secret and leakage scans, all 68 effective predecessor hashes, and Docker cleanup passed.
+
+### Files, protected inputs and costs
+
+- Added `configs/summaries/session_boundaries_v1.json`, `data/summaries/sessionization-development-v1/manifest.json`, the five files under `src/summaries`, three focused test files, and the six-file immutable result under `results/summaries/sessionization-development-v1`.
+- Changed only `Makefile`, `tests/integration/test_phase5_conflict_evaluation.py`, and this ledger outside those new paths. Production migrations, storage, ingestion, temporal and conflict code remain unchanged.
+- The Step 5.4 manifest kept SHA-256 `35f37c3ef5f4a45739df200e64053a5d35552dec264336bb6bca3b701fb850ff`. Its five non-manifest artifacts remained byte-identical, and its fresh replay still matched those artifacts under the current Makefile.
+- Step 6.1 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Boundary configuration: `configs/summaries/session_boundaries_v1.json`, SHA-256 `d2af3cbfd35e24d1f0b3a10acd148fb46a7fc2b4cd96268182bd12dd8570f20b`
+- Dataset manifest: `data/summaries/sessionization-development-v1/manifest.json`, SHA-256 `c139e2624cbec7904ca8edd67b4b1f42423dcfda8a47a1d8ca04cf8ee5507b69`
+- Result manifest: `results/summaries/sessionization-development-v1/manifest.json`, SHA-256 `34611525b22cb9dcf8b5c9eb4affd2422d778b58b4b443c90913ce29c8f9365c`
+- Predictions: `predictions.jsonl`, SHA-256 `2b7de7fc1b2d821867e8eeaa29182a1e22e15977387ce40e46301e2e56f86845`
+- Scores: `scores.json`, SHA-256 `12fd9d01232fa5e1a418d699388c5bf333676d0827c477bcc85c4c5b66c02131`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- This step tests deterministic boundary mechanics and source coverage. It does not assess summary quality, create durative memories, persist sessions, call a model, or inspect frozen test users.
+
+### Next-step input
+
+Step 6.2 receives the frozen boundary configuration, typed session contracts, user-scoped repository, immutable 20-source development release, and deletion-aware as-of behavior. Step 6.2 has not started and still requires separate implementation and review.
+
+## Phase 6, Step 6.2: Build grounded session summaries
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `97485bcc62ccc954c63fb1d8cd593d5f0d42533e`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-6.2-guidance-v1`, envelope SHA-256 `175f3a05789d633cefeab329816c38123de4f2226713a82154f10755bb123fd1`
+- Commit message: `summary: add grounded session summaries`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added migration `0006` with user-owned summary definitions, immutable versions, complete source membership, and statement-to-claim-version-and-span evidence. Composite foreign keys enforce ownership, and transaction time is stored as a half-open interval.
+- Source, span, and evidence deletion triggers physically purge every affected summary version before protected predecessor rows are removed. The coordinator also handles each existing source, claim, lifecycle, and recompute outbox event; it adds no new event type.
+- Added a typed transactional repository with deterministic create, exact replay, drift rejection, successor, stale-input, concurrent first-write, and empty-summary behavior. It never mutates an older version.
+- Rendering is structural and deterministic. It preserves status, time, attribution, and sensitivity qualifiers; omits restricted, hypothetical, and excluded claims; marks disputes as unresolved; and asks a question only for explicit uncertainty or dispute. Every statement must cite the exact same-user claim version and source span. No evidence is generated.
+- The development loader binds the protected Step 6.1 sessions to the Phase 3 development claims and evidence. It reads no summary gold, oracle data, review queue, frozen test user, or model output.
+- During review, exact-lineage validation was tightened. Statement claim IDs must now equal the claims represented by their evidence, and provenance scoring independently recomputes and verifies each span ID instead of accepting any span from the same source. Two focused regressions cover these cases.
+
+### Results
+
+The release evaluated 20 sessions. Seventeen produced persisted summaries and three had no eligible evidence and remained explicitly empty. The 17 summaries contain 34 statements and cover all 33 development claims with exact source, span, claim-version, and session-membership lineage. One uncertain claim produces a separate review question.
+
+All structural coverage and consistency metrics scored `1.000000`; invalid, stale, cross-user, and unsupported-lineage counts were zero. The deletion check removed an affected summary before rebuilding the surviving sessions. Two clean PostgreSQL runs produced byte-identical artifacts.
+
+### Tests and contract checks
+
+- `make test-grounded-summaries PYTHON=.venv-storage/bin/python`: 45 tests passed against disposable PostgreSQL 16, including the two review regressions.
+- `make test-sessionization PYTHON=.venv-storage/bin/python`: 33 protected Step 6.1 tests passed.
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 protected Phase 5 evaluator tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 protected resolver tests passed.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 protected relation tests passed.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 protected candidate tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 protected lifecycle tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 604 tests were discovered in 27.758 seconds; 528 passed and 76 database tests skipped. Every skipped database group passed in the sequential Docker targets above.
+- Migration replay and checksum enforcement, four-table constraints, composite ownership, all-version deletion, exact replay and successor behavior, stale and concurrent writes, rendering rules, time normalization, source and claim lineage, immutable output refusal, and two clean byte-identical runs passed.
+- `git diff --check`, staged and unstaged inspection, result-manifest self-verification, the changed-file secret and leakage scans, all 79 predecessor hashes with exactly seven authorized changes, and Docker cleanup passed.
+
+### Files, protected inputs and costs
+
+- Added `configs/summaries/session_summary_renderer_v1.json`, `migrations/0006_session_summaries.sql`, four implementation files under `src/summaries`, five focused test files, one dataset manifest, and the seven-file immutable release under `results/summaries/grounded-summary-development-v1`.
+- Changed only `Makefile` and the six migration adapters named in the Step 6.2 contract outside those new paths. Core storage, ingestion, temporal, conflict, extraction, and sessionization implementations remain unchanged.
+- The Step 6.1 and Phase 5 frozen releases kept their recorded manifest and artifact hashes. The adapter applies only migrations `0001` through `0005` when replaying Step 6.1, and its five non-manifest artifacts remain byte-identical.
+- Step 6.2 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service.
+
+### Artifacts and limitations
+
+- Renderer configuration: `configs/summaries/session_summary_renderer_v1.json`, SHA-256 `1e15e3359c292095f7563de1f00f0d348d43030eebe34f68545b0f851e8797a5`
+- Migration: `migrations/0006_session_summaries.sql`, SHA-256 `64181b9e87054bb4f206018a4576e31f197218762e8f684a95ab642df4bc0834`
+- Dataset manifest: `data/summaries/grounded-summary-development-v1/manifest.json`, SHA-256 `4b4a48e62029a4e138f54dba4235b506eba8cc6236526ff7c2ede14243fa07b5`
+- Result manifest: `results/summaries/grounded-summary-development-v1/manifest.json`, SHA-256 `ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761`
+- Summaries: `summaries.jsonl`, SHA-256 `6ce2ddbdc3ade54154e4db0bd136ff6f12e1037ebf4b214d560a2247fb674b22`
+- Empty sessions: `empty_sessions.jsonl`, SHA-256 `409d2d275cd4ea4e1f218b8b7fc3e6810bbaa886fb3c0128ce78b734ccf71a81`
+- Checks: `checks.json`, SHA-256 `4d5b6a3f96ac2fa0f60ff9dd1177e51b44e6badd612cbb10d2ad8885aacfc7ea`
+- Failures: `failures.jsonl`, empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Run metadata: `run.json`, SHA-256 `278c541668357b69d2a0884375537c69164bea65be76f9df5aec144cf83edf8e`
+- Findings: `findings.md`, SHA-256 `4d535d9f1abad75c67734d7e5128f8ec734070f71bb744c674870cba0adf7eed`
+- This development set contains only single-source sessions and candidate claims. The scorecard checks grounding, structure, persistence, and reproducibility; it does not rate editorial quality or estimate production summary quality.
+- This step does not create durative memories, call a model, infer missing evidence, or implement Step 6.3.
+
+### Next-step input
+
+Step 6.3 receives the checksum-bound summary schema, deterministic renderer, exact lineage model, deletion-aware coordinator, and immutable grounded-summary development release. Step 6.3 has not started and still requires separate implementation and review.
+
+## Phase 6, Step 6.3: Add deterministic durative claims
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `16f6c367ed7543aa05b3da00044f9fab1555dfb1`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-6.3-guidance-v1`, envelope SHA-256 `de50f5ce8955d85f617bfef15af7e39297704c4b6a056f32a467ad7473ce28e2`
+- Commit message: `summary: add deterministic durative claims`
+- The worktree was clean after the final commit check.
+
+### Dataset and implementation
+
+- Added a frozen rules file for interval predicates in the role, goal, preference, belief, relationship, and state families. Inference requires exact user, subject, predicate, polarity, and canonical JSON object identity. It does not paraphrase or merge predicates.
+- The public request covers one user and transaction cutoff. Each atomic run stores every proposition decision for that user. Migration `0007` adds user-owned run, decision, and evidence tables with composite foreign keys and source-deletion cascades. Persisted evidence roles are exactly `supports` or `counter_evidence`; ignored inputs remain in the run snapshot and are not written as lineage.
+- Eligible support must be episodic, visible at the transaction cutoff, asserted or corrected, and in a confirmed, current, or historical lifecycle state. One explicit closed interval is sufficient. Otherwise, support must span at least two sessions, sources, and episode times.
+- Restricted, hypothetical, denied, disputed, unresolved, recursive, and otherwise ineligible evidence cannot create a durative claim. Incompatible values block only when their time overlaps or is unknown. A resolved temporal change across disjoint intervals remains historical context.
+- Accepted results use the ordinary claim model with `memory_kind="durative"`, inferred epistemic status, candidate lifecycle, `speaker_id="memory_system"`, null belief confidence, minimum support confidence, highest eligible sensitivity, and exact span lineage. The extraction version records `model_version="deterministic"`.
+- Claim identity is stable for the exact proposition. Additional evidence appends an immutable transaction-time successor. A changed valid interval creates a replacement claim instead of mutating the old claim. Replay, concurrent writes, source deletion, and survivor recomputation are transactional.
+- The development loader binds only the frozen Step 6.2 release, Phase 3 development claims and evidence, session definitions, predicate registry, and rules file. It has no runtime path to summary gold, scaled gold, an oracle, a review queue, or frozen test users.
+
+### Results
+
+The release accounted for all 33 development claims. Seven use predicates outside the durative rules. The other 26 propositions were rejected as counterevidence because the imported claims still have null memory kind and candidate lifecycle. This is the conservative result required by the frozen handoff; no rule was weakened to create a positive example.
+
+The database contains two user-level inference runs with 26 decisions, split 13 per user. The decisions contain 42 `counter_evidence` lineage rows and no ignored rows. Accepted claims, failures, duplicate decisions, stale references, cross-user references, unsupported decisions, model calls, retries, and cost are all zero. Decision accounting, input-claim accounting, and provenance integrity each scored `1.000000`; replay and deletion recompute checks passed.
+
+During review, a wrong exclusion glob accidentally exposed frozen-test gold text to the reviewer. The reviewer stopped immediately. None of the exposed text was used in code, fixtures, expected values, metrics, or judgments. The implementation and release are derived only from the explicit development allowlist and bound manifests.
+
+### Tests and contract checks
+
+- `make test-durative-claims PYTHON=.venv-storage/bin/python`: 55 tests passed against disposable PostgreSQL 16. The first unpinned invocation stopped at import because the system Python lacked `psycopg`; no test body ran in that attempt.
+- `make test-grounded-summaries PYTHON=.venv-storage/bin/python`: 45 protected Step 6.2 tests passed.
+- `make test-sessionization PYTHON=.venv-storage/bin/python`: 33 protected sessionization tests passed.
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 protected Phase 5 evaluator tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 protected resolver tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 protected temporal-evaluation tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 protected storage and ingestion tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 659 tests were discovered in 28.953 seconds; 564 passed and 95 database tests skipped. The guidance-required database groups passed in the sequential Docker targets above.
+- Public run contracts, exact-proposition matching, family coverage, counterevidence precedence, complete date and timestamp boundaries, transaction visibility, stable claim identity, successor and replacement behavior, deterministic extraction metadata, exact lineage roles, replay, concurrency, deletion, immutable output refusal, and two clean byte-identical releases passed.
+- `git diff --check`, compilation, result self-verification, the changed-file secret and leakage scans, the 91-file predecessor attestation with exactly nine authorized drifts, staged and unstaged inspection, and Docker cleanup passed.
+
+### Files, protected inputs and costs
+
+- Added the rules configuration, migration `0007`, four durative modules, four focused test files, the development manifest, and the seven-file immutable release under `results/summaries/durative-claim-development-v1`.
+- Changed only the Makefile and the eight migration or replay adapters authorized by the Step 6.3 contract outside those new paths. Core storage, ingestion, temporal, conflict, sessionization, grounded-summary, and extraction production modules remain unchanged.
+- The Step 6.2 manifest remains `ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761`. Migration `0006`, its four production modules, and all six Step 6.2 result artifacts kept their recorded hashes. The effective predecessor map covers 91 paths: 82 unchanged and exactly nine authorized drifts.
+- Step 6.3 made zero OpenAI requests, used zero input and output tokens, cost `$0`, and wrote to no hosted service. Historical OpenAI spend remains `$0.2314404`.
+
+### Artifacts and limitations
+
+- Rules configuration: `configs/summaries/durative_claim_rules_v1.json`, SHA-256 `680de008e33de6824b8fded16f8e6fdc6877130d9a2caa35908be1c45c1a0b7b`
+- Migration: `migrations/0007_durative_claims.sql`, SHA-256 `64e1fc2a9538d342b28003d5a1bf78b1532326fa5be0e6d8d448b8e94bc07325`
+- Dataset manifest: `data/summaries/durative-claim-development-v1/manifest.json`, SHA-256 `51db96e51079303c8e6267c224e02ea117c4a9d810217b3310ccef31b4ac4d72`
+- Result manifest: `results/summaries/durative-claim-development-v1/manifest.json`, SHA-256 `1d3f1c78d95bd96399224581bec21143c4b52562517d4779b74850e42d26fdbb`
+- Rejections: `rejections.jsonl`, SHA-256 `7bbc228591b89e8049fbc42a3de8f2da060162498bbce7f631f0eadfb792ebc9`
+- Claims and failures: both empty, SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Checks: `checks.json`, SHA-256 `fe36f87449c02b5260f9be755c8406b64ca213d9375eb8ceb844f67f2d2de8a5`
+- Run metadata: `run.json`, SHA-256 `863a1671a32de482112143cfdbb85f11eafa3570c49a41ce7ff9ecee1a9bbb02`
+- Findings: `findings.md`, SHA-256 `85f0aca8d2fbf164dee91790f5c51b9b0ef63ce5c4637bcea6251087ef4c1bfc`
+- The frozen development handoff cannot produce a positive durative claim because its claims are unresolved candidates with null memory kind. Positive inference, persistence, time, concurrency, and deletion behavior are covered by synthetic unit and live PostgreSQL fixtures instead.
+
+### Next-step input
+
+Step 6.4 receives the frozen rules, checksum-bound schema, user-run inference contract, exact support and counterevidence lineage, deletion-aware recompute behavior, and immutable development release. Step 6.4 has not started and still requires separate implementation and review.
+
+## Phase 6, Step 6.4: Evaluate summary quality
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `d52b4a2a9a1178ab37354fc65fd1d202519185cc`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-6.4-guidance-v2`, envelope SHA-256 `3b5673d169a1ad58cffda7ff45bd83ffe0a541da9ed38e870be99503842955b9`
+- Commit message: `eval: add Phase 6 summary scorecard`
+- The worktree was clean after the final commit check.
+
+### Evaluation boundary and sequencing
+
+- The first Step 6.4 attempt under guidance v1 was invalid and never committed. Cached-diff review found a trailing blank line in the runtime module after development gold had already been opened. Even though the change was only whitespace, changing the frozen runtime byte invalidated that checkpoint.
+- Guidance v2 froze the corrected runtime module at SHA-256 `5b8b991d7fe5ea6a723fe7ca18929351ade8559b6e3082aa38c43afc228ea093`. The v2 runtime contains no scorer, gold, oracle, review, reference-summary, or test-user import or path.
+- The runtime checkpoint was generated for ten development cases while all v1 and v2 scorer configurations, scorer code, scorer tests, gold files, event maps, and final result paths were absent. The preflight records that state, the two byte-identical runtime trials, five cases per user, and zero model use. The complete checkpoint tree was frozen before any scorer file returned.
+- The previously authorized v1 development-only gold was then copied byte-for-byte from the private backup into the v2 paths. Gold cases, claims, and event map retained SHA-256 values `66271b5cd113a126f3ed5c339a599e5ff35d342fa2be233bdeea39310174e8d6`, `88361358e7972753655a38107e3a8fcef2131a3e8b9e98000e771f808ef7001f`, and `83393611342afde3bd8606a78f377c2f41969bf2e41c18a4a5493b2029052c17`.
+- This was not a blind evaluation: the implementing agent had already seen the authorized development gold during the invalid v1 attempt. The v2 scorer and mapping were carried forward without reinterpretation or threshold tuning. No frozen test-user, oracle, or review-queue content was opened, copied, or scored.
+
+### Results
+
+The release has one prediction and no failure for each of the ten cases belonging to `user_001` and `user_002`. The all-visible-session baseline contains 165 factual statements and five unresolved questions. The reviewed gold contains 22 events, 31 evidence instances, two correction events, and nine uncertainty events.
+
+Exact Claim-and-evidence matching found no event match. Gold-event micro precision is `0/165`, recall is `0/22`, and F1 is `0.000000`; macro precision, recall, and F1 are each `0.000000` over ten cases. Supporting-evidence micro precision is `0/165`, recall is `0/31`, and F1 is `0.000000`. Current-versus-historical accuracy is `null` because there are no matched reviewed-state events. Correction preservation is `0/2`, and uncertainty preservation is `0/9`.
+
+Case accounting is `10/10`, and exact statement-to-Claim-version-to-span provenance coverage is `170/170`. Cross-user predictions, stale references, unsupported statements, runtime failures, and sanitized failures are all zero. The result publishes no composite score.
+
+These low scores are an honest outcome of the frozen baseline. It returns every visible session summary instead of retrieving by instruction, and the upstream weak extraction does not exactly match the reviewed gold Claims and evidence. Step 6.4 did not change production behavior or tune to the exposed development gold.
+
+### Tests and contract checks
+
+- Focused Step 6.4 unit and integration tests: 30 tests passed, including guarded runtime reads, exact checkpoint bytes, invalid-v1 rejection, carried-gold identity, one-to-one scoring, metric denominators, and two deterministic scorer runs.
+- `make test-durative-claims PYTHON=.venv-storage/bin/python`: 55 tests passed against disposable PostgreSQL 16.
+- `make test-grounded-summaries PYTHON=.venv-storage/bin/python`: 45 tests passed.
+- `make test-sessionization PYTHON=.venv-storage/bin/python`: 33 tests passed.
+- `make test-conflict-eval PYTHON=.venv-storage/bin/python`: 39 tests passed.
+- `make test-belief-resolution PYTHON=.venv-storage/bin/python`: 46 tests passed.
+- `make test-conflict-relations PYTHON=.venv-storage/bin/python`: 29 tests passed.
+- `make test-conflict-candidates PYTHON=.venv-storage/bin/python`: 29 tests passed.
+- `make test-temporal-eval PYTHON=.venv-storage/bin/python`: 20 tests passed.
+- `make test-temporal PYTHON=.venv-storage/bin/python`: 15 tests passed.
+- `make test-storage PYTHON=.venv-storage/bin/python`: 30 tests passed.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 689 tests were discovered in 26.246 seconds; 594 passed and 95 database tests skipped. Every guidance-required database group passed in the sequential Docker targets above.
+- Compilation, `git diff --check`, staged and unstaged inspection, secret and leakage scans, manifest self-verification, exact checkpoint/final prediction and failure identity, the 103-path predecessor check with zero drift, and Docker cleanup passed.
+
+### Artifacts and costs
+
+- Scorer configuration: `configs/summaries/summary_quality_scorer_v2.json`, SHA-256 `28b02f194f2cfafb4c2ec82e876bfae6797a9f588465f7fcc3564da6d58bddf1`
+- Runtime cases: `data/summaries/summary-quality-development-v2/runtime/cases.jsonl`, SHA-256 `3ec24d5abe216b125f088307822bd4e48a3b82f9a21f75cf91e3110640797b33`
+- Runtime input manifest: `data/summaries/summary-quality-development-v2/runtime/manifest.json`, SHA-256 `4feba4d18e7ec6ad8932a683d58114d55a138a0b1f4a90d61547a8a0d9f7ac8f`
+- Dataset manifest: `data/summaries/summary-quality-development-v2/manifest.json`, SHA-256 `d58646b3df446c467fabc0bf41099f80fc0a045f54a41c361ee92013702fbc17`
+- Runtime preflight: `results/summaries/summary-quality-development-runtime-v2/checkpoint_preflight.json`, SHA-256 `4a2b8947c10259199ab2ca122f5d86ab8ce225f3819ec4469f98f723f5c23dd7`
+- Runtime checkpoint manifest: `checkpoint_manifest.json`, SHA-256 `6b0a474e42962ac792516c0ed024fa78d9d52842974cf8e8f221f0297e04500e`
+- Runtime and final predictions: SHA-256 `4bcd6c0c821936465f927e2f3196fcaccf108b997a24c45cc24191602942813a`
+- Runtime and final failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Final result manifest: `results/summaries/summary-quality-development-v2/manifest.json`, SHA-256 `b9ed38d2bf68afc0532adda7a1b229cc989548eaabd1087e597b8787819b4385`
+- Scores: `scores.json`, SHA-256 `c5b1590be212388b1daf5a81065e1ec6c972402b7d348b0ab47f08c2a087658c`
+- Run metadata: `run.json`, SHA-256 `9ffd729551312accdfa40112b625c72ee24a5e51e41f5291e6d8710d1ec13d6d`
+- Findings: `findings.md`, SHA-256 `26312cf69531aa36b5aee405feba88230fbf97ee83ded3bae16a8a23429a5bde`
+- Step 6.4 made zero requests or retries, used zero input and output tokens, cost `$0`, and called no provider. Historical OpenAI spend remains `$0.2314404`.
+
+### Next-step input
+
+Step 7.1 receives the frozen session boundaries, grounded-summary and durative contracts, immutable durative and summary-quality scorecards, exact statement provenance, and versioned session-index input. Step 7.1 has not started and requires separate guidance and authorization.
+
+## Phase 7, Step 7.1: Build atomic and session indexes
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `9e72921e930a336c8a3ef280165f5715cac0019a`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-7.1-guidance-v1`, envelope SHA-256 `41a3f67caa7a41f9039f24a3d78eff26c1e45568eda64a9be3b3753ee8c33418`
+- Commit message: `retrieval: add atomic and session indexes`
+
+### Schema and implementation
+
+- Migration `0008` adds user-owned index runs, atomic and session records, and exact claim-version, source-span, and checked-relation lineage. Composite foreign keys enforce ownership. Separate partial GIN and HNSW indexes cover atomic and session records, while B-tree filters begin with user, index version, and record kind.
+- Atomic records preserve the frozen Claim and ClaimVersion fields, lifecycle, valid and transaction time, sensitivity, evidence, and checked relation context. Session records reuse the existing summary text, ordered statements, unresolved questions, lifecycle set, sensitivity flag, and exact statement lineage. Restricted records are excluded; candidate, current, historical, disputed, and superseded records keep their original status.
+- `deterministic_token_hash_v1` produces 256-dimensional, L2-normalized vectors with Unicode normalization and SHA-256 bucket and sign selection. It uses only the Python standard library, has no random or network path, and is explicitly a development storage vector rather than a semantic embedding model.
+- Per-user builds use an advisory lock and one transaction. Exact replay is a no-op; an idempotency-key drift, ownership mismatch, stale lineage, or partial write fails closed. Source, span, relation, evidence, and summary deletion remove affected index rows before any stale content can remain, and survivors can be rebuilt under the same contract.
+
+### Review corrections
+
+- The development loader originally hashed the complete mixed runtime user and source files. Review replaced those bindings with the frozen two-user and 20-source prefix hashes from the sessionization manifest and added a read trap that fails on record 3 or source 21.
+- Checked relation lineage originally lacked the build cutoff. It now requires `created_at <= transaction_as_of`; a live regression covers both the exact boundary and a future relation.
+- A pre-commit release attempt used the 126-file protection map inside runtime generation and therefore hashed three prohibited Step 6.4 gold files. That release was rejected and never committed. The corrected runtime hashes only four approved authority manifests: the Step 6.3 result manifest, Step 6.4 result manifest, checkpoint manifest, and checkpoint preflight. A full-execution read trap rejects gold, scorer, evaluator, oracle, review-queue, and test-user paths.
+- The final release states that its 126-path result is a `git_and_reviewer_gate` with `runtime_verified=false`. Reviewer-side recomputation found exactly the nine authorized compatibility changes and 117 unchanged protected paths. The private pre-correction backup remains outside the repository.
+
+### Results
+
+The final development build contains 33 atomic records and 17 session records for `user_001` and `user_002`, with no durative records. It created two successful user-scoped runs and 50 total records. Claim and source lineage each contain 66 rows; there are no checked relation rows because the frozen development handoff contains none.
+
+Failures, duplicates, cross-user references, stale references, unsupported records, restricted records, partial writes, model calls, retries, tokens, and incremental cost are all zero. All 50 records have 256-dimensional vectors and full-text documents. Exact lineage, replay, deletion, and deterministic-release checks passed. The five payload artifacts remained byte-identical across the leakage correction; only the release manifest changed to record the narrower runtime authority contract.
+
+### Tests and contract checks
+
+- `make test-retrieval-index PYTHON=.venv-storage/bin/python`: 40 tests passed against disposable PostgreSQL 16, including the prefix trap, relation cutoff, full runtime-read trap, migration, index, replay, concurrency, rollback, deletion, and two-clean-build checks.
+- Protected live gates passed: ingestion 5, storage 30, temporal lifecycle 15, temporal evaluation 20, conflict candidates 29, conflict relations 29, belief resolution 46, Phase 5 evaluation 39, sessionization 33, grounded summaries 45, durative claims 55, and Step 6.4 summary quality 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 729 tests were discovered in 30.385 seconds; 621 passed and 108 database tests skipped. The skipped database groups passed in the sequential live gates above.
+- Release self-verification, in-memory compilation, `git diff --check`, staged and unstaged inspection, secret and leakage scans, out-of-band 126-path protection with exactly nine authorized changes, payload-byte comparison, and Docker cleanup passed.
+
+### Artifacts, costs and limitations
+
+- Index configuration: `configs/retrieval/index_v1.json`, SHA-256 `4579b9fe671985a35f605ad9f0dcf256d4672b95329e597d0876754bc5c84a48`
+- Migration: `migrations/0008_retrieval_indexes.sql`, SHA-256 `57608bce946af98cd88c8ecb1741e4d2ce32520f7894bf81b9beaf103b639156`
+- Dataset manifest: `data/retrieval/index-development-v1/manifest.json`, SHA-256 `b9c1afd7490d78d25d9bd37d34abb0b90b739908f6ab3da89f9e3b7da343f8fc`
+- Result manifest: `results/retrieval/index-development-v1/manifest.json`, SHA-256 `5854d9389224128549df992a9fd7f60e857333ed273adb946b1c1c8c58dea0c6`
+- Records: `records.jsonl`, SHA-256 `e29531cd3bf72419c947a31b13c0b4adbd008f019dfbfc3e6a820ad541e23cfe`
+- Checks: `checks.json`, SHA-256 `513c869d0ed4c1247be650a065ac88ad1b4b8256f9c3c9c029d53aa70f59441d`
+- Run metadata: `run.json`, SHA-256 `802c46fc63cefcb5d2e99a9a27f6ebf9b6173e4519da0bf4433fa17286168987`
+- Findings: `findings.md`, SHA-256 `11a712bbd98e9340a3c0a06840ade6181c0ca6fd4acc8794b2b9950e2f4a2980`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Step 7.1 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- The development handoff contains only candidate atomic claims and no accepted durative claim. The token-hash vectors prove index mechanics and reproducibility; they do not establish semantic retrieval quality, relevance, ranking, latency, or production embedding quality.
+
+### Next-step input
+
+Step 7.2 receives the frozen index schema, deterministic renderer and embedder contract, exact record lineage, deletion-aware rebuild behavior, and immutable 50-record development release. Query classification, filters, ranking, fusion, retrieval scoring, and answers have not started and require separate guidance and authorization.
+
+## Phase 7, Step 7.2: Add query planning and pre-search filters
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `cd8fc5856b682584aa979623b500fabaf8d5f902`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-7.2-guidance-v1`, envelope SHA-256 `d698cc1b53460bc6422fa9d25fb9f47a398425e7848cdf18f93a71e2e9103e70`
+- Compatibility ruling: `step-7.2-guidance-v1-compatibility-ruling-1`, envelope SHA-256 `bb83c54b37ff2ff14c7e6655fded7a696de79e19c4dfa4b0f63086cd1dbc1e4b`
+- Commit message: `retrieval: add deterministic query planning and filters`
+
+### Implementation
+
+- The request and plan contracts require an aware cutoff, a frozen index version, sorted record-kind, speaker, and subject filters, typed valid time, and explicit sensitivity permissions. Unknown fields, duplicate filters, mixed or reversed time, naive timestamps, and version drift fail before repository work.
+- The planner classifies eight query types with frozen NFKC and casefolded phrase rules. Evidence requests take precedence over the underlying factual type, while change and correction intent takes precedence over simple current or historical wording. Structured time remains authoritative; unstructured time is flagged for clarification instead of parsed.
+- The query repository chooses the latest successful user-owned index run at or before the request cutoff. It then applies transaction, source-ingestion, relation, inclusive valid-time, speaker, subject, lifecycle, and sensitivity checks. Cross-user rows never enter the result or its rejection counts. Restricted rows cannot be authorized, sensitive rows require permission, and null sensitivity requires a separate audit opt-in.
+- The repository returns stable record-ID order for reproducibility only. It does not execute full-text or vector search, compute an embedding, score or rank a record, choose `k`, fuse results, rerank, or answer a question.
+- Compatibility ruling 1 updates only the frozen Makefile hash in `tests/integration/test_phase5_conflict_evaluation.py`. The final Makefile SHA-256 is `347eab60fd4d62d3764bb4315f1831cc024c3696bd37524de8ffd8106252c6e1`; the ruled adapter SHA-256 is `580fd9b546996641a397f9ea1f57980c44e41066ceb92f91f0fea50f3d734a8f`. The Step 5.3 and Phase 5 manifests and payloads remain unchanged.
+
+### Development release
+
+The release contains 24 synthetic development requests, split evenly across `user_001` and `user_002`, with three requests for each query label. Runtime planning and filtering completed before the scorer opened the separate reviewed reference. The runtime checkpoint records that no reference, gold, oracle, review-queue, test-user, search, ranking, or model path ran.
+
+All 24 labels, 24 plan expectations, and 24 eligibility expectations matched. Failures, cross-user rows, restricted rows, post-cutoff rows, duplicate decisions, stale rows, unsupported rows, model calls, retries, tokens, and incremental cost were all zero. Two clean PostgreSQL runs produced byte-identical runtime artifacts, and two scorer runs over the checkpoint produced byte-identical releases.
+
+### Tests and review gates
+
+- `make test-retrieval-planning PYTHON=.venv-storage/bin/python`: 81 tests passed, including the frozen Step 7.1 index tests and 41 new unit and PostgreSQL integration tests.
+- Protected live gates passed: ingestion 5, storage 30, temporal lifecycle 15, temporal evaluation 20, conflict candidates 29, conflict relations 29, belief resolution 46, Phase 5 evaluation 39, sessionization 33, grounded summaries 45, durative claims 55, and Step 6.4 summary quality 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 770 tests were discovered in 32.473 seconds; 650 passed and 120 database tests skipped. The skipped database groups passed in the sequential live gates above.
+- Independent release recomputation, in-memory compilation, manifest self-verification, `git diff --check`, staged and unstaged inspection, secret and leakage scans, Docker cleanup, and the no-search SQL spy passed.
+- The out-of-band 126-path predecessor replay found the same nine authorized compatibility paths and 117 unchanged paths. The Step 7.1 result manifest remains `5854d9389224128549df992a9fd7f60e857333ed273adb946b1c1c8c58dea0c6`, and its 50-record payload remains byte-exact. Before the ledger entry, tracked Step 7.2 drift was limited to `Makefile`, `src/retrieval/__init__.py`, and the ruled Phase 5 adapter.
+
+### Artifacts, costs, and limitations
+
+- Planner configuration: `configs/retrieval/query_planner_v1.json`, SHA-256 `538af5ceb41f50c752dc086c9f6ef39ee6b42b4ec0616948b3ac38192f66c654`
+- Dataset manifest: `data/retrieval/query-planning-development-v1/manifest.json`, SHA-256 `c93af3341693425611e75749d962d12fb185bb3ee9788d0eb906ad03bcc4f260`
+- Runtime requests: `requests.jsonl`, SHA-256 `9763e0a723a00e9dce7ec2f031ba9863983c06b7a20fe42f97019f1e229a2b30`
+- Reviewed reference: `reference.jsonl`, SHA-256 `5c2f6f9a2aa21f18a3050cf48d4d8954377ee1f58d013813481da211db1be36b`
+- Runtime checkpoint: `runtime-checkpoint.json`, SHA-256 `2f7986346623f7af93115c1f74ea4640447975317f93a399cdfe155c372279eb`
+- Predictions: `predictions.jsonl`, SHA-256 `b925bc80a1cb1e37832d096adc0256de8f7f42c85be275f6b316c164743080b9`
+- Filter decisions: `filter-decisions.jsonl`, SHA-256 `1167c707272c308b8dca6b29aecd120d7796f36512210000b618f8a0fe5d07bc`
+- Checks: `checks.json`, SHA-256 `c71ddba046d8ae6a1f7bc5d46179e4651d67a296dd37cc2c2df0010e08165cd1`
+- Run metadata: `run.json`, SHA-256 `6a6f1aa3de6adc5162eee154189cddef99ac7f9c2ca86b8f991e4f593418d2fb`
+- Findings: `findings.md`, SHA-256 `b2e0cb66b82f8eb463b432914793a25fbead6823877a02f53851761eb30bcb7a`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Result manifest: `results/retrieval/query-planning-development-v1/manifest.json`, SHA-256 `007b5c14c7e74a87c717150a5ab0ee454e8ed1e61dd493c014705cae5dd7383f`
+- Step 7.2 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- This is a structural planner and filter release, not a retrieval-quality result. It does not reconstruct an older aggregate index snapshot when no safe snapshot exists. The frozen index remains candidate-heavy, and its deterministic token-hash vectors do not establish semantic retrieval quality.
+
+### Next-step input
+
+Step 7.3 receives the frozen request, plan, eligibility-result, planner configuration, repository boundary, and immutable Step 7.2 release. Search, ranking, fusion, reranking, connected-history expansion, retrieval metrics, evidence packages, and answers have not started and require separate guidance and authorization.
+
+## Phase 7, Step 7.3: Add B2-B4 search and fusion
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `701a23b1af2749f83ba782206b1d29cffc83dc5d`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-7.3-guidance-v1`, envelope SHA-256 `4f9b8a1f9671eaa722ae71134d9714300d8a7302b952a8d896cee5f7cc060597`
+- Commit message: `retrieval: add B2-B4 search and fusion`
+
+### Implementation
+
+- B2 searches atomic records, B3 searches session records, and B4 searches both. Each run rebinds the frozen Step 7.2 eligibility result by user, index version, successful snapshot run, record kind, and record ID before search.
+- Lexical and vector queries start from a materialized, user-owned eligible set. They use PostgreSQL full-text search and exact pgvector cosine ordering with a pool of 40 records per kind. An empty text-search query or zero vector skips that channel instead of creating a match.
+- Search, expansion, metadata loading, and result assembly run in one read-only repeatable-read transaction. Missing records, changed eligibility fields, future source or relation lineage, unrelated source lineage, non-finite scores, and incomplete provenance fail the whole execution.
+- Fusion uses unweighted reciprocal rank fusion with `1 / (60 + rank)`. Scores are stored as fixed 12-place decimal strings. The reranker changes only equal-score order using the frozen query-label kind and lifecycle preferences, followed by stable record ID.
+- Change queries can add eligible versions of the same claim and one-hop checked relation neighbours. Expansion stays inside the same user, index version, snapshot, and eligibility result. Symmetric relation direction is kept in the trace. The first ten atomic seeds are chosen after filtering out session results.
+- Accepted items contain record anchors, component scores, RRF contributions, lifecycle state, claim-version lineage, source-span lineage, and expansion paths. Rejected items retain the Step 7.2 pre-filter reasons or record `outside_top_k` and `no_channel_match`. No raw source text is copied into the result.
+
+### Review corrections
+
+- Source-lineage validation originally allowed extra claim-version pairs that were not part of the indexed record's claim lineage. It now requires exact equality and has a PostgreSQL regression proving the corrupt record fails closed.
+- Symmetric checked relations were accepted from storage but rewritten as incoming or outgoing in the result trace. The contract and repository now preserve `symmetric`, with unit and live coverage.
+- B4 originally limited the combined atomic and session ranking to ten before selecting atomic expansion seeds. It now filters to atomic records first and then takes ten, as required by the expansion contract.
+- The corrected release kept `results.jsonl`, `checks.json`, `failures.jsonl`, `run.json`, and `findings.md` byte-identical. Only the implementation-bound runtime checkpoint and manifest changed.
+
+### Development release
+
+The release contains eight handcrafted runtime queries, one per Step 7.2 query label and four per development user. Each query ran as B2, B3, and B4, producing 24 results: eight per baseline. B2 accepted only atomic records, B3 accepted only session records, and B4 used the atomic and session lexical and vector channels.
+
+The 24 runs accepted 204 records, recorded 44 pre-filter and 152 post-rank rejections, and produced no failures. All accepted ranks are contiguous and at most ten. Cross-user, restricted, post-cutoff, stale, unsupported, duplicate, and partial-lineage counts are zero. The frozen development index has no checked relation links or multi-version claim chain, so its expansion count is zero; live fixtures cover both paths.
+
+This is a runtime-only release. It created, opened, and hashed no relevance file and computed no retrieval-quality or timing metric. Provider requests, retries, tokens, and incremental cost are zero. Historical OpenAI spend remains `$0.2314404`.
+
+### Tests and contract checks
+
+- `make test-retrieval-baselines PYTHON=.venv-storage/bin/python`: 132 tests passed against disposable PostgreSQL 16. This includes the frozen index and planning suites, B2-B4 search, tie ordering, expansion, deletion, repeatable-read consistency, read traps, and two clean byte-identical releases.
+- Protected live gates passed: conflict evaluation 39, belief resolution 46, conflict relations 29, conflict candidates 29, durative claims 55, grounded summaries 45, sessionization 33, temporal evaluation 20, temporal lifecycle 15, and storage with ingestion 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 821 tests were discovered in 29.409 seconds; 688 passed and 133 database tests skipped. Every required database group passed in the sequential live gates above.
+- Release self-verification, compilation, `git diff --check`, staged and unstaged inspection, secret and leakage scans, exact three-path predecessor drift, all 15 protected hashes, and Docker cleanup passed.
+
+### Artifacts, costs, and limitations
+
+- Ranking configuration: `configs/retrieval/baseline_v1.json`, SHA-256 `6d49b6d9302b32eb5446ceeb36eb14642091a73ff264c4d7cfeeb4569858cea1`
+- Dataset manifest: `data/retrieval/baseline-execution-development-v1/manifest.json`, SHA-256 `d32915d803cb1d2dcaeaf4f0269b1da33b3f9111a58222c4027b9a5e95446b48`
+- Runtime queries: `queries.jsonl`, SHA-256 `e6e98f9b6de0747652d0d99b2379abe2d1e1a01ab012b1c6cae00cfab8e72bb4`
+- Result manifest: `results/retrieval/baseline-execution-development-v1/manifest.json`, SHA-256 `ab45d4a51766d9d0edcc39c77f8b0ccd4abbcb1254437153f7759418cfe01703`
+- Runtime checkpoint: `runtime-checkpoint.json`, SHA-256 `d99a2ee8720f16fb40867f92d1740582536ecced84c7eadfffc5f1907065e3b4`
+- Results: `results.jsonl`, SHA-256 `e1e69fe8ac64a81f27e171cdd7082b7648e2a339659f11e6e4f2a1702a1dbb60`
+- Checks: `checks.json`, SHA-256 `c5ec466fe24c7105931886632cb4751aca9211a816e7edd2ef8056052179bc0d`
+- Run metadata: `run.json`, SHA-256 `03b1edb8079cd9601ec70aa13f71c3017170cdae20a3176fcee7e925ae564555`
+- Findings: `findings.md`, SHA-256 `860e385b5d5a99742351d8bdbf33eb51710e3dbf3e9474b5b9b77c11dea2c4a9`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- The deterministic signed token-hash vector rewards shared tokens and hash collisions; it is not a semantic embedding. The index remains candidate-heavy. This step makes no relevance, latency, or production retrieval-quality claim.
+
+### Next-step input
+
+Step 7.4 receives the immutable runtime queries, ranking configuration, 24 B2-B4 results, exact lineage, and runtime checkpoint. Relevance annotations and retrieval metrics have not started and require separate guidance and authorization.
+
+## Phase 7, Step 7.4: Evaluate B2-B4 retrieval quality and latency
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `d849ea1140f97066edb408acd8704268655c7abe`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-7.4-guidance-v1`, envelope SHA-256 `17d8609f5e0799661ea4a7d6b3a1de3493d267a6cff90efa4d21e17de4df96ae`
+- Commit message: `retrieval: evaluate B2-B4 quality and latency`
+
+### Evaluation boundary
+
+- The runtime checkpoint was created before the relevance data, scorer contracts, scorer implementation, scorer tests, final data manifest, and final result directory existed. Its preflight records those paths as absent and records that relevance, gold, oracle, review-queue, frozen-test, and model content were not opened.
+- The checkpoint contains 240 warm local latency samples: one warmup followed by ten measured repository calls for each of eight queries and three baselines. Every sample carries the digest of its frozen Step 7.3 result. Runtime generation used only the approved development releases and did not read scorer or relevance paths.
+- After the checkpoint was frozen, all 200 same-user query/record pairs were reviewed in stable record-ID order: four queries over 24 records for `user_001` and four over 26 records for `user_002`. Ranked order was not used during labeling. This was a development diagnostic, not a blind evaluation; prior exposure to the committed ranking was possible.
+- The reviewer checked every annotation against the approved 50-record index universe and the first 20 development source records. The two start-date correction records remain separate: the correcting record is direct evidence, while the corrected record remains useful historical evidence and is marked stale for that query. Calendar-title-only rows do not inherit relevance from a nearby project event.
+- Final scoring is offline. It opens no database and performs no retrieval. The final result uses the frozen latency samples and Step 7.3 rankings without changing the index, planner, filters, search, fusion, reranking, `k`, or any predecessor artifact.
+
+### Results
+
+The release has eight queries, 24 baseline results, 200 reviewed annotations, 240 latency samples, and zero failures. Cross-user predictions, unsupported references, stale lineage, provider calls, retries, input tokens, output tokens, and incremental cost are all zero.
+
+- B2: Recall@5 `16/17 = 0.958333`; Recall@10 `17/17 = 1.000000`; nDCG@10 `32.478399/33.071157 = 0.983456`; MRR `8/8 = 1.000000`; relevant-session recall is `null` for all eight cases with reason `baseline_has_no_session_path`; stale-memory rate `1/71 = 0.014085`.
+- B3: Recall@5 `14/14 = 1.000000`; Recall@10 `14/14 = 1.000000`; nDCG@10 `24.821684/30.047438 = 0.836945`; MRR `6.833333/8 = 0.854167`; relevant-session recall `14/14 = 1.000000`; stale-memory rate `1/61 = 0.016393`.
+- B4: Recall@5 `24/31 = 0.829167`; Recall@10 `30/31 = 0.975000`; nDCG@10 `45.124256/50.171080 = 0.910682`; MRR `7.5/8 = 0.937500`; relevant-session recall `14/14 = 1.000000`; stale-memory rate `2/72 = 0.027778`.
+- Warm local latency: B2 used 80 samples with mean `10.521 ms`, p50 `9.624 ms`, p95 `15.607 ms`, and max `82.647 ms`; B3 used 80 with mean `8.863 ms`, p50 `8.408 ms`, p95 `12.289 ms`, and max `20.009 ms`; B4 used 80 with mean `13.439 ms`, p50 `13.222 ms`, p95 `18.966 ms`, and max `31.464 ms`.
+- The scorecard contains 63 quality rows and 63 latency rows. It records the same numerator, denominator, value, scored-case count, null-case count, and null reason for every baseline slice by query type, benchmark capability, source type, difficulty, and development split. Source-type slices are intentionally multi-membership and are not additive. No composite score is published.
+
+### Review corrections
+
+- An accepted result ID outside the reviewed relevance universe originally raised an untyped key lookup error. The scorer now fails closed with `RetrievalQualityError`, and a regression covers a cross-user high scorer.
+- A new regression distinguishes a report's speaker from its subject so an attributed claim is scored for the correct person.
+- Release verification originally checked only artifact hashes and selected counts. It now verifies the checkpoint-before-gold boundary, every dataset and implementation binding, all relevance and review records, and byte-for-byte recomputation of per-query results, scorecard, checks, run metadata, findings, and the final manifest. A tampered bound input now fails verification.
+- These corrections did not change the frozen runtime checkpoint, latency samples, relevance labels, per-query scores, scorecard, checks, run metadata, failures, or findings. Only the evaluator and its implementation-bound result manifest changed.
+
+### Tests and contract checks
+
+- Focused Step 7.4 unit and live PostgreSQL integration tests: 31 passed, including metric arithmetic, all five adversarial cases, immutable writes, checkpoint ordering, runtime read traps, 200-label completeness, 240 latency samples, two deterministic scorer runs, and tamper rejection.
+- Protected live gates passed sequentially: retrieval baselines, planning, and index 132; storage and ingestion 30; temporal lifecycle 15; temporal evaluation 20; conflict candidates 29; conflict relations 29; belief resolution 46; Phase 5 conflict evaluation 39; sessionization 33; grounded summaries 45; and durative claims 55. The live total was 473 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 852 tests were discovered in 23.868 seconds; 717 passed and 135 database tests skipped. Every required database group passed in the sequential live gates above.
+- Independent metric and nearest-rank latency recomputation matched all 24 per-query rows and all 63 aggregate and slice rows. Release self-verification, in-memory compilation, exact allowlist inspection, `git diff --check`, secret and leakage scans, and Docker cleanup passed.
+- All protected Step 7.1, Step 7.2, and Step 7.3 hashes remained byte-exact. Existing-path drift from `d849ea1140f97066edb408acd8704268655c7abe` is limited to this ledger entry; the implementation adds exactly the 21 authorized Step 7.4 paths.
+
+### Artifacts, costs, and limitations
+
+- Evaluation configuration: `configs/retrieval/quality_evaluation_v1.json`, SHA-256 `45e0f0bd5057f92b1bdd20fb14313911b12202b79d072e8d05c6c0600489bb2a`
+- Runtime manifest: `data/retrieval/retrieval-quality-development-v1/runtime/manifest.json`, SHA-256 `f148dc0df972f9bba3dd511014ba216047d206ccafcd84a0c1b107b57c5e9432`
+- Dataset manifest: `data/retrieval/retrieval-quality-development-v1/manifest.json`, SHA-256 `c1cb67ce7fcec77ad8004fb8a19cabd52a1ffc26ef0dba080b13ea44bae0bb6c`
+- Relevance annotations: `gold/relevance.jsonl`, SHA-256 `b1fd2024620ad8baf2165824f5715eadd1009c739dc01d11bb9aa288f8a75c83`
+- Review record: `gold/review.json`, SHA-256 `68f7ee182a11e9d812e18e6eb51c1b524ad2c203ba3c3bce34c31364427600d5`
+- Checkpoint preflight: `checkpoint_preflight.json`, SHA-256 `265a32d07bc85a3948bac6e8dc954a61aa53e12461444d2ce0880895e1a5ecab`
+- Runtime checkpoint manifest: `checkpoint_manifest.json`, SHA-256 `82807fa0ab3ae99961aa1fef3ece65353361cb45a1ed28a9c443d901c1d688e4`
+- Latency samples: `latency-samples.jsonl`, SHA-256 `4d947e64abd5d3fc0fb8d6d1f6e723a8cd77b123fa66d0e85d44971c66893305`
+- Per-query scores: `per-query.jsonl`, SHA-256 `1ff5b724786cf8d1b12979484f2d156bc5fe4a9c0b7b18491e8c78295d87d1c6`
+- Scorecard: `scorecard.json`, SHA-256 `0f6a9cf75e7b526ab893052a43c198a7d295da6efc8fb0d5cdabbb661469f0f8`
+- Final result manifest: `manifest.json`, SHA-256 `6e89700beb6a483ce0b23c3033927122c2170897b81a366ffde31fc7785a63e4`
+- Failures: both runtime and final files have empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+- Step 7.4 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- The evaluation covers a small development set with prior ranking exposure possible. The index remains candidate-heavy, and the deterministic token-hash vectors are not semantic embeddings. The reported scores and warm local timings are diagnostics, not production guarantees.
+
+### Phase 8 handoff
+
+Phase 8 receives the frozen session, index, planner, ranking, lineage, relevance, and retrieval-quality artifacts. Step 7.4 does not authorize an answerer, evidence-package assembly, benchmark test run, model call, or any Phase 8 implementation. Phase 8 has not started.
+
+## Phase 8, Step 8.1: Build validated evidence packages
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `1df7e3c0846e9bebb873debe4cc2ae1f532a2cb1`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-8.1-guidance-v1`, envelope SHA-256 `6af1d3eb7d227c430a93b89abfce8fcc1853c5d29027f828650b5c8a58dec229`
+- Commit message: `answering: build validated evidence packages`
+
+### Implementation and review
+
+- The builder hydrates the 24 frozen Step 7.3 results in a read-only, repeatable-read transaction. Queries bind the user, index version, snapshot, immutable claim version, source, and span before returning any row. Atomic and session paths are deduplicated by claim version; session summaries remain navigation records and never become evidence.
+- Every accepted claim version must match the frozen retrieval item's exact claim, source, and span lineage. Quotes are checked against the source bytes, including offset bounds when offsets exist. Raw source content, participant payloads, arbitrary metadata, embeddings, summary prose, and unresolved-question prose are not serialized.
+- Lifecycle handling stays conservative. Current and confirmed claims are current, historical and superseded claims are historical, disputed claims are conflicting, and candidates are rejected with `package_validation/candidate_not_promoted`. Excluded or restricted evidence fails the package instead of being exposed.
+- Package identity binds the schema, configuration, runtime and input-release versions and hashes, user, query, baseline, execution, result, snapshot, index, and time cutoffs. Rejections retain stable identifiers, stage, rank where the predecessor supplies one, and exact reasons.
+- The review tightened invariant checks, source and span equality, offset validation, blocker order, manifest verification, and recomputed counters. It also made relation hydration validate both decision endpoints by exact user, claim, and version ownership, half-open transaction visibility, inclusive requested valid time, and cutoff. Regressions cover a future endpoint, an ineligible endpoint, a poisoned cross-user relation, and a poisoned accepted cross-user record ID.
+- The runtime does not rerun planning, filtering, search, ranking, or relevance scoring. It opens no Step 7.4 relevance gold or scorecard and makes no model or provider call.
+
+### Development release
+
+The release contains 24 packages and zero failures: eight each for B2, B3, and B4. It hydrates 204 accepted retrieval records into 33 unique candidate claim versions. All 24 packages have complete exact provenance, with zero cross-user, missing-lineage, post-cutoff, quote-mismatch, restricted, duplicate, or partial-package records.
+
+All 33 development claims remain candidates. The release therefore has 295 candidate rejections, 196 carried retrieval rejections, zero categorized claim versions, zero serialized relevant sources or spans, and zero `answer_allowed=true` packages. This is the expected conservative result. Complete provenance does not promote a candidate or establish semantic answerability.
+
+### Tests and contract checks
+
+- Focused Step 8.1 unit and live PostgreSQL integration tests: 33 passed, including exact package execution and replay, quote and offset validation, lifecycle partitions, relation endpoint cutoffs, poisoned ownership, read traps, tamper rejection, and two clean byte-identical releases.
+- Protected live gates passed sequentially: Step 7.4 retrieval quality 31, retrieval baselines 132, Phase 5 conflict evaluation 39, storage and ingestion 30, durative claims 55, grounded summaries 45, and sessionization 33 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 885 tests were discovered in 27.224 seconds; 731 passed and 154 database tests skipped. The required database groups passed in the live gates, with the remaining groups already covered by the coding gate.
+- Release self-verification, in-memory compilation, exact allowlist inspection, protected-hash checks, `git diff --check`, secret and leakage scans, staged and unstaged inspection, and Docker cleanup passed. No predecessor file changed before this ledger entry; the implementation adds exactly the 15 authorized Step 8.1 paths.
+
+### Artifacts, costs, and limitations
+
+- Evidence-package configuration: `configs/answering/evidence_package_v1.json`, SHA-256 `64c85873389c291bcee89df6aed6dc3a72ea4cd396fd0593613b809acdf17fdd`
+- Dataset manifest: `data/answering/evidence-package-development-v1/manifest.json`, SHA-256 `016b34eccba3260974e5c8eb2be58d6fb2023ad4399919634577b82c5c4bc7f4`
+- Packages: `packages.jsonl`, SHA-256 `bb57898bea51417b2ecad1252b451669ae2c748033c9cef88360f16a825f8186`
+- Checks: `checks.json`, SHA-256 `9e081b65e5bc8c8f59c8fb320a357e14240eedc06fd5febb67ddbcf588d8c766`
+- Run metadata: `run.json`, SHA-256 `87c10978b82cf309e01982b580c41a9e48371dd262f9d8cc28aa7a4d5afd3a1d`
+- Findings: `findings.md`, SHA-256 `3c9a43eb218073ace99aff998948c1f80a1b97927ca7f7d479ae14294325a211`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Result manifest: `manifest.json`, SHA-256 `8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213`
+- Step 8.1 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- This release verifies package structure and provenance only. The candidate-heavy upstream data yields no promoted evidence and no answer-allowed package; it does not measure relevance, truth, or answer quality.
+
+### Next-step input
+
+Step 8.2 receives only the frozen `evidence_package_development_v1` release and its manifest. Answer generation, citation rendering, abstention text, model use, and Step 8.2 implementation have not started and require separate guidance and authorization.
+
+## Phase 8, Step 8.2: Add the memory answer contract
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `8fec075d754dff7f12821947919d5c01f867d949`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-8.2-guidance-v1`, envelope SHA-256 `91593dde89451249910fdbc00b0f048db4964d499b0c83d3c60deba5c3a2033d`
+- Commit message: `answering: add grounded memory answer contract`
+
+### Contract and runtime boundary
+
+- The new immutable contracts cover `answered`, `abstained`, `disputed`, and `partially_answered` outputs. Answer and statement IDs are hashes of their canonical content without the ID field. Unknown fields, unsafe JSON, duplicate or unsorted provenance, invalid time data, non-finite confidence, and inconsistent status fields fail closed.
+- Each factual statement names exact claim and immutable version IDs. Its citations must match the same package's evidence ID, source, span, nullable message ID, and quote. The validator rejects missing, changed, rejected, cross-user, wrong-version, wrong-source, wrong-span, wrong-message, and wrong-quote provenance.
+- Non-abstained answer text is only the newline join of its grounded statement text. Answered output cannot cite conflicting claims. Disputed output needs at least two conflicting claim versions, and partial output needs a grounded statement plus a non-empty unresolved part.
+- The input loader first runs the frozen Step 8.1 verifier, then checks the exact dataset, result, and package hashes. Every answer binds the Step 8.1 release, the canonical package record, user, query, baseline, plan, snapshot, time cutoffs, configuration, prompt, and runtime versions.
+- The renderer treats package strings as untrusted JSON data. Its frozen schema spells out the exact status, statement, claim-reference, and citation fields, status rules, and provenance requirements. It omits rejected evidence, summary prose, raw source content, source metadata, embeddings, gold, and runtime-owned IDs.
+- `answer_allowed=false` short-circuits before prompt rendering or candidate inspection. The provider model remains a dormant configuration value for a future validated candidate path. Step 8.2 has no provider adapter, environment lookup, database write, or model call.
+
+### Review corrections
+
+- The first renderer listed only top-level candidate and statement field names. It now includes the strict nested candidate schema, allowed status values, category rules, citation fields, and provenance requirements promised by the contract.
+- The contract now rejects invalid valid-time representations and enforces the exact generation-mode and dormant-model binding for non-blocked candidates. Unsafe Unicode strings fail with the same sanitized contract error as other unsafe JSON.
+- Dataset and result verification now bind all six Step 8.1 authorities: dataset manifest, result manifest, packages, checks, run metadata, and failures. A regression proves a rehashed authority mismatch fails closed.
+- These changes alter the dormant prompt hash and therefore the answer IDs, `answers.jsonl`, and final manifest. The release was regenerated before any model, gold, oracle, review, or frozen-test access.
+
+### Development release
+
+All 24 frozen packages contain only candidate claims and carry `no_promoted_claims`. Each produced the fixed abstention `I cannot answer this from the available memory.` with the configured unconfirmed-claim reason, confidence zero, no statements or citations, and null requested and resolved model fields.
+
+The release has 24 answers, 24 abstentions, and zero answered, disputed, partial, failed, duplicate, cross-user, or invalid-provenance records. It made no provider request and used no tokens. These counts test contract behavior only; they do not measure answer correctness or abstention accuracy.
+
+### Tests and contract checks
+
+- Focused Step 8.2 unit and integration tests: 27 passed, covering all four statuses, canonical IDs, strict prompt schema and escaping, blocked short-circuiting, time and model binding, exact citation closure, sanitized failures, all authority hashes, immutable output, byte-identical replay, and prohibited-read traps.
+- Step 8.1 unit and live PostgreSQL integration tests: 33 passed.
+- Protected live gates passed: retrieval baselines 132, Phase 5 conflict evaluation 39, grounded summaries 45, sessionization 33, temporal lifecycle 15, and storage with ingestion 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 912 tests were discovered in 27.969 seconds; 758 passed and 154 database tests skipped. The required database groups passed in the live gates above.
+- Release self-verification, two clean byte-identical runs, in-memory compilation, exact allowlist inspection, protected hashes, `git diff --check`, secret and prohibited-data scans, staged and unstaged inspection, and Docker cleanup passed. No predecessor file changed before this ledger entry; the implementation adds exactly the 14 authorized Step 8.2 paths.
+
+### Artifacts, costs, and limitations
+
+- Memory-answer configuration: `configs/answering/memory_answer_v1.json`, SHA-256 `98b743d593e17a88216ac74cf17693f08898537027e0d91672d45aaeb4dfcc10`
+- Dataset manifest: `data/answering/memory-answer-contract-development-v1/manifest.json`, SHA-256 `015e0d5e16f9870e04728f3668ee1f21f8c1b1a9a383f274c3c6bcb23c6f455e`
+- Prompt contract: `memory_answer_prompt_v1`, SHA-256 `69dd688430c55fc35a16369201ef8eea7d470d10f610edec254f5cbd59bf14c1`
+- Answers: `answers.jsonl`, SHA-256 `d83fcac2eed3a4b2493c575cc49f593657669a690b9cfa61307afc8890940ba4`
+- Checks: `checks.json`, SHA-256 `3642da6ae21165b1c2ddf6c4e64773e423615aa3a85b18834c8682ba26252164`
+- Run metadata: `run.json`, SHA-256 `bcbe9eef40c0b126e106c7b88c61e2a5c74db6df5fd2be54cd1b8183cb1e80d2`
+- Findings: `findings.md`, SHA-256 `63aefda40e96341de9e62181db8397be70aaa152d45a78a70279389a5726bd55`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Result manifest: `manifest.json`, SHA-256 `d0d987ff126aca2c7b05a0966e6b797247c7123e252fb26fc59d9599374fb841`
+- Step 8.2 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+- All real development outputs abstain because upstream has no promoted claims. Positive statuses are covered only by invented unit fixtures and are not benchmark results.
+
+### Next-step input
+
+Step 8.3 receives the frozen answer schema, prompt contract, candidate validator, configuration, all-abstained development release, and its candidate-data limitation. Comparable answer runs, answer gold, paid-call preflight, provider execution, and Step 8.3 implementation have not started and require separate guidance and authorization.
+
+## Phase 8, Step 8.3: Freeze the comparable answer evaluation
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `9f7625455abafb85b513b8d30a53d793580160ce`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-8.3-guidance-v1`, envelope SHA-256 `64138cb9675729b340c1a471dcf698302609a35c08d4d1f36fe3956e3f596737`
+- Compatibility ruling: the Step 8.2 integration test changes only its Git-topology tail. The new SHA-256 is `bcb41709723cdf8e9fc6617acd16903ce8202979016d3ac2d7e8e333e76466ea`; its seven predecessor and release assertions are unchanged.
+- Commit message: `answering: freeze comparable answer evaluation`
+
+### Runtime and scoring boundary
+
+- Step 8.1 and Step 8.2 are publicly verified before their records are read. Each Step 8.2 answer is reparsed and matched to its exact package, user, query, baseline, execution, plan, snapshot, time cutoffs, and package hash.
+- The no-call preflight is written before the prediction file. It records 24 packages, zero provider-eligible cases, no transmitted cases, users, source IDs, or fields, and zero requests, retries, tokens, output allowance, or incremental cost.
+- Runtime predictions are a byte-for-byte copy of the 24 frozen Step 8.2 answers. The runtime checkpoint binds those bytes, both predecessor releases, the B1 comparison settings, the configuration, the runtime implementation, and the empty failures file.
+- The scorer verifies the checkpoint before reading predictions. It does not open a database, rebuild packages, render a prompt, call a provider, or read gold, oracle, review-queue, relevance, frozen-test, credential, or environment data.
+- B2, B3, and B4 each contain eight deterministic structural abstentions. B5 and B6 are unavailable because no frozen evidence-package release exists for either baseline; they are not represented as zero-scoring predictions.
+
+### Structural quality report
+
+The report contains 24 per-case rows and 35 scorecard rows. All 24 predictions are abstentions with `no_promoted_claims`, no factual statements, no citations, and no model metadata. There are no failures.
+
+All seven requested quality metrics are null. For B2-B4, the exact reasons are `no_non_abstained_predictions`, `no_predicted_citations`, `no_authorized_answer_evidence_gold`, or `no_factual_statements`, as appropriate. Every B5 and B6 metric uses `baseline_not_available`. The release publishes no composite score and makes no claim about answer correctness or abstention accuracy.
+
+The configured future comparison model remains `gpt-4.1-2025-04-14` with the frozen B1 generation settings, but no provider path ran. Step 8.3 made zero requests, used zero tokens, and cost `$0`; historical OpenAI spend remains `$0.2314404`.
+
+### Tests and contract checks
+
+- Focused Step 8.3 unit and integration tests: 21 passed, covering exact configuration and B1 parity, zero-call arithmetic, checkpoint-before-scorer ordering, byte-identical prediction reuse, all metric null reasons, B5/B6 unavailability, immutable outputs, prohibited-read traps, tamper rejection, and the exact 20-path topology.
+- Focused Step 8.2 unit and integration tests: 27 passed. Step 8.1 unit and live PostgreSQL integration tests: 33 passed.
+- Protected live gates passed sequentially: retrieval baselines 132, Phase 5 conflict evaluation 39, grounded summaries 45, sessionization 33, temporal lifecycle 15, and storage with ingestion 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 933 tests were discovered in 28.284 seconds; 779 passed and 154 database tests skipped. The required database groups passed in the live gates above.
+- Public Step 8.1, Step 8.2, runtime-checkpoint, and final-release verification passed. In-memory compilation, prediction byte comparison, exact allowlist inspection, protected hashes, `git diff --check`, secret and prohibited-data scans, cached and unstaged inspection, and Docker cleanup passed.
+- The final diff contains exactly 20 authorized paths: 18 new Step 8.3 files, this ledger entry, and the ruled Step 8.2 test-only adapter. No production predecessor or frozen release changed.
+
+### Artifacts and limitations
+
+- Comparable-run configuration: `configs/answering/comparable_answer_run_v1.json`, SHA-256 `59714759f54323d5e80e30d006e11b02f780d286e08a23dd44b95bf782789ea2`
+- Dataset manifest: `data/answering/memory-answer-quality-development-v1/manifest.json`, SHA-256 `17b8806421e76f5cc0206044ef49266dbc14dd975a6332001794b246eeb85ec2`
+- No-call preflight: `preflight.json`, SHA-256 `321b54c61b2e702dbfe2f223f1018ce43341f1ddcb474311b5c1e6ca3145cf22`
+- Runtime predictions: `predictions.jsonl`, SHA-256 `d83fcac2eed3a4b2493c575cc49f593657669a690b9cfa61307afc8890940ba4`
+- Runtime checkpoint: `checkpoint_manifest.json`, SHA-256 `71df6f495373cd1cf4ef1c4cf2aa296604a4f322bf8ffd47a21f59f3f9933a1a`
+- Per-case report: `per-case.jsonl`, SHA-256 `17212ac04fce3649b268e9eba4aeb7a91cf7acb206176cf255fccd7926531b13`
+- Scorecard: `scorecard.json`, SHA-256 `52342ae1982fd11aac38f7338303782ccd9974fd23ed52f3d147c51c7a054828`
+- Checks: `checks.json`, SHA-256 `9aa451266d6398c119d0fe95a2a4a3eddd2c358f70035a4e738af9afa839acde`
+- Run metadata: `run.json`, SHA-256 `92deb10fe687823c4e3640f17a77e8577f6fa949d3a246001b0c0b3e15cdac72`
+- Findings: `findings.md`, SHA-256 `a00ef558a3c14142622c915dcd159d213a7d1146665f4b1a8364c5f74bc6c0d7`
+- Final result manifest: `manifest.json`, SHA-256 `ac936819856939f66597c279fc0b852022a650d5455a4c21240ffbb01f0a524f`
+- Runtime and final failures are empty, with SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+- This release proves deterministic reuse, structural safety, and explicit denominator handling. It does not measure factual answer quality, compare B5 or B6, validate a model-generated answer, or establish answerability performance.
+
+### Phase 8 handoff
+
+Phase 8 ends with the frozen Step 8.1 evidence packages, Step 8.2 answer contract, Step 8.3 no-call checkpoint, comparison policy, and structural scorecard. Phase 9 has not started. Any answerability policy, threshold tuning, abstention gold, model execution, or interactive answering requires separate guidance and authorization.
+
+## Phase 9, Step 9.1: Add the answerability decision
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `a18501a27708c259cccce8bf87948962e672bd41`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-9.1-guidance-v1`, envelope SHA-256 `9cc8c86bf9725d04c71d2033df14939e392166377ecd6fc5a70955f8c717f48b`
+- Compatibility rulings are limited to the Step 8.2 and Step 8.3 topology tests. Their envelope hashes are `7f022204628f60e1079d4dbe1c70fdea3aa30d1b891f1027ee3e131231b04def`, `6faffe095dc298db3234e8d66d47ddd3826062d65e41c3d3411cf10927f87172`, `6308f6c27642fbe3e0172d4b28140dcb3bb1b2091d94abcafd50a64712fe6eaf`, and `15e90d9f1132bee9d902d9591d67204cb9fb7c87da4260ea27692bba9ff74eb9`.
+- Commit message: `abstention: add deterministic answerability decisions`
+
+### Boundary and implementation
+
+This contract was derived in a clean room after a separate prompt derivation encountered prohibited content. The clean-room reviewer did not read that draft or the exposed content. Step 9.1 uses the frozen Step 8.1 evidence packages only. Step 8.2 and Step 8.3 remain prerequisite and protection authorities, not decision labels.
+
+The new `src/abstention/` package adds strict request, requirement, evidence, rejection, confidence, assessment, decision, failure, and check contracts. Its input loader verifies the public Step 8.1 release before reading canonical package bytes. It binds the Step 8.2 and Step 8.3 manifests, parses every nested package field strictly, and does not open a database, prompt, answer output, scorecard, gold file, provider setting, or environment credential.
+
+The policy runs before generation. It checks exact proposition and person scope, transaction and inclusive valid time, speaker and source authority, unresolved conflicts, stable-trait support, and checked causal support. Repeated durative support requires distinct sources, session definitions, and episode times unless an accepted durative claim already carries a closed interval. A relation-based causal answer requires an exact outgoing `caused_by` edge with both same-user endpoints present as visible, time-eligible categorized claims. Candidate, rejected, stale, ambiguous, missing, or wrong-direction endpoints cannot support generation.
+
+The independent review tightened nested unknown-field rejection, decision and assessment coherence, rejection-ID validation, speaker-backed authority checks, repeated durative support, and causal endpoint validation. These changes are covered by invented fixtures and did not change the candidate-only development outcome.
+
+### Development result
+
+The release contains 24 deterministic decisions, eight each for B2, B3, and B4. Every package abstains with `no_promoted_claims` because all retrieved development claims remain candidates. There are zero answerable or clarification decisions, zero generation-allowed cases, zero accepted evidence references, zero failures, and zero provider requests.
+
+All 491 upstream rejection rows are preserved exactly: 295 candidate rejections and 196 retrieval rejections. Every decision has confidence value `null`, calibration status `not_calibrated`, and null reason `step_9_2_not_run`. The release makes no claim that these abstentions are correct; positive authority, time, conflict, trait, and causal branches are covered only by controlled invented fixtures.
+
+### Tests and safeguards
+
+- Focused Step 9.1 unit and integration tests: 35 passed. They cover strict contracts and IDs, blocker precedence, wrong-person and time failures, authority classes, conflict reporting, partial answers, repeated durative evidence, directed causal endpoints, nested parser tampering, exact release accounting, prohibited-read traps, immutable writes, and byte-identical replay.
+- Focused Step 8.2 and Step 8.3 contract and topology suites: 48 passed. The two ruled adapters retain all predecessor artifact assertions and now recognize the exact Step 9.1 path set.
+- Step 8.1 unit and live PostgreSQL integration tests: 33 passed.
+- Protected live gates passed sequentially: retrieval baselines 132, Phase 5 conflict evaluation 39, grounded summaries 45, sessionization 33, temporal lifecycle 15, storage with ingestion 30, and durative claims 55 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python`: passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python`: 968 tests were discovered in 28.433 seconds; 814 passed and 154 database tests skipped. The required database groups passed in the live gates above.
+- Release self-verification, two clean byte-identical runs, in-memory compilation, exact allowlist inspection, protected hashes, `git diff --check`, secret and prohibited-data scans, cached and unstaged inspection, and Docker cleanup passed.
+
+The final diff contains exactly 18 authorized paths: 15 new Step 9.1 files, this ledger entry, and the two ruled topology-test adapters. The result manifest records both adapter hashes and all four compatibility-ruling envelopes. No production predecessor, migration, dependency, frozen release, governing policy, roadmap, or Make target changed.
+
+### Artifacts, costs, and limitations
+
+- Configuration: `configs/abstention/answerability_v1.json`, SHA-256 `b4e5dbd3fcb41c7a2b61cd2c208b7cca8cb2a0696d1d907215174eabeae4da9c`
+- Dataset manifest: `data/abstention/answerability-development-v1/manifest.json`, SHA-256 `bbcf1a703b2cbb3d6facf700882f8e354e0db906f5dbf6fee4cfb53ceb9ae9bf`
+- Decisions: `decisions.jsonl`, SHA-256 `06a57523ed2262dbccdc412e11d214b5d7f00e4ead81b974fee87e8c6323dbe0`
+- Checks: `checks.json`, SHA-256 `1160a8861f2b86496e72aac25fac99a24fbd35c7ad52d4c5ab0236d44734911a`
+- Run metadata: `run.json`, SHA-256 `651648133df3c97435808525226dd2c5b357126aa189fca16956700578f50015`
+- Findings: `findings.md`, SHA-256 `d67bbc73f85bb54a18a1c05066277dd7f47605091ed62bc9f57981fbb7ab2ebc`
+- Failures: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Result manifest: `manifest.json`, SHA-256 `15667096c215de19fcf2ac6d897237791b62eef30e37d505adac2e5de4523de3`
+- Step 9.1 made zero provider requests, used zero tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`.
+
+### Next-step input
+
+Step 9.2 receives the frozen answerability contracts, configuration, policy, strict artifact-only loader, uncalibrated confidence contract, and immutable candidate-only development release. Threshold tuning, answerability gold, calibration, paid calls, interactive answering, and Step 9.2 implementation have not started and require separate guidance.
+
+## Phase 9, Step 9.2: Freeze answerability thresholds
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `35d0c64431f19d4243b72af712dadeb8d522128f`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-9.2-guidance-v1`, envelope SHA-256 `c815ed3785101c08ce563c42c802c4513ab1bb00f5213e21e77098369d751628`
+- Compatibility rulings: `04a22f11ce263f3ec9ddb87b4b821881d7bbec72a655fe5cb4fc34cffbb83f81`, `930d0059bbff3323cd38855b48d4a1ca6ae97b4b35baae4653906fd50c1c9139`, `af76ef9b298cb600cb7214242993d63c7c318da5b47326a24b409275a6c52f59`, and `4b6c8a864310ff0823b5dd493abd726be8406bbe945f7b1839daf9a42f9afea7`
+- Commit message: `abstention: freeze answerability thresholds`
+
+### Calibration boundary
+
+The runtime configuration, three calibration modules, invented fixtures, 144 controlled predictions, and runtime checkpoint were frozen before the scorer reference was opened. The profile `ordinary_1_trait_2` was selected in advance and was not changed after scoring. The reference is made only from controlled invented cases; no benchmark answerability gold exists for the 24 development packages.
+
+Compatibility metadata arrived after the valid v1 checkpoint was frozen. The v2 finalizer therefore carries forward the seven substantive v1 payloads byte for byte and adds the four ruling envelopes and exact test-adapter drift. It does not change thresholds, predictions, fixtures, the selected profile, or the real development decisions.
+
+### Current result
+
+- Controlled sweep: 24 fixtures across six frozen profiles, with 144 predictions. The selected profile produces 8 answerable, 8 abstain, and 8 clarify decisions, `0.333333` coverage, `1.000000` answerable coverage, and zero controlled selective risk.
+- Real development release: 24 abstentions, zero answerable or clarification decisions, zero generation-allowed cases, 491 preserved rejections, null confidence, and zero failures.
+- Real answerability accuracy, selective risk, and confidence calibration remain null because no authorized matching gold exists. The controlled fixture metrics test policy mechanics only and are not a benchmark-quality claim.
+- Provider requests, retries, tokens, and incremental cost are all zero. Historical OpenAI spend remains `$0.2314404`.
+
+### Artifacts and review gate
+
+- Runtime predictions: SHA-256 `4b7db7c9427ada99430e49b9a42b14f4c9b92de749f83f876897064eb6b9acd0`
+- Runtime checkpoint: SHA-256 `5a66f85a0c690879771f36f3f6293d190cd672c9b291ee9c7f93f2965f39ce88`
+- Final v2 decisions: SHA-256 `28ca79bac049c1ac46d64864902a5647b1f68326ccf5e9bf38ba0032aa81b5fe`
+- Final v2 scorecard: SHA-256 `c2e94d82d8ca809fbb34ef5df7366701bdc124d5632c51608d964f50d9e4a3b6`
+- Final v2 manifest: SHA-256 `ef957226d62beb44a8cb117e786a2c59f23f96815d8b5daa48b9d22d80c6ef53`
+- Final v2 checks: SHA-256 `91acd39d1d382b40339e6f12b19cf3ccd10129acb6e0fcb56d3b2bc0394cf7bd`
+- Final v2 findings: SHA-256 `2c6949f0ab212ddd0f6e46c0a467bcb40549e727237f0ccec3fce040e1ed2279`
+
+### Independent review
+
+- The checkpoint chronology was checked independently. The runtime checkpoint predates the controlled reference and the final dataset manifest; all frozen runtime, configuration, fixture, implementation, prediction, and checkpoint hashes match.
+- Focused Step 9.2, Step 9.1, Step 8.2, and Step 8.3 suites: 108 passed. The live Step 8.1 evidence-package suite: 33 passed.
+- Protected live gates passed: retrieval baselines 132, conflict evaluation 39, belief resolution 46, conflict relations 29, conflict candidates 29, durative claims 55, grounded summaries 45, sessionization 33, temporal evaluation 20, temporal lifecycle 15, and storage with ingestion 30 tests.
+- Docker occasionally reported PostgreSQL healthy before the host port accepted a connection. The affected exact targets passed unchanged after a local readiness check; no repository code or test was altered to accommodate the startup race.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python` passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python` discovered 993 tests: 839 passed and 154 database tests skipped. Every required database group passed in the live gates above.
+- Runtime and v2 release verification, two clean finalizations, in-memory compilation, exact metric and count recomputation, all three nested topology attestations, protected hashes, secret and prohibited-import scans, `git diff --check`, cached and unstaged inspection, and Docker cleanup passed.
+- The final diff contains exactly 29 authorized paths: 24 new Step 9.2 files, this ledger entry, and four test-only compatibility paths. The adapters retain predecessor artifact assertions and only advance the committed-boundary and live-topology checks.
+
+### Limitations and handoff
+
+This release freezes threshold mechanics rather than validating real answerability. The development corpus still has no promoted claims or authorized answerability gold, so real accuracy, selective risk, abstention precision and recall, and confidence calibration remain unmeasured. Controlled fixtures are invented contract tests, not product evidence. Step 9.3 receives the immutable thresholds, checkpoint, v2 release, null-confidence policy, and these limitations.
+
+Step 9.3 has not started. It requires separate guidance and authorization.
+
+## Phase 9, Step 9.3: Recover development interactive answering v2
+
+Status: complete
+
+### Repository state and recovery boundary
+
+- Starting commit: `d0932a7994153745285c1f4e3d75c36ffbbaf06a`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Guidance: `step-9.3-guidance-v2`, envelope SHA-256 `865223b8aea8665b8df8b10839f9d1f1cdb9c9c5a31d17f97e6f47ad27606a77`
+- Corrections 1–4: `34a82610f0287d6f5321d7be6c1b75fb6fe475a984c6418cfb67d4b31b160880`, `5480ebcbe58fbeeb17bfbdb3e30c0aa4a7e9ed41477976233c0efe19a72733a1`, `4772c7f722bd1545a98c589d665248eaf7aee82f525670be0944f2820f2ca653`, and `25783bb2d0a5f8649e63c5ca1f0a0a7bdd6b890f3b6b2c217ffa3d638cbd3261`
+- Commit message: `abstention: recover development interactive answering v2`
+
+The uncommitted v1 attempt was invalid because it used three aggregate requirement aliases that are absent from the predicate registry. Its 32 files remain in the private, mode-restricted backup `/private/tmp/longitudinal-memory-step9.3-invalid-v1-d0932a7`; no v1 interactive path remains in the repository. The canonical path-key-sorted backup map contains 32 lines and 4,185 bytes and hashes to `ee40e76025fa0d7ae92ee565460c2c49dae1e0134aca4ab9da01319298659748`. The required complete-line C-sort diagnostic hashes the same entries to `ae181cd44d7e73b259a8ebd32f0b01f1ffae6b2c51e4c45ef7fee20b01e84e19`.
+
+This recovery is not blind. Development gold had been opened during the invalid v1 attempt, but it was not used to choose or validate the corrected requirements before the v2 checkpoint. A reviewer also saw isolated prohibited frozen-test snippets during the abandoned v1 review. That material was not used in the v2 runtime, scorer, fixtures, expected values, or this review. The v2 runtime and scorer opened no frozen-test row, oracle, review queue, credential, environment file, prompt, provider, or network path.
+
+### Corrected runtime and release
+
+The v2 requirements contain four sets and five exact registered predicates: `has_mentor`, `leads_project`, `career_goal`, `job_start_date`, and `office_base`. The extraction case requires both `has_mentor` and `leads_project`; the other three cases each require one predicate. The requirements file is 4,900 bytes with SHA-256 `b421acfad6a1d3c84d45ad977eacabbe0f9ef96da1c042c8745086b700d98fae`.
+
+The runtime read exactly the first four development cases for `user_001` and `user_002` and never requested row five. It froze before the v2 gold, evaluator, or final release existed. Its plans bind the requirement-set identity and predicates; `plans.jsonl` hashes to `02e2afd4001d96fa421c57b2ad5fd329dda1d581e90124cc0de768b496e5f94a`. Retrieval and evidence-package bytes remain unchanged from the invalid attempt because the requirement correction does not alter those upstream operations: `5b4f5199cff3f73a83deab9f394aff5340f307a7aac7581c5d7a524424e2f203` and `ccdf6a13fbba02125442cae803c47298e73be88407267c4c32d2367562beefe4`. The frozen runtime checkpoint is `423790b9eb4d0fa5e33aeeafd870cb75f8d78c259c307322d25e276615a199d4`.
+
+All four development histories remain candidate-only. The release contains four abstentions, four turns, 121 preserved rejections (61 candidate and 60 retrieval), and zero accepted evidence, factual statements, citations, failures, provider-eligible cases, or provider requests. Sixteen frozen-test cases remain deferred, so this is not the roadmap's literal 20-case completion. B5 and B6 remain unavailable, this run is not B7, and Step 9.4 has not started.
+
+The reviewed development metrics are deliberately modest: decision accuracy `1/4` (`0.250000`); behaviour micro precision `1/4` (`0.250000`), recall `1/10` (`0.100000`), and F1 `2/14` (`0.142857`); macro precision `0.250000`, recall `0.125000`, and F1 `0.166667`. Memory-use, current-versus-historical, correction, and evidence recall are all zero on denominators 3, 1, 1, and 4. Abstention recall is `1/1`. Clarification recall is null because there is no reviewed clarification case. Exact-evidence precision is null with no predicted evidence; recall and F1 are `0/7`. Factual provenance is null because the system produced no factual output. There is no composite score and no answer-quality claim.
+
+### Independent review
+
+- Focused v2 unit and integration tests: 17 passed; two frozen-runtime rebuild tests remain intentionally skipped because rerunning v2 after reference restoration would break the checkpoint boundary.
+- The review found and fixed one post-checkpoint verifier gap. The final verifier now rejects drift in the checkpoint's frozen implementation map and checks the exact dataset, behaviour-reference, and review authorities. The frozen runtime checkpoint and every runtime payload remain byte-identical; only the final manifest was rebound.
+- Step 9.1 and Step 9.2 contract suites: 60 passed. The Phase 8 answer-quality, memory-answer, and evidence-package suites passed 62 tests locally with 19 PostgreSQL cases skipped; the evidence-package suite then passed all 33 tests against the disposable database.
+- Protected live gates passed sequentially: retrieval baselines 132, conflict evaluation 39, belief resolution 46, conflict relations 29, conflict candidates 29, durative claims 55, grounded summaries 45, sessionization 33, temporal evaluation 20, temporal lifecycle 15, and storage with ingestion 30 tests.
+- `make validate-scaled-benchmark PYTHON=.venv-storage/bin/python` passed at dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`.
+- `make test PYTHON=.venv-storage/bin/python` passed with 1,012 tests discovered: 856 passed and 156 database or frozen-runtime tests skipped. Every required database group passed in the live gates above.
+- Runtime and final self-verification, exact identity/time/lineage recomputation, in-memory compilation, all three adapter attestations, 33-path topology, protected hashes, changed-path secret and leakage scans, `git diff --check`, cached and unstaged inspection, and Docker cleanup passed. The final diff contains 29 new v2 files, this ledger entry, and three test-only compatibility adapters; production predecessor drift is zero.
+
+### Artifacts, cost, and handoff
+
+- Configuration: SHA-256 `69985ddf0a39518571c404bac04cc6e02095c25e32d2d73612098b31f2094ea1`
+- Development cases: SHA-256 `ffc42b724ea7d36783e8ec861b4074734a933577835f39f84a8e75cba6bece26`
+- Reviewed behaviour reference: SHA-256 `afa7a0d8d16140a469d79e4c69f57a7b357f7a50ea5247edb176ad69be60c975`
+- Final predictions: SHA-256 `babf748e7014d7d89b418986b3e3b9daf3d191f04e1a93d4cca8b877a276a977`
+- Scorecard: SHA-256 `c499c3dc173871788f7a4cb463885a1b09762a5bec04eb577aaaf1b81d3bb369`
+- Final manifest after the verifier correction: SHA-256 `c9ac70ba2b25ef5639288b39eb0aa997b59957dab6195060d12e6943eec10d7b`
+- Failures are empty, SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+
+Step 9.3 v2 made no model call, transmitted no fields, used no tokens, and cost `$0`. Historical OpenAI spend remains `$0.2314404`. The eventual Step 9.4 handoff is limited to this frozen four-case runtime, corrected requirement contract, checkpoint, structural scorecard, and their stated non-blind and candidate-only limitations.
+
+## Step 9.4 prerequisite: Freeze matched B6/B7 development inputs
+
+Status: complete
+
+- Starting commit: `3c45309de43a35b0c7b7b588077f094be2b57934`
+- Ending commit: the commit containing this entry
+- Commit message: `abstention: freeze matched B6 B7 development inputs`
+
+This prerequisite freezes matched B6 and B7 inputs for the same four development cases; it does not score them or start Step 9.4. Each pair shares the exact Step 9.3 B4 plan, snapshot, retrieval result, evidence package, timestamps, model configuration, prompt identity, and structural answer. B6 goes directly from the blocked package to Step 8.2 structural abstention without a Step 9 gate. B7 adds the committed Step 9.1 decision and Step 9.2 `ordinary_1_trait_2` threshold, then reaches the same abstention. The release contains four pairs, four B6 predictions, four B7 predictions, eight abstentions, four B7 gate applications, no B6 gate application, and zero failures, provider-eligible cases, requests, retries, tokens, or cost. Sixteen frozen-test cases remain deferred.
+
+This was not a clean-room review. The implementer had prior pilot answer-reference exposure and did not use it; the reviewer had prior frozen-snippet exposure and did not use it; the root contract derivation had no prohibited exposure. The runtime opened no Step 9.3 gold or reference, Step 9.4 scorer or reference, frozen-test row, oracle, review queue, credential, provider, or network path.
+
+Independent review tightened canonical failure and shared-pair identities and made the static verifier reconstruct every prediction and pair from the frozen Step 9.3 plan, retrieval, package, and decision artifacts. The four prediction/pair payloads stayed byte-identical. The corrected checkpoint is SHA-256 `9902507e5518b2b16fee35ad76be62ef57201bb9271b3de251e2b2063c239186`; B6 predictions are `49992c38495346a8a88b1ed3e12995c12a965b2ccc525eb6956ee2cb6dd72d9c`, B7 predictions are `ad1fc7bfc9eecfdc7792b281afd46b0c729596060e5a2dbdae7a49a515b4fefe`, pairs are `a7b3e018e9fb6c45392d9a678ba2c166990e456c05ac2e43d17b1cc9f640df24`, and failures remain the empty-file hash `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+
+The governing guidance, compatibility ruling, and correction envelope hashes are `9823e973c651cd2d8836035df07cb5fa0ef69336c18e542955afda05227b9edd`, `50b592b4507b3dd42dfce1e3cfd5a907694edc7d72ef42793ca67ff5d76df36a`, and `72ffb02598f0e9823ed61670ea156299b4e219123243533a5393297e249ddb8c`. The four test-only adapters attest the committed Step 9.3 bytes and the exact 17-path prerequisite topology. Step 9.4 scoring, reference loading, the remaining 16 cases, Phase 9 completion, and Phase 10 remain out of scope.
+
+The corrected focused suite passed 17 tests against PostgreSQL. The Step 9.3, Step 9.2, Step 9.1, memory-answer, answer-quality, and evidence-package contract matrix ran 177 tests: 152 passed and 25 database or frozen-runtime cases were skipped there; the evidence-package suite then passed all 33 tests live. Protected live gates passed for retrieval baselines, conflict evaluation (39), belief resolution (46), conflict relations (29), conflict candidates (29), durative claims (55), grounded summaries (45), sessionization (33), temporal evaluation (20), temporal lifecycle (15), and storage with ingestion (30). The scaled validator passed with dataset SHA-256 `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`, and the full 1,029-test suite passed; database coverage was supplied by the live gates.
+
+Runtime self-verification, two clean database replays, coordinated-tamper rejection, in-memory compilation, protected hashes, changed-path secret and prohibited-import scans, `git diff --check`, exact cached and unstaged inspection, and Docker cleanup passed. This is only a matched-input prerequisite: it publishes no score, opens no comparison reference, makes no quality claim, and does not complete Step 9.4 or Phase 9.
+
+## Phase 9, Step 9.4: Evaluate B7 coverage and risk on development cases
+
+Status: complete
+
+- Starting commit: `7e8fc5337384ac329264e3606507b925bd890d63`
+- Ending commit: the commit containing this entry
+- Guidance envelope: `e8c5a5b1381f6314edc13d952c5f77103cef020503de90b5f7904a929573595f`
+- Boundary ruling: `d22d055e9c32cdd0f178f1eadaa77f23574eab50e02e7a6af69f879cbf97d476`
+- Commit message: `abstention: evaluate B7 coverage and risk`
+
+This nonblind development evaluation scores the frozen matched prerequisite without rerunning retrieval, package construction, answerability, or a provider. It copies only the four reviewed development decisions after verifying checkpoint `9902507e5518b2b16fee35ad76be62ef57201bb9271b3de251e2b2063c239186`; record five and all frozen, oracle, review-queue, answer-gold, environment, and provider inputs stay unopened. The implementer had prior pilot answer-reference exposure and did not use it. The reviewer had prior frozen-snippet exposure and did not use it. This review makes no clean-room claim.
+
+B6 and B7 each abstain on all four cases. Both have coverage `0/4`, abstention precision `1/4`, abstention recall `1/1`, false-answer rate `0/1`, and unnecessary-abstention rate `3/3`. Answer accuracy and selective risk are null because neither baseline answered. Every B7-minus-B6 measurable delta is zero, the gate changes no output, and this release provides no evidence that B7 improves on B6. Sixteen frozen cases remain deferred, so Phase 9 exit is false.
+
+The independent review tightened status/action coherence and exact metric serialization, then added the safe-discovery included-module list that the boundary ruling requires. Its first read-trapped run caught `tests.unit.test_atomic_extraction_step34_selection` attempting to open a Pilot artifact; the trap stopped the read before any bytes were returned. The module now sits in the excluded set. The eight per-case rows, four pair deltas, scorecard, checks, and empty failures stayed byte-identical. The rebound manifest is SHA-256 `e8aed9be4455a1dd8b33f390928bcec537e5c69e752a41a1a23265acb5e12fbd`; findings are `3555c3859721273aeec94dbb52d01cf51cf4a52f9ff1bb40294d98c6d9a217ed`, per-case rows `5d0f0ae5c5f78b1e558ea69ab5552d6167c0b03b08c4517949b47c1045076733`, pair deltas `fc443171c69cd4cc62d9e83961804d1d6a58e9064e21ea49dce613829d86379f`, and the scorecard `16ad0cacf0d9bdd7d024591ac040e298bae5098ff0dd02d0cd249d6a9e07f3b6`.
+
+The boundary ruling intentionally forbids unrestricted `make test` and the full scaled validator. The committed scaled manifest passed the permitted manifest-only check with SHA-256 `e3b4386b7063b3c2d65b45574b2e5665fc5094a8330ffd16ea83781744b9a5d3` and dataset identity `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61`; none of its referenced files was opened. The final safe complement contains 55 included and 46 excluded modules. It ran 602 tests with 130 expected skips, no failure, and zero prohibited opens.
+
+Focused Step 9.4 tests passed 14/14. The prerequisite, Step 9.3, Step 9.1/9.2, and Phase 8 contract matrix ran 179 tests: 154 passed and 25 live-database or frozen-runtime cases were skipped there. The prerequisite and evidence-package live run then passed 51/51. Protected PostgreSQL targets passed for retrieval baselines (132), conflict evaluation (39), belief resolution (46), conflict relations (29), conflict candidates (29), durative claims (55), grounded summaries (45), sessionization (33), temporal evaluation (20), temporal lifecycle (15), and storage with ingestion (30).
+
+Two clean scorer runs, deep release verification, coordinated-tamper rejection, compilation, exact hashes and 22-path topology, protected-tree checks, changed-path secret and prohibited-input scans, `git diff --check`, cached and unstaged inspection, and Docker cleanup passed. Provider requests, retries, tokens, and incremental cost remained zero; historical OpenAI spend stays `$0.2314404`. Phase 10 has not started.
+
+## Phase 10, Step 10.1: Freeze the B0-B7 comparison
+
+Status: complete
+
+- Starting commit: `78ed4900fd9a7aecbd7ca8c70b5726b356a07ff4`
+- Guidance envelope: `fb8e38cf51393968183db1a40e1659bcffaac6cebe6733cfaf9bdbc3a0f1959a`
+- Compatibility ruling: `866692ef90fdb207f7636c3f78dec96a4a3301354690d972fa217f1e53eea65c`
+- Commit message: `evaluation: freeze B0 B7 comparison`
+
+This step freezes one comparison contract for B0 through B7 across QA, summaries, and interactive cases. It records the same model settings and one task-specific prompt for every baseline, 27 scaled-manifest file bindings, 82 future metrics, and eight missing runtime prerequisites. It contains no predictions, scores, or model output. Step 10.2 has not started.
+
+The build opened only `data/scaled-v1/manifest.json`. It did not follow any referenced runtime, gold, oracle, review, schema, or prediction path. Provider requests, tokens, and incremental cost remained zero; historical OpenAI spend stays `$0.2314404`. The implementer had prior pilot answer-reference exposure and did not use it. The reviewer had prior frozen-snippet exposure and did not use it. This review does not claim a clean-room boundary.
+
+Independent review found one verifier gap: coordinated changes to the live comparison or prompt configuration could be rebound into the result artifacts. The verifier now pins both existing file hashes before parsing and the standalone definition parser pins the full canonical definition. The definition, prompts, checks, run record, findings, counts, and prerequisite gaps did not change. The rebound result manifest is SHA-256 `14d14b701ac54005a8038335cd37be6cc2eb6446ef68be8a440f0159d2291159`; the dataset manifest remains `f701db8601a1f0241b6c553b86d3cd7432c4e4563db8a7a53eeaac7d4c195858`.
+
+Focused tests passed 13/13, including byte-identical replay, manifest-only read traps, immutable output checks, and coordinated-tamper rejection. The read-trapped safe complement ran 615 tests with 130 expected database skips and no prohibited read. Protected live targets passed for retrieval baselines (132), conflict evaluation (39), belief resolution (46), conflict relations (29), conflict candidates (29), durative claims (55), grounded summaries (45), sessionization (33), temporal evaluation (20), temporal lifecycle (15), and storage with ingestion (30).
+
+Compilation, deep verification, exact 16-path topology, protected hashes, changed-path scans, `git diff --check`, cached and unstaged inspection, and Docker cleanup passed. The scaled-manifest-only check retained dataset identity `746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61` without following any file binding. The boundary ruling intentionally excludes unrestricted `make test` and the full scaled validator, so this entry does not claim either gate passed.
+
+This is a definition release, not a comparison result. All eight scaled runtime and prediction releases are still missing, Phase 9 remains incomplete, and Step 10.2 requires separate guidance.
+
+## Phase 10, Step 10.2: Preflight and approve the frozen run
+
+Status: complete
+
+- Starting commit: `b2ae263e1129758325a30db57c03620628c6355e`
+- Guidance: `step-10.2-guidance-v1`, SHA-256 `b91d4b44752e649c3419eb557c9e0148839820998e94400e48a0f13a00f83f05`
+- Commit message: `evaluation: preflight frozen comparison run`
+
+The provider-disabled preflight opens only the five scaled runtime files named by the committed manifest. It freezes 25 resumable batches and 4,660 planned requests: 100 extraction requests plus B0-B7 runs for 500 QA, 50 summary, and 20 interactive cases. It does not open gold, oracle, review queues, or existing predictions. No API key value is stored in an artifact.
+
+Extraction is pinned to `gpt-4.1-mini-2025-04-14`; answer generation is pinned to `gpt-4.1-2025-04-14`. Both use temperature 0, `store=false`, exact output limits, no automatic retry, and a checkpoint after every successful response. Standard uncached prices checked on 2026-08-10 give an expected incremental cost of `$32.8869328` and a hard maximum of `$91.2131728`. Including the prior `$0.2314404`, the cumulative maximum is `$91.4446132`.
+
+The immutable release records the state before approval: credential reuse was approved, while transmission and paid execution were still false. Sneha later approved both remaining gates in the controlling session. The approved transmission is limited to synthetic source text and metadata, case prompts and identifiers, timestamps, and baseline-specific memory context. Gold, oracle data, review records, credentials, and scorer-only fields remain excluded. Step 10.2 itself made zero provider requests and cost `$0`.
+
+The focused Step 10.2 suite passed 12 tests. The predecessor contract stack passed 218 tests with 25 expected database or frozen-runtime skips. The read-bounded safe complement passed 627 tests with 130 expected skips. Two clean builds were byte-identical; deep verification, compilation, exact path checks, protected hashes, changed-path secret scans, and `git diff --check` passed.
+
+The final diff has 25 paths: 17 Step 10.2 additions, this ledger entry, and seven test-only adapters. The adapters preserve every predecessor artifact assertion and add committed-boundary checks before accepting the exact Step 10.2 path set.
+
+Key artifacts are the dataset manifest `d1f7455b6e931bfae95a8b5c0c14128de512ce59e088faa13a260df22bb5c052`, transmission plan `d0f17e36504c70fa0424b50c856b793f4ba8ebb8c6f3af969f5e309a8e660e78`, batch plan `c0b89899e6c3fd380557916eb91d84f7a86a21e5f24ee9c7af6748d4323b3c13`, checks `a4d606393e44749ad847b48dc2980e19fb26dc4ccfc8faf343ad359ee27bf038`, and result manifest `b5645e4189df260daa69292d15a95a641834b15b64eb19ce3a273b8c7e030ac5`.
+
+Step 10.3 receives this frozen plan and the explicit transmission and spend approvals. It must keep each batch immutable, resume only unfinished or provider-failed work, and finish predictions before opening scorer-only gold.
+
+## Recovery: preserve the interrupted OpenAI Step 10.3 run
+
+Status: complete
+
+### Repository state
+
+- Starting commit: `141066391f70060ce99acdf0804ac7b3cbadafdc`
+- Branch: `codex/implementation-handoff-3.5-11.4`
+- Ending commit: the commit containing this entry
+- Commit message: `evaluation: preserve interrupted OpenAI run`
+- No unrelated path or staged change was present at recovery start.
+
+### Audit and recovery
+
+- No OpenAI evaluation worker, frozen-answer process, or external Python provider connection was running. The only Python sockets found were local connections owned by the Hermes service.
+- The dirty paths matched the interrupted Step 10.3 work exactly. The changed code, tests, v2 configuration, and failed artifacts contain no secret value or unrelated user edit.
+- The 100-request GPT-4.1-mini extraction completed with 100 accepted predictions, 427,542 input tokens, 20,372 output tokens, and cost `$0.2036120`. It remains historical evidence and will not be replayed, overwritten, or reused by the Qwen series.
+- B0 QA v1 made 20 requests. All 20 failed, and its prediction file is empty. The run is `failed_not_scored`; it is not a zero-scoring result.
+- B0 QA v2 made four requests, used 1,182 input and 314 output tokens, and cost `$0.0048760`. All four responses failed output validation. Its prediction file is empty, so it is also not a scored result.
+- Historical OpenAI usage is 149 requests, 536,405 input tokens, 26,921 output tokens, and `$0.4399284`. No OpenAI request was made after the Qwen recovery goal began, so new OpenAI cost is `$0.0000000`.
+- Added a hash-bound recovery manifest for the two failed B0 attempts, the completed extraction, both run configurations, and the recovery findings. The historical answer runner now refuses its built-in live execution path before it can read an environment file or create output. Tests may still pass an explicit fake client.
+- The replacement series is `qwen35-27b-fp8-v1`. It will regenerate extraction and write to new paths. It will not replay or modify OpenAI predictions.
+
+### Files changed
+
+- Preserved the interrupted OpenAI files under `configs/evaluation/frozen_answer_run_v2.json`, `results/evaluation/frozen-run-v1/`, and `results/evaluation/frozen-run-v2/`.
+- Added `src/evaluation/openai_recovery.py`, `results/evaluation/openai-step10.3-interrupted-v1/manifest.json`, `results/evaluation/openai-step10.3-interrupted-v1/findings.md`, and `tests/integration/test_openai_recovery.py`.
+- Updated the frozen answer runner, OpenAI error sanitization, focused unit and integration tests, and the Step 10.2 topology adapter.
+
+### Tests and checks
+
+- Focused fake-client recovery suite in `.venv-storage`: 23 tests passed before the extraction resume regression was added.
+- The first broader 43-test matrix found one test-only Step 10.2 topology assertion that still described the old worktree. Functional tests passed. The adapter now checks the original Step 10.2 commit separately and the exact 17-path recovery topology separately.
+- Final recovery matrix: 44 tests passed in 101.760 seconds.
+- Post-review manifest, runner, and topology subset: 15 tests passed in 35.959 seconds.
+- `git diff --check`, JSON parsing, tracked and untracked secret scans, cached-diff inspection, artifact counts, and SHA-256 checks passed.
+- An initial `.venv` invocation could not import `tiktoken`; `.venv-storage` contains the pinned `tiktoken==0.13.0` and ran the test gates.
+- Unrestricted `make test` remains deferred under the existing frozen-data boundary. The recovery matrix uses fake clients and opens no gold, oracle, review queue, `.env`, or frozen-test record.
+
+### Protected hashes
+
+- `preference.md`: `bf6dfc6ea0b23e9ff1c52b4dbf1debce6ebe495070e826743ffa2d56681a18b8`
+- `docs/memory-evaluation-steps.md`: `bf89021a98273e623edbe27318c9b1cadfb8bed023f5e256a2f58b13e27913ba`
+- Completed extraction checkpoint: `cebf273adf95a2ca012adf268f6e3cef276178a12e7b0cfef4f323989415cf54`
+- Completed extraction predictions: `527b95fd9e839b41c47e9154e03c8e9551c5c46f931feae8236222cc8117ebd2`
+- B0 v1 failed checkpoint: `1f179d144e78fa2d93aaa10528aea21279db7ee418d40b76e28aea5a5c775e60`
+- B0 v1 failures: `9648afc6009e5df15d277ef8983970291ade5e78ec74cd4718884fe2ce2f1c4b`
+- B0 v2 failed checkpoint: `290882071af2387e102445dd389556892d8ceb05626b9d0cac0d922f6b711d9b`
+- B0 v2 failures: `631b427c14d8816bcf21749e333bf6c750e73abf4bb1a57dedcfee81abe3310e`
+- Both B0 prediction files: empty-file SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
+- Recovery manifest: `57e34b30ceb0100a75cefa49175228fd386e89a205d27588c7104fac88061f75`
+
+### Limitations and next input
+
+- The OpenAI extraction is structurally complete but belongs only to the historical OpenAI run. Its quality has not been rescored here.
+- Neither B0 attempt produced a usable answer, and neither is part of a score denominator.
+- No Qwen model, tokenizer, vLLM server, Jarvis instance, development pilot, or Qwen-tokenized preflight exists yet.
+- The next step receives the immutable recovery manifest and the existing checkpoint contracts. It must add a provider-neutral private-vLLM seam and pass local fake-server tests before any Jarvis instance is created.
+
+## Demo and Qwen execution scaffold
+
+Status: implemented locally; external execution pending separate approval
+
+- Added the `qwen35-27b-fp8-v1` frozen configuration with exact model and vLLM revisions, non-thinking sampling, strict task schemas, one RTX-PRO6000 target, a 16,384-token context, and INR 200/300/1,000 stage caps.
+- Added a private vLLM client extension, model/authentication mismatch handling, strict structured payloads, runtime tokenization, per-response fsynced checkpoints, immutable manifests, no automatic invalid-output retry, and the Stage 3 validity/reserve gate. A resumable runner selects exactly 932 development and 3,728 test requests, regenerates Qwen extraction first, and then builds B0-B7 contexts from those Qwen claims.
+- Generated a 12-request Stage 1 pack from runtime-only development inputs: three extraction, three B0 QA, three B0 summary, and three B0 interactive requests. It contains no scorer gold, oracle record, review queue, or OpenAI prediction reuse.
+- Added a deterministic sanitized bundle and read-only FastAPI endpoints for cases, runs, scorecards, and health. Runtime code reads only the generated bundle.
+- Added a responsive React/TypeScript explorer with chronological replay, memory lifecycle states, evidence inspection, abstention and failure explanations, baseline filtering, incomplete run status, and desktop/mobile layouts.
+- Added `make demo`, focused demo tests, one Docker image, Docker Compose service, and Railway-ready health configuration. The hosted image needs no GPU, database, API key, or provider call.
+- Historical OpenAI artifacts and their hashes remain unchanged. The demo reports the series as `interrupted_not_scored`, 149 requests, 536,405 input tokens, 26,921 output tokens, and `$0.4399284` recorded spend.
+- Step 10.4 is not complete: the demo scorecard presents existing complete development batches and explicit gaps, but no Qwen benchmark has been run or scored.
+- After separate approval, the artifact-only demo was deployed from branch `testing` at commit `b924d8a` to [longitudinal-memory-benchmark.up.railway.app](https://longitudinal-memory-benchmark.up.railway.app).
+- No JarvisLabs instance, paid benchmark run, GPU, database, API key, or provider execution was added to the hosted service.

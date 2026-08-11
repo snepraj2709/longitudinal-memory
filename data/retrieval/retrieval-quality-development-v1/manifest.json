@@ -1,0 +1,65 @@
+{
+  "annotation_count": 200,
+  "blind_evaluation": false,
+  "dataset_version": "retrieval_quality_development_v1",
+  "development_users": [
+    "user_001",
+    "user_002"
+  ],
+  "guidance_sha256": "17d8609f5e0799661ea4a7d6b3a1de3493d267a6cff90efa4d21e17de4df96ae",
+  "guidance_version": "step-7.4-guidance-v1",
+  "inputs": {
+    "baseline_queries": {
+      "path": "data/retrieval/baseline-execution-development-v1/queries.jsonl",
+      "sha256": "e6e98f9b6de0747652d0d99b2379abe2d1e1a01ab012b1c6cae00cfab8e72bb4"
+    },
+    "baseline_ranked_results": {
+      "path": "results/retrieval/baseline-execution-development-v1/results.jsonl",
+      "sha256": "e1e69fe8ac64a81f27e171cdd7082b7648e2a339659f11e6e4f2a1702a1dbb60"
+    },
+    "index_records": {
+      "path": "results/retrieval/index-development-v1/records.jsonl",
+      "sha256": "e29531cd3bf72419c947a31b13c0b4adbd008f019dfbfc3e6a820ad541e23cfe"
+    },
+    "quality_config": {
+      "path": "configs/retrieval/quality_evaluation_v1.json",
+      "sha256": "45e0f0bd5057f92b1bdd20fb14313911b12202b79d072e8d05c6c0600489bb2a"
+    },
+    "relevance": {
+      "path": "data/retrieval/retrieval-quality-development-v1/gold/relevance.jsonl",
+      "sha256": "b1fd2024620ad8baf2165824f5715eadd1009c739dc01d11bb9aa288f8a75c83"
+    },
+    "review": {
+      "path": "data/retrieval/retrieval-quality-development-v1/gold/review.json",
+      "sha256": "68f7ee182a11e9d812e18e6eb51c1b524ad2c203ba3c3bce34c31364427600d5"
+    },
+    "runtime_checkpoint": {
+      "path": "results/retrieval/retrieval-quality-development-runtime-v1/checkpoint_manifest.json",
+      "sha256": "82807fa0ab3ae99961aa1fef3ece65353361cb45a1ed28a9c443d901c1d688e4"
+    },
+    "runtime_failures": {
+      "path": "results/retrieval/retrieval-quality-development-runtime-v1/failures.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runtime_latency_samples": {
+      "path": "results/retrieval/retrieval-quality-development-runtime-v1/latency-samples.jsonl",
+      "sha256": "4d947e64abd5d3fc0fb8d6d1f6e723a8cd77b123fa66d0e85d44971c66893305"
+    },
+    "runtime_preflight": {
+      "path": "results/retrieval/retrieval-quality-development-runtime-v1/checkpoint_preflight.json",
+      "sha256": "265a32d07bc85a3948bac6e8dc954a61aa53e12461444d2ce0880895e1a5ecab"
+    },
+    "source_prefix": {
+      "path": "data/scaled-v1/runtime/sources.jsonl",
+      "prefix_records": 20,
+      "prefix_sha256": "b0dc2b0dae985b51e2e25e441f98dcbe8d86045fa6a3beae2545f50de9e844d9"
+    }
+  },
+  "labeling_boundary": "stable_same_user_candidate_order_without_rankings",
+  "model_usage": "deterministic_no_model",
+  "prior_ranked_result_exposure_possible": true,
+  "query_count": 8,
+  "review_status": "implementation_reviewed",
+  "split": "development",
+  "starting_commit": "d849ea1140f97066edb408acd8704268655c7abe"
+}

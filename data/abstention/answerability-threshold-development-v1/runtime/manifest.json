@@ -1,0 +1,44 @@
+{
+  "clean_room_boundary": "no_rejected_prompt_content_used",
+  "config_sha256": "cf33994fb0a13994748b1d3c67a53a15396e30f51b65dd042a191c18e7127e02",
+  "dataset_version": "answerability-threshold-development-runtime-v1",
+  "excluded_inputs": [
+    "rejected_step_9_2_derivation",
+    "benchmark_gold",
+    "answer_gold",
+    "relevance_gold",
+    "step_6_4_gold",
+    "oracle",
+    "review_queues",
+    "frozen_test_users",
+    "scaled_runtime",
+    "step_8_2_answers",
+    "step_8_3_scorecard",
+    "provider_credentials",
+    "database",
+    "prompts"
+  ],
+  "fixture_count": 24,
+  "fixtures_sha256": "82cee5781648819fb90094f9ab3244c2d0a8d85528e1fd2bf49df553d4765d51",
+  "guidance_sha256": "c815ed3785101c08ce563c42c802c4513ab1bb00f5213e21e77098369d751628",
+  "guidance_version": "step-9.2-guidance-v1",
+  "implementation": {
+    "src/abstention/calibration.py": "67407be6be00603b887984b3217a9e3522ce6331db8cc73e7c70a2a819de2daf",
+    "src/abstention/calibration_contracts.py": "3dcff2419b33dd5958b1d06215ff38f29463444c1695e9be4b4e7b410f3e2e8c",
+    "src/abstention/calibration_evaluation.py": "51162ea629771f3d30030dc443e82b3b860025ddff1d3f1e036899a408a29077"
+  },
+  "model": "deterministic_no_model",
+  "profile_count": 6,
+  "profile_order": [
+    "ordinary_1_trait_2",
+    "ordinary_1_trait_3",
+    "ordinary_2_trait_2",
+    "ordinary_2_trait_3",
+    "ordinary_3_trait_2",
+    "ordinary_3_trait_3"
+  ],
+  "reference_included": false,
+  "selected_profile": "ordinary_1_trait_2",
+  "starting_commit": "35d0c64431f19d4243b72af712dadeb8d522128f",
+  "step_9_1_result_manifest_sha256": "15667096c215de19fcf2ac6d897237791b62eef30e37d505adac2e5de4523de3"
+}

@@ -1,0 +1,62 @@
+{
+  "allowed_users": ["user_001", "user_002"],
+  "dataset_version": "evidence_package_development_v1",
+  "input_release_version": "baseline_execution_development_v1",
+  "package_schema_version": "evidence_package_schema_v1",
+  "runtime_version": "evidence_package_runtime_v1",
+  "predecessor_drift": [],
+  "excluded_inputs": [
+    "data/retrieval/retrieval-quality-development-v1/gold",
+    "results/retrieval/retrieval-quality-development-v1/scorecard.json",
+    "scaled_gold",
+    "oracle",
+    "review_queue",
+    "step_6_4_gold",
+    "test_users"
+  ],
+  "expected": {
+    "baseline_counts": {"B2": 8, "B3": 8, "B4": 8},
+    "failure_count": 0,
+    "package_count": 24,
+    "query_count": 8,
+    "user_count": 2
+  },
+  "guidance_sha256": "6af1d3eb7d227c430a93b89abfce8fcc1853c5d29027f828650b5c8a58dec229",
+  "guidance_version": "step-8.1-guidance-v1",
+  "inputs": {
+    "baseline_config": {
+      "path": "configs/retrieval/baseline_v1.json",
+      "sha256": "6d49b6d9302b32eb5446ceeb36eb14642091a73ff264c4d7cfeeb4569858cea1"
+    },
+    "baseline_queries": {
+      "path": "data/retrieval/baseline-execution-development-v1/queries.jsonl",
+      "sha256": "e6e98f9b6de0747652d0d99b2379abe2d1e1a01ab012b1c6cae00cfab8e72bb4"
+    },
+    "baseline_release": {
+      "checkpoint_path": "results/retrieval/baseline-execution-development-v1/runtime-checkpoint.json",
+      "checkpoint_sha256": "d99a2ee8720f16fb40867f92d1740582536ecced84c7eadfffc5f1907065e3b4",
+      "manifest_path": "results/retrieval/baseline-execution-development-v1/manifest.json",
+      "manifest_sha256": "ab45d4a51766d9d0edcc39c77f8b0ccd4abbcb1254437153f7759418cfe01703",
+      "results_path": "results/retrieval/baseline-execution-development-v1/results.jsonl",
+      "results_sha256": "e1e69fe8ac64a81f27e171cdd7082b7648e2a339659f11e6e4f2a1702a1dbb60"
+    },
+    "index_release": {
+      "manifest_path": "results/retrieval/index-development-v1/manifest.json",
+      "manifest_sha256": "5854d9389224128549df992a9fd7f60e857333ed273adb946b1c1c8c58dea0c6",
+      "records_path": "results/retrieval/index-development-v1/records.jsonl",
+      "records_sha256": "e29531cd3bf72419c947a31b13c0b4adbd008f019dfbfc3e6a820ad541e23cfe"
+    },
+    "planner": {
+      "config_path": "configs/retrieval/query_planner_v1.json",
+      "config_sha256": "538af5ceb41f50c752dc086c9f6ef39ee6b42b4ec0616948b3ac38192f66c654",
+      "release_manifest_path": "results/retrieval/query-planning-development-v1/manifest.json",
+      "release_manifest_sha256": "007b5c14c7e74a87c717150a5ab0ee454e8ed1e61dd493c014705cae5dd7383f"
+    },
+    "retrieval_quality_gate": {
+      "final_manifest_path": "results/retrieval/retrieval-quality-development-v1/manifest.json",
+      "final_manifest_sha256": "6e89700beb6a483ce0b23c3033927122c2170897b81a366ffde31fc7785a63e4"
+    }
+  },
+  "runtime_boundary": "phase_7_runtime_only_no_relevance_gold_or_scorecard",
+  "starting_commit": "1df7e3c0846e9bebb873debe4cc2ae1f532a2cb1"
+}

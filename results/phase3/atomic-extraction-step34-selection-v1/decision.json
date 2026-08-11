@@ -1,0 +1,284 @@
+{
+  "candidate_versions_reviewed": [
+    "atomic-extraction-v4",
+    "atomic-extraction-v5",
+    "atomic-extraction-v6",
+    "atomic-extraction-v7",
+    "atomic-extraction-v8",
+    "atomic-extraction-v9"
+  ],
+  "known_limitations": [
+    "The v2 safety result missed 21 of 48 gold claims.",
+    "The selected v3 runtime prompt has deterministic contract coverage but no separate paid full-development result.",
+    "The candidate comparison covers Maya development cases only.",
+    "One run per candidate does not measure provider-run variance."
+  ],
+  "measured_results": {
+    "v2_safety_baseline": {
+      "metrics": {
+        "epistemic_status_accuracy": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 33,
+          "value": 0.916667
+        },
+        "micro_claim_f1": {
+          "denominator": 84,
+          "null_reason": null,
+          "numerator": 54,
+          "value": 0.642857
+        },
+        "micro_claim_precision": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 27,
+          "value": 0.75
+        },
+        "micro_claim_recall": {
+          "denominator": 48,
+          "null_reason": null,
+          "numerator": 27,
+          "value": 0.5625
+        },
+        "object_accuracy": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 27,
+          "value": 0.75
+        },
+        "polarity_accuracy": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 36,
+          "value": 1.0
+        },
+        "predicate_accuracy": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 35,
+          "value": 0.972222
+        },
+        "provenance_span_precision": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 11,
+          "value": 0.305556
+        },
+        "provenance_span_recall": {
+          "denominator": 50,
+          "null_reason": null,
+          "numerator": 11,
+          "value": 0.22
+        },
+        "speaker_accuracy": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 36,
+          "value": 1.0
+        },
+        "subject_accuracy": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 36,
+          "value": 1.0
+        },
+        "unsupported_memory_rate": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 0,
+          "value": 0.0
+        },
+        "valid_time_accuracy": {
+          "denominator": 36,
+          "null_reason": null,
+          "numerator": 24,
+          "value": 0.666667
+        }
+      },
+      "total_unsupported_claims": 0
+    },
+    "v8_best_f1_candidate": {
+      "disposition": "rejected_known_unsupported_claims",
+      "metrics": {
+        "epistemic_status_accuracy": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 36,
+          "value": 0.923077
+        },
+        "micro_claim_f1": {
+          "denominator": 88,
+          "null_reason": null,
+          "numerator": 62,
+          "value": 0.704545
+        },
+        "micro_claim_precision": {
+          "denominator": 40,
+          "null_reason": null,
+          "numerator": 31,
+          "value": 0.775
+        },
+        "micro_claim_recall": {
+          "denominator": 48,
+          "null_reason": null,
+          "numerator": 31,
+          "value": 0.645833
+        },
+        "object_accuracy": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 31,
+          "value": 0.794872
+        },
+        "polarity_accuracy": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 39,
+          "value": 1.0
+        },
+        "predicate_accuracy": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 37,
+          "value": 0.948718
+        },
+        "provenance_span_precision": {
+          "denominator": 40,
+          "null_reason": null,
+          "numerator": 13,
+          "value": 0.325
+        },
+        "provenance_span_recall": {
+          "denominator": 50,
+          "null_reason": null,
+          "numerator": 13,
+          "value": 0.26
+        },
+        "speaker_accuracy": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 39,
+          "value": 1.0
+        },
+        "subject_accuracy": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 37,
+          "value": 0.948718
+        },
+        "unsupported_memory_rate": {
+          "denominator": 40,
+          "null_reason": null,
+          "numerator": 4,
+          "value": 0.1
+        },
+        "valid_time_accuracy": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 32,
+          "value": 0.820513
+        }
+      },
+      "total_unsupported_claims": 4
+    },
+    "v9_final_candidate": {
+      "disposition": "rejected_regression",
+      "metrics": {
+        "epistemic_status_accuracy": {
+          "denominator": 37,
+          "null_reason": null,
+          "numerator": 34,
+          "value": 0.918919
+        },
+        "micro_claim_f1": {
+          "denominator": 87,
+          "null_reason": null,
+          "numerator": 54,
+          "value": 0.62069
+        },
+        "micro_claim_precision": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 27,
+          "value": 0.692308
+        },
+        "micro_claim_recall": {
+          "denominator": 48,
+          "null_reason": null,
+          "numerator": 27,
+          "value": 0.5625
+        },
+        "object_accuracy": {
+          "denominator": 37,
+          "null_reason": null,
+          "numerator": 30,
+          "value": 0.810811
+        },
+        "polarity_accuracy": {
+          "denominator": 37,
+          "null_reason": null,
+          "numerator": 37,
+          "value": 1.0
+        },
+        "predicate_accuracy": {
+          "denominator": 37,
+          "null_reason": null,
+          "numerator": 33,
+          "value": 0.891892
+        },
+        "provenance_span_precision": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 14,
+          "value": 0.358974
+        },
+        "provenance_span_recall": {
+          "denominator": 50,
+          "null_reason": null,
+          "numerator": 14,
+          "value": 0.28
+        },
+        "speaker_accuracy": {
+          "denominator": 37,
+          "null_reason": null,
+          "numerator": 37,
+          "value": 1.0
+        },
+        "subject_accuracy": {
+          "denominator": 37,
+          "null_reason": null,
+          "numerator": 36,
+          "value": 0.972973
+        },
+        "unsupported_memory_rate": {
+          "denominator": 39,
+          "null_reason": null,
+          "numerator": 6,
+          "value": 0.153846
+        },
+        "valid_time_accuracy": {
+          "denominator": 37,
+          "null_reason": null,
+          "numerator": 28,
+          "value": 0.756757
+        }
+      },
+      "total_unsupported_claims": 6
+    }
+  },
+  "phase_3_5": {
+    "ready_to_begin": true,
+    "requires_separate_paid_run_preflight": true,
+    "started": false
+  },
+  "quality_evidence_prompt_version": "atomic-extraction-v2",
+  "review_status": "approved_by_sneha",
+  "reviewed_on": "2026-08-09",
+  "selected_normalization_version": null,
+  "selected_runtime_prompt_version": "atomic-extraction-v3",
+  "selection": "retain_safe_runtime_default",
+  "selection_reason": "V8 improved F1 but produced four known unsupported claims. V9 regressed on F1 and produced six. Sneha approved retaining the runtime default and the zero-unsupported v2 result as its measured safety evidence.",
+  "selection_version": "atomic-extraction-step34-selection-v1",
+  "step": "3.4",
+  "step_status": "complete"
+}

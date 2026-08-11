@@ -1,0 +1,102 @@
+{
+  "attempt_id": "attempt-005",
+  "failure": {
+    "code": "concurrent_snapshot_tokenizer_initialization_failed",
+    "detail": "The text-only server still failed while loading the Hub tokenizer, so setup was changed to seal and smoke-test the exact local snapshot before server startup."
+  },
+  "lifecycle": {
+    "account_balance_after_inr": 4885.5,
+    "account_balance_before_inr": 4891.85,
+    "created_at": "2026-08-11T09:25:10.278454Z",
+    "destroyed_at": "2026-08-11T09:28:49.621994Z",
+    "destruction_verified": true,
+    "elapsed_billable_seconds": 219.344755,
+    "events": [
+      {
+        "account_response_sha256": "d9daede13e987cde4f3532d2963dad79b8f04ece5c894fe74832a3cd37f5dd40",
+        "at": "2026-08-11T09:25:05.895165Z",
+        "event": "preflight",
+        "gpu_inventory_sha256": "ce5e9c45214c108874ddb31e38a5161b4db21f8b828ce81f21d9090b04fe5f07",
+        "resource_inventory_sha256": "02fbf66b98401e7a99ec3bc21fc73b6bf3fc430b1700e4237819b5c277350bf5",
+        "selected_offer": {
+          "free_devices": 7,
+          "gpu": "RTX-PRO6000-96GB",
+          "region": "IN1",
+          "spot_rate_inr_per_hour": 93.96,
+          "workload_type": "container"
+        }
+      },
+      {
+        "at": "2026-08-11T09:25:10.278454Z",
+        "event": "created",
+        "machine_id": 468778,
+        "offer": {
+          "free_devices": 7,
+          "gpu": "RTX-PRO6000-96GB",
+          "region": "IN1",
+          "spot_rate_inr_per_hour": 93.96,
+          "workload_type": "container"
+        }
+      },
+      {
+        "at": "2026-08-11T09:25:12.990587Z",
+        "environment": "Python 3.10.20\n2.11.0+cu130 13.0\nNVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+        "event": "install_environment_recorded"
+      },
+      {
+        "at": "2026-08-11T09:27:34.533350Z",
+        "event": "vllm_installed",
+        "revision": "65b7662d3fcb773afaf751ab29ac6960a0cf011d",
+        "version": "0.26.1rc1.dev602+g65b7662d3",
+        "wheel_url_sha256": "c85af8d1a08986a45d02bd5fc78119678bd4c6e17bb244f2fa6500435e71a8c5"
+      },
+      {
+        "at": "2026-08-11T09:27:43.469962Z",
+        "event": "server_files_uploaded",
+        "server_script_sha256": "ebf9298ca2cb7cecea2085fb8321a4314c43e3ccf329430902873b9dfdbbb496"
+      },
+      {
+        "at": "2026-08-11T09:27:45.453867Z",
+        "event": "server_started"
+      },
+      {
+        "at": "2026-08-11T09:28:37.303164Z",
+        "diagnostic_sha256": "3edbea1d7ad11c3a1229298e2c99a430099e8b4e43d618554f53e900fb2d4c9e",
+        "event": "server_failure_recorded"
+      },
+      {
+        "at": "2026-08-11T09:28:39.589773Z",
+        "event": "checkpoint_download",
+        "failure_code": "download_failed",
+        "succeeded": false
+      },
+      {
+        "at": "2026-08-11T09:28:44.662371Z",
+        "event": "destroy_requested",
+        "succeeded": true
+      },
+      {
+        "at": "2026-08-11T09:28:49.621994Z",
+        "event": "destruction_verified"
+      }
+    ],
+    "gpu_cost_inr": 5.724898,
+    "machine_id": 468778,
+    "observed_account_spend_inr": 6.35,
+    "offer": {
+      "free_devices": 7,
+      "gpu": "RTX-PRO6000-96GB",
+      "region": "IN1",
+      "spot_rate_inr_per_hour": 93.96,
+      "workload_type": "container"
+    },
+    "schema_version": "qwen_jarvis_lifecycle_v2",
+    "series_id": "qwen35-27b-fp8-v2"
+  },
+  "prior_gpu_cost_inr": 19.05,
+  "schema_version": "qwen_pipeline_run_v2",
+  "series_id": "qwen35-27b-fp8-v2",
+  "stages": {},
+  "status": "failed_or_budget_stopped",
+  "total_gpu_cost_inr": 25.4
+}

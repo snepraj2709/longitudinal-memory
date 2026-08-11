@@ -1,0 +1,57 @@
+{
+  "schema_version": "qwen_series_config_v1",
+  "series_id": "qwen35-27b-fp8-v1",
+  "status": "configured_not_run",
+  "model": {
+    "hugging_face_id": "Qwen/Qwen3.5-27B-FP8",
+    "revision": "97f5941bf617e31c5e237364a8602ce3f03a551a",
+    "model_alias": "qwen35-27b-fp8-v1",
+    "context_length": 16384,
+    "task": "text",
+    "enable_thinking": false
+  },
+  "runtime": {
+    "engine": "vllm",
+    "vllm_git_revision": "65b7662d3fcb773afaf751ab29ac6960a0cf011d",
+    "gpu_type": "RTX-PRO6000-96GB",
+    "region": "IN1",
+    "container_template": "pytorch",
+    "tensor_parallel_size": 1
+  },
+  "sampling": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "top_k": 20,
+    "presence_penalty": 1.5,
+    "seed": 42
+  },
+  "contracts": {
+    "extraction_prompt_version": "atomic-extraction-v3",
+    "extraction_prompt_module_sha256": "6e010d975a6bc37000a19f15fbaf1e6add456e670018348c4c4d635bbeafa583",
+    "extraction_schema_module_sha256": "bfb4f79fea773d98a2bbde70eadacf1bfc967bd8d59f7a6a00d6e6c17d798b14",
+    "predicate_registry_sha256": "15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1",
+    "answer_prompts_sha256": "681935ec199e6f0a4f7cb37c971c0c28295293af9f792f1f41f6225ce5f468bf",
+    "response_schema_version": "qwen_structured_output_v1"
+  },
+  "output": {
+    "root": "results/evaluation/qwen35-27b-fp8-v1",
+    "structured_json": true,
+    "checkpoint_after_each_response": true,
+    "automatic_invalid_output_retries": 0
+  },
+  "budget_inr": {
+    "total": 1500.0,
+    "stage_1": 200.0,
+    "stage_2": 300.0,
+    "stage_3": 1000.0,
+    "stage_3_reserve_fraction": 0.2,
+    "stage_3_minimum_valid_response_rate": 0.95
+  },
+  "workload": {
+    "development_compatibility_requests": 12,
+    "development_two_user_requests": 932,
+    "full_requests": 4660,
+    "expected_input_tokens": 11800532,
+    "expected_output_tokens": 1288000
+  }
+}

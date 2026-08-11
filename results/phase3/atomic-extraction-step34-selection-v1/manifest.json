@@ -1,0 +1,52 @@
+{
+  "generated_at_utc": "2026-08-08T19:11:09.787796Z",
+  "input_file_sha256": {
+    "results/phase3/atomic-extraction-v2/run.json": "7a22b863e8e6da796a308ea1553818a957189159807d8087917626cdd9524a6d",
+    "results/phase3/atomic-extraction-v2/scores.json": "d81cdedd2323f92c2c2ff6f94fc6c87e4d14c80fa3fb0e059f9fdcd70bc78b23",
+    "results/phase3/atomic-extraction-v4-development-analysis-v1/manifest.json": "c8974a6ec2bebcde4d28ff7ab24d2595144fb751b49ce1cbb26572ae2318091f",
+    "results/phase3/atomic-extraction-v4-development-analysis-v1/summary.json": "1e039c8d1c01a36a7dee415e195f743efd85458037aed5f9b1311a3c71f9e96b",
+    "results/phase3/atomic-extraction-v5-development-analysis-v1/manifest.json": "f48514206bab1e3a2763ea230168a8ae839164de68a381b41e544f9dc3324b4a",
+    "results/phase3/atomic-extraction-v5-development-analysis-v1/summary.json": "b2fbbef65083ac11802ed8de1413d661f228d7bf4f249baa035dcb437aa0afb5",
+    "results/phase3/atomic-extraction-v6-development-analysis-v1/manifest.json": "75e89bfd41dc1a0047c3954d9d418f42d7118a263c1ea5ff65dc5a9c95a047c8",
+    "results/phase3/atomic-extraction-v6-development-analysis-v1/summary.json": "ee189fd1a11c3f34b541502589a57f7e83b9942b70a8b727da2ff0ff297e00d6",
+    "results/phase3/atomic-extraction-v7-development-analysis-v1/manifest.json": "971375bbbdac259d51deb05dc00a1fa0f866009619daafe81abe2b5713ae914b",
+    "results/phase3/atomic-extraction-v7-development-analysis-v1/summary.json": "4ae0da330a3ce272229508452f57e0e760cc9774dbdb2ee238f082d51f00aac2",
+    "results/phase3/atomic-extraction-v8-development-analysis-v1/manifest.json": "a3175ae138237027d0cb23c0c176ab53cfee2ae430cc27e777f25abf91c063a6",
+    "results/phase3/atomic-extraction-v8-development-analysis-v1/summary.json": "21e5d13978012cde050387a2bb8b9ccfbf4a5edd5390f4ac2bb0332681c6faba",
+    "results/phase3/atomic-extraction-v8-development-v1/run.json": "f65ac92f5cd79da893cc08010b2a8abbe1da4e8f341141b8d28d3c245f831796",
+    "results/phase3/atomic-extraction-v8-development-v1/scores.json": "4c9bd5431d50c8704ee371bf3768321c05e1b1fb37e86e95878b475ea3f88ee9",
+    "results/phase3/atomic-extraction-v9-development-analysis-v1/manifest.json": "85f7a022e75ad5dc57641a39fbb9ed4fae2ed429e95974be6011a5a23d7d633c",
+    "results/phase3/atomic-extraction-v9-development-analysis-v1/summary.json": "4adb59ca682f12bc3e8d217f2d9a4fbbd20ba16f09c78a395c347ed7cc885bc2",
+    "results/phase3/atomic-extraction-v9-development-v1/run.json": "fa5a851139611b426ab606984d8a9518cf68c46cacc1ef5007518c734f740590",
+    "results/phase3/atomic-extraction-v9-development-v1/scores.json": "db5fc5af4dddc2a943a8988271d511a2d53415f3fe3315e2d29fb65b37a0296d"
+  },
+  "output_file_sha256": {
+    "decision.json": "f37532922efabf1e10d117509ddffa6034e1a74432140e22cd38eded4fe00640",
+    "findings.md": "abbf42650201bfc59ebdcf4de299c3512800796328177a60f975329c5eb2f94b"
+  },
+  "protected_b1_file_sha256": {
+    "configs/full_history_baseline_v1.json": "9ac8881719153f09369e195e1c81eb55cc5f2f50e591f87b4fe2664c16bf6d76",
+    "results/pilot/b1-full-history/baseline_findings.md": "62c8f0d1d64972b2fe031dd5aadd7efa7d1cb9f0d17ec5de9019879dcc2151f8",
+    "results/pilot/b1-full-history/case_scores.jsonl": "07a0db890fef5b1fa203edcf642b1cbaeef8602d147aac22c6c660f377da4ab8",
+    "results/pilot/b1-full-history/failure_analysis.jsonl": "8332084a3316e326074c767d45bf7fd5824a45f62e0bcae9e3f165b9cf053bf1",
+    "results/pilot/b1-full-history/failure_summary.json": "3c309527c10c9fc4344b7acb5994795e20e1f174557087e769d76a6b2b96bd0f",
+    "results/pilot/b1-full-history/failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "results/pilot/b1-full-history/manual_review.jsonl": "9e9a74331a9af4f608b780a23fce5e936e0964f06edac874424d127188fbe2c0",
+    "results/pilot/b1-full-history/predictions.jsonl": "63e5b1061c98edbec8a2c77c2260bd364bb3362d876fe22a02e3a10a2f5187b0",
+    "results/pilot/b1-full-history/run.json": "b8f7b38fac1d28b70de219a96a567e98052a86764513da01d692019b87926507",
+    "results/pilot/b1-full-history/scores.json": "3187cedbabb60fbec2d6aca1dfd517d09cd37a404f7cd00e04d9065155b91f3d"
+  },
+  "release_status": "step_3_4_complete",
+  "repository_commit": "657d90e4016fcb85f6fdb370cd8127b747ef2ea1",
+  "repository_worktree_state": "dirty",
+  "review_status": "approved_by_sneha",
+  "scope": {
+    "api_calls_made_by_selection": false,
+    "candidate_prompt_count": 6,
+    "development_case_count": 10,
+    "development_user": "Maya",
+    "frozen_test_user_records_accessed": false,
+    "phase_3_5_started": false
+  },
+  "selection_version": "atomic-extraction-step34-selection-v1"
+}

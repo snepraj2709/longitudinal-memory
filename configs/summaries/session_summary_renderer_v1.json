@@ -1,0 +1,36 @@
+{
+  "renderer_version": "session_summary_renderer_v1",
+  "rule_version": "grounded_summary_rules_v1",
+  "session_boundary_version": "session_boundaries_v1",
+  "observed_facts_heading": "Observed facts",
+  "unresolved_questions_heading": "Unresolved questions",
+  "empty_marker": "None.",
+  "predicate_format": "underscores_to_spaces",
+  "object_format": "canonical_json",
+  "eligible_lifecycle_statuses": [
+    "candidate",
+    "confirmed",
+    "current",
+    "historical",
+    "disputed",
+    "superseded"
+  ],
+  "excluded_epistemic_statuses": [
+    "hypothetical"
+  ],
+  "excluded_sensitivities": [
+    "restricted"
+  ],
+  "question_triggers": [
+    "uncertain",
+    "disputed"
+  ],
+  "statement_order": [
+    "source_produced_at",
+    "source_order",
+    "span_start_offset",
+    "claim_id",
+    "statement_kind"
+  ],
+  "review_status": "implementation_reviewed"
+}

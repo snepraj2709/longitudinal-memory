@@ -1,0 +1,29 @@
+{
+  "annotation_count": 200,
+  "annotation_inputs": {
+    "index_records": {
+      "path": "results/retrieval/index-development-v1/records.jsonl",
+      "sha256": "e29531cd3bf72419c947a31b13c0b4adbd008f019dfbfc3e6a820ad541e23cfe"
+    },
+    "query_records": {
+      "path": "data/retrieval/baseline-execution-development-v1/queries.jsonl",
+      "sha256": "e6e98f9b6de0747652d0d99b2379abe2d1e1a01ab012b1c6cae00cfab8e72bb4"
+    },
+    "source_prefix": {
+      "path": "data/scaled-v1/runtime/sources.jsonl",
+      "record_count": 20,
+      "sha256": "b0dc2b0dae985b51e2e25e441f98dcbe8d86045fa6a3beae2545f50de9e844d9"
+    }
+  },
+  "blind_evaluation": false,
+  "candidate_order": "index_record_id_ascending",
+  "cross_user_annotation_count": 0,
+  "development_users": ["user_001", "user_002"],
+  "gold_or_oracle_opened": false,
+  "prior_ranked_result_exposure_possible": true,
+  "query_count": 8,
+  "rankings_used_during_annotation": false,
+  "review_status": "implementation_reviewed",
+  "reviewed_annotation_count": 200,
+  "test_user_content_opened": false
+}

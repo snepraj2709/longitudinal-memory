@@ -1,0 +1,68 @@
+{
+  "account_balance_after_inr": 4877.56,
+  "account_balance_before_inr": 4879.15,
+  "created_at": "2026-08-11T09:39:08.944852Z",
+  "destroyed_at": "2026-08-11T09:39:27.607156Z",
+  "destruction_verified": true,
+  "elapsed_billable_seconds": 18.662413,
+  "events": [
+    {
+      "account_response_sha256": "c398210c9eba4bb9632a819da48e4926125f7bf2f0e219fa3fd7847a730f71f8",
+      "at": "2026-08-11T09:39:05.075043Z",
+      "event": "preflight",
+      "gpu_inventory_sha256": "3421b6927d57cfec24183d17e13b5c1a8342bf985a620c933b375ea61f0c366b",
+      "resource_inventory_sha256": "0abcf75d93547cee16d0982e6eac51360c3c302b3b8349aa89f991e7444f5f92",
+      "selected_offer": {
+        "free_devices": 7,
+        "gpu": "RTX-PRO6000-96GB",
+        "region": "IN1",
+        "spot_rate_inr_per_hour": 93.96,
+        "workload_type": "container"
+      }
+    },
+    {
+      "at": "2026-08-11T09:39:08.944852Z",
+      "event": "created",
+      "machine_id": 468789,
+      "offer": {
+        "free_devices": 7,
+        "gpu": "RTX-PRO6000-96GB",
+        "region": "IN1",
+        "spot_rate_inr_per_hour": 93.96,
+        "workload_type": "container"
+      }
+    },
+    {
+      "at": "2026-08-11T09:39:11.822696Z",
+      "environment": "Python 3.10.20\n2.11.0+cu130 13.0\nNVIDIA RTX PRO 6000 Blackwell Server Edition, 595.58.03, 97887 MiB",
+      "event": "install_environment_recorded"
+    },
+    {
+      "at": "2026-08-11T09:39:19.312564Z",
+      "event": "checkpoint_download",
+      "failure_code": "download_failed",
+      "succeeded": false
+    },
+    {
+      "at": "2026-08-11T09:39:22.772948Z",
+      "event": "destroy_requested",
+      "succeeded": true
+    },
+    {
+      "at": "2026-08-11T09:39:27.607156Z",
+      "event": "destruction_verified"
+    }
+  ],
+  "gpu_cost_inr": 0.487089,
+  "machine_id": 468789,
+  "observed_account_spend_inr": 1.59,
+  "offer": {
+    "free_devices": 7,
+    "gpu": "RTX-PRO6000-96GB",
+    "region": "IN1",
+    "spot_rate_inr_per_hour": 93.96,
+    "workload_type": "container"
+  },
+  "schema_version": "qwen_jarvis_lifecycle_v2",
+  "series_id": "qwen35-27b-fp8-v2"
+}

@@ -1,0 +1,91 @@
+{
+  "approval": {
+    "approval_source": "controlling_user_session_v2_correction_approval",
+    "credential_reuse_approved": true,
+    "data_transmission_approved": true,
+    "paid_execution_approved": true,
+    "provider_execution_authorized": true,
+    "reuse_existing_local_openai_api_key": true
+  },
+  "cost": {
+    "completed_extraction_cost_usd": "0.2036120",
+    "historical_openai_spend_usd": "0.2314404",
+    "maximum_cumulative_cost_usd": "91.4446132",
+    "maximum_incremental_cost_usd": "91.2131728"
+  },
+  "execution": {
+    "b7_deterministic_gate": "no_promoted_claims",
+    "baseline_order": [
+      "B0",
+      "B1",
+      "B2",
+      "B3",
+      "B4",
+      "B5",
+      "B6",
+      "B7"
+    ],
+    "checkpoint_after_each_completion": true,
+    "maximum_retry_requests": 0,
+    "output_root": "results/evaluation/frozen-run-v2/batches",
+    "successful_replay_allowed": false,
+    "task_order": [
+      "qa",
+      "summary",
+      "interactive"
+    ],
+    "worker_count": 4
+  },
+  "extraction_checkpoint_path": "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/checkpoint.json",
+  "extraction_checkpoint_sha256": "cebf273adf95a2ca012adf268f6e3cef276178a12e7b0cfef4f323989415cf54",
+  "extraction_predictions_path": "results/evaluation/frozen-run-v1/batches/batch_01_extraction_all_sources/predictions.jsonl",
+  "extraction_predictions_sha256": "527b95fd9e839b41c47e9154e03c8e9551c5c46f931feae8236222cc8117ebd2",
+  "failed_v1": {
+    "checkpoint_path": "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/checkpoint.json",
+    "checkpoint_sha256": "1f179d144e78fa2d93aaa10528aea21279db7ee418d40b76e28aea5a5c775e60",
+    "failure_count": 20,
+    "failures_path": "results/evaluation/frozen-run-v1/batches/batch_02_B0_qa/failures.jsonl",
+    "failures_sha256": "9648afc6009e5df15d277ef8983970291ade5e78ec74cd4718884fe2ce2f1c4b",
+    "incremental_cost_usd": "0.0000000",
+    "reason": "json_instruction_missing_from_serialized_input",
+    "run_config_path": "configs/evaluation/frozen_answer_run_v1.json",
+    "run_config_sha256": "449652ef79024070b433edffd2fb569fd5653bf37b6203ac7f01c7b20f0a6299"
+  },
+  "input_contract": {
+    "json_instruction_field": "response_format",
+    "json_instruction_value": "JSON object",
+    "requires_literal_json_in_serialized_input": true,
+    "supersedes_run_version": "frozen_answer_run_v1"
+  },
+  "model": {
+    "api": "responses",
+    "input_usd_per_million_tokens": "2.00",
+    "max_output_tokens": 1000,
+    "output_usd_per_million_tokens": "8.00",
+    "provider": "OpenAI",
+    "requested_model": "gpt-4.1-2025-04-14",
+    "resolved_model": "gpt-4.1-2025-04-14",
+    "store": false,
+    "temperature": 0.0,
+    "text_format": "json_object"
+  },
+  "preflight_manifest_path": "results/evaluation/frozen-preflight-v1/manifest.json",
+  "preflight_manifest_sha256": "b5645e4189df260daa69292d15a95a641834b15b64eb19ce3a273b8c7e030ac5",
+  "prompt_contract_path": "configs/evaluation/frozen_prompts_v1.json",
+  "prompt_contract_sha256": "681935ec199e6f0a4f7cb37c971c0c28295293af9f792f1f41f6225ce5f468bf",
+  "run_version": "frozen_answer_run_v2",
+  "runtime": {
+    "interactive_path": "data/scaled-v1/runtime/interactive.jsonl",
+    "interactive_sha256": "9fd5ca22a9c7af22f8e4dbbd54c80745d30149751a6b65cf9b41b7de5403d706",
+    "qa_path": "data/scaled-v1/runtime/qa.jsonl",
+    "qa_sha256": "e7112dbda8fb8868f425566c6ee8c6fb0c4f3e4c3c2f718a1c603caaecfee934",
+    "sources_path": "data/scaled-v1/runtime/sources.jsonl",
+    "sources_sha256": "a5cbdf38faf22689726c5d5998ea58e2b9e8a19acfae9318511064b5e29235de",
+    "summary_path": "data/scaled-v1/runtime/summaries.jsonl",
+    "summary_sha256": "080e622a3085b1c323dd7aee9565f8c02e0a2895fcd892b175cbbb5acccf1ee5",
+    "users_path": "data/scaled-v1/runtime/users.jsonl",
+    "users_sha256": "13e118ad1e8ecda61616eec51d6ff896ee37321f48a8c187d6c460af898cc3ef"
+  },
+  "schema_version": "frozen_answer_run_schema_v2",
+  "starting_commit": "141066391f70060ce99acdf0804ac7b3cbadafdc"
+}

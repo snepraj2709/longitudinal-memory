@@ -17,10 +17,12 @@ from .contracts import (
     validate_atomic_claim,
 )
 from .prompt import (
+    ATOMIC_EXTRACTION_PROMPT_VERSION,
     ATOMIC_EXTRACTION_SYSTEM_PROMPT,
     build_atomic_extraction_prompt,
+    get_atomic_extraction_system_prompt,
 )
-from .predicate_registry import load_default_predicate_registry
+from .predicate_registry import PredicateRegistry, load_default_predicate_registry
 from .source import ExtractionSource
 
 
@@ -128,11 +130,19 @@ def extract_atomic_claims(
     client: object,
     *,
     evidence_normalization_version: str | None = None,
+    registry: PredicateRegistry | None = None,
 ) -> AtomicExtractionResult:
     """Make one model call and validate its claims against the supplied source."""
 
     raw_response, metadata = getattr(client, "complete_with_metadata")(
-        system_prompt=ATOMIC_EXTRACTION_SYSTEM_PROMPT,
+        system_prompt=(
+            ATOMIC_EXTRACTION_SYSTEM_PROMPT
+            if registry is None
+            else get_atomic_extraction_system_prompt(
+                ATOMIC_EXTRACTION_PROMPT_VERSION,
+                registry=registry,
+            )
+        ),
         user_prompt=build_atomic_extraction_prompt(source_group),
     )
     return validate_atomic_response(
@@ -140,6 +150,7 @@ def extract_atomic_claims(
         raw_response,
         metadata,
         evidence_normalization_version=evidence_normalization_version,
+        registry=registry,
     )
 
 
@@ -149,6 +160,7 @@ def validate_atomic_response(
     metadata: OpenAIResponseMetadata,
     *,
     evidence_normalization_version: str | None = None,
+    registry: PredicateRegistry | None = None,
 ) -> AtomicExtractionResult:
     """Validate one returned response without making another provider call."""
 
@@ -158,7 +170,7 @@ def validate_atomic_response(
         records, normalization_diagnostics = _normalize_claim_records(
             records, source_group, evidence_normalization_version
         )
-    claims = _validate_claim_records(records, source_group)
+    claims = _validate_claim_records(records, source_group, registry=registry)
     return AtomicExtractionResult(
         source_id=source_group.source_id,
         claims=claims,
@@ -320,7 +332,10 @@ def _parse_claim_records(raw_response: object, source_id: str) -> list[object]:
 
 
 def _validate_claim_records(
-    records: list[object], source_group: ExtractionSource
+    records: list[object],
+    source_group: ExtractionSource,
+    *,
+    registry: PredicateRegistry | None = None,
 ) -> tuple[AtomicClaimV1, ...]:
     errors: list[str] = []
     claims: list[AtomicClaimV1] = []
@@ -336,7 +351,7 @@ def _validate_claim_records(
 
     for index, record in enumerate(records):
         try:
-            claim = validate_atomic_claim(record)
+            claim = validate_atomic_claim(record, registry=registry)
         except AtomicClaimValidationError as error:
             errors.extend(f"claims[{index}]: {message}" for message in error.errors)
             continue

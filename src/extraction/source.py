@@ -32,6 +32,7 @@ class ExtractionSource:
     source_type: str
     observations: tuple[HistoryObservation, ...]
     known_entities: tuple[KnownEntity, ...]
+    user_id: str | None = None
 
 
 def group_source_observations(

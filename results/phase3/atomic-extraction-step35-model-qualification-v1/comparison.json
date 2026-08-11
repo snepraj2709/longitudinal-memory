@@ -1,0 +1,31 @@
+{
+  "comparison_version": "step35-model-qualification-comparison-v1",
+  "gate": {
+    "full_exact_true_positives": null,
+    "full_matched_provenance_spans": null,
+    "mini_exact_true_positives": null,
+    "mini_matched_provenance_spans": null
+  },
+  "models": {
+    "gpt41": {
+      "actual_cost_usd": "0.019646",
+      "failure_counts": {
+        "cross_user": 0,
+        "execution": 1,
+        "persistence": 0,
+        "provenance": 0
+      },
+      "generation_complete": false,
+      "scores": null
+    },
+    "gpt41-mini": {
+      "generation_complete": false,
+      "not_started": true
+    }
+  },
+  "passed": false,
+  "reasons": [
+    "all eight qualification predictions must exist before scoring",
+    "gpt41 execution failures must be zero"
+  ]
+}

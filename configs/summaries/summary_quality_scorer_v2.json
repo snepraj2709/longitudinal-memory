@@ -1,0 +1,74 @@
+{
+  "allowed_users": [
+    "user_001",
+    "user_002"
+  ],
+  "baseline_version": "all_visible_session_summaries_v1",
+  "case_count": 10,
+  "case_order": "runtime_prefix",
+  "evidence_match_fields": [
+    "source_id",
+    "message_id",
+    "quote"
+  ],
+  "event_match_fields": [
+    "user_id",
+    "subject_id",
+    "speaker_id",
+    "predicate",
+    "object",
+    "polarity",
+    "epistemic_status",
+    "valid_from",
+    "valid_to",
+    "time_precision"
+  ],
+  "event_matching": "deterministic_maximum_one_to_one_stable_id",
+  "input_bindings": {
+    "durative_claims": {
+      "manifest_sha256": "1d3f1c78d95bd96399224581bec21143c4b52562517d4779b74850e42d26fdbb",
+      "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "grounded_summaries": {
+      "manifest_sha256": "ca38522d51e8568f49326789074d146dadcac3935687f21dc5fe0e937aba5761",
+      "payload_sha256": "6ce2ddbdc3ade54154e4db0bd136ff6f12e1037ebf4b214d560a2247fb674b22"
+    },
+    "phase3_claims": {
+      "manifest_sha256": "f5127cfdb7720ecf84e320da613396d11d71629b709813e2e25ea2ab00df0876",
+      "payload_sha256": "509c51229eb8a6e13e898a28fec594d0118c29b6f5a93fc917fb0d1af34b4ff7"
+    },
+    "runtime_cases": {
+      "prefix_count": 10,
+      "source_sha256": "080e622a3085b1c323dd7aee9565f8c02e0a2895fcd892b175cbbb5acccf1ee5"
+    },
+    "session_definitions": {
+      "manifest_sha256": "34611525b22cb9dcf8b5c9eb4affd2422d778b58b4b443c90913ce29c8f9365c",
+      "payload_sha256": "2b7de7fc1b2d821867e8eeaa29182a1e22e15977387ce40e46301e2e56f86845"
+    }
+  },
+  "metrics": [
+    "gold_event_micro_precision",
+    "gold_event_micro_recall",
+    "gold_event_micro_f1",
+    "gold_event_macro_precision",
+    "gold_event_macro_recall",
+    "gold_event_macro_f1",
+    "supporting_evidence_micro_precision",
+    "supporting_evidence_micro_recall",
+    "supporting_evidence_micro_f1",
+    "current_historical_accuracy",
+    "correction_preservation",
+    "uncertainty_preservation",
+    "case_accounting",
+    "provenance_coverage",
+    "cross_user_prediction_count",
+    "stale_reference_count",
+    "unsupported_statement_count",
+    "runtime_failure_count"
+  ],
+  "model_calls": 0,
+  "prior_v1_development_gold_exposure": true,
+  "retries": 0,
+  "runtime_split": "development",
+  "scorer_version": "summary_quality_scorer_v2"
+}

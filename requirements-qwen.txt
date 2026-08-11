@@ -1,0 +1,2 @@
+-r requirements-step35.txt
+vllm @ git+https://github.com/vllm-project/vllm.git@65b7662d3fcb773afaf751ab29ac6960a0cf011d

@@ -9,6 +9,7 @@ from .contracts import (
     ALLOWED_POLARITIES,
     ALLOWED_PREDICATES,
 )
+from .predicate_registry import PredicateRegistry
 
 
 ATOMIC_EXTRACTION_SCHEMA_VERSION = "atomic_extraction_v1"
@@ -111,7 +112,14 @@ _TEXT_FORMAT = {
 }
 
 
-def atomic_extraction_text_format() -> dict[str, object]:
+def atomic_extraction_text_format(
+    registry: PredicateRegistry | None = None,
+) -> dict[str, object]:
     """Return an isolated copy of the frozen Responses text format."""
 
-    return deepcopy(_TEXT_FORMAT)
+    result = deepcopy(_TEXT_FORMAT)
+    if registry is not None:
+        result["schema"]["properties"]["claims"]["items"]["properties"][
+            "predicate"
+        ]["enum"] = sorted(registry.predicates)
+    return result

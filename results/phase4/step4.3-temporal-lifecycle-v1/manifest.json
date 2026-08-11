@@ -1,0 +1,89 @@
+{
+  "artifact_version": "step4.3-temporal-lifecycle-v1",
+  "generated_at": "2026-08-09T07:37:22Z",
+  "guidance_version": "step-4.3-guidance-v1",
+  "decision_envelope_sha256": "9a9687396f0a77f9ab3939e0202b89376290118493c62731a6dd6f0e80e2be16",
+  "repository": {
+    "starting_commit": "c50103c878c2c5a1d98d287d352b6ffca3a61719",
+    "worktree": "uncommitted_step4.3_changes"
+  },
+  "scope": {
+    "migration": "0003_temporal_lifecycle.sql",
+    "lifecycle_mode": "explicit_caller_request_only",
+    "transaction_interval": "start_inclusive_end_exclusive",
+    "valid_interval": "inclusive",
+    "default_query_statuses": [
+      "confirmed",
+      "current",
+      "historical"
+    ],
+    "llm_requests": 0,
+    "hosted_writes": 0,
+    "gold_loaded": false
+  },
+  "implementation_hashes": {
+    "Makefile": "f0632a26242e677154e09380cf300b44e467b8344e51c81f1ca897bb711916aa",
+    "migrations/0003_temporal_lifecycle.sql": "2d4e888b262e3dab1a86464fa9de6d33d8818d8978004c5923a5a5e69226fc8e",
+    "src/temporal/__init__.py": "24c692f46335c104e5338d7c639a1890bef83196ebcfd993549f4f574b7508e3",
+    "src/temporal/contracts.py": "b0bef262e1332e6435daf7e2dcec602f73d38cfbbe2abec1174d64558b1fda0e",
+    "src/temporal/service.py": "7a0836035f1b3e3845dd21f90370d20525ceb8f3508d9c18b17124d1effff61f",
+    "src/storage/contracts.py": "23122b62d4831bb1ca9a881a6396627d2de609ef954e8c583e599a80989de660",
+    "src/storage/repository.py": "c3602486372cccf9b360ad692a05c09b30a6405eefbbb5ebea22a47fd6dd9d3e",
+    "src/ingestion/service.py": "4c2d98417f69896c37506f0b879dae7f306c9d7d61e103036553387ff2a1784e",
+    "tests/unit/test_temporal_contracts.py": "f65d619f7f29e0a1cf1c802fdb936b3d4b44005575a68d1eb17035d88b9caafb",
+    "tests/integration/test_temporal_service.py": "173c9b4a2d72c22c45a3d05b284b95b31c81b4989b476ef99406bc6801216f90",
+    "tests/integration/test_phase4_storage.py": "ec072b86396f8d1ae1271590d4b4d53870c538bba6e6b10a79b916915c1ee154"
+  },
+  "artifact_hashes": {
+    "findings.md": "274b79a17d589474b70683aa77cbb2936ba0eb3d8fd5a8e4bd4c77887a6f9250"
+  },
+  "validation": {
+    "temporal_docker": {
+      "command": "make test-temporal PYTHON=.venv-storage/bin/python",
+      "passed": 15,
+      "failed": 0
+    },
+    "storage_docker": {
+      "command": "make test-storage PYTHON=.venv-storage/bin/python",
+      "passed": 30,
+      "failed": 0
+    },
+    "full_suite": {
+      "command": "make test",
+      "passed_or_skipped": 384,
+      "skipped": 25,
+      "failed": 0
+    },
+    "scaled_validator": {
+      "command": "make validate-scaled-benchmark",
+      "status": "passed",
+      "dataset_sha256": "746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61"
+    },
+    "development_replay": {
+      "sources": 20,
+      "candidate_claims": 33,
+      "promoted_claims": 0
+    }
+  },
+  "protected_inputs": {
+    "migrations/0001_phase4_storage.sql": "6f8a84ce1f78adeccfd7ff15d830dbcf844c34159a0ed34ce11cea4313e95359",
+    "migrations/0002_ingestion_reprocessing.sql": "52900567c16e67c654d6fb845b615043beb5d9bf68851eb58231c5740a41253b",
+    "compose.yaml": "c53c4d37a256e2203f32566a3196c246cd5b2bb67ad8e1839095c9c1c8b0f51a",
+    "requirements-storage.txt": "d375af9a0f805ccfd0fbf9a4943cfc6f44b4d7371e6a2376f6b8318d3c73e3d6",
+    "results/phase4/step4.2-ingestion-v1/manifest.json": "5c5e27587642af9115e0b5454292afb4b211043ec641b57b97c91573f0796ed2",
+    "results/phase4/step4.2-ingestion-v1/findings.md": "097af6341fd97031ef27802f2bfe79263e60fb377926bb811e94ff07e141010d",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/manifest.json": "f5127cfdb7720ecf84e320da613396d11d71629b709813e2e25ea2ab00df0876",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/claims.jsonl": "509c51229eb8a6e13e898a28fec594d0118c29b6f5a93fc917fb0d1af34b4ff7",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/evidence_index.json": "311107940b64e22d9ba8af77e17d04e17f4298e8b5797e6f7234261e852ca0b6",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/scores.json": "76c96cc9590da0ac40d31a6ff5ab1d96e3decacb732a9bfc9b531e58e8750b4b",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "configs/extraction/predicate_registry_v2.json": "15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1",
+    "preference.md": "bf6dfc6ea0b23e9ff1c52b4dbf1debce6ebe495070e826743ffa2d56681a18b8",
+    "docs/memory-evaluation-steps.md": "bf89021a98273e623edbe27318c9b1cadfb8bed023f5e256a2f58b13e27913ba"
+  },
+  "known_limitations": [
+    "The service applies only explicit lifecycle requests; Step 4.4 will evaluate temporal accuracy.",
+    "The 33 development claims have null memory_kind and remain candidates.",
+    "Deleting the last evidence removes the unsupported claim and its lifecycle audit rows."
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "version": "step4.2-ingestion-v1",
+  "phase": "4",
+  "step": "4.2",
+  "status": "implemented_local",
+  "starting_commit": "5e1d042360d4e084324f8ca258c601ef90dfd293",
+  "guidance": {
+    "version": "step-4.2-guidance-v1",
+    "decision_envelope_sha256": "0fefea8634648673692bd65a39a9f71248bb6c302bd7ee8828e77360a34c8894"
+  },
+  "frozen_inputs": {
+    "migrations/0001_phase4_storage.sql": "6f8a84ce1f78adeccfd7ff15d830dbcf844c34159a0ed34ce11cea4313e95359",
+    "compose.yaml": "c53c4d37a256e2203f32566a3196c246cd5b2bb67ad8e1839095c9c1c8b0f51a",
+    "requirements-storage.txt": "d375af9a0f805ccfd0fbf9a4943cfc6f44b4d7371e6a2376f6b8318d3c73e3d6",
+    "data/scaled-v1/runtime/users.jsonl": "13e118ad1e8ecda61616eec51d6ff896ee37321f48a8c187d6c460af898cc3ef",
+    "data/scaled-v1/runtime/sources.jsonl": "a5cbdf38faf22689726c5d5998ea58e2b9e8a19acfae9318511064b5e29235de",
+    "configs/extraction/predicate_registry_v2.json": "15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/manifest.json": "f5127cfdb7720ecf84e320da613396d11d71629b709813e2e25ea2ab00df0876",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/claims.jsonl": "509c51229eb8a6e13e898a28fec594d0118c29b6f5a93fc917fb0d1af34b4ff7",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/evidence_index.json": "311107940b64e22d9ba8af77e17d04e17f4298e8b5797e6f7234261e852ca0b6",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/scores.json": "76c96cc9590da0ac40d31a6ff5ab1d96e3decacb732a9bfc9b531e58e8750b4b",
+    "results/phase3/phase4-input-development-gpt41-fallback-v1/failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "implementation_sha256": {
+    "Makefile": "5165e54100225a1a0c989b5a3eb2478056b4a7bb6762c3b4eebcccf68a434286",
+    "migrations/0002_ingestion_reprocessing.sql": "52900567c16e67c654d6fb845b615043beb5d9bf68851eb58231c5740a41253b",
+    "src/storage/contracts.py": "ae7d629102180a713a66f24fabbb4df791c1d4b55434b8383b3558b193853ead",
+    "src/storage/repository.py": "eb3f8fa89908ba9cd1ef81f317b538685b5118918c5b18741391fad303047737",
+    "src/ingestion/__init__.py": "8e2d39771ae3352de2f7213b51174bcb0cccd63ade03338ae57ab5f724ae65e0",
+    "src/ingestion/contracts.py": "479a7cb8fa8fce52c0eeaf2f76029d88d63acd9f1aa9b7679c3725b13ebf40b9",
+    "src/ingestion/service.py": "c8cfe30a5034b7842c779d521d27a2d9f2a7c9e901c0d6e3ce5206248d51ca85",
+    "tests/unit/test_ingestion_contracts.py": "6c38b3b3f934e81e18cb1cb9a36f6bf7e7b791ccff1a4c6bdc04a8a384591c8d",
+    "tests/integration/test_phase4_storage.py": "6655daab6da656fe1626af1d1511e8d005b1e5cc157a0e0ad55d4c29d4f2473e",
+    "tests/integration/test_ingestion_service.py": "2bdc338bdc02f950616a86c2a97e0e3a2ef85db40334ac833a63635fe0058a68"
+  },
+  "artifact_sha256": {
+    "findings.md": "097af6341fd97031ef27802f2bfe79263e60fb377926bb811e94ff07e141010d"
+  },
+  "verification": {
+    "make test-ingestion": {"tests": 5, "failures": 0},
+    "make test-storage": {"tests": 30, "failures": 0, "database": "disposable_postgresql"},
+    "make validate-scaled-benchmark": {"status": "passed", "dataset_sha256": "746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61"},
+    "make test": {"tests": 369, "failures": 0, "skipped_database_tests": 16}
+  },
+  "replay_check": {
+    "development_sources": 20,
+    "candidate_claims": 33,
+    "evidence_links": 33,
+    "replays": 2,
+    "duplicate_derived_records": 0,
+    "gold_or_oracle_loaded": false
+  },
+  "external_operations": {
+    "llm_requests": 0,
+    "provider_cost_usd": 0,
+    "hosted_database_writes": 0
+  },
+  "next_step_input": "transactional source, attempt, claim extraction, outbox, and tombstone records for Step 4.3"
+}

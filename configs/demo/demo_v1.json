@@ -1,0 +1,46 @@
+{
+  "schema_version": "demo_config_v1",
+  "bundle_version": "demo-v1",
+  "cases": [
+    {
+      "case_id": "temporal_003",
+      "title": "A corrected date",
+      "summary": "A second-hand date is replaced by Aryan's direct correction.",
+      "memory_states": [
+        {"status": "historical", "label": "Earlier report", "value": "Aryan started on May 11.", "evidence": ["conv_003:msg_conv_003_004"]},
+        {"status": "disputed", "label": "Questioned report", "value": "Maya repeats the May 11 date to Aryan.", "evidence": ["conv_004:msg_conv_004_001"]},
+        {"status": "corrected", "label": "Current fact", "value": "Aryan started on May 18.", "evidence": ["conv_004:msg_conv_004_002"]}
+      ]
+    },
+    {
+      "case_id": "conflict_002",
+      "title": "Experience versus fact",
+      "summary": "The system preserves Maya's experience while resolving the project status.",
+      "memory_states": [
+        {"status": "historical", "label": "Maya's interpretation", "value": "Maya felt Pravin rejected the project.", "evidence": ["conv_007:msg_conv_007_001"]},
+        {"status": "corrected", "label": "Pravin's clarification", "value": "The positioning needed work; the project was not rejected.", "evidence": ["email_004:msg_email_004_003"]},
+        {"status": "current", "label": "Resolved view", "value": "Pravin did not reject Kids Spark, although Maya experienced the feedback that way.", "evidence": ["conv_007:msg_conv_007_001", "email_004:msg_email_004_003"]}
+      ]
+    },
+    {
+      "case_id": "user_modeling_001",
+      "title": "A changing career direction",
+      "summary": "A preference develops over months instead of being treated as permanent.",
+      "memory_states": [
+        {"status": "historical", "label": "April", "value": "Maya was unsure about marketing and planned to try it.", "evidence": ["conv_002:msg_conv_002_003"]},
+        {"status": "historical", "label": "June", "value": "She began enjoying marketing.", "evidence": ["conv_005:msg_conv_005_002"]},
+        {"status": "historical", "label": "July", "value": "She moved to a 40% product, 60% marketing allocation.", "evidence": ["conv_008:msg_conv_008_002", "email_004:msg_email_004_004"]},
+        {"status": "current", "label": "September", "value": "She chose product and received an October 1 transfer.", "evidence": ["conv_011:msg_conv_011_003", "email_006:msg_email_006_004"]}
+      ]
+    },
+    {
+      "case_id": "abstention_001",
+      "title": "Evidence is absent",
+      "summary": "The benchmark rewards refusing to infer a missing college subject.",
+      "memory_states": [
+        {"status": "current", "label": "Available evidence", "value": "Maya mentions finishing college, but no source names her subject.", "evidence": ["conv_002:msg_conv_002_005"]},
+        {"status": "unknown", "label": "College subject", "value": "Unknown from the available history.", "evidence": []}
+      ]
+    }
+  ]
+}

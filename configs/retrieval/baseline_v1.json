@@ -1,0 +1,156 @@
+{
+  "ranking_config_version": "retrieval_baseline_v1",
+  "index_version": "retrieval_index_v1",
+  "embedding_version": "deterministic_token_hash_v1",
+  "embedding_dimension": 256,
+  "distance": "cosine",
+  "fts_configuration": "simple",
+  "baseline_record_kinds": {
+    "B2": [
+      "atomic"
+    ],
+    "B3": [
+      "session"
+    ],
+    "B4": [
+      "atomic",
+      "session"
+    ]
+  },
+  "k": 10,
+  "candidate_pool_size": 40,
+  "rrf_constant": 60,
+  "score_decimal_places": 12,
+  "score_rounding": "ROUND_HALF_EVEN",
+  "channel_order": [
+    "atomic_lexical",
+    "atomic_vector",
+    "session_lexical",
+    "session_vector",
+    "old_version",
+    "checked_relation"
+  ],
+  "relation_expansion_types": [
+    "corrects",
+    "supersedes",
+    "contradicts",
+    "refines",
+    "same_event_as"
+  ],
+  "kind_preferences": {
+    "current_state": [
+      "atomic",
+      "session"
+    ],
+    "historical_state": [
+      "session",
+      "atomic"
+    ],
+    "change_over_time": [
+      "session",
+      "atomic"
+    ],
+    "specific_event": [
+      "atomic",
+      "session"
+    ],
+    "relationship": [
+      "session",
+      "atomic"
+    ],
+    "commitment": [
+      "atomic",
+      "session"
+    ],
+    "evidence_request": [
+      "atomic",
+      "session"
+    ],
+    "unknown": [
+      "atomic",
+      "session"
+    ]
+  },
+  "lifecycle_preferences": {
+    "current_state": [
+      "current",
+      "confirmed",
+      "candidate",
+      "disputed",
+      "historical",
+      "superseded"
+    ],
+    "historical_state": [
+      "historical",
+      "superseded",
+      "current",
+      "confirmed",
+      "disputed",
+      "candidate"
+    ],
+    "change_over_time": [
+      "historical",
+      "superseded",
+      "current",
+      "confirmed",
+      "disputed",
+      "candidate"
+    ],
+    "specific_event": [
+      "confirmed",
+      "current",
+      "historical",
+      "candidate",
+      "disputed",
+      "superseded"
+    ],
+    "relationship": [
+      "confirmed",
+      "current",
+      "historical",
+      "candidate",
+      "disputed",
+      "superseded"
+    ],
+    "commitment": [
+      "confirmed",
+      "current",
+      "historical",
+      "candidate",
+      "disputed",
+      "superseded"
+    ],
+    "evidence_request": [
+      "confirmed",
+      "current",
+      "historical",
+      "candidate",
+      "disputed",
+      "superseded"
+    ],
+    "unknown": [
+      "confirmed",
+      "current",
+      "historical",
+      "candidate",
+      "disputed",
+      "superseded"
+    ]
+  },
+  "reranker_version": "ontology_tie_break_v1",
+  "post_rank_reasons": [
+    "no_channel_match",
+    "outside_top_k"
+  ],
+  "channel_notices": [
+    "empty_fts_query",
+    "empty_query_vector",
+    "relation_expansion_not_applicable"
+  ],
+  "failure_codes": [
+    "invalid_request",
+    "search_failed",
+    "stale_snapshot",
+    "lineage_incomplete"
+  ]
+}

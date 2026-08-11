@@ -1,0 +1,417 @@
+{
+  "index_version": "phase4-source-claim-evidence-index-v1",
+  "sources": [
+    {
+      "claim_ids": [
+        "claim_617641d25352c3333931f667ea53ae5f017f4b144ba7b64716829a63bd4902a2",
+        "claim_8133c8e955890d0f449b28bb3ef4ab9f93fd29aff0bd2e6241ddba6b3c3736ec",
+        "claim_c4488b09e3fd775bdb799c15df4b435fd7b0939c9ea54fa7e3c1dc72fc569819",
+        "claim_d3ab5d26bfff622cdaf595333b2110e13904a31eef1952ef9e8ba3728e07fb57"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_8133c8e955890d0f449b28bb3ef4ab9f93fd29aff0bd2e6241ddba6b3c3736ec",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_001_message_001",
+          "quote_sha256": "02ba80b182c608203e743d9c7c66c3a01d095e0504be7e33abc942b4f43cfa3a"
+        },
+        {
+          "claim_id": "claim_c4488b09e3fd775bdb799c15df4b435fd7b0939c9ea54fa7e3c1dc72fc569819",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_001_message_001",
+          "quote_sha256": "02ba80b182c608203e743d9c7c66c3a01d095e0504be7e33abc942b4f43cfa3a"
+        },
+        {
+          "claim_id": "claim_d3ab5d26bfff622cdaf595333b2110e13904a31eef1952ef9e8ba3728e07fb57",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_001_message_001",
+          "quote_sha256": "22f7777758f1d73eec43f074d0ba3ecc03825abb5050b9046f2636d3de493cf5"
+        },
+        {
+          "claim_id": "claim_617641d25352c3333931f667ea53ae5f017f4b144ba7b64716829a63bd4902a2",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_001_message_001",
+          "quote_sha256": "9fedfa75d983e512e81469290c19f79bc17a6c5b3f70466d0338aa2594d59dde"
+        }
+      ],
+      "position": 1,
+      "source_id": "scaled_user_001_conversation_001",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [
+        "claim_b474c805d7ab31bbd6cd0bcdeb0fb4e364a834daeda83ebc3301efbe77d68c7b"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_b474c805d7ab31bbd6cd0bcdeb0fb4e364a834daeda83ebc3301efbe77d68c7b",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_email_001_message_001",
+          "quote_sha256": "ee217baf602555b9a4f428bb6007df788d41c3de74697986cedf602b52bd53d8"
+        }
+      ],
+      "position": 2,
+      "source_id": "scaled_user_001_email_001",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [],
+      "evidence": [],
+      "position": 3,
+      "source_id": "scaled_user_001_chat_001",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [],
+      "evidence": [],
+      "position": 4,
+      "source_id": "scaled_user_001_calendar_001",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [
+        "claim_baecde3ef8ac0771fe83ecc18437f97319c721655c60c83181d5b189661a3e86",
+        "claim_e4d27006eb94108f55cde0ac84eb311a4a69971b2beaf845d7f42f2808620f28"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_e4d27006eb94108f55cde0ac84eb311a4a69971b2beaf845d7f42f2808620f28",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_002_message_001",
+          "quote_sha256": "7138e9bbf1c7926a3af3940faaaba140281d17dd1632dbb573fb15e2ff3f593c"
+        },
+        {
+          "claim_id": "claim_baecde3ef8ac0771fe83ecc18437f97319c721655c60c83181d5b189661a3e86",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_002_message_001",
+          "quote_sha256": "1c022d4711179dc28091279cca9d765f564fae66fd10e10f29d15d52f7fd4035"
+        }
+      ],
+      "position": 5,
+      "source_id": "scaled_user_001_conversation_002",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [
+        "claim_294d58ca21140c4a27a7c87a346d697ba63bad9aa96ae491ed54c6e0f83cc0c5",
+        "claim_7e9da9b911cb931066fda9489c53964d293c411ad9779f79361c496d012c682c"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_294d58ca21140c4a27a7c87a346d697ba63bad9aa96ae491ed54c6e0f83cc0c5",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_email_002_message_001",
+          "quote_sha256": "f9653bbb4b6bfd7ea4f5f190d35818385f425cdc91975a5794681833f9711e7d"
+        },
+        {
+          "claim_id": "claim_7e9da9b911cb931066fda9489c53964d293c411ad9779f79361c496d012c682c",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_email_002_message_001",
+          "quote_sha256": "666d8b999ee05a9a7f79873347568c9caca25a48f6775af1fb571937e6b28e1c"
+        }
+      ],
+      "position": 6,
+      "source_id": "scaled_user_001_email_002",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [
+        "claim_04eb8f7a957327f3404614d025209b601ee3db39ac159ec6f0a1d4e93f3a90e7",
+        "claim_67d51463cd58bea6445d1196d792cc1ba032ff13c31fb0b5832473ef7b03ada3"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_67d51463cd58bea6445d1196d792cc1ba032ff13c31fb0b5832473ef7b03ada3",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_chat_002_message_001",
+          "quote_sha256": "d8bf249dd18d25db93fa7807a7192d027e8f4e727b38abe72b8ee77b726dedd2"
+        },
+        {
+          "claim_id": "claim_04eb8f7a957327f3404614d025209b601ee3db39ac159ec6f0a1d4e93f3a90e7",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_chat_002_message_002",
+          "quote_sha256": "0e91d9f71d6127a6fe55b1f4daf00c97f0308f67350730117ea1369b15569878"
+        }
+      ],
+      "position": 7,
+      "source_id": "scaled_user_001_chat_002",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [
+        "claim_f3d536dbdaabcdd609a81e752a001c1deac0e8a364be0c5cad175deee7cfac73"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_f3d536dbdaabcdd609a81e752a001c1deac0e8a364be0c5cad175deee7cfac73",
+          "evidence_position": 1,
+          "message_id": null,
+          "quote_sha256": "591feb075199d797b8b4a3ad2e5e93a3a4e2626d6f72489b01700df063799868"
+        }
+      ],
+      "position": 8,
+      "source_id": "scaled_user_001_calendar_002",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [
+        "claim_669c5de514b3bcf8ecca895cbe212ecd53d2199786fc28115a38cc4fa0f888ab",
+        "claim_84f87811137754d4f428337ff20832da6bf8217a40dc0d2eafb5436ac3243e3e"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_669c5de514b3bcf8ecca895cbe212ecd53d2199786fc28115a38cc4fa0f888ab",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_003_message_001",
+          "quote_sha256": "486083b11e09468518e6de4246076cc0b5d6f67cee802292802e003439ce9ece"
+        },
+        {
+          "claim_id": "claim_84f87811137754d4f428337ff20832da6bf8217a40dc0d2eafb5436ac3243e3e",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_003_message_001",
+          "quote_sha256": "1c046fb3633f1fa26c266e0c8a99a6264ef672d74d3d8586e62f090af4ed717f"
+        }
+      ],
+      "position": 9,
+      "source_id": "scaled_user_001_conversation_003",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [
+        "claim_105ed4c53f13b7f94af4b10f7c0ac490ab016e02fe3a72c983f4f61c9902991a",
+        "claim_635a9d0f76f903ce90f8a77a8308ba5a6db02a42c29458c1aee514642e77849c"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_105ed4c53f13b7f94af4b10f7c0ac490ab016e02fe3a72c983f4f61c9902991a",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_004_message_001",
+          "quote_sha256": "b30bf99336f5dfa499ecb185b55798ff8bc232fa964fb3c977e8e0ec8cfa6df8"
+        },
+        {
+          "claim_id": "claim_635a9d0f76f903ce90f8a77a8308ba5a6db02a42c29458c1aee514642e77849c",
+          "evidence_position": 1,
+          "message_id": "scaled_user_001_conversation_004_message_001",
+          "quote_sha256": "34973f7fbf71a1d499b226aea7b2a7266b953e7cbeeb5c3a3cb97d9a43968d74"
+        }
+      ],
+      "position": 10,
+      "source_id": "scaled_user_001_conversation_004",
+      "user_id": "user_001"
+    },
+    {
+      "claim_ids": [
+        "claim_109ec3eb06d04584939e7412a51046b7cfa5010942a2caf6e4ef8c5122d8f5c6",
+        "claim_623dc5bd4c37d14cd6f5670fc93265aab0a4782f8e7ca65e6f6079b3149dbb30",
+        "claim_d591344f30505afb58b57b7debce19d4863151c314ed21408bd786bfd9fbf5be",
+        "claim_fe5ec4d51a419688bd941c1124e36d3d722fd82bdf6245db0e43d436d6a2b793"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_623dc5bd4c37d14cd6f5670fc93265aab0a4782f8e7ca65e6f6079b3149dbb30",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_001_message_001",
+          "quote_sha256": "5be64805db1fde02e63104d1fa3fec5e93e00437494cab5bb37e0fe45c153e8b"
+        },
+        {
+          "claim_id": "claim_fe5ec4d51a419688bd941c1124e36d3d722fd82bdf6245db0e43d436d6a2b793",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_001_message_001",
+          "quote_sha256": "5be64805db1fde02e63104d1fa3fec5e93e00437494cab5bb37e0fe45c153e8b"
+        },
+        {
+          "claim_id": "claim_109ec3eb06d04584939e7412a51046b7cfa5010942a2caf6e4ef8c5122d8f5c6",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_001_message_001",
+          "quote_sha256": "a368056449718bac254ed8ea9f95d68afcaa3777b71bfbf630d44eecfc237392"
+        },
+        {
+          "claim_id": "claim_d591344f30505afb58b57b7debce19d4863151c314ed21408bd786bfd9fbf5be",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_001_message_001",
+          "quote_sha256": "9fedfa75d983e512e81469290c19f79bc17a6c5b3f70466d0338aa2594d59dde"
+        }
+      ],
+      "position": 11,
+      "source_id": "scaled_user_002_conversation_001",
+      "user_id": "user_002"
+    },
+    {
+      "claim_ids": [
+        "claim_1bbde824a0f3f8e5dbb557dab92c65ad2149899a3800731e696c9ad5cc9ed77e"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_1bbde824a0f3f8e5dbb557dab92c65ad2149899a3800731e696c9ad5cc9ed77e",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_email_001_message_001",
+          "quote_sha256": "42aa80e48e969ac1eed37dd5356b3c1324886d88df56280bc2b45d164f7451f5"
+        }
+      ],
+      "position": 12,
+      "source_id": "scaled_user_002_email_001",
+      "user_id": "user_002"
+    },
+    {
+      "claim_ids": [],
+      "evidence": [],
+      "position": 13,
+      "source_id": "scaled_user_002_chat_001",
+      "user_id": "user_002"
+    },
+    {
+      "claim_ids": [
+        "claim_781ca227de6e3b7c10a9542d80eb71adbb16756ccbaea9b9c19ae3be485f355d"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_781ca227de6e3b7c10a9542d80eb71adbb16756ccbaea9b9c19ae3be485f355d",
+          "evidence_position": 1,
+          "message_id": null,
+          "quote_sha256": "9c7850695d1faea1078b1e9aa40c134d6cff94d4e933b79a6d4e47b91f0b0681"
+        }
+      ],
+      "position": 14,
+      "source_id": "scaled_user_002_calendar_001",
+      "user_id": "user_002"
+    },
+    {
+      "claim_ids": [
+        "claim_1306e96fed60a0ab6785c61c656db7b66fc5d7a861153405f69a5231737d0ea8",
+        "claim_dbf0d7cd0d980c368c2dcb64775aee74b76ac310b21ad8e159bb1b8cd860e8c3"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_1306e96fed60a0ab6785c61c656db7b66fc5d7a861153405f69a5231737d0ea8",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_002_message_001",
+          "quote_sha256": "7138e9bbf1c7926a3af3940faaaba140281d17dd1632dbb573fb15e2ff3f593c"
+        },
+        {
+          "claim_id": "claim_dbf0d7cd0d980c368c2dcb64775aee74b76ac310b21ad8e159bb1b8cd860e8c3",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_002_message_001",
+          "quote_sha256": "0ab7bbdf820a7a6d35efa9786ab939d74f2f63e4f445042c0c4cdc20d9018c19"
+        }
+      ],
+      "position": 15,
+      "source_id": "scaled_user_002_conversation_002",
+      "user_id": "user_002"
+    },
+    {
+      "claim_ids": [
+        "claim_39e4f27c4548c963b3c6cc13373ccfc38ea54e2a88cd8f7f4768def863fb88e5",
+        "claim_e9910feaad9a0a5156476db8a58d4e855cc3e28d7f1e17368c97ad2cc6c4011b"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_e9910feaad9a0a5156476db8a58d4e855cc3e28d7f1e17368c97ad2cc6c4011b",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_email_002_message_001",
+          "quote_sha256": "2c03e76044054c631ab7eb415a81345f80c5312d352b03ca57fb33a939835aee"
+        },
+        {
+          "claim_id": "claim_39e4f27c4548c963b3c6cc13373ccfc38ea54e2a88cd8f7f4768def863fb88e5",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_email_002_message_001",
+          "quote_sha256": "42277797451ad2f6a7d5d535969571a73b158dbff27588731bba785c67e9fc09"
+        }
+      ],
+      "position": 16,
+      "source_id": "scaled_user_002_email_002",
+      "user_id": "user_002"
+    },
+    {
+      "claim_ids": [
+        "claim_253f48947e9749e199004e198b563ff26996ad813acb03c5f81c0682a7d27f2e",
+        "claim_abbe42b2e0a89aa557f355413e3b56e5a129eeecefef65937f345fabb202f435"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_abbe42b2e0a89aa557f355413e3b56e5a129eeecefef65937f345fabb202f435",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_chat_002_message_001",
+          "quote_sha256": "6b7d5b9528db9b45fd0fda0a9bc11740a5d6c53efd307bd11ebec862cbe638f5"
+        },
+        {
+          "claim_id": "claim_253f48947e9749e199004e198b563ff26996ad813acb03c5f81c0682a7d27f2e",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_chat_002_message_002",
+          "quote_sha256": "c93dbbdb2be0091b6331ce5c0df2e9db067352f5127402226c642d154f21b6af"
+        }
+      ],
+      "position": 17,
+      "source_id": "scaled_user_002_chat_002",
+      "user_id": "user_002"
+    },
+    {
+      "claim_ids": [
+        "claim_feda6ec35a2f765d783e646f77c6eea9a5abffe4e3346485b79b2bdc47c89a63"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_feda6ec35a2f765d783e646f77c6eea9a5abffe4e3346485b79b2bdc47c89a63",
+          "evidence_position": 1,
+          "message_id": null,
+          "quote_sha256": "05c8281607765af28c5434e92a070e096ee2430ad502d61da9c1d999524874c1"
+        }
+      ],
+      "position": 18,
+      "source_id": "scaled_user_002_calendar_002",
+      "user_id": "user_002"
+    },
+    {
+      "claim_ids": [
+        "claim_5e0a632d7122c158e720333fb3402c44298191f5941855785d3c7a3c859aa517",
+        "claim_c980849b6095b94c0b20512328f7f5c5b6ce06591833c454ce3c7ba5af1348ef"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_5e0a632d7122c158e720333fb3402c44298191f5941855785d3c7a3c859aa517",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_003_message_001",
+          "quote_sha256": "5a768106516b09616faa2b3d35b4386d3ee5b81e04773a86592fbb4f297c0047"
+        },
+        {
+          "claim_id": "claim_c980849b6095b94c0b20512328f7f5c5b6ce06591833c454ce3c7ba5af1348ef",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_003_message_001",
+          "quote_sha256": "70e2a15a88dd798f7cc28d8e2c5320195a8964c75ba47ffd6575128885dd968b"
+        }
+      ],
+      "position": 19,
+      "source_id": "scaled_user_002_conversation_003",
+      "user_id": "user_002"
+    },
+    {
+      "claim_ids": [
+        "claim_a2145bdf5012b623261c018eaf8315a210140664178a4c96572bead2bb2c4140",
+        "claim_d0faf3926341ca0f560cc858aaa725d9b537ca2d37f5e1630b07eb55a91ab3d4"
+      ],
+      "evidence": [
+        {
+          "claim_id": "claim_a2145bdf5012b623261c018eaf8315a210140664178a4c96572bead2bb2c4140",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_004_message_001",
+          "quote_sha256": "b30bf99336f5dfa499ecb185b55798ff8bc232fa964fb3c977e8e0ec8cfa6df8"
+        },
+        {
+          "claim_id": "claim_d0faf3926341ca0f560cc858aaa725d9b537ca2d37f5e1630b07eb55a91ab3d4",
+          "evidence_position": 1,
+          "message_id": "scaled_user_002_conversation_004_message_001",
+          "quote_sha256": "3acaf0816a3a8e921ae1c8aa55d9e840609c015d083d948660002b493c01a70b"
+        }
+      ],
+      "position": 20,
+      "source_id": "scaled_user_002_conversation_004",
+      "user_id": "user_002"
+    }
+  ],
+  "validation": {
+    "claim_count": 33,
+    "evidence_count": 33,
+    "indexed_claim_count": 33,
+    "source_count": 20,
+    "valid": true
+  }
+}

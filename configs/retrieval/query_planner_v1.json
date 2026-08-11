@@ -1,0 +1,137 @@
+{
+  "planner_version": "retrieval_query_planner_v1",
+  "index_version": "retrieval_index_v1",
+  "normalization": [
+    "NFKC",
+    "casefold",
+    "unicode_alphanumeric_tokens"
+  ],
+  "classification_precedence": [
+    "evidence_request",
+    "change_over_time",
+    "historical_state",
+    "current_state",
+    "specific_event",
+    "relationship",
+    "commitment",
+    "unknown"
+  ],
+  "classification_phrases": {
+    "evidence_request": [
+      "what evidence",
+      "show evidence",
+      "source for",
+      "proof of",
+      "how do you know",
+      "where did this come from"
+    ],
+    "change_over_time": [
+      "change over time",
+      "changed over time",
+      "how has",
+      "before and after",
+      "used to but now",
+      "correction",
+      "corrected"
+    ],
+    "historical_state": [
+      "historical",
+      "historically",
+      "in the past",
+      "previously",
+      "back then",
+      "used to"
+    ],
+    "current_state": [
+      "current",
+      "currently",
+      "right now",
+      "now",
+      "today"
+    ],
+    "specific_event": [
+      "what happened",
+      "when did",
+      "specific event",
+      "which event"
+    ],
+    "relationship": [
+      "relationship",
+      "related to",
+      "connected to",
+      "who is"
+    ],
+    "commitment": [
+      "commitment",
+      "committed to",
+      "promised",
+      "plan to",
+      "deadline"
+    ],
+    "unknown": []
+  },
+  "current_time_phrases": [
+    "right now",
+    "now",
+    "current",
+    "currently",
+    "today"
+  ],
+  "unresolved_time_phrases": [
+    "yesterday",
+    "tomorrow",
+    "last week",
+    "last month",
+    "last year",
+    "next week",
+    "next month",
+    "next year",
+    "recently",
+    "on monday",
+    "on tuesday",
+    "on wednesday",
+    "on thursday",
+    "on friday",
+    "on saturday",
+    "on sunday"
+  ],
+  "unresolved_time_patterns": [
+    "iso_like_date",
+    "slash_date",
+    "clock_time"
+  ],
+  "record_kinds": [
+    "atomic",
+    "session"
+  ],
+  "nonexcluded_lifecycle_statuses": [
+    "candidate",
+    "confirmed",
+    "current",
+    "historical",
+    "disputed",
+    "superseded"
+  ],
+  "current_lifecycle_statuses": [
+    "candidate",
+    "confirmed",
+    "current",
+    "disputed"
+  ],
+  "sensitivity_scopes": [
+    "standard",
+    "sensitive"
+  ],
+  "relation_expansion_types": [
+    "corrects",
+    "supersedes",
+    "contradicts",
+    "refines",
+    "same_event_as"
+  ],
+  "failure_codes": [
+    "invalid_request",
+    "invalid_config",
+    "planning_failed"
+  ]
+}

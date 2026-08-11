@@ -1,0 +1,58 @@
+{
+  "available_baselines": [
+    "B2",
+    "B3",
+    "B4"
+  ],
+  "configured_resolved_model": "gpt-4.1-2025-04-14",
+  "deferred_baselines": [
+    "B5",
+    "B6"
+  ],
+  "expected_baseline_case_counts": {
+    "B2": 8,
+    "B3": 8,
+    "B4": 8,
+    "B5": 0,
+    "B6": 0
+  },
+  "expected_prediction_count": 24,
+  "final_release": "memory_answer_quality_development_v1",
+  "generation_settings": {
+    "api": "responses",
+    "max_output_tokens": 1000,
+    "provider": "OpenAI",
+    "store": false,
+    "temperature": 0.0,
+    "text_format": "json_object"
+  },
+  "hard_maximum_run_cost_usd": "0",
+  "historical_openai_spend_usd": "0.2314404",
+  "input_answer_version": "memory_answer_v1",
+  "input_package_version": "evidence_package_v1",
+  "metric_names": [
+    "strict_answer_correctness",
+    "lenient_answer_correctness",
+    "evidence_precision",
+    "evidence_recall",
+    "citation_correctness",
+    "unsupported_claim_rate",
+    "current_vs_outdated_fact_error_rate"
+  ],
+  "null_reasons": {
+    "citation_correctness": "no_predicted_citations",
+    "current_vs_outdated_fact_error_rate": "no_factual_statements",
+    "evidence_precision": "no_predicted_citations",
+    "evidence_recall": "no_authorized_answer_evidence_gold",
+    "lenient_answer_correctness": "no_non_abstained_predictions",
+    "strict_answer_correctness": "no_non_abstained_predictions",
+    "unsupported_claim_rate": "no_factual_statements"
+  },
+  "prompt_sha256": "69dd688430c55fc35a16369201ef8eea7d470d10f610edec254f5cbd59bf14c1",
+  "prompt_version": "memory_answer_prompt_v1",
+  "provider_returned_model": null,
+  "requested_model": "gpt-4.1-2025-04-14",
+  "run_version": "comparable_memory_answer_run_v1",
+  "runtime_release": "memory_answer_quality_development_runtime_v1",
+  "scorer_version": "memory_answer_quality_scorer_v1"
+}

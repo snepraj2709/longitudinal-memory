@@ -1,0 +1,67 @@
+{
+  "configuration_version": "phase4-input-model-qualification-v1",
+  "stage": "qualification",
+  "dataset_version": "scaled_v1",
+  "dataset_split": "development",
+  "dataset_sha256": "746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61",
+  "runtime_user_file_sha256": "13e118ad1e8ecda61616eec51d6ff896ee37321f48a8c187d6c460af898cc3ef",
+  "runtime_source_file_sha256": "a5cbdf38faf22689726c5d5998ea58e2b9e8a19acfae9318511064b5e29235de",
+  "gold_claim_file_sha256": "a74aa1e2f07b238ee837dfea80f0562c1a2c9fb81f02fa6b168dd0e3290cfff3",
+  "predicate_registry_path": "configs/extraction/predicate_registry_v2.json",
+  "predicate_registry_version": "predicate_registry_v2",
+  "predicate_registry_sha256": "5cb9ba2f2b7a81aa2ce61d52d9425fbf1f2d39964a3a66286d5679ebb2e5175d",
+  "prompt_version": "atomic-extraction-v3",
+  "schema_version": "atomic_extraction_v1",
+  "schema_sha256": "f694616f02143cc4e5595fe0658b100f29562c9c4d4df716af362fa10989aac1",
+  "generation_settings": {
+    "api": "responses",
+    "max_output_tokens": 1200,
+    "store": false,
+    "temperature": 0,
+    "text_format": "json_schema"
+  },
+  "token_counter_version": "tiktoken_0_13_0_request_json_v1",
+  "token_encoding": "o200k_base",
+  "input_token_reserve_per_request": 256,
+  "expected_output_tokens_per_request": 400,
+  "maximum_retry_requests": 0,
+  "prior_spend_usd": "0.00",
+  "cumulative_authorization_usd": "0.20",
+  "prompt_sha256": "57ec5307bf3cdf691e303ccd65602a0d3856f95b442c8408e44fd74e9d05ac5b",
+  "case_order": [
+    {
+      "user_id": "user_001",
+      "source_id": "scaled_user_001_conversation_001"
+    },
+    {
+      "user_id": "user_001",
+      "source_id": "scaled_user_001_email_002"
+    },
+    {
+      "user_id": "user_001",
+      "source_id": "scaled_user_001_chat_002"
+    },
+    {
+      "user_id": "user_001",
+      "source_id": "scaled_user_001_calendar_001"
+    }
+  ],
+  "models": [
+    {
+      "label": "gpt41",
+      "requested_model": "gpt-4.1-2025-04-14",
+      "resolved_model": "gpt-4.1-2025-04-14",
+      "input_usd_per_million_tokens": "2.00",
+      "output_usd_per_million_tokens": "8.00",
+      "output_directory": "results/phase3/atomic-extraction-step35-model-qualification-v1/gpt41"
+    },
+    {
+      "label": "gpt41-mini",
+      "requested_model": "gpt-4.1-mini-2025-04-14",
+      "resolved_model": "gpt-4.1-mini-2025-04-14",
+      "input_usd_per_million_tokens": "0.40",
+      "output_usd_per_million_tokens": "1.60",
+      "output_directory": "results/phase3/atomic-extraction-step35-model-qualification-v1/gpt41-mini"
+    }
+  ]
+}

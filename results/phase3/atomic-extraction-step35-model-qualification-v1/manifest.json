@@ -1,0 +1,227 @@
+{
+  "budget": {
+    "actual_spend_usd": "0.019646",
+    "cost_cap_usd": "0.200000",
+    "cumulative_actual_spend_usd": "0.019646",
+    "prior_spend_usd": "0.000000",
+    "projected_hard_maximum_usd": "0.172894",
+    "remaining_reserved_requests": 27,
+    "requests_charged": 1,
+    "requests_reserved": 28
+  },
+  "case_order": [
+    {
+      "position": 1,
+      "source_id": "scaled_user_001_conversation_001",
+      "user_id": "user_001"
+    },
+    {
+      "position": 2,
+      "source_id": "scaled_user_001_email_002",
+      "user_id": "user_001"
+    },
+    {
+      "position": 3,
+      "source_id": "scaled_user_001_chat_002",
+      "user_id": "user_001"
+    },
+    {
+      "position": 4,
+      "source_id": "scaled_user_001_calendar_001",
+      "user_id": "user_001"
+    }
+  ],
+  "configurations": {
+    "full": {
+      "canonical_sha256": "5f4cd1864c01127e79f5c046dde59c4d8fc899c82dbe67cc2ceebea07b1a0136",
+      "file_sha256": "896d9f0444f2bcdd28af72da315571cc2a37b4f8dd39306cddda50f6a911a85d",
+      "path": "configs/extraction/phase4_input_development_v1.json"
+    },
+    "qualification": {
+      "canonical_sha256": "fe4bd735e1753e096e8c16602ee2b7f03e317ee9500afabbea30b7126715899a",
+      "file_sha256": "e2ba375f4c27878a9bd59cb0f1cc08ff71c80d9f0e4fd529759b4137c582ae7e",
+      "path": "configs/extraction/phase4_input_model_qualification_v1.json"
+    }
+  },
+  "files": {
+    "comparison.json": "7118753f6306203fa63cb04d5584ea1f863d6e0c5b0d1e90d72676e4ede79c46",
+    "decision.json": "e35f67f89306658f790330bdfa2a45087c995cf0f094c3c9f835cb3af3671fbd",
+    "findings.md": "8e2e2ccbbac7bd59a3a3c3e1a5efbd3fa66d1f28805bea232a82c15635cce8f9",
+    "gpt41/failures.jsonl": "431dc3f414a4828ed00055792c2815947ec5857bc564710f866c39c1ccf3f00f",
+    "gpt41/predictions.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gpt41/run.json": "1887760f58c6b7db56c7ee98e2c67a9214d437a648625259120da27b71ac2589"
+  },
+  "gold_access": {
+    "expected_sha256": "a74aa1e2f07b238ee837dfea80f0562c1a2c9fb81f02fa6b168dd0e3290cfff3",
+    "opened_only_after_all_eight_predictions": false
+  },
+  "manifest_version": "step35-model-qualification-manifest-v1",
+  "models": {
+    "gpt41": {
+      "actual_cost_usd": "0.019646",
+      "input_tokens_charged": 5023,
+      "label": "gpt41",
+      "output_tokens_charged": 1200,
+      "request_count": 1,
+      "requested_model": "gpt-4.1-2025-04-14",
+      "requests": [
+        {
+          "outcome": "provider",
+          "position": 1,
+          "provider_metadata": {
+            "charged_cost_usd": "0.019646",
+            "charged_input_tokens": 5023,
+            "charged_output_tokens": 1200,
+            "input_tokens": null,
+            "output_tokens": null,
+            "request_id": null,
+            "response_id": null,
+            "returned_model": null,
+            "total_tokens": null
+          },
+          "source_id": "scaled_user_001_conversation_001"
+        }
+      ],
+      "resolved_model": "gpt-4.1-2025-04-14",
+      "returned_models": []
+    },
+    "gpt41-mini": {
+      "not_started": true
+    }
+  },
+  "predicate_registry": {
+    "path": "configs/extraction/predicate_registry_v2.json",
+    "sha256": "5cb9ba2f2b7a81aa2ce61d52d9425fbf1f2d39964a3a66286d5679ebb2e5175d",
+    "version": "predicate_registry_v2"
+  },
+  "rendered_prompts": {
+    "aggregate_sha256": "57ec5307bf3cdf691e303ccd65602a0d3856f95b442c8408e44fd74e9d05ac5b",
+    "cases": [
+      {
+        "position": 1,
+        "sha256": "7fefc022381759a63c444f3a6baf7e549f9bee0483afa31abbc706f172297c60",
+        "source_id": "scaled_user_001_conversation_001",
+        "user_id": "user_001"
+      },
+      {
+        "position": 2,
+        "sha256": "c07f1f26b91fa65530b331234018d0fdcfb76b74686e5de673d2bff726fd9c74",
+        "source_id": "scaled_user_001_email_002",
+        "user_id": "user_001"
+      },
+      {
+        "position": 3,
+        "sha256": "e9cc884293821577e858ac9bb1cce9d51cf8c74cd88736fdccea1caf6468dca1",
+        "source_id": "scaled_user_001_chat_002",
+        "user_id": "user_001"
+      },
+      {
+        "position": 4,
+        "sha256": "67f2cbd1aee975e2bcba939981a0d6bac24cd6ac3e09489a4e6c0f0773c04437",
+        "source_id": "scaled_user_001_calendar_001",
+        "user_id": "user_001"
+      }
+    ],
+    "system_prompt_sha256": "e44326b7a2e79eddec7de0bf5a4d263f0799538d2171a57d6342cfb8a2ae5d15",
+    "version": "atomic-extraction-v3"
+  },
+  "repository": {
+    "commit": "f9cd3cd5e6dd60981aed57b73afd4ab52b03d7e5",
+    "worktree_dirty": true,
+    "worktree_status_sha256": "b8c4bbe89e9df892ec484cee0d04ebf79d8fa074b47bc5a810085d1af47468e1"
+  },
+  "runtime_inputs": {
+    "dataset_sha256": "746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61",
+    "dataset_version": "scaled_v1",
+    "sources": {
+      "path": "data/scaled-v1/runtime/sources.jsonl",
+      "sha256": "a5cbdf38faf22689726c5d5998ea58e2b9e8a19acfae9318511064b5e29235de"
+    },
+    "users": {
+      "path": "data/scaled-v1/runtime/users.jsonl",
+      "sha256": "13e118ad1e8ecda61616eec51d6ff896ee37321f48a8c187d6c460af898cc3ef"
+    }
+  },
+  "schema": {
+    "sha256": "f694616f02143cc4e5595fe0658b100f29562c9c4d4df716af362fa10989aac1",
+    "version": "atomic_extraction_v1"
+  },
+  "token_counter": {
+    "encoding": "o200k_base",
+    "method": "client-serialized JSON request tokens plus fixed framing reserve",
+    "models": {
+      "gpt41": [
+        {
+          "exact_input_tokens": 4767,
+          "maximum_input_tokens": 5023,
+          "position": 1,
+          "request_body_sha256": "5a6cacb958f90fa089c03bf9dd1a092aed427c7a264baff6b135a3147812f75b",
+          "source_id": "scaled_user_001_conversation_001",
+          "user_id": "user_001"
+        },
+        {
+          "exact_input_tokens": 4763,
+          "maximum_input_tokens": 5019,
+          "position": 2,
+          "request_body_sha256": "d4798abd56a1554e4cd73339c1f3063677d588d057c07611e5a9963ce25b1013",
+          "source_id": "scaled_user_001_email_002",
+          "user_id": "user_001"
+        },
+        {
+          "exact_input_tokens": 4818,
+          "maximum_input_tokens": 5074,
+          "position": 3,
+          "request_body_sha256": "aa50d026030797c34c64f98866a71d170e67270e66c3f4a513512672c370ab82",
+          "source_id": "scaled_user_001_chat_002",
+          "user_id": "user_001"
+        },
+        {
+          "exact_input_tokens": 4732,
+          "maximum_input_tokens": 4988,
+          "position": 4,
+          "request_body_sha256": "ca14acc2120e57be1270650e1f18856d76dbd69b90dca9e1c887e8b595e7009c",
+          "source_id": "scaled_user_001_calendar_001",
+          "user_id": "user_001"
+        }
+      ],
+      "gpt41-mini": [
+        {
+          "exact_input_tokens": 4768,
+          "maximum_input_tokens": 5024,
+          "position": 1,
+          "request_body_sha256": "46724299b912e3a13d4a5f559e8a4092ea4b3b40bcebec8292b28910cb18b867",
+          "source_id": "scaled_user_001_conversation_001",
+          "user_id": "user_001"
+        },
+        {
+          "exact_input_tokens": 4764,
+          "maximum_input_tokens": 5020,
+          "position": 2,
+          "request_body_sha256": "f30813f6ef494ed4133cfcf6e30450b092a4176c2d747583e885f94a9328dea7",
+          "source_id": "scaled_user_001_email_002",
+          "user_id": "user_001"
+        },
+        {
+          "exact_input_tokens": 4819,
+          "maximum_input_tokens": 5075,
+          "position": 3,
+          "request_body_sha256": "982b55e4c257fbd34697be3d3cb56731203e585e59d235de613a494a4a1d17ec",
+          "source_id": "scaled_user_001_chat_002",
+          "user_id": "user_001"
+        },
+        {
+          "exact_input_tokens": 4733,
+          "maximum_input_tokens": 4989,
+          "position": 4,
+          "request_body_sha256": "4f12c7373a8500d966ee90573c3d687a18cb2931b718be40e858ad0403113e0a",
+          "source_id": "scaled_user_001_calendar_001",
+          "user_id": "user_001"
+        }
+      ]
+    },
+    "package": "tiktoken",
+    "package_version": "0.13.0",
+    "reserve_per_request": 256,
+    "version": "tiktoken_0_13_0_request_json_v1"
+  }
+}

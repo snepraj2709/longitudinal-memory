@@ -1,0 +1,1 @@
+{"artifact_version":"query_planning_development_v1","case_count":24,"execution_mode":"deterministic_no_model","failure_count":0,"historical_openai_spend_usd":"0.2314404","incremental_cost_usd":0,"input_tokens":0,"model_calls":0,"output_tokens":0,"prediction_count":24,"ranking_executed":false,"retries":0,"search_executed":false}

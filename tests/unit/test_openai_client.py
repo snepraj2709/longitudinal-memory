@@ -10,6 +10,7 @@ from evaluation.openai_client import (
     OpenAIResponseError,
     OpenAIResponseMetadata,
     OpenAIResponsesClient,
+    _provider_error_metadata,
     _parse_reset_duration,
     load_env_value,
 )
@@ -238,6 +239,32 @@ class OpenAIResponsesClientTests(unittest.TestCase):
         self.assertEqual(_parse_reset_duration("6m0s"), 360.0)
         self.assertEqual(_parse_reset_duration("1h2m3.5s"), 3723.5)
         self.assertIsNone(_parse_reset_duration("later"))
+
+    def test_provider_error_metadata_excludes_message_content(self) -> None:
+        detail = json.dumps({
+            "error": {
+                "message": "sensitive provider detail",
+                "type": "invalid_request_error",
+                "param": "text.format.type",
+                "code": "unsupported_value",
+            }
+        })
+        self.assertEqual(
+            _provider_error_metadata(detail),
+            ("unsupported_value", "text.format.type", None),
+        )
+        self.assertEqual(
+            _provider_error_metadata(json.dumps({
+                "error": {
+                    "message": "Input must contain the word JSON.",
+                    "type": "invalid_request_error",
+                    "param": "input",
+                    "code": None,
+                }
+            })),
+            ("invalid_request_error", "input", "json_instruction_missing"),
+        )
+        self.assertEqual(_provider_error_metadata("not json"), (None, None, None))
 
     def test_env_loader_reads_only_requested_value_and_rejects_duplicates(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

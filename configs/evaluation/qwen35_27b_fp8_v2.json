@@ -1,0 +1,217 @@
+{
+  "approval": {
+    "branch": "testing",
+    "dataset_change_invalidates_approval": true,
+    "deployment_service": "demo",
+    "deployment_target": "longitudinal-memory",
+    "provider_change_invalidates_approval": true,
+    "railway_plan_change_allowed": false
+  },
+  "authority_bindings": [
+    {
+      "path": "data/scaled-v1/manifest.json",
+      "sha256": "e3b4386b7063b3c2d65b45574b2e5665fc5094a8330ffd16ea83781744b9a5d3"
+    },
+    {
+      "path": "configs/evaluation/frozen_prompts_v1.json",
+      "sha256": "681935ec199e6f0a4f7cb37c971c0c28295293af9f792f1f41f6225ce5f468bf"
+    },
+    {
+      "path": "configs/extraction/predicate_registry_v2.json",
+      "sha256": "15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1"
+    },
+    {
+      "path": "configs/retrieval/query_planner_v1.json",
+      "sha256": "538af5ceb41f50c752dc086c9f6ef39ee6b42b4ec0616948b3ac38192f66c654"
+    },
+    {
+      "path": "configs/retrieval/index_v1.json",
+      "sha256": "4579b9fe671985a35f605ad9f0dcf256d4672b95329e597d0876754bc5c84a48"
+    },
+    {
+      "path": "configs/retrieval/baseline_v1.json",
+      "sha256": "6d49b6d9302b32eb5446ceeb36eb14642091a73ff264c4d7cfeeb4569858cea1"
+    },
+    {
+      "path": "configs/answering/evidence_package_v1.json",
+      "sha256": "64c85873389c291bcee89df6aed6dc3a72ea4cd396fd0593613b809acdf17fdd"
+    },
+    {
+      "path": "configs/answering/memory_answer_v1.json",
+      "sha256": "98b743d593e17a88216ac74cf17693f08898537027e0d91672d45aaeb4dfcc10"
+    },
+    {
+      "path": "configs/abstention/answerability_v1.json",
+      "sha256": "b4e5dbd3fcb41c7a2b61cd2c208b7cca8cb2a0696d1d907215174eabeae4da9c"
+    },
+    {
+      "path": "configs/abstention/answerability_thresholds_v1.json",
+      "sha256": "cf33994fb0a13994748b1d3c67a53a15396e30f51b65dd042a191c18e7127e02"
+    }
+  ],
+  "baselines": [
+    {
+      "baseline_id": "B0",
+      "context": "query_only",
+      "provider_call": true
+    },
+    {
+      "baseline_id": "B1",
+      "context": "same_user_source_history_before_as_of",
+      "provider_call": true
+    },
+    {
+      "baseline_id": "B2",
+      "context": "phase7_top_k_qwen_atomic",
+      "provider_call": true
+    },
+    {
+      "baseline_id": "B3",
+      "context": "phase7_top_k_phase6_grounded_sessions",
+      "provider_call": true
+    },
+    {
+      "baseline_id": "B4",
+      "context": "phase7_fused_atomic_and_sessions",
+      "provider_call": true
+    },
+    {
+      "baseline_id": "B5",
+      "context": "b4_plus_persisted_bitemporal_lifecycle_filtering",
+      "provider_call": true
+    },
+    {
+      "baseline_id": "B6",
+      "context": "b5_plus_persisted_relations_and_belief_resolution",
+      "provider_call": true
+    },
+    {
+      "baseline_id": "B7",
+      "context": "exact_b6_context_and_response_plus_deterministic_answerability",
+      "provider_call": false
+    }
+  ],
+  "budget_inr": {
+    "stage_1": 200.0,
+    "stage_2": 300.0,
+    "stage_3": 1000.0,
+    "stage_3_minimum_batch_valid_rate": 0.9,
+    "stage_3_minimum_extraction_valid_count": 20,
+    "stage_3_minimum_valid_response_count": 884,
+    "stage_3_reserve_fraction": 0.2,
+    "total": 1500.0
+  },
+  "checkpointing": {
+    "atomic_per_request_file": true,
+    "compose_ordered_jsonl_after_batch": true,
+    "invalid_output_retries": 0,
+    "maximum_transport_retries_global": 25,
+    "maximum_transport_retries_per_request": 1
+  },
+  "data_access": {
+    "cross_split_access": false,
+    "cross_user_access": false,
+    "gold_after_prediction_seal_only": true,
+    "openai_artifact_reuse": false,
+    "prohibited_runtime_roots": [
+      "data/scaled-v1/gold",
+      "data/scaled-v1/oracle",
+      "data/scaled-v1/review",
+      "results/evaluation/openai-step10.3-interrupted-v1",
+      "results/evaluation/qwen35-27b-fp8-v1"
+    ],
+    "qwen_v1_artifact_reuse": false
+  },
+  "model": {
+    "context_length": 16384,
+    "enable_thinking": false,
+    "hugging_face_id": "Qwen/Qwen3.5-27B-FP8",
+    "model_alias": "qwen35-27b-fp8-v2",
+    "revision": "97f5941bf617e31c5e237364a8602ce3f03a551a",
+    "task": "text"
+  },
+  "output": {
+    "root": "results/evaluation/qwen35-27b-fp8-v2",
+    "series_manifest": "results/evaluation/qwen35-27b-fp8-v2/series.json"
+  },
+  "predecessor": {
+    "series_id": "qwen35-27b-fp8-v1",
+    "status": "superseded_not_run"
+  },
+  "runtime": {
+    "client_concurrency": 8,
+    "engine": "vllm",
+    "generation_config": "vllm",
+    "gpu_memory_utilization": 0.9,
+    "max_num_seqs": 16,
+    "resources": [
+      {
+        "gpu": "H100-80GB",
+        "maximum_spot_rate_inr_per_hour": 133.33,
+        "priority": 1,
+        "region": "IN2",
+        "spot": true
+      },
+      {
+        "gpu": "RTX-PRO6000-96GB",
+        "maximum_spot_rate_inr_per_hour": 100.0,
+        "priority": 2,
+        "region": "IN1",
+        "spot": true
+      }
+    ],
+    "storage_gb": 100,
+    "template": "pytorch",
+    "tensor_parallel_size": 1,
+    "vllm_git_revision": "65b7662d3fcb773afaf751ab29ac6960a0cf011d"
+  },
+  "sampling": {
+    "answer": {
+      "presence_penalty": 1.5,
+      "seed": 42,
+      "temperature": 0.7,
+      "top_k": 20,
+      "top_p": 0.8
+    },
+    "extraction": {
+      "presence_penalty": 1.5,
+      "seed": 42,
+      "temperature": 0.7,
+      "top_k": 20,
+      "top_p": 0.8
+    },
+    "judge": {
+      "seed": 42,
+      "temperature": 0.0
+    }
+  },
+  "schema_version": "qwen_series_config_v2",
+  "scoring": {
+    "composite_score": false,
+    "development_and_test_separate": true,
+    "failed_batches_are_zero": false,
+    "judge_is_diagnostic_only": true,
+    "judge_max_cases_per_batch": 10,
+    "judge_same_task_and_user_per_batch": true
+  },
+  "series_id": "qwen35-27b-fp8-v2",
+  "status": "frozen_not_run",
+  "workload": {
+    "logical_predictions": {
+      "development": 912,
+      "frozen_test": 3648,
+      "total": 4560
+    },
+    "provider_requests": {
+      "development_answers_b0_b6": 798,
+      "development_extraction": 20,
+      "development_judge": 112,
+      "frozen_answers_b0_b6": 3192,
+      "frozen_extraction": 80,
+      "frozen_judge": 448,
+      "maximum_including_transport_retries": 4687,
+      "planned_including_compatibility": 4662,
+      "stage_1_compatibility": 12
+    }
+  }
+}

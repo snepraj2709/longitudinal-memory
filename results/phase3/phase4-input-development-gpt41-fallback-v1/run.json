@@ -1,0 +1,52 @@
+{
+  "artifact_sha256": {
+    "case_scores.jsonl": "3c38d2638e120cda19f44260f598671a96f1f36ad9673f87b7afbe89da332770",
+    "claims.jsonl": "509c51229eb8a6e13e898a28fec594d0118c29b6f5a93fc917fb0d1af34b4ff7",
+    "evidence_index.json": "311107940b64e22d9ba8af77e17d04e17f4298e8b5797e6f7234261e852ca0b6",
+    "failures.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "known_limitations.json": "cc4d1e8ff62ab85918048c0d95e5c3bf388a5d0f2627ce262f4035d4cfe8ff0d",
+    "predictions.jsonl": "98b3c22ac325b14de1de540f0439d939c90ae9be0cad85f7c8e7d766842be897",
+    "scores.json": "76c96cc9590da0ac40d31a6ff5ab1d96e3decacb732a9bfc9b531e58e8750b4b"
+  },
+  "budget": {
+    "actual_new_spend_usd": "0.1616440",
+    "cost_cap_usd": "0.3839604",
+    "cumulative_actual_spend_usd": "0.2314404",
+    "prior_spend_usd": "0.0697964",
+    "projected_cumulative_hard_maximum_usd": "0.2314404",
+    "remaining_hard_maximum_usd": "0.0000000",
+    "requests_charged": 16,
+    "requests_reserved": 16
+  },
+  "configuration_sha256": "a09588ec23d15a0611c6cb30f4b9c492928cd1cd192dda2248914c53230db8e5",
+  "configuration_version": "phase4-input-development-gpt41-fallback-v1",
+  "failure_count": 0,
+  "requested_model": "gpt-4.1-2025-04-14",
+  "resolved_model": "gpt-4.1-2025-04-14",
+  "run_format_version": "phase4-input-gpt41-fallback-run-v1",
+  "started_at": "2026-08-09T06:10:48.179906Z",
+  "status": "completed",
+  "successful_source_ids": [
+    "scaled_user_001_conversation_001",
+    "scaled_user_001_email_001",
+    "scaled_user_001_chat_001",
+    "scaled_user_001_calendar_001",
+    "scaled_user_001_conversation_002",
+    "scaled_user_001_email_002",
+    "scaled_user_001_chat_002",
+    "scaled_user_001_calendar_002",
+    "scaled_user_001_conversation_003",
+    "scaled_user_001_conversation_004",
+    "scaled_user_002_conversation_001",
+    "scaled_user_002_email_001",
+    "scaled_user_002_chat_001",
+    "scaled_user_002_calendar_001",
+    "scaled_user_002_conversation_002",
+    "scaled_user_002_email_002",
+    "scaled_user_002_chat_002",
+    "scaled_user_002_calendar_002",
+    "scaled_user_002_conversation_003",
+    "scaled_user_002_conversation_004"
+  ],
+  "updated_at": "2026-08-09T06:15:20.056201Z"
+}

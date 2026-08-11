@@ -1,0 +1,58 @@
+{
+  "dataset_version": "relation_development_v1",
+  "review_status": "approved",
+  "case_count": 8,
+  "user_counts": {
+    "user_001": 4,
+    "user_002": 4
+  },
+  "case_ids": [
+    "c51_u1_same_family_repeat",
+    "c51_u1_separate_periods",
+    "c51_u1_ninety_day_boundary",
+    "c51_u1_lexical_threshold",
+    "c51_u2_shared_entity_overlap",
+    "c51_u2_mixed_unknown",
+    "c51_u2_approximate",
+    "c51_u2_cross_user_distractor"
+  ],
+  "present_gold_labels": {
+    "temporal_change": 1,
+    "unrelated": 6,
+    "unresolved_ambiguity": 1
+  },
+  "runtime": {
+    "path": "runtime/cases.jsonl",
+    "sha256": "9a298284bc25a155954be6e20e7807541f9638fbfd50640060878b7a73b5fe0e"
+  },
+  "gold": {
+    "path": "gold/cases.jsonl",
+    "sha256": "0e245546cab7b85cffa83fa3ef05fe860ea6a230891718f36dfe44851fa42d74"
+  },
+  "candidate_runtime": {
+    "path": "data/conflicts/candidate-development-v1/runtime/cases.jsonl",
+    "sha256": "19aa0171b3ce655f06725e4c555a8e0a5d4b3c9c3c25bc9cc3d7de35e4368a33"
+  },
+  "candidate_predictions": {
+    "path": "results/conflicts/candidate-generation-development-v1/predictions.jsonl",
+    "sha256": "2d8d0c790c3aa136735b2ac8bb1f2fcca5eeeb9732acca2af5b4dd5dd35870ae"
+  },
+  "reference_runtime": {
+    "path": "data/phase4/temporal-development-v1/runtime/cases.jsonl",
+    "sha256": "4c67e1a01f0513512f9c1c3d65bacf8a943f66d037c369182a24adae9b656416"
+  },
+  "classifier_config": {
+    "path": "configs/conflicts/relation_classifier_v1.json",
+    "sha256": "fab3171a55ad21e25e303e89f44e57b7d0b926eb8f82283ce1dcb910d8960659"
+  },
+  "predicate_registry": {
+    "path": "configs/extraction/predicate_registry_v2.json",
+    "sha256": "15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1"
+  },
+  "relation_migration": {
+    "path": "migrations/0004_conflict_relations.sql",
+    "sha256": "d48a4c3902b59f9fc83f3497cedc65c964de25c4edb3b1fd53a04e3afaa1e5c3"
+  },
+  "review_method": "manual_review_of_fixed_candidate_pairs_and_runtime_evidence",
+  "source_boundary": "step5.1_predictions_candidate_runtime_and_step4.4_runtime_only_no_supplemental_claims_gold_oracle_review_or_test_users"
+}

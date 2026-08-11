@@ -1,0 +1,26 @@
+{
+  "dataset_version": "belief_resolution_development_v1",
+  "review_status": "approved",
+  "case_count": 8,
+  "user_counts": {"user_001": 4, "user_002": 4},
+  "case_ids": [
+    "c51_u1_same_family_repeat",
+    "c51_u1_separate_periods",
+    "c51_u1_ninety_day_boundary",
+    "c51_u1_lexical_threshold",
+    "c51_u2_shared_entity_overlap",
+    "c51_u2_mixed_unknown",
+    "c51_u2_approximate",
+    "c51_u2_cross_user_distractor"
+  ],
+  "present_relation_labels": {"temporal_change": 1, "unrelated": 6, "unresolved_ambiguity": 1},
+  "runtime": {"path": "runtime/cases.jsonl", "sha256": "f2d92261abd6a7bf49616068e7738ea4929cf8bcfaf0a85f1ec5252558421692"},
+  "gold": {"path": "gold/cases.jsonl", "sha256": "f76b7bafd0a1796a0a7474cc222384c3f81716c44d5b5db71e29472b9a659276"},
+  "relation_runtime": {"path": "data/conflicts/relation-development-v1/runtime/cases.jsonl", "sha256": "9a298284bc25a155954be6e20e7807541f9638fbfd50640060878b7a73b5fe0e"},
+  "relation_predictions": {"path": "results/conflicts/relation-classification-development-v1/predictions.jsonl", "sha256": "f41a15fa83df9602c0536976aaebbc7aef9d7e33d1353f057dbeb52a6b3cf201"},
+  "relation_release": {"path": "results/conflicts/relation-classification-development-v1/manifest.json", "sha256": "2f29edd580957192cc7808e2e4a454b7fa7c0b89bfc9ea3851efbf9e1c76179e"},
+  "resolver_config": {"path": "configs/conflicts/belief_resolver_v1.json", "sha256": "9cd5ac711da1ec11f0528852845f42e9da7f2050d088bd51ad7e12cf8e9356c6"},
+  "belief_migration": {"path": "migrations/0005_belief_resolution.sql", "sha256": "641588e4a05a6c20bc5513fe1c0a41825ba9ed0379bf2de50a64c339732f59cb"},
+  "review_method": "manual_review_of_frozen_step5_2_runtime_and_predictions",
+  "source_boundary": "step5_2_runtime_and_predictions_only_no_step5_2_or_older_gold_oracle_review_or_test_users"
+}

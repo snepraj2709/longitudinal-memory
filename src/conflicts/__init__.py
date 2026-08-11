@@ -1,0 +1,83 @@
+"""Deterministic conflict-candidate generation."""
+
+from .candidates import (
+    CandidateConfig,
+    CandidatePair,
+    CandidateRequest,
+    CandidateSignals,
+    ConflictCandidateError,
+    ConflictCandidateService,
+    generate_candidate_pairs,
+    load_candidate_config,
+)
+from .classifier import (
+    CheckedRelation,
+    ClassificationRequest,
+    ConflictClassifier,
+    ConflictClassifierError,
+    ConflictDecision,
+    classify_conflict,
+    load_classifier_config,
+)
+from .relations import (
+    ConflictRelationConflict,
+    ConflictRelationError,
+    ConflictRelationService,
+    PersistedConflict,
+)
+from .resolver import (
+    AuthorityEvidence,
+    BeliefResolutionPlan,
+    BeliefResolver,
+    BeliefResolverError,
+    LifecycleAction,
+    PersistedResolutionInput,
+    PlannedRelation,
+    ResolutionRequest,
+    ResolverConfig,
+    load_resolver_config,
+    resolve_belief,
+)
+from .resolution import (
+    BeliefResolutionConflict,
+    BeliefResolutionError,
+    BeliefResolutionService,
+    PersistedBeliefResolution,
+)
+
+__all__ = [
+    "CandidateConfig",
+    "CandidatePair",
+    "CandidateRequest",
+    "CandidateSignals",
+    "AuthorityEvidence",
+    "BeliefResolutionPlan",
+    "BeliefResolutionConflict",
+    "BeliefResolutionError",
+    "BeliefResolutionService",
+    "BeliefResolver",
+    "BeliefResolverError",
+    "CheckedRelation",
+    "ClassificationRequest",
+    "ConflictCandidateError",
+    "ConflictCandidateService",
+    "ConflictClassifier",
+    "ConflictClassifierError",
+    "ConflictDecision",
+    "ConflictRelationConflict",
+    "ConflictRelationError",
+    "ConflictRelationService",
+    "PersistedConflict",
+    "PersistedBeliefResolution",
+    "PersistedResolutionInput",
+    "LifecycleAction",
+    "PlannedRelation",
+    "ResolutionRequest",
+    "ResolverConfig",
+    "classify_conflict",
+    "generate_candidate_pairs",
+    "load_candidate_config",
+    "load_classifier_config",
+    "load_resolver_config",
+    "resolve_belief",
+]

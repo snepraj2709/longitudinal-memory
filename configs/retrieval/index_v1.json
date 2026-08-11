@@ -1,0 +1,52 @@
+{
+  "index_version": "retrieval_index_v1",
+  "content_renderer_version": "retrieval_content_v1",
+  "embedding_version": "deterministic_token_hash_v1",
+  "embedding_dimension": 256,
+  "distance": "cosine",
+  "fts_configuration": "simple",
+  "token_normalization": [
+    "NFKC",
+    "casefold",
+    "unicode_alphanumeric_runs"
+  ],
+  "bucket_rule": "sha256_bytes_0_7_big_endian_mod_dimension",
+  "sign_rule": "sha256_byte_8_low_bit_zero_positive",
+  "empty_embedding": "zero_vector",
+  "eligible_record_kinds": [
+    "atomic",
+    "session"
+  ],
+  "eligible_lifecycle_statuses": [
+    "candidate",
+    "confirmed",
+    "current",
+    "historical",
+    "disputed",
+    "superseded"
+  ],
+  "excluded_lifecycle_statuses": [
+    "excluded"
+  ],
+  "excluded_sensitivities": [
+    "restricted"
+  ],
+  "atomic_content_fields": [
+    "subject_id",
+    "speaker_id",
+    "predicate",
+    "object_json",
+    "polarity",
+    "epistemic_status",
+    "memory_kind",
+    "lifecycle_status",
+    "valid_time",
+    "transaction_time",
+    "checked_relations"
+  ],
+  "session_content_fields": [
+    "summary_text",
+    "ordered_grounded_statements",
+    "unresolved_questions"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "dataset_version": "answerability-development-v1",
+  "guidance_version": "step-9.1-guidance-v1",
+  "guidance_sha256": "9cc8c86bf9725d04c71d2033df14939e392166377ecd6fc5a70955f8c717f48b",
+  "starting_commit": "a18501a27708c259cccce8bf87948962e672bd41",
+  "clean_room_boundary": "clean_room_no_rejected_prompt_content",
+  "config_sha256": "b4e5dbd3fcb41c7a2b61cd2c208b7cca8cb2a0696d1d907215174eabeae4da9c",
+  "allowed_users": ["user_001", "user_002"],
+  "expected_package_count": 24,
+  "inputs": {
+    "step_8_1_dataset_manifest": {
+      "path": "data/answering/evidence-package-development-v1/manifest.json",
+      "sha256": "016b34eccba3260974e5c8eb2be58d6fb2023ad4399919634577b82c5c4bc7f4"
+    },
+    "step_8_1_result_manifest": {
+      "path": "results/answering/evidence-package-development-v1/manifest.json",
+      "sha256": "8d0b3a44c5a7452827f5ead93fedc39ade92a6097cfa06641eecee0c996d8213"
+    },
+    "step_8_1_packages": {
+      "path": "results/answering/evidence-package-development-v1/packages.jsonl",
+      "sha256": "bb57898bea51417b2ecad1252b451669ae2c748033c9cef88360f16a825f8186"
+    },
+    "step_8_1_checks": {
+      "path": "results/answering/evidence-package-development-v1/checks.json",
+      "sha256": "9e081b65e5bc8c8f59c8fb320a357e14240eedc06fd5febb67ddbcf588d8c766"
+    },
+    "step_8_1_run": {
+      "path": "results/answering/evidence-package-development-v1/run.json",
+      "sha256": "87c10978b82cf309e01982b580c41a9e48371dd262f9d8cc28aa7a4d5afd3a1d"
+    },
+    "step_8_1_failures": {
+      "path": "results/answering/evidence-package-development-v1/failures.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "step_8_2_prerequisite_manifest": {
+      "path": "results/answering/memory-answer-contract-development-v1/manifest.json",
+      "sha256": "d0d987ff126aca2c7b05a0966e6b797247c7123e252fb26fc59d9599374fb841"
+    },
+    "step_8_3_prerequisite_manifest": {
+      "path": "results/answering/memory-answer-quality-development-v1/manifest.json",
+      "sha256": "ac936819856939f66597c279fc0b852022a650d5455a4c21240ffbb01f0a524f"
+    }
+  },
+  "reason_precedence": [
+    "no_retrieved_claims",
+    "incomplete_evidence",
+    "no_promoted_claims",
+    "clarification_required",
+    "wrong_person_risk",
+    "requested_information_absent",
+    "requested_time_not_covered",
+    "stale_evidence",
+    "insufficient_speaker_authority",
+    "insufficient_source_authority",
+    "unresolved_conflict",
+    "stable_trait_support_insufficient",
+    "causal_support_insufficient"
+  ],
+  "excluded_inputs": [
+    "answerability_gold",
+    "answer_gold",
+    "relevance_gold",
+    "oracle_data",
+    "review_queues",
+    "frozen_test_users",
+    "step_6_4_gold",
+    "scaled_interactive_data",
+    "provider_credentials",
+    "rejected_prompt_agent_derivation"
+  ],
+  "predecessor_drift": []
+}

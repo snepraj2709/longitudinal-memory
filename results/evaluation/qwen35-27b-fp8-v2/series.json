@@ -1,0 +1,25 @@
+{
+  "authority_bindings": {
+    "configs/abstention/answerability_thresholds_v1.json": "cf33994fb0a13994748b1d3c67a53a15396e30f51b65dd042a191c18e7127e02",
+    "configs/abstention/answerability_v1.json": "b4e5dbd3fcb41c7a2b61cd2c208b7cca8cb2a0696d1d907215174eabeae4da9c",
+    "configs/answering/evidence_package_v1.json": "64c85873389c291bcee89df6aed6dc3a72ea4cd396fd0593613b809acdf17fdd",
+    "configs/answering/memory_answer_v1.json": "98b743d593e17a88216ac74cf17693f08898537027e0d91672d45aaeb4dfcc10",
+    "configs/evaluation/frozen_prompts_v1.json": "681935ec199e6f0a4f7cb37c971c0c28295293af9f792f1f41f6225ce5f468bf",
+    "configs/extraction/predicate_registry_v2.json": "15349ed1f623442dcafedfddfbf9809ea7f44497d5eed0d76bfeff89f57ecfd1",
+    "configs/retrieval/baseline_v1.json": "6d49b6d9302b32eb5446ceeb36eb14642091a73ff264c4d7cfeeb4569858cea1",
+    "configs/retrieval/index_v1.json": "4579b9fe671985a35f605ad9f0dcf256d4672b95329e597d0876754bc5c84a48",
+    "configs/retrieval/query_planner_v1.json": "538af5ceb41f50c752dc086c9f6ef39ee6b42b4ec0616948b3ac38192f66c654",
+    "data/scaled-v1/manifest.json": "e3b4386b7063b3c2d65b45574b2e5665fc5094a8330ffd16ea83781744b9a5d3"
+  },
+  "config_path": "configs/evaluation/qwen35_27b_fp8_v2.json",
+  "config_sha256": "0f06a82d0db074c8775a6889c8b9657e35c8af5160852cc337493d2db09d3aee",
+  "historical_openai_series_status": "interrupted_not_scored",
+  "logical_prediction_count": 4560,
+  "planned_provider_request_count": 4662,
+  "predecessor_series_id": "qwen35-27b-fp8-v1",
+  "predecessor_status": "superseded_not_run",
+  "provider_request_count": 0,
+  "schema_version": "qwen_series_manifest_v2",
+  "series_id": "qwen35-27b-fp8-v2",
+  "status": "frozen_not_run"
+}

@@ -1,0 +1,64 @@
+{
+  "runtime_version": "retrieval_quality_runtime_v1",
+  "guidance_version": "step-7.4-guidance-v1",
+  "guidance_sha256": "17d8609f5e0799661ea4a7d6b3a1de3493d267a6cff90efa4d21e17de4df96ae",
+  "starting_commit": "d849ea1140f97066edb408acd8704268655c7abe",
+  "split": "development",
+  "allowed_users": [
+    "user_001",
+    "user_002"
+  ],
+  "query_count": 8,
+  "result_count": 24,
+  "latency_sample_count": 240,
+  "runtime_bindings": {
+    "quality_config": {
+      "path": "configs/retrieval/quality_evaluation_v1.json",
+      "sha256": "45e0f0bd5057f92b1bdd20fb14313911b12202b79d072e8d05c6c0600489bb2a"
+    },
+    "index_release": {
+      "manifest_path": "results/retrieval/index-development-v1/manifest.json",
+      "manifest_sha256": "5854d9389224128549df992a9fd7f60e857333ed273adb946b1c1c8c58dea0c6",
+      "records_path": "results/retrieval/index-development-v1/records.jsonl",
+      "records_sha256": "e29531cd3bf72419c947a31b13c0b4adbd008f019dfbfc3e6a820ad541e23cfe"
+    },
+    "planner_release": {
+      "manifest_path": "results/retrieval/query-planning-development-v1/manifest.json",
+      "manifest_sha256": "007b5c14c7e74a87c717150a5ab0ee454e8ed1e61dd493c014705cae5dd7383f",
+      "checkpoint_path": "results/retrieval/query-planning-development-v1/runtime-checkpoint.json",
+      "checkpoint_sha256": "2f7986346623f7af93115c1f74ea4640447975317f93a399cdfe155c372279eb"
+    },
+    "baseline_queries": {
+      "path": "data/retrieval/baseline-execution-development-v1/queries.jsonl",
+      "sha256": "e6e98f9b6de0747652d0d99b2379abe2d1e1a01ab012b1c6cae00cfab8e72bb4"
+    },
+    "baseline_config": {
+      "path": "configs/retrieval/baseline_v1.json",
+      "sha256": "6d49b6d9302b32eb5446ceeb36eb14642091a73ff264c4d7cfeeb4569858cea1"
+    },
+    "baseline_dataset": {
+      "path": "data/retrieval/baseline-execution-development-v1/manifest.json",
+      "sha256": "d32915d803cb1d2dcaeaf4f0269b1da33b3f9111a58222c4027b9a5e95446b48"
+    },
+    "baseline_release": {
+      "manifest_path": "results/retrieval/baseline-execution-development-v1/manifest.json",
+      "manifest_sha256": "ab45d4a51766d9d0edcc39c77f8b0ccd4abbcb1254437153f7759418cfe01703",
+      "checkpoint_path": "results/retrieval/baseline-execution-development-v1/runtime-checkpoint.json",
+      "checkpoint_sha256": "d99a2ee8720f16fb40867f92d1740582536ecced84c7eadfffc5f1907065e3b4",
+      "results_path": "results/retrieval/baseline-execution-development-v1/results.jsonl",
+      "results_sha256": "e1e69fe8ac64a81f27e171cdd7082b7648e2a339659f11e6e4f2a1702a1dbb60",
+      "checks_path": "results/retrieval/baseline-execution-development-v1/checks.json",
+      "checks_sha256": "c5ec466fe24c7105931886632cb4751aca9211a816e7edd2ef8056052179bc0d"
+    }
+  },
+  "required_absent_paths": [
+    "data/retrieval/retrieval-quality-development-v1/gold",
+    "data/retrieval/retrieval-quality-development-v1/manifest.json",
+    "results/retrieval/retrieval-quality-development-v1",
+    "src/retrieval/quality_contracts.py",
+    "src/retrieval/quality_evaluation.py",
+    "tests/unit/test_retrieval_quality_evaluation.py"
+  ],
+  "runtime_boundary": "latency_checkpoint_before_relevance",
+  "model_usage": "deterministic_no_model"
+}

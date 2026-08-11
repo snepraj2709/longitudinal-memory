@@ -1,0 +1,21 @@
+{
+  "answer_allowed_rule": "complete_coverage_and_promoted_claim_and_no_clarification",
+  "category_order": ["current_claims", "historical_claims", "conflicting_claims"],
+  "config_version": "evidence_package_config_v1",
+  "evidence_package_version": "evidence_package_v1",
+  "input_release_version": "baseline_execution_development_v1",
+  "runtime_version": "evidence_package_runtime_v1",
+  "schema_version": "evidence_package_schema_v1",
+  "failure_codes": ["invalid_request", "stale_result", "lineage_incomplete", "invariant_violation"],
+  "factual_lifecycle_categories": {
+    "confirmed": "current_claims",
+    "current": "current_claims",
+    "disputed": "conflicting_claims",
+    "historical": "historical_claims",
+    "superseded": "historical_claims"
+  },
+  "non_promoted_lifecycle_status": "candidate",
+  "rejection_reasons": ["candidate_not_promoted"],
+  "rejection_stages": ["pre_filter", "post_rank", "package_validation"],
+  "structural_blockers": ["no_retrieved_claims", "incomplete_evidence", "no_promoted_claims", "clarification_required"]
+}
