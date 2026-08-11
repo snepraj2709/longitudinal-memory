@@ -1,17 +1,22 @@
 # Qwen JarvisLabs runbook
 
-## Frozen series
+The decision-complete implementation and execution contract is [qwen-implementation.md](qwen-implementation.md). That document controls model and runtime revisions, B0-B7 semantics, PostgreSQL materialization, request counts, budget gates, checkpointing, cleanup, scoring, commits, and deployment.
 
-- Series: `qwen35-27b-fp8-v1`
-- Model: `Qwen/Qwen3.5-27B-FP8`
-- Hugging Face revision: `97f5941bf617e31c5e237364a8602ce3f03a551a`
-- vLLM revision: `65b7662d3fcb773afaf751ab29ac6960a0cf011d`
-- Alias: `qwen35-27b-fp8-v1`
-- Context: 16,384 tokens, text only, non-thinking
-- Preferred GPU: one spot RTX-PRO6000 96 GB container in IN1, PyTorch template
-- Fallback: H200 spot only after separate approval
+## Series status
 
-The RTX-PRO6000 spot rate inspected on 2026-08-11 was INR 93.96/hour. Recheck it immediately before creation:
+- `qwen35-27b-fp8-v1` is a historical, unrun scaffold. Preserve it as `superseded_not_run`; do not start its runner.
+- `qwen35-27b-fp8-v2` is the only approved execution series.
+- `openai-gpt41-v1` remains `interrupted_not_scored` and must not be resumed or used as Qwen input.
+
+## Resource policy
+
+Use one H100 80 GB spot container in `IN2` when its current spot rate is at or below INR 133.33/hour. If it is unavailable or above that ceiling, use one RTX-PRO6000 96 GB spot container in `IN1` when its rate is at or below INR 100/hour.
+
+Do not use H100 on-demand, H200, multiple GPUs, another region, or another model. Stop without spending when neither approved spot resource meets its ceiling.
+
+## Operator entrypoint
+
+Before creating a resource:
 
 ```bash
 jl status --json
@@ -19,75 +24,31 @@ jl gpus --json
 jl resources --json
 ```
 
-Do not create an instance until the owner separately approves the current rate and Stage 1 spend.
+Authentication must succeed without exposing a token. Then follow sections 3 through 17 of [qwen-implementation.md](qwen-implementation.md) in order. Do not improvise a direct `jl create` or invoke `scripts/run_qwen_vllm.sh` outside the v2 lifecycle wrapper.
 
-## Stage 1: INR 200 cap
+The wrapper must keep one accepted instance running across approved stages, checkpoint every response, download recoverable artifacts, destroy the instance on every exit path, and verify that it no longer exists. Pausing is not final cleanup.
 
-The committed compatibility pack contains three extraction, three QA, three summary, and three interactive requests. It uses B0 for answer compatibility and does not reuse OpenAI extraction.
+## Hard limits
 
-On the approved GPU, install the exact vLLM revision from `requirements-qwen.txt`, set `HF_TOKEN` and a private `VLLM_API_KEY`, then start:
+| Stage | Incremental cap | Cumulative cap | Planned provider requests |
+| --- | ---: | ---: | ---: |
+| Compatibility | INR 200 | INR 200 | 12 |
+| Development | INR 300 | INR 500 | 930 |
+| Frozen test | INR 1,000 | INR 1,500 | 3,720 |
 
-```bash
-scripts/run_qwen_vllm.sh
-```
+The planned total is 4,662 provider requests. At most 25 additional requests may result from the single-retry transport policy. Invalid structured output is never retried. Stop before a stage or cumulative cap, retaining enough time to download artifacts and destroy the resource.
 
-Record measured model download and startup seconds. From the local machine, tunnel the private endpoint and run:
+## Emergency cleanup
 
-```bash
-PYTHONPATH=src .venv-storage/bin/python -m evaluation.qwen_preflight \
-  --requests results/evaluation/qwen35-27b-fp8-v1/stage1/compatibility-requests.jsonl \
-  --output results/evaluation/qwen35-27b-fp8-v1/stage1/run-001 \
-  --base-url http://127.0.0.1:6006 \
-  --model qwen35-27b-fp8-v1 \
-  --api-key "$VLLM_API_KEY" \
-  --hourly-rate-inr 93.96 \
-  --stage-cap-inr 200 \
-  --setup-seconds <MEASURED_SECONDS>
-```
-
-The runner makes no automatic retry. It checkpoints each response and records tokenizer count, inference time, throughput, and GPU cost. Download the complete Stage 1 directory before pausing the instance.
-
-## Stage 2: INR 300 cap
-
-Stage 2 covers the complete two-user development slice: 932 requests. Start it only after reviewing Stage 1 schema compatibility. Qwen must regenerate extraction; do not read or copy OpenAI extraction predictions into this series.
+If the lifecycle wrapper is interrupted, identify the recorded machine ID, download the available run directory, and destroy the instance:
 
 ```bash
-PYTHONPATH=src .venv-storage/bin/python -m evaluation.qwen_benchmark \
-  --split development \
-  --output results/evaluation/qwen35-27b-fp8-v1/stage2/run-001 \
-  --base-url http://127.0.0.1:6006 \
-  --api-key "$VLLM_API_KEY" \
-  --hourly-rate-inr <CURRENT_RATE> \
-  --stage-cap-inr 300 \
-  --cumulative-cap-inr 500 \
-  --prior-cost-inr <STAGE_1_COST> \
-  --setup-seconds <STAGE_2_SETUP_SECONDS>
+jl list --json
+jl get <machine_id> --json
+jl download <machine_id> <remote_result_directory> <local_recovery_directory> -r
+jl destroy <machine_id> --yes --json
+jl list --json
+jl get <machine_id> --json
 ```
 
-After an intentional stop, pass `--resume`. Every checkpointed valid or invalid model response is skipped, so invalid output is not retried.
-
-Download each completed batch before proceeding. Stop before the stage or cumulative cap. Load development gold only after all development predictions are complete.
-
-## Stage 3: INR 1,000 cap
-
-Stage 3 is optional. It can start only when Stage 2 has at least 95% structurally valid responses and the projected cost plus a 20% reserve fits the remaining budget. Frozen gold stays closed until corresponding predictions are complete.
-
-The runner enforces that gate before selecting the 3,728 test-split requests:
-
-```bash
-PYTHONPATH=src .venv-storage/bin/python -m evaluation.qwen_benchmark \
-  --split test \
-  --output results/evaluation/qwen35-27b-fp8-v1/stage3/run-001 \
-  --base-url http://127.0.0.1:6006 \
-  --api-key "$VLLM_API_KEY" \
-  --hourly-rate-inr <CURRENT_RATE> \
-  --stage-cap-inr 1000 \
-  --cumulative-cap-inr 1500 \
-  --prior-cost-inr <STAGE_1_PLUS_2_COST> \
-  --setup-seconds <STAGE_3_SETUP_SECONDS> \
-  --stage2-valid-responses <VALID_COUNT> \
-  --stage2-total-responses 932 \
-  --projected-cost-inr <PROJECTED_STAGE_3_COST>
-```
-
-Pause or destroy the resource as soon as the approved stage ends. Do not switch to H200, change model/runtime revisions, retry invalid output, or extend the budget without a new approval.
+Record download or destruction failures locally and keep retrying cleanup. Do not leave an approved run in a paused or unknown state.
