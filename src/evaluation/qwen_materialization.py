@@ -97,11 +97,14 @@ def materialize_qwen_contexts(
     split: str,
     runtime: Mapping[str, Sequence[Mapping[str, object]]],
     extraction_rows: Sequence[Mapping[str, object]],
+    series_id: str = SERIES_ID,
+    config_path: Path | None = None,
 ) -> MaterializationResult:
     """Build every baseline context through the persisted Phase 4-7 services."""
 
     root = repo_root.resolve()
-    load_qwen_v2_config(root)
+    if config_path is None:
+        load_qwen_v2_config(root)
     _validate_runtime(split, runtime, extraction_rows)
     _require_clean_database(connection)
     apply_migrations(connection, root / "migrations")
@@ -117,6 +120,8 @@ def materialize_qwen_contexts(
     claim_ids_by_user, extraction_failures = _materialize_extraction(
         connection,
         root,
+        series_id,
+        config_path,
         users,
         sources,
         extraction_rows,
@@ -125,8 +130,8 @@ def materialize_qwen_contexts(
 
     _rebuild_summaries(connection, tuple(claim_ids_by_user), candidate_cutoff)
     contexts: list[ContextPackage] = []
-    contexts.extend(_base_contexts(split, runtime))
-    _build_index(connection, root, tuple(claim_ids_by_user), candidate_cutoff, "candidate")
+    contexts.extend(_base_contexts(split, runtime, series_id))
+    _build_index(connection, root, series_id, tuple(claim_ids_by_user), candidate_cutoff, "candidate")
     contexts.extend(
         _retrieved_contexts(
             connection,
@@ -135,13 +140,14 @@ def materialize_qwen_contexts(
             runtime,
             {"B2": "B2", "B3": "B3", "B4": "B4"},
             "candidate_extraction",
+            series_id,
         )
     )
     _drop_index_snapshots(connection)
 
-    _apply_temporal_lifecycle(connection, claim_ids_by_user, as_of, temporal_at)
+    _apply_temporal_lifecycle(connection, claim_ids_by_user, as_of, temporal_at, series_id)
     _rebuild_summaries(connection, tuple(claim_ids_by_user), temporal_at)
-    _build_index(connection, root, tuple(claim_ids_by_user), temporal_at, "temporal")
+    _build_index(connection, root, series_id, tuple(claim_ids_by_user), temporal_at, "temporal")
     contexts.extend(
         _retrieved_contexts(
             connection,
@@ -150,6 +156,7 @@ def materialize_qwen_contexts(
             runtime,
             {"B5": "B4"},
             "persisted_temporal_lifecycle",
+            series_id,
         )
     )
     _drop_index_snapshots(connection)
@@ -161,14 +168,16 @@ def materialize_qwen_contexts(
     claim_ids_by_user, _ = _materialize_extraction(
         connection,
         root,
+        series_id,
+        config_path,
         users,
         sources,
         extraction_rows,
     )
-    failures.extend(_apply_conflicts(connection, root, claim_ids_by_user, temporal_at, as_of))
-    _apply_temporal_lifecycle(connection, claim_ids_by_user, as_of, conflict_at)
+    failures.extend(_apply_conflicts(connection, root, claim_ids_by_user, temporal_at, as_of, series_id))
+    _apply_temporal_lifecycle(connection, claim_ids_by_user, as_of, conflict_at, series_id)
     _rebuild_summaries(connection, tuple(claim_ids_by_user), conflict_index_at)
-    _build_index(connection, root, tuple(claim_ids_by_user), conflict_index_at, "conflict")
+    _build_index(connection, root, series_id, tuple(claim_ids_by_user), conflict_index_at, "conflict")
     b6_contexts = _retrieved_contexts(
         connection,
         root,
@@ -176,6 +185,7 @@ def materialize_qwen_contexts(
         runtime,
         {"B6": "B4"},
         "persisted_conflict_resolution",
+        series_id,
     )
     contexts.extend(b6_contexts)
     contexts.extend(_b7_contexts(b6_contexts))
@@ -190,7 +200,12 @@ def materialize_qwen_contexts(
     )
 
 
-def write_materialization(result: MaterializationResult, output_dir: Path) -> None:
+def write_materialization(
+    result: MaterializationResult,
+    output_dir: Path,
+    *,
+    series_id: str = SERIES_ID,
+) -> None:
     """Write one immutable, canonically ordered context release."""
 
     output_dir.mkdir(parents=True, exist_ok=False)
@@ -198,7 +213,7 @@ def write_materialization(result: MaterializationResult, output_dir: Path) -> No
     _exclusive_jsonl(output_dir / "failures.jsonl", (asdict(item) for item in result.failures))
     manifest = {
         "schema_version": "qwen_context_materialization_v2",
-        "series_id": SERIES_ID,
+        "series_id": series_id,
         "split": result.split,
         "status": "completed" if not result.failures else "completed_with_failures",
         "context_count": len(result.contexts),
@@ -268,6 +283,8 @@ def _reset_materialization_database(connection: object, root: Path) -> None:
 def _materialize_extraction(
     connection: object,
     root: Path,
+    series_id: str,
+    config_path: Path | None,
     users: Sequence[Mapping[str, object]],
     sources: Sequence[Mapping[str, object]],
     extraction_rows: Sequence[Mapping[str, object]],
@@ -276,7 +293,7 @@ def _materialize_extraction(
     created_at = min(datetime.fromisoformat(str(item["created_at"])) for item in sources)
     for user in users:
         repository.insert_user(MemoryUser(str(user["user_id"]), created_at))
-    extraction_version = _extraction_version(root, created_at)
+    extraction_version = _extraction_version(root, created_at, series_id, config_path)
     repository.insert_extraction_version(extraction_version)
 
     rows_by_source = {str(row["record_id"]): row for row in extraction_rows}
@@ -286,7 +303,7 @@ def _materialize_extraction(
     claim_ids_by_user: dict[str, list[str]] = {str(row["user_id"]): [] for row in users}
     failures = []
     for source in sources:
-        source_record = _source_record(source)
+        source_record = _source_record(source, series_id)
         result = ingestion.ingest(IngestRequest(source_record, extraction_version.version_id))
         if not result.created or result.attempt_id is None:
             raise QwenMaterializationError("source ingestion unexpectedly replayed")
@@ -338,11 +355,20 @@ def _materialize_extraction(
     return claim_ids_by_user, tuple(failures)
 
 
-def _extraction_version(root: Path, created_at: datetime) -> ExtractionVersionRecord:
-    config = load_qwen_v2_config(root)
+def _extraction_version(
+    root: Path,
+    created_at: datetime,
+    series_id: str,
+    config_path: Path | None,
+) -> ExtractionVersionRecord:
+    config = (
+        load_qwen_v2_config(root)
+        if config_path is None
+        else json.loads((root / config_path).read_text(encoding="utf-8"))
+    )
     model = config["model"]
     return ExtractionVersionRecord(
-        "qwen35_27b_fp8_v2_extraction",
+        f"{series_id.replace('-', '_')}_extraction",
         f"{model['hugging_face_id']}@{model['revision']}",
         "atomic-extraction-v3",
         _file_sha(root / PROMPT_MODULE_PATH),
@@ -355,7 +381,7 @@ def _extraction_version(root: Path, created_at: datetime) -> ExtractionVersionRe
     )
 
 
-def _source_record(source: Mapping[str, object]) -> SourceEventRecord:
+def _source_record(source: Mapping[str, object], series_id: str) -> SourceEventRecord:
     metadata = source["metadata"]
     if not isinstance(metadata, dict):
         raise QwenMaterializationError("source metadata must be an object")
@@ -366,7 +392,7 @@ def _source_record(source: Mapping[str, object]) -> SourceEventRecord:
         str(source["user_id"]),
         str(source["source_type"]),
         str(session_id),
-        f"{SERIES_ID}:{source['source_id']}",
+        f"{series_id}:{source['source_id']}",
         datetime.fromisoformat(str(source["created_at"])),
         datetime.fromisoformat(str(source["ingested_at"])),
         content,
@@ -481,6 +507,7 @@ def _rebuild_summaries(connection: object, user_ids: tuple[str, ...], cutoff: da
 def _build_index(
     connection: object,
     root: Path,
+    series_id: str,
     user_ids: tuple[str, ...],
     cutoff: datetime,
     snapshot: str,
@@ -508,7 +535,7 @@ def _build_index(
                 INDEX_VERSION,
                 repository.config_sha256,
                 cutoff,
-                f"{SERIES_ID}:{snapshot}:{user_id}",
+                f"{series_id}:{snapshot}:{user_id}",
                 input_snapshot,
                 cutoff,
                 cutoff,
@@ -520,6 +547,7 @@ def _build_index(
 def _base_contexts(
     split: str,
     runtime: Mapping[str, Sequence[Mapping[str, object]]],
+    series_id: str = SERIES_ID,
 ) -> tuple[ContextPackage, ...]:
     sources_by_user: dict[str, list[Mapping[str, object]]] = {}
     for source in runtime["sources"]:
@@ -533,7 +561,7 @@ def _base_contexts(
                 for source in sorted(sources_by_user[str(case["user_id"])], key=_source_order)
                 if datetime.fromisoformat(str(source["ingested_at"])) <= as_of
             )
-            contexts.append(_context(split, task, case, "B0", True, "query_only", ()))
+            contexts.append(_context(split, task, case, "B0", True, "query_only", (), series_id))
             contexts.append(
                 _context(
                     split,
@@ -543,6 +571,7 @@ def _base_contexts(
                     True,
                     "same_user_full_history",
                     visible_sources,
+                    series_id,
                 )
             )
     return tuple(contexts)
@@ -555,6 +584,7 @@ def _retrieved_contexts(
     runtime: Mapping[str, Sequence[Mapping[str, object]]],
     baseline_map: Mapping[str, str],
     snapshot: str,
+    series_id: str = SERIES_ID,
 ) -> tuple[ContextPackage, ...]:
     repository = RetrievalSearchRepository(connection)
     baseline_config = load_baseline_config(root / BASELINE_CONFIG_PATH)
@@ -592,6 +622,7 @@ def _retrieved_contexts(
                         True,
                         snapshot,
                         records,
+                        series_id,
                     )
                 )
     return tuple(contexts)
@@ -675,6 +706,7 @@ def _apply_temporal_lifecycle(
     claim_ids_by_user: Mapping[str, Sequence[str]],
     as_of: datetime,
     transitioned_at: datetime,
+    series_id: str,
 ) -> None:
     repository = StorageRepository(connection)
     temporal = TemporalService(connection)
@@ -704,7 +736,7 @@ def _apply_temporal_lifecycle(
                 TransitionRequest(
                     user_id,
                     claim_id,
-                    f"{SERIES_ID}:temporal:{claim_id}",
+                    f"{series_id}:temporal:{claim_id}",
                     target,
                     "qwen_v2_as_of_lifecycle",
                     transitioned_at,
@@ -718,6 +750,7 @@ def _apply_conflicts(
     claim_ids_by_user: Mapping[str, Sequence[str]],
     conflict_at: datetime,
     as_of: datetime,
+    series_id: str,
 ) -> tuple[MaterializationFailure, ...]:
     failures = []
     candidate_service = ConflictCandidateService(connection, repo_root=root)
@@ -773,7 +806,7 @@ def _apply_conflicts(
                     conflict_at,
                     None,
                     resolved_at,
-                    f"{SERIES_ID}:resolution:{decision_id}",
+                    f"{series_id}:resolution:{decision_id}",
                     RESOLVER_VERSION,
                 )
             )
@@ -824,10 +857,11 @@ def _context(
     provider_call: bool,
     snapshot: str,
     records: Sequence[dict[str, object]],
+    series_id: str = SERIES_ID,
 ) -> ContextPackage:
     canonical_records = tuple(records)
     return ContextPackage(
-        SERIES_ID,
+        series_id,
         split,
         task,
         str(case["case_id"]),

@@ -57,6 +57,7 @@ def seal_logical_predictions(
     output_dir: Path,
     *,
     split: str,
+    series_id: str = SERIES_ID,
 ) -> Mapping[str, object]:
     """Combine sealed B0-B6 provider terminals and zero-call B7 terminals."""
 
@@ -88,7 +89,7 @@ def seal_logical_predictions(
     (output_dir / "failures.jsonl").write_bytes(failure_payload)
     manifest = {
         "schema_version": "qwen_logical_prediction_seal_v2",
-        "series_id": SERIES_ID,
+        "series_id": series_id,
         "split": split,
         "status": "sealed" if not failures else "sealed_with_failures",
         "logical_prediction_count": expected,
@@ -119,12 +120,15 @@ def score_sealed_release(
     reference_loader: Callable[[], Mapping[str, Sequence[Mapping[str, object]]]],
     execution_metadata: Mapping[str, object],
     output_dir: Path,
+    series_id: str = SERIES_ID,
+    config_path: Path | None = None,
 ) -> Mapping[str, object]:
     """Verify the prediction checkpoint, then and only then open scorer references."""
 
     root = repo_root.resolve()
-    load_qwen_v2_config(root)
-    manifest, predictions = verify_prediction_seal(prediction_dir)
+    if config_path is None:
+        load_qwen_v2_config(root)
+    manifest, predictions = verify_prediction_seal(prediction_dir, series_id=series_id)
     split = str(manifest["split"])
     _verify_context_release(contexts_path)
     contexts = _load_contexts(contexts_path)
@@ -143,13 +147,14 @@ def score_sealed_release(
         extraction_records=extraction,
         references=references,
         execution_metadata=execution_metadata,
+        series_id=series_id,
     )
     payload = b"".join(_canonical(asdict(row)) + b"\n" for row in rows)
     output_dir.mkdir(parents=True, exist_ok=False)
     (output_dir / "metrics.jsonl").write_bytes(payload)
     scorecard = {
         "schema_version": "qwen_scorecard_v2",
-        "series_id": SERIES_ID,
+        "series_id": series_id,
         "split": split,
         "status": "completed" if manifest["failure_count"] == 0 else "completed_with_execution_failures",
         "composite_score": None,
@@ -169,6 +174,8 @@ def score_sealed_release(
 
 def verify_prediction_seal(
     prediction_dir: Path,
+    *,
+    series_id: str = SERIES_ID,
 ) -> tuple[Mapping[str, object], tuple[dict[str, object], ...]]:
     expected_files = {"predictions.jsonl", "failures.jsonl", "manifest.json"}
     if not prediction_dir.is_dir() or {path.name for path in prediction_dir.iterdir()} != expected_files:
@@ -176,7 +183,7 @@ def verify_prediction_seal(
     manifest = json.loads((prediction_dir / "manifest.json").read_text(encoding="utf-8"))
     if manifest.get("schema_version") != "qwen_logical_prediction_seal_v2":
         raise QwenScoringError("prediction seal schema changed")
-    if manifest.get("series_id") != SERIES_ID or manifest.get("status") not in {"sealed", "sealed_with_failures"}:
+    if manifest.get("series_id") != series_id or manifest.get("status") not in {"sealed", "sealed_with_failures"}:
         raise QwenScoringError("prediction seal identity or status changed")
     split = manifest.get("split")
     if split not in EXPECTED_LOGICAL:
@@ -203,6 +210,7 @@ def score_records(
     extraction_records: Sequence[Mapping[str, object]],
     references: Mapping[str, Sequence[Mapping[str, object]]],
     execution_metadata: Mapping[str, object],
+    series_id: str = SERIES_ID,
 ) -> tuple[MetricRow, ...]:
     """Compute deterministic metrics without collapsing failures into score zeros."""
 
@@ -214,7 +222,7 @@ def score_records(
         for task in TASK_KEYS
     }
     rows: list[MetricRow] = []
-    rows.extend(_extraction_metrics(split, extraction_records, references["claims"]))
+    rows.extend(_extraction_metrics(split, extraction_records, references["claims"], series_id))
     context_index = {(item.baseline_id, item.task, item.case_id): item for item in contexts}
     prediction_index = {
         (str(row["baseline_id"]), str(row["task"]), str(row["record_id"])): row
@@ -227,12 +235,12 @@ def score_records(
                 (case_id, prediction_index.get((baseline, task, case_id)), context_index.get((baseline, task, case_id)), value)
                 for case_id, value in sorted(gold.items())
             ]
-            rows.extend(_execution_metrics(split, baseline, task, cases))
-            rows.extend(_answer_metrics(split, baseline, task, cases))
-            rows.extend(_retrieval_metrics(split, baseline, task, cases))
-            rows.extend(_lifecycle_metrics(split, baseline, task, cases, references["claims"]))
-    rows.extend(_run_metrics(split, execution_metadata))
-    rows.extend(_conflict_metrics(split, contexts, references.get("conflicts", ())))
+            rows.extend(_execution_metrics(split, baseline, task, cases, series_id))
+            rows.extend(_answer_metrics(split, baseline, task, cases, series_id))
+            rows.extend(_retrieval_metrics(split, baseline, task, cases, series_id))
+            rows.extend(_lifecycle_metrics(split, baseline, task, cases, references["claims"], series_id))
+    rows.extend(_run_metrics(split, execution_metadata, series_id))
+    rows.extend(_conflict_metrics(split, contexts, references.get("conflicts", ()), series_id))
     return tuple(sorted(rows, key=lambda row: (
         row.metric_group, row.metric, row.baseline_id, row.task
     )))
@@ -241,10 +249,12 @@ def score_records(
 def build_judge_jobs(
     prediction_dir: Path,
     references: Mapping[str, Sequence[Mapping[str, object]]],
+    *,
+    series_id: str = SERIES_ID,
 ) -> tuple[ExecutionJob, ...]:
     """Create blinded same-user, same-task, same-baseline batches of at most ten."""
 
-    manifest, predictions = verify_prediction_seal(prediction_dir)
+    manifest, predictions = verify_prediction_seal(prediction_dir, series_id=series_id)
     split = str(manifest["split"])
     _validate_references(split, references)
     gold = {
@@ -268,7 +278,7 @@ def build_judge_jobs(
                 reference = gold[task].get(case_id)
                 if reference is None:
                     raise QwenScoringError("judge reference does not match sealed prediction")
-                candidate_id = sha256(f"{SERIES_ID}:{record['baseline_id']}:{case_id}".encode()).hexdigest()[:20]
+                candidate_id = sha256(f"{series_id}:{record['baseline_id']}:{case_id}".encode()).hexdigest()[:20]
                 candidate_ids.append(candidate_id)
                 candidates.append({
                     "candidate_id": candidate_id,
@@ -305,6 +315,7 @@ def build_judge_jobs(
                 response_format=_response_format(f"qwen_judge_{position:04d}", schema),
                 max_output_tokens=2000,
                 validator=validate,
+                series_id=series_id,
                 local_metadata={
                     "candidates": {
                         candidate_id: {
@@ -335,24 +346,33 @@ def run_judge(
     retry_ledger: TransportRetryLedger | None = None,
     before_attempt: AttemptGate | None = None,
     after_attempt: AttemptComplete | None = None,
+    series_id: str = SERIES_ID,
+    model: str | None = None,
+    temperature: float | None = None,
+    workers: int = 8,
 ) -> Mapping[str, object]:
     """Verify prediction sealing before opening references and invoking the judge."""
 
-    verify_prediction_seal(prediction_dir)
+    verify_prediction_seal(prediction_dir, series_id=series_id)
     references = reference_loader()
-    jobs = build_judge_jobs(prediction_dir, references)
-    config = load_qwen_v2_config(repo_root.resolve())
+    jobs = build_judge_jobs(prediction_dir, references, series_id=series_id)
+    model_alias = model
+    if model_alias is None:
+        config = load_qwen_v2_config(repo_root.resolve())
+        model_alias = str(config["model"]["model_alias"])
     result = execute_jobs(
         jobs,
         output_dir=output_dir,
         client_factory=_client_factory(
             base_url=base_url,
-            model=str(config["model"]["model_alias"]),
+            model=model_alias,
             api_key=api_key,
+            temperature=temperature,
         ),
         retry_ledger=retry_ledger,
         before_attempt=before_attempt,
         after_attempt=after_attempt,
+        workers=workers,
     )
     diagnostic = {
         **result,
@@ -425,7 +445,7 @@ def _compose_judge_per_case(
     )))
 
 
-def _extraction_metrics(split, records, gold_claims):
+def _extraction_metrics(split, records, gold_claims, series_id):
     predicted = []
     valid_count = 0
     for row in records:
@@ -438,9 +458,9 @@ def _extraction_metrics(split, records, gold_claims):
     gold_keys = {_claim_key(item) for item in gold_claims}
     matched = len(pred_keys & gold_keys)
     rows = [
-        _metric(split, "all", "all", "extraction", "structurally_valid_sources", valid_count, len(records)),
-        _metric(split, "all", "all", "extraction", "claim_precision", matched, len(pred_keys)),
-        _metric(split, "all", "all", "extraction", "claim_recall", matched, len(gold_keys)),
+        _metric(split, "all", "all", "extraction", "structurally_valid_sources", valid_count, len(records), series_id=series_id),
+        _metric(split, "all", "all", "extraction", "claim_precision", matched, len(pred_keys), series_id=series_id),
+        _metric(split, "all", "all", "extraction", "claim_recall", matched, len(gold_keys), series_id=series_id),
     ]
     precision = matched / len(pred_keys) if pred_keys else 0
     recall = matched / len(gold_keys) if gold_keys else 0
@@ -450,31 +470,32 @@ def _extraction_metrics(split, records, gold_claims):
         2 * precision * recall / (precision + recall) if denominator else 0,
         denominator,
         "no_matched_or_predicted_claims",
+        series_id=series_id,
     ))
     return rows
 
 
-def _execution_metrics(split, baseline, task, cases):
+def _execution_metrics(split, baseline, task, cases, series_id):
     planned = len(cases)
     success = sum(record is not None and record.get("status") == "succeeded" for _, record, _, _ in cases)
     failed = sum(record is not None and record.get("status") == "failed" for _, record, _, _ in cases)
     return [
-        _metric(split, baseline, task, "execution", "valid_response_rate", success, planned),
-        _count_metric(split, baseline, task, "execution", "execution_failures", failed),
+        _metric(split, baseline, task, "execution", "valid_response_rate", success, planned, series_id=series_id),
+        _count_metric(split, baseline, task, "execution", "execution_failures", failed, series_id=series_id),
     ]
 
 
-def _answer_metrics(split, baseline, task, cases):
+def _answer_metrics(split, baseline, task, cases, series_id):
     successful = [(record, gold) for _, record, _, gold in cases if record and record.get("status") == "succeeded"]
     if not successful:
-        return [_metric(split, baseline, task, "answer", "answer_correctness", 0, 0, "no_valid_predictions")]
+        return [_metric(split, baseline, task, "answer", "answer_correctness", 0, 0, "no_valid_predictions", series_id=series_id)]
     expected_abstain = [bool(gold.get("should_abstain")) for record, gold in successful]
     predicted_abstain = [record["output"].get("status") == "abstained" for record, gold in successful]
     rows = [
-        _metric(split, baseline, task, "abstention", "abstention_accuracy", sum(a == b for a, b in zip(expected_abstain, predicted_abstain)), len(successful)),
-        _metric(split, baseline, task, "abstention", "coverage", sum(not item for item in predicted_abstain), len(successful)),
-        _metric(split, baseline, task, "abstention", "false_answer_rate", sum(expected and not predicted for expected, predicted in zip(expected_abstain, predicted_abstain)), sum(expected_abstain), "no_unanswerable_cases"),
-        _metric(split, baseline, task, "abstention", "unnecessary_abstention_rate", sum(not expected and predicted for expected, predicted in zip(expected_abstain, predicted_abstain)), sum(not item for item in expected_abstain), "no_answerable_cases"),
+        _metric(split, baseline, task, "abstention", "abstention_accuracy", sum(a == b for a, b in zip(expected_abstain, predicted_abstain)), len(successful), series_id=series_id),
+        _metric(split, baseline, task, "abstention", "coverage", sum(not item for item in predicted_abstain), len(successful), series_id=series_id),
+        _metric(split, baseline, task, "abstention", "false_answer_rate", sum(expected and not predicted for expected, predicted in zip(expected_abstain, predicted_abstain)), sum(expected_abstain), "no_unanswerable_cases", series_id=series_id),
+        _metric(split, baseline, task, "abstention", "unnecessary_abstention_rate", sum(not expected and predicted for expected, predicted in zip(expected_abstain, predicted_abstain)), sum(not item for item in expected_abstain), "no_answerable_cases", series_id=series_id),
     ]
     evidence_scores = []
     quote_scores = []
@@ -496,9 +517,9 @@ def _answer_metrics(split, baseline, task, cases):
     pred_n = sum(item[1] for item in evidence_scores)
     gold_n = sum(item[2] for item in evidence_scores)
     rows.extend([
-        _metric(split, baseline, task, "evidence", "source_message_precision", tp, pred_n, "no_predicted_evidence"),
-        _metric(split, baseline, task, "evidence", "source_message_recall", tp, gold_n, "no_gold_evidence"),
-        _metric(split, baseline, task, "evidence", "exact_quote_correctness", sum(item[0] for item in quote_scores), sum(item[1] for item in quote_scores), "no_predicted_citations"),
+        _metric(split, baseline, task, "evidence", "source_message_precision", tp, pred_n, "no_predicted_evidence", series_id=series_id),
+        _metric(split, baseline, task, "evidence", "source_message_recall", tp, gold_n, "no_gold_evidence", series_id=series_id),
+        _metric(split, baseline, task, "evidence", "exact_quote_correctness", sum(item[0] for item in quote_scores), sum(item[1] for item in quote_scores), "no_predicted_citations", series_id=series_id),
     ])
     if task == "qa":
         strict = lenient = eligible = 0
@@ -518,18 +539,18 @@ def _answer_metrics(split, baseline, task, cases):
                     acceptable = [str(item) for item in gold.get("acceptable_answers", [])]
                     lenient += deterministic_answer_match(answer, reference, acceptable)
         rows.extend([
-            _metric(split, baseline, task, "answer", "strict_correctness", strict, eligible, "no_scorable_qa_predictions"),
-            _metric(split, baseline, task, "answer", "lenient_correctness", lenient, eligible, "no_scorable_qa_predictions"),
+            _metric(split, baseline, task, "answer", "strict_correctness", strict, eligible, "no_scorable_qa_predictions", series_id=series_id),
+            _metric(split, baseline, task, "answer", "lenient_correctness", lenient, eligible, "no_scorable_qa_predictions", series_id=series_id),
         ])
     else:
         metric = "gold_event_f1" if task == "summary" else "behaviour_coverage"
-        rows.append(_metric(split, baseline, task, task, metric, 0, 0, "semantic_judge_diagnostic_only"))
+        rows.append(_metric(split, baseline, task, task, metric, 0, 0, "semantic_judge_diagnostic_only", series_id=series_id))
     return rows
 
 
-def _retrieval_metrics(split, baseline, task, cases):
+def _retrieval_metrics(split, baseline, task, cases, series_id):
     if baseline in {"B0", "B1"}:
-        return [_metric(split, baseline, task, "retrieval", "recall_at_10", 0, 0, "retrieval_not_applicable")]
+        return [_metric(split, baseline, task, "retrieval", "recall_at_10", 0, 0, "retrieval_not_applicable", series_id=series_id)]
     recalls5 = []
     recalls10 = []
     reciprocal = []
@@ -556,16 +577,16 @@ def _retrieval_metrics(split, baseline, task, cases):
         ideal = sum(1 / math.log2(index + 2) for index in range(min(len(relevant), 10)))
         ndcgs.append(dcg / ideal if ideal else 0.0)
     return [
-        _average_metric(split, baseline, task, "retrieval", "recall_at_5", recalls5),
-        _average_metric(split, baseline, task, "retrieval", "recall_at_10", recalls10),
-        _average_metric(split, baseline, task, "retrieval", "mean_reciprocal_rank", reciprocal),
-        _average_metric(split, baseline, task, "retrieval", "ndcg_at_10", ndcgs),
+        _average_metric(split, baseline, task, "retrieval", "recall_at_5", recalls5, series_id=series_id),
+        _average_metric(split, baseline, task, "retrieval", "recall_at_10", recalls10, series_id=series_id),
+        _average_metric(split, baseline, task, "retrieval", "mean_reciprocal_rank", reciprocal, series_id=series_id),
+        _average_metric(split, baseline, task, "retrieval", "ndcg_at_10", ndcgs, series_id=series_id),
     ]
 
 
-def _lifecycle_metrics(split, baseline, task, cases, gold_claims):
+def _lifecycle_metrics(split, baseline, task, cases, gold_claims, series_id):
     if baseline not in {"B5", "B6", "B7"}:
-        return [_metric(split, baseline, task, "temporal", "lifecycle_accuracy", 0, 0, "lifecycle_not_available")]
+        return [_metric(split, baseline, task, "temporal", "lifecycle_accuracy", 0, 0, "lifecycle_not_available", series_id=series_id)]
     claims = {str(item["claim_id"]): item for item in gold_claims}
     matched = total = 0
     for _, prediction, context, gold in cases:
@@ -583,19 +604,19 @@ def _lifecycle_metrics(split, baseline, task, cases, gold_claims):
                     statuses.update(record.get("lifecycle_statuses", []))
             total += 1
             matched += str(claim.get("status")) in statuses
-    return [_metric(split, baseline, task, "temporal", "lifecycle_accuracy", matched, total, "no_required_claim_lifecycle_matches")]
+    return [_metric(split, baseline, task, "temporal", "lifecycle_accuracy", matched, total, "no_required_claim_lifecycle_matches", series_id=series_id)]
 
 
-def _conflict_metrics(split, contexts, references):
+def _conflict_metrics(split, contexts, references, series_id):
     if not references:
-        return [_metric(split, "B6", "all", "conflict", "relation_accuracy", 0, 0, "no_conflict_relation_reference")]
-    return [_metric(split, "B6", "all", "conflict", "relation_accuracy", 0, 0, "conflict_reference_adapter_not_available")]
+        return [_metric(split, "B6", "all", "conflict", "relation_accuracy", 0, 0, "no_conflict_relation_reference", series_id=series_id)]
+    return [_metric(split, "B6", "all", "conflict", "relation_accuracy", 0, 0, "conflict_reference_adapter_not_available", series_id=series_id)]
 
 
-def _run_metrics(split, metadata):
+def _run_metrics(split, metadata, series_id):
     rows = []
     for name in ("input_tokens", "output_tokens", "provider_request_count", "transport_retry_count"):
-        rows.append(_count_metric(split, "all", "all", "usage", name, int(metadata.get(name, 0))))
+        rows.append(_count_metric(split, "all", "all", "usage", name, int(metadata.get(name, 0)), series_id=series_id))
     for name in ("gpu_cost_inr", "inference_wall_seconds", "output_tokens_per_second"):
         value = metadata.get(name)
         rows.append(_metric(
@@ -603,21 +624,36 @@ def _run_metrics(split, metadata):
             float(value) if isinstance(value, (int, float)) else 0,
             1 if isinstance(value, (int, float)) else 0,
             "measurement_not_available",
+            series_id=series_id,
         ))
     return rows
 
 
-def _metric(split, baseline, task, group, name, numerator, denominator, null_reason="zero_denominator"):
+def _metric(
+    split,
+    baseline,
+    task,
+    group,
+    name,
+    numerator,
+    denominator,
+    null_reason="zero_denominator",
+    *,
+    series_id=SERIES_ID,
+):
     value = float(numerator) / denominator if denominator else None
-    return MetricRow(SERIES_ID, split, task, baseline, group, name, numerator, denominator, value, None if denominator else null_reason, True)
+    return MetricRow(series_id, split, task, baseline, group, name, numerator, denominator, value, None if denominator else null_reason, True)
 
 
-def _count_metric(split, baseline, task, group, name, value):
-    return MetricRow(SERIES_ID, split, task, baseline, group, name, value, 1, float(value), None, True)
+def _count_metric(split, baseline, task, group, name, value, *, series_id=SERIES_ID):
+    return MetricRow(series_id, split, task, baseline, group, name, value, 1, float(value), None, True)
 
 
-def _average_metric(split, baseline, task, group, name, values):
-    return _metric(split, baseline, task, group, name, sum(values), len(values), "no_scorable_retrieval_cases")
+def _average_metric(split, baseline, task, group, name, values, *, series_id=SERIES_ID):
+    return _metric(
+        split, baseline, task, group, name, sum(values), len(values),
+        "no_scorable_retrieval_cases", series_id=series_id,
+    )
 
 
 def _claim_key(claim):

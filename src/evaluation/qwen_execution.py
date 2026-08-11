@@ -1,4 +1,4 @@
-"""Concurrent, resumable execution for the qwen35-27b-fp8-v2 series."""
+"""Concurrent, resumable execution for OpenAI-compatible Qwen series."""
 
 from __future__ import annotations
 
@@ -111,7 +111,12 @@ class TransportRetryLedger:
             return True
 
 
-def build_extraction_jobs(repo_root: Path, split: str) -> tuple[ExecutionJob, ...]:
+def build_extraction_jobs(
+    repo_root: Path,
+    split: str,
+    *,
+    series_id: str = SERIES_ID,
+) -> tuple[ExecutionJob, ...]:
     root = repo_root.resolve()
     selected = select_runtime(root, split)
     registry = load_predicate_registry(root / REGISTRY)
@@ -146,6 +151,7 @@ def build_extraction_jobs(repo_root: Path, split: str) -> tuple[ExecutionJob, ..
             response_format=response_format,
             max_output_tokens=1200,
             validator=validate,
+            series_id=series_id,
         ))
     return tuple(jobs)
 
@@ -154,6 +160,8 @@ def build_answer_jobs(
     repo_root: Path,
     split: str,
     contexts: Sequence[ContextPackage],
+    *,
+    series_id: str = SERIES_ID,
 ) -> tuple[ExecutionJob, ...]:
     root = repo_root.resolve()
     selected = select_runtime(root, split)
@@ -206,6 +214,7 @@ def build_answer_jobs(
             ),
             max_output_tokens=1000,
             validator=validate,
+            series_id=series_id,
         ))
     return tuple(jobs)
 
@@ -223,8 +232,8 @@ def execute_jobs(
 ) -> Mapping[str, object]:
     """Execute missing jobs and seal an ordered batch after every job is terminal."""
 
-    if workers != MAX_WORKERS:
-        raise QwenExecutionError(f"v2 worker count must remain {MAX_WORKERS}")
+    if workers <= 0:
+        raise QwenExecutionError("worker count must be positive")
     if not jobs:
         raise QwenExecutionError("execution batch cannot be empty")
     ordered = tuple(sorted(jobs, key=lambda item: item.position))
@@ -297,6 +306,8 @@ def execute_jobs(
 def derive_b7_records(
     contexts: Sequence[ContextPackage],
     b6_records: Sequence[Mapping[str, object]],
+    *,
+    series_id: str = SERIES_ID,
 ) -> tuple[dict[str, object], ...]:
     """Wrap each B6 terminal result with the deterministic answerability gate."""
 
@@ -314,7 +325,7 @@ def derive_b7_records(
         underlying = by_key.get((context.task, context.case_id))
         base = {
             "schema_version": "qwen_execution_record_v2",
-            "series_id": SERIES_ID,
+            "series_id": series_id,
             "request_id": f"derived:B7:{context.task}:{context.case_id}",
             "position": position,
             "split": context.split,
@@ -392,6 +403,8 @@ def extraction_rows_from_records(
 def write_derived_b7(
     output_dir: Path,
     records: Sequence[Mapping[str, object]],
+    *,
+    series_id: str = SERIES_ID,
 ) -> Mapping[str, object]:
     """Seal deterministic B7 logical predictions without provider accounting."""
 
@@ -406,7 +419,7 @@ def write_derived_b7(
     _write_or_verify(output_dir / "failures.jsonl", failure_payload)
     manifest = {
         "schema_version": "qwen_b7_derivation_v2",
-        "series_id": SERIES_ID,
+        "series_id": series_id,
         "split": str(ordered[0]["split"]),
         "status": "completed" if not failures else "completed_with_failures",
         "logical_prediction_count": len(ordered),

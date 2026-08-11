@@ -1,0 +1,47 @@
+{
+  "schema_version": "qwen3_vllm_development_config_v1",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "status": "configured_not_run",
+  "provider": "openai_compatible_vllm",
+  "split": "development",
+  "model": {
+    "context_length": 8192,
+    "enable_thinking": false,
+    "hugging_face_id": "Qwen/Qwen3-8B",
+    "model_alias": "qwen3-8b-vllm",
+    "revision": "runtime_download_latest",
+    "task": "text"
+  },
+  "runtime": {
+    "client_concurrency": 1,
+    "engine": "vllm",
+    "fallback_gpus": [
+      "A5000"
+    ],
+    "gpu": "L4",
+    "max_num_seqs": 4,
+    "region": "IN2",
+    "storage_gb": 100,
+    "temperature": 0
+  },
+  "workload": {
+    "answer_provider_requests_b0_b6": 798,
+    "b7_provider_requests": 0,
+    "extraction_provider_requests": 20,
+    "judge_provider_requests": 112,
+    "logical_predictions": 912,
+    "maximum_transport_retries": 25,
+    "total_provider_requests": 930
+  },
+  "output": {
+    "root": "results/evaluation/qwen3-8b-vllm-dev-v1"
+  },
+  "budget_inr": {
+    "hard_cap": 750
+  },
+  "scoring": {
+    "composite_score": false,
+    "failed_batches_are_zero": false,
+    "judge_is_diagnostic_only": true
+  }
+}

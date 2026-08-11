@@ -60,6 +60,14 @@ class QwenMaterializationUnitTests(unittest.TestCase):
             manifest = json.loads((output / "manifest.json").read_text())
             self.assertIn("contexts_sha256", manifest)
 
+    def test_materialization_manifest_accepts_replacement_series_id(self) -> None:
+        result = MaterializationResult("development", (), (), {})
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "release"
+            write_materialization(result, output, series_id="qwen3-8b-vllm-dev-v1")
+            manifest = json.loads((output / "manifest.json").read_text())
+        self.assertEqual(manifest["series_id"], "qwen3-8b-vllm-dev-v1")
+
 
 if __name__ == "__main__":
     unittest.main()

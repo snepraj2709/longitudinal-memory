@@ -105,6 +105,19 @@ class QwenExecutionTests(unittest.TestCase):
             self.assertEqual(manifest["successful_count"], 9)
             self.assertEqual(manifest["worker_count"], 8)
 
+    def test_single_worker_execution_is_allowed_for_small_vllm(self) -> None:
+        active = {"current": 0, "maximum": 0, "lock": threading.Lock()}
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = execute_jobs(
+                tuple(_job(index) for index in range(1, 4)),
+                output_dir=Path(directory) / "batch",
+                client_factory=lambda _job: _Client(_success, active),
+                workers=1,
+            )
+        self.assertEqual(active["maximum"], 1)
+        self.assertEqual(manifest["successful_count"], 3)
+        self.assertEqual(manifest["worker_count"], 1)
+
     def test_resume_does_not_repeat_terminal_requests(self) -> None:
         calls = []
         with tempfile.TemporaryDirectory() as directory:
