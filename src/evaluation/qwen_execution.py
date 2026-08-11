@@ -65,11 +65,12 @@ class ExecutionJob:
     max_output_tokens: int
     validator: Validator
     local_metadata: Mapping[str, object] | None = None
+    series_id: str = SERIES_ID
 
     @property
     def request_sha256(self) -> str:
         return _sha({
-            "series_id": SERIES_ID,
+            "series_id": self.series_id,
             "request_id": self.request_id,
             "position": self.position,
             "split": self.split,
@@ -258,6 +259,8 @@ def execute_jobs(
     records = _load_terminal_records(request_dir, ordered)
     if len(records) != len(ordered):
         raise QwenExecutionError("batch ended without a terminal record for every request")
+    if len({item.series_id for item in ordered}) != 1:
+        raise QwenExecutionError("batch cannot mix series IDs")
     rows = [records[item.request_id] for item in ordered]
     payload = b"".join(_canonical_bytes(row) + b"\n" for row in rows)
     _write_or_verify(output_dir / "responses.jsonl", payload)
@@ -267,7 +270,7 @@ def execute_jobs(
     _write_or_verify(output_dir / "failures.jsonl", failure_payload)
     manifest = {
         "schema_version": "qwen_execution_batch_v2",
-        "series_id": SERIES_ID,
+        "series_id": ordered[0].series_id,
         "split": ordered[0].split,
         "task": ordered[0].task if len({item.task for item in ordered}) == 1 else "mixed",
         "status": "completed" if not failures else "completed_with_failures",
@@ -492,7 +495,7 @@ def _execute_one(
 def _record_base(job: ExecutionJob, attempts: int, retries: int, seconds: float) -> dict[str, object]:
     return {
         "schema_version": "qwen_execution_record_v2",
-        "series_id": SERIES_ID,
+        "series_id": job.series_id,
         "request_id": job.request_id,
         "request_sha256": job.request_sha256,
         "position": job.position,
@@ -601,15 +604,20 @@ def _load_terminal_records(
 
 
 def _client_factory(
-    *, base_url: str, model: str, api_key: str | None,
+    *, base_url: str, model: str, api_key: str | None, temperature: float | None = None,
 ) -> ClientFactory:
     def create(job: ExecutionJob) -> VLLMClient:
         judge = job.task == "judge"
+        request_temperature = (
+            float(temperature)
+            if temperature is not None
+            else (0.0 if judge else float(SAMPLING["temperature"]))
+        )
         return VLLMClient(
             base_url=base_url,
             model=model,
             api_key=api_key,
-            temperature=0.0 if judge else float(SAMPLING["temperature"]),
+            temperature=request_temperature,
             max_output_tokens=job.max_output_tokens,
             text_format=job.response_format,
             payload_options={

@@ -14,7 +14,7 @@ from evaluation.vllm_client import (
     VLLMResponseError,
 )
 
-MODEL = "qwen35-27b-fp8-v1"
+MODEL = "qwen3-8b-vllm"
 
 
 def completion_response(

@@ -1,0 +1,46 @@
+{
+  "schema_version": "qwen_vllm_pilot_config_v1",
+  "pilot_id": "qwen3-8b-vllm-pilot-v1",
+  "provider": "openai_compatible_vllm",
+  "framework": "vllm",
+  "default_api_key_env": "QWEN_VLLM_API_KEY",
+  "default_output_root": "results/evaluation/qwen3-8b-vllm-pilot-v1",
+  "compatibility_request_count": 12,
+  "concurrency": 1,
+  "context_length": 8192,
+  "temperature": 0,
+  "retryable_http_status_codes": [
+    408,
+    429,
+    502,
+    503,
+    504
+  ],
+  "delete_after_pilot": true,
+  "paths": [
+    {
+      "name": "jarvis_l4_24gb",
+      "model": "qwen3-8b-vllm",
+      "region": "IN2",
+      "allowed_gpus": [
+        "L4"
+      ]
+    },
+    {
+      "name": "jarvis_a5000_24gb_fallback_in2",
+      "model": "qwen3-8b-vllm",
+      "region": "IN2",
+      "allowed_gpus": [
+        "A5000"
+      ]
+    },
+    {
+      "name": "jarvis_a5000_24gb_fallback_in1",
+      "model": "qwen3-8b-vllm",
+      "region": "IN1",
+      "allowed_gpus": [
+        "A5000"
+      ]
+    }
+  ]
+}

@@ -34,7 +34,7 @@ The image contains only FastAPI, the compiled web app, and the sanitized demo bu
 
 ## Qwen benchmark
 
-The new comparison series is `qwen35-27b-fp8-v1`. Its model, Hugging Face revision, vLLM revision, prompts, schemas, sampling, seed, GPU type, and budget gates are pinned in `configs/evaluation/qwen35_27b_fp8_v1.json`.
+The current Qwen path is a small `Qwen/Qwen3-8B` vLLM pilot on JarvisLabs L4, exposed through an OpenAI-compatible API. The old `qwen35-27b-fp8-v1` and `qwen35-27b-fp8-v2` plans are historical and should not run.
 
 The 12-request Stage 1 pack is generated from runtime-only development inputs:
 
@@ -42,7 +42,7 @@ The 12-request Stage 1 pack is generated from runtime-only development inputs:
 PYTHONPATH=src .venv-storage/bin/python -m evaluation.qwen_compatibility --repo-root .
 ```
 
-No JarvisLabs resource, paid benchmark, OpenAI call, or Railway deployment is started by these commands. Those actions require separate approval. See `docs/QWEN_JARVIS_RUNBOOK.md` and `docs/DEMO_RUNBOOK.md`.
+No JarvisLabs resource, paid benchmark, OpenAI call, or Railway deployment is started by these commands. Those actions require separate approval. See `docs/qwen-implementation.md`, `docs/QWEN_JARVIS_RUNBOOK.md`, and `docs/DEMO_RUNBOOK.md`.
 
 ## Project contracts
 

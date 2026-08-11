@@ -173,6 +173,7 @@ test-qwen-v2:
 		tests.unit.test_qwen_scoring \
 		tests.unit.test_qwen_lifecycle \
 		tests.unit.test_qwen_pipeline \
+		tests.unit.test_qwen_serverless_pilot \
 		tests.unit.test_vllm_client -v
 	$(MAKE) test-qwen-materialization PYTHON=$(PYTHON)
 

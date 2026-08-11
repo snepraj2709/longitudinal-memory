@@ -30,7 +30,7 @@ This snapshot describes commit `5002450`. It distinguishes implemented component
 | 7. Dual retrieval | Implemented and development-tested | Atomic and session indexes, query planning, pre-search filters, B2-B4 fusion, and component evaluation exist. No complete scaled B2-B4 Qwen release exists. |
 | 8. Grounded answering | Partial | Evidence-package and answer contracts exist. The development release structurally abstained on all available B2-B4 cases; B5-B6 answer evidence is incomplete and no scaled Qwen answers exist. |
 | 9. Abstention gate | Partial | The deterministic gate, thresholds, and matched four-case B6/B7 development comparison exist. Both baselines abstained on all four cases, so over-abstention remains unresolved and the 16 frozen cases remain deferred. |
-| 10. Ablations | In progress | Steps 10.1 and 10.2 are complete. OpenAI Step 10.3 is `interrupted_not_scored`; Qwen v1 is configured but unrun; corrected Qwen v2 is next. Step 10.4 is pending measured Qwen results. |
+| 10. Ablations | In progress | Steps 10.1 and 10.2 are complete. OpenAI Step 10.3 is `interrupted_not_scored`; the old Qwen3.5 plans are historical and unrun; Qwen3-8B on vLLM is next. Step 10.4 is pending measured Qwen results. |
 | 11. UI and deployment | Read-only slice deployed | The deterministic FastAPI and React demo runs locally and is live on Railway. It replays sanitized artifacts and currently presents partial historical results, not a completed Qwen benchmark. |
 
 ### Phase 2 evidence
@@ -72,7 +72,7 @@ The current Phase 3 runner also stops on a failed call and refuses a non-empty r
 
 ### Next implementation
 
-Run the corrected `qwen35-27b-fp8-v2` comparison under the execution contract in [Qwen implementation](qwen-implementation.md). It must materialize B2-B7 through the real PostgreSQL-backed Phase 4-7 services, preserve the OpenAI and Qwen v1 histories, publish reproducible scores, and then update the read-only demo.
+Run the Qwen3-8B vLLM pilot under the updated execution contract in [Qwen implementation](qwen-implementation.md). The pilot must prove request shape, schema validity, retries, checkpointing, and measured cost through an OpenAI-compatible endpoint. A full scored Qwen comparison still must materialize B2-B7 through the real PostgreSQL-backed Phase 4-7 services, preserve the OpenAI and historical Qwen3.5 artifacts, publish reproducible scores, and then update the read-only demo.
 
 ## How the phases connect
 
@@ -724,7 +724,7 @@ The OpenAI series is `interrupted_not_scored`. Its 100-request `gpt-4.1-mini-202
 
 The recorded OpenAI spend is `$0.4399284` across 149 requests, 536,405 input tokens, and 26,921 output tokens. Execution was paused before the projected `$91.2131728` hard maximum, approximately `$100`; the project did not spend `$100`. OpenAI execution remains disabled. Any future restart requires a new series, output directory, corrected JSON contract, and separate cost approval.
 
-`qwen35-27b-fp8-v1` is a configured but unrun scaffold. It must remain immutable and become `superseded_not_run`. The next execution series is `qwen35-27b-fp8-v2`, which corrects B3-B7 semantics, scoring, concurrency, and GPU lifecycle policy. Qwen v2 regenerates extraction and all downstream artifacts; it must not reuse the completed OpenAI extraction.
+`qwen35-27b-fp8-v1` and `qwen35-27b-fp8-v2` are historical Qwen3.5 planning work and must not run. The next paid work is a Qwen3-8B vLLM pilot on JarvisLabs L4. Any full scored Qwen comparison must regenerate extraction and all downstream artifacts under a new output root; it must not reuse the completed OpenAI extraction.
 
 ### Step 10.4: Publish the scorecard
 

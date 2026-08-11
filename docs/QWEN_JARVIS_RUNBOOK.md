@@ -1,24 +1,23 @@
-# Qwen JarvisLabs runbook
+# Qwen3-8B JarvisLabs runbook
 
-The decision-complete implementation and execution contract is [qwen-implementation.md](qwen-implementation.md). That document controls model and runtime revisions, B0-B7 semantics, PostgreSQL materialization, request counts, budget gates, checkpointing, cleanup, scoring, commits, and deployment.
+Use this runbook with [qwen-implementation.md](qwen-implementation.md). It is for the current Qwen3-8B vLLM path, not the old Qwen3.5/H100 work.
 
-## Series status
+## Current policy
 
-- `qwen35-27b-fp8-v1` is a historical, unrun scaffold. Preserve it as `superseded_not_run`; do not start its runner.
-- `qwen35-27b-fp8-v2` is the only permitted execution series, but paid execution is paused.
-- `openai-gpt41-v1` remains `interrupted_not_scored` and must not be resumed or used as Qwen input.
+- Current model: `Qwen/Qwen3-8B`.
+- Served model alias: `qwen3-8b-vllm`.
+- GPU: L4 24GB first.
+- Fallback: A5000 24GB only if current JarvisLabs inventory offers it. On 2026-08-11, A5000 was not listed; L4 and A30 24GB containers were listed in `IN2`.
+- Context: 8,192 tokens.
+- Temperature: 0.
+- API: OpenAI-compatible vLLM `/v1/chat/completions`.
+- First repo run: 12 compatibility requests only.
 
-Eight setup attempts on 2026-08-11 spent INR 39.69 and produced no provider response. All instances were destroyed. A new GPU attempt requires fresh approval; the earlier execution approval is no longer valid.
+The old `qwen35-27b-fp8-v1` and `qwen35-27b-fp8-v2` plans are historical. Preserve their artifacts, but do not run them.
 
-## Resource policy
+## Before spending
 
-Use one H100 80 GB spot container in `IN2` when its current spot rate is at or below INR 133.33/hour. If it is unavailable or above that ceiling, use one RTX-PRO6000 96 GB spot container in `IN1` when its rate is at or below INR 100/hour.
-
-Do not use H100 on-demand, H200, multiple GPUs, another region, or another model. Stop without spending when neither approved spot resource meets its ceiling.
-
-## Operator entrypoint
-
-Before creating a resource:
+Check auth and current inventory:
 
 ```bash
 jl status --json
@@ -26,40 +25,56 @@ jl gpus --json
 jl resources --json
 ```
 
-Authentication must succeed without exposing a token. Then follow sections 3 through 17 of [qwen-implementation.md](qwen-implementation.md) in order. Do not improvise a direct `jl create` or invoke `scripts/run_qwen_vllm.sh` outside the v2 lifecycle wrapper.
+Do not paste tokens into chat. Put the vLLM API key in ignored local `.qwen-vllm.env`:
 
-The wrapper also requires this explicit command-line lock after fresh approval:
-
-```bash
-PYTHONPATH=src python -m evaluation.qwen_pipeline \
-  --confirm-paid-gpu qwen35-27b-fp8-v2-paid-gpu-approved
+```text
+QWEN_VLLM_API_KEY=<local secret>
 ```
 
-Before the full model download, the wrapper must pass the Python 3.12 FlashInfer import check and a metadata-only dummy-weight engine boot. Failure at either gate destroys the instance without attempting the 30.9 GB download.
+## Start vLLM on JarvisLabs
 
-The wrapper must keep one accepted instance running across approved stages, checkpoint every response, download recoverable artifacts, destroy the instance on every exit path, and verify that it no longer exists. Pausing is not final cleanup.
-
-## Hard limits
-
-| Stage | Incremental cap | Cumulative cap | Planned provider requests |
-| --- | ---: | ---: | ---: |
-| Compatibility | INR 200 | INR 200 | 12 |
-| Development | INR 300 | INR 500 | 930 |
-| Frozen test | INR 1,000 | INR 1,500 | 3,720 |
-
-The planned total is 4,662 provider requests. At most 25 additional requests may result from the single-retry transport policy. Invalid structured output is never retried. Stop before a stage or cumulative cap, retaining enough time to download artifacts and destroy the resource.
-
-## Emergency cleanup
-
-If the lifecycle wrapper is interrupted, identify the recorded machine ID, download the available run directory, and destroy the instance:
+Use L4 in `IN2`:
 
 ```bash
-jl list --json
+jl create --gpu L4 --spot --template pytorch --storage 60 --http-ports "6006" --region IN2 --name longitudinal-memory-qwen3-8b --yes --json
+jl upload <machine_id> scripts/run_qwen_vllm.sh /home/run_qwen_vllm.sh
+jl upload <machine_id> .qwen-vllm.env /home/.qwen-vllm.env
+jl exec <machine_id> -- sh -lc 'python -m pip install --upgrade vllm'
+jl exec <machine_id> -- sh -lc 'chmod 700 /home/run_qwen_vllm.sh && set -a && . /home/.qwen-vllm.env && set +a && nohup /home/run_qwen_vllm.sh >/home/qwen3-8b-vllm.log 2>&1 < /dev/null &'
+```
+
+Get the HTTPS endpoint for port 6006:
+
+```bash
 jl get <machine_id> --json
-jl download <machine_id> <remote_result_directory> <local_recovery_directory> -r
+```
+
+Use that endpoint plus `/v1` as the repo `--base-url`.
+
+## Verify from this repo
+
+After the endpoint is reachable and paid requests are explicitly approved:
+
+```bash
+PYTHONPATH=src python -m evaluation.qwen_serverless_pilot \
+  --env-file .qwen-vllm.env \
+  --base-url https://<port-6006-endpoint>/v1 \
+  --deployment-id <machine_id> \
+  --model qwen3-8b-vllm \
+  --gpu L4 \
+  --storage-gb 60 \
+  --confirm-paid-serverless qwen3-8b-vllm-pilot-paid-requests-approved
+```
+
+The receipt is written under `results/evaluation/qwen3-8b-vllm-pilot-v1/`.
+
+## Cleanup
+
+Destroy the instance after the pilot:
+
+```bash
 jl destroy <machine_id> --yes --json
-jl list --json
 jl get <machine_id> --json
 ```
 
-Record download or destruction failures locally and keep retrying cleanup. Do not leave an approved run in a paused or unknown state.
+The second command should fail or show that the machine no longer exists. Do not leave the instance paused unless Sneha explicitly asks for that.

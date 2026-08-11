@@ -38,15 +38,15 @@ class QwenPipelineTests(unittest.TestCase):
 
     def test_server_command_matches_pinned_vllm_cli(self) -> None:
         script = (ROOT / "scripts/run_qwen_vllm.sh").read_text(encoding="utf-8")
-        self.assertIn("/home/qwen-v2-env/bin/vllm serve", script)
-        self.assertIn("/home/qwen35-27b-fp8-v2-model", script)
-        self.assertIn("--max-model-len 16384", script)
+        self.assertIn("MODEL_ID=\"${MODEL_ID:-Qwen/Qwen3-8B}\"", script)
+        self.assertIn("MODEL_ALIAS=\"${MODEL_ALIAS:-qwen3-8b-vllm}\"", script)
+        self.assertIn("MAX_MODEL_LEN=\"${MAX_MODEL_LEN:-8192}\"", script)
+        self.assertIn("exec \"${VLLM_BIN}\" serve \"${MODEL_ID}\"", script)
+        self.assertIn("--api-key \"${VLLM_API_KEY}\"", script)
         self.assertIn("--reasoning-parser qwen3", script)
         self.assertIn("--language-model-only", script)
-        self.assertIn("--load-format dummy", script)
-        self.assertIn("qwen35-27b-fp8-v2-metadata", script)
         self.assertNotIn("--task generate", script)
-        self.assertNotIn("--api-key", script)
+        self.assertNotIn("qwen35-27b-fp8-v2", script)
 
     def test_attempt_ids_and_historical_cost_preserve_failed_spend(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
