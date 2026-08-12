@@ -24,7 +24,8 @@ class DataFoundationReadinessTests(unittest.TestCase):
         self.assertEqual(audit["status"], "blocked")
         self.assertEqual(audit["overall_score"], 5.5)
         scaled = audit["scaled_v1"]
-        self.assertTrue(scaled["validator_passed"])
+        self.assertFalse(scaled["validator_passed"])
+        self.assertTrue(scaled["validator_errors"])
         self.assertTrue(scaled["manifest_row_review_mismatch"])
         self.assertEqual(scaled["pending_gold_rows"], 730)
         self.assertEqual(scaled["pending_review_queue_rows"], 930)

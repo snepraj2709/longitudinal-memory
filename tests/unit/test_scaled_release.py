@@ -32,43 +32,15 @@ class ScaledReleaseTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.repo_root = Path(__file__).resolve().parents[2]
 
-    def test_release_has_exact_counts_balance_and_split(self) -> None:
-        report = validate_scaled_release(self.repo_root)
+    def test_release_blocks_false_review_approval(self) -> None:
+        with self.assertRaises(ScaledReleaseError) as raised:
+            validate_scaled_release(self.repo_root)
 
-        self.assertEqual(report.users, 10)
-        self.assertEqual(report.sources, 100)
-        self.assertEqual(report.qa, 500)
-        self.assertEqual(report.summaries, 50)
-        self.assertEqual(report.interactive_scenarios, 20)
-        self.assertEqual(report.gold_claims, 160)
-        self.assertEqual(
-            dict(report.qa_capability_counts),
-            {capability: 100 for capability in CAPABILITIES},
-        )
-        self.assertEqual(
-            dict(report.interactive_capability_counts),
-            {capability: 4 for capability in CAPABILITIES},
-        )
-        self.assertEqual(
-            dict(report.summary_type_counts),
-            {"temporal": 25, "user_model": 25},
-        )
-        self.assertEqual(
-            report.split_counts,
-            {
-                "development": {
-                    "qa": 100,
-                    "summaries": 10,
-                    "interactive_scenarios": 4,
-                },
-                "test": {
-                    "qa": 400,
-                    "summaries": 40,
-                    "interactive_scenarios": 16,
-                },
-            },
-        )
-        self.assertEqual(report.human_review_status, "approved")
+        errors = "\n".join(raised.exception.errors)
+        self.assertIn("gold claims.review_status must be approved/implementation_reviewed", errors)
+        self.assertIn("gold qa.review_status must be approved/implementation_reviewed", errors)
+        self.assertIn("review queue evidence.status must be approved/resolved", errors)
+        self.assertIn("pending_human_review=730", errors)
 
     def test_runtime_loader_is_user_scoped(self) -> None:
         for user_id in USER_IDS:
@@ -157,7 +129,6 @@ class ScaledReleaseTests(unittest.TestCase):
             tuple(path.as_posix() for path in RELEASE_DATA_PATHS),
         )
         self.assertEqual(manifest["dataset_sha256"], expected)
-        self.assertEqual(validate_scaled_release(self.repo_root).dataset_sha256, expected)
 
     def test_review_queue_snapshot_preserves_preapproval_state(self) -> None:
         for path in REVIEW_PATHS:

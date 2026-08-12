@@ -104,6 +104,9 @@ CLAIM_FIELDS = frozenset({"claim_id", "benchmark_version", "user_id", "subject_i
 EVENT_FIELDS = frozenset({"event_id", "benchmark_version", "user_id", "event_type", "valid_from", "valid_to", "facts", "caused_by", "superseded_by", "disclosure_status"})
 FACT_FIELDS = frozenset({"fact_id", "subject_id", "predicate", "object"})
 REVIEW_FIELDS = frozenset({"review_id", "benchmark_version", "queue", "user_id", "target_type", "target_id", "status", "checks", "notes"})
+APPROVED_GOLD_REVIEW_STATUSES = frozenset({"approved", "implementation_reviewed"})
+RESOLVED_REVIEW_QUEUE_STATUSES = frozenset({"approved", "resolved"})
+PENDING_REVIEW_STATUS = "pending_human_review"
 
 
 class ScaledReleaseError(ValueError):
@@ -189,14 +192,18 @@ def validate_scaled_release(repo_root: str | Path) -> ScaledValidationReport:
     reviews = {name: _checked_jsonl(root / path, errors) for name, path in zip(REVIEW_NAMES, REVIEW_PATHS)}
     schemas = {name: _checked_json(root / path, errors) for name, path in zip(SCHEMA_NAMES, SCHEMA_PATHS)}
     manifest = _checked_json(root / MANIFEST_PATH, errors)
+    review = manifest.get("review")
+    review_state = review if isinstance(review, dict) else {}
+    require_reviewed_gold = review_state.get("human_review_status") == "approved"
+    require_resolved_review_queues = review_state.get("review_queue_status") == "approved"
 
     _validate_runtime(users, sources, runtime_qa, runtime_summaries, runtime_interactive, errors)
     _validate_oracle(events, errors)
-    _validate_claims(claims, errors)
+    _validate_claims(claims, errors, require_approved_review=require_reviewed_gold)
     runtime_by_task = {"qa": runtime_qa, "summarization": runtime_summaries, "interactive": runtime_interactive}
     gold_by_task = {"qa": gold_qa, "summarization": gold_summaries, "interactive": gold_interactive}
-    _validate_gold(gold_by_task, runtime_by_task, claims, events, sources, errors)
-    _validate_reviews(reviews, gold_by_task, claims, errors)
+    _validate_gold(gold_by_task, runtime_by_task, claims, events, sources, errors, require_approved_review=require_reviewed_gold)
+    _validate_reviews(reviews, gold_by_task, claims, errors, require_resolved_status=require_resolved_review_queues)
     _validate_phenomena(gold_qa, sources, errors)
     _validate_schemas(schemas, errors)
     for path, records in (
@@ -447,10 +454,12 @@ def _validate_oracle(events: list[dict[str, Any]], errors: list[str]) -> None:
                 errors.append(f"oracle event {event.get('event_id')} crosses the user boundary")
 
 
-def _validate_claims(claims: list[dict[str, Any]], errors: list[str]) -> None:
+def _validate_claims(claims: list[dict[str, Any]], errors: list[str], *, require_approved_review: bool = False) -> None:
     if len(claims) != 160:
         errors.append(f"gold claim count must be 160, got {len(claims)}")
     ids: list[str] = []
+    bad_review_statuses: Counter[str] = Counter()
+    bad_review_examples: list[str] = []
     per_user = Counter(item.get("user_id") for item in claims)
     if any(per_user[user_id] != 16 for user_id in USER_IDS):
         errors.append("gold claims must contain 16 claims per user")
@@ -475,8 +484,14 @@ def _validate_claims(claims: list[dict[str, Any]], errors: list[str]) -> None:
             errors.append(f"{location}.memory_kind is invalid")
         if claim.get("status") not in {"candidate", "confirmed", "current", "historical", "disputed", "superseded", "excluded"}:
             errors.append(f"{location}.status is invalid")
-        if claim.get("review_status") != "pending_human_review":
-            errors.append(f"{location}.review_status must remain pending_human_review")
+        _track_review_status(
+            claim.get("review_status"),
+            location,
+            require_approved_review,
+            APPROVED_GOLD_REVIEW_STATUSES,
+            bad_review_statuses,
+            bad_review_examples,
+        )
         valid_from = _timestamp(claim.get("valid_from"), f"{location}.valid_from", errors)
         valid_to = _timestamp(claim.get("valid_to"), f"{location}.valid_to", errors, allow_none=True)
         if valid_from and valid_to and valid_from > valid_to:
@@ -487,6 +502,15 @@ def _validate_claims(claims: list[dict[str, Any]], errors: list[str]) -> None:
     expected_ids = {f"scaled_{user_id}_claim_{number:03d}" for user_id in USER_IDS for number in range(1, 17)}
     if set(ids) != expected_ids:
         errors.append("claim stable IDs must use 001 through 016 for every user")
+    _append_review_status_error(
+        errors,
+        "gold claims",
+        "review_status",
+        require_approved_review,
+        APPROVED_GOLD_REVIEW_STATUSES,
+        bad_review_statuses,
+        bad_review_examples,
+    )
 
 
 def _validate_gold(
@@ -496,6 +520,8 @@ def _validate_gold(
     events: list[dict[str, Any]],
     sources: list[dict[str, Any]],
     errors: list[str],
+    *,
+    require_approved_review: bool = False,
 ) -> None:
     claim_map = {item.get("claim_id"): item for item in claims}
     event_map = {item.get("event_id"): item for item in events}
@@ -508,11 +534,19 @@ def _validate_gold(
         if [item.get("case_id") for item in records] != [item.get("case_id") for item in runtime]:
             errors.append(f"gold {task} order and IDs must match runtime")
         runtime_map = {item.get("case_id"): item for item in runtime}
+        bad_review_statuses: Counter[str] = Counter()
+        bad_review_examples: list[str] = []
         for index, record in enumerate(records, 1):
             location = f"gold {task} line {index}"
             _exact(record, GOLD_FIELDS[task], location, errors)
-            if record.get("review_status") != "pending_human_review":
-                errors.append(f"{location}.review_status must remain pending_human_review")
+            _track_review_status(
+                record.get("review_status"),
+                location,
+                require_approved_review,
+                APPROVED_GOLD_REVIEW_STATUSES,
+                bad_review_statuses,
+                bad_review_examples,
+            )
             runtime_record = runtime_map.get(record.get("case_id"))
             if runtime_record:
                 for field in RUNTIME_FIELDS[task]:
@@ -550,6 +584,15 @@ def _validate_gold(
                     errors.append(f"{location} references unknown event {event_id!r}")
                 elif event.get("user_id") != user_id:
                     errors.append(f"{location} references another user's oracle event")
+        _append_review_status_error(
+            errors,
+            f"gold {task}",
+            "review_status",
+            require_approved_review,
+            APPROVED_GOLD_REVIEW_STATUSES,
+            bad_review_statuses,
+            bad_review_examples,
+        )
     for claim in claims:
         _validate_evidence(claim.get("evidence"), f"claim {claim.get('claim_id')}", claim.get("user_id"), None, source_map, errors)
 
@@ -588,7 +631,57 @@ def _validate_evidence(evidence: object, location: str, user_id: object, cutoff:
         seen.add(key)
 
 
-def _validate_reviews(reviews: Mapping[str, list[dict[str, Any]]], gold_by_task: Mapping[str, list[dict[str, Any]]], claims: list[dict[str, Any]], errors: list[str]) -> None:
+def _track_review_status(
+    value: object,
+    location: str,
+    require_reviewed: bool,
+    reviewed_statuses: frozenset[str],
+    bad_statuses: Counter[str],
+    examples: list[str],
+) -> None:
+    status = value if isinstance(value, str) else "<missing_or_invalid>"
+    valid = status in reviewed_statuses if require_reviewed else status == PENDING_REVIEW_STATUS
+    if valid:
+        return
+    bad_statuses[status] += 1
+    if len(examples) < 3:
+        examples.append(location)
+
+
+def _append_review_status_error(
+    errors: list[str],
+    label: str,
+    field: str,
+    require_reviewed: bool,
+    reviewed_statuses: frozenset[str],
+    bad_statuses: Counter[str],
+    examples: Sequence[str],
+) -> None:
+    if not bad_statuses:
+        return
+    counts = ", ".join(f"{status}={count}" for status, count in sorted(bad_statuses.items()))
+    example_text = ", ".join(examples)
+    if require_reviewed:
+        allowed = "/".join(sorted(reviewed_statuses))
+        errors.append(
+            f"{label}.{field} must be {allowed} after manifest review approval; "
+            f"invalid statuses: {counts}; examples: {example_text}"
+        )
+    else:
+        errors.append(
+            f"{label}.{field} must remain {PENDING_REVIEW_STATUS} before manifest review approval; "
+            f"invalid statuses: {counts}; examples: {example_text}"
+        )
+
+
+def _validate_reviews(
+    reviews: Mapping[str, list[dict[str, Any]]],
+    gold_by_task: Mapping[str, list[dict[str, Any]]],
+    claims: list[dict[str, Any]],
+    errors: list[str],
+    *,
+    require_resolved_status: bool = False,
+) -> None:
     expected_targets: dict[str, set[str]] = {
         "corrections": {f"scaled_{user_id}_claim_004__scaled_{user_id}_claim_005" for user_id in USER_IDS},
         "conflicts": {f"scaled_{user_id}_claim_010__scaled_{user_id}_claim_011" for user_id in USER_IDS},
@@ -604,15 +697,21 @@ def _validate_reviews(reviews: Mapping[str, list[dict[str, Any]]], gold_by_task:
     review_ids: list[str] = []
     for queue, records in reviews.items():
         targets: set[str] = set()
+        bad_review_statuses: Counter[str] = Counter()
+        bad_review_examples: list[str] = []
         for index, record in enumerate(records, 1):
             location = f"review queue {queue} line {index}"
             _exact(record, REVIEW_FIELDS, location, errors)
             if record.get("queue") != queue:
                 errors.append(f"{location}.queue must be {queue}")
-            # These rows are part of the approved dataset hash. The manifest
-            # records the later review outcome without rewriting this snapshot.
-            if record.get("status") != "pending_human_review":
-                errors.append(f"{location}.status must remain pending_human_review")
+            _track_review_status(
+                record.get("status"),
+                location,
+                require_resolved_status,
+                RESOLVED_REVIEW_QUEUE_STATUSES,
+                bad_review_statuses,
+                bad_review_examples,
+            )
             if record.get("benchmark_version") != BENCHMARK_VERSION:
                 errors.append(f"{location}.benchmark_version is invalid")
             if record.get("user_id") not in USER_IDS:
@@ -625,6 +724,15 @@ def _validate_reviews(reviews: Mapping[str, list[dict[str, Any]]], gold_by_task:
                 targets.add(record["target_id"])
         if targets != expected_targets[queue]:
             errors.append(f"review queue {queue} does not cover its exact required targets")
+        _append_review_status_error(
+            errors,
+            f"review queue {queue}",
+            "status",
+            require_resolved_status,
+            RESOLVED_REVIEW_QUEUE_STATUSES,
+            bad_review_statuses,
+            bad_review_examples,
+        )
     _duplicates(review_ids, "review_id", errors)
 
 
@@ -733,17 +841,41 @@ def _validate_manifest(root: Path, manifest: dict[str, Any], users: list[dict[st
     }
     if manifest.get("splits") != expected_splits:
         errors.append("manifest split information is invalid")
-    expected_review = {
-        "automated_validation_status": "passed",
-        "implementation_review_status": "complete",
-        "human_review_status": "approved",
-        "review_queue_status": "approved",
-        "reviewed_by": "Sneha",
-        "reviewed_dataset_sha256": "746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61",
-        "approved_on": "2026-08-08",
+    _validate_manifest_review_state(manifest.get("review"), current_hash, errors)
+
+
+def _validate_manifest_review_state(review: object, current_hash: str, errors: list[str]) -> None:
+    fields = {
+        "automated_validation_status",
+        "implementation_review_status",
+        "human_review_status",
+        "review_queue_status",
+        "reviewed_by",
+        "reviewed_dataset_sha256",
+        "approved_on",
     }
-    if manifest.get("review") != expected_review:
-        errors.append("manifest review state is invalid")
+    _exact(review, fields, "manifest.review", errors)
+    if not isinstance(review, dict):
+        return
+    if review.get("automated_validation_status") != "passed":
+        errors.append("manifest.review.automated_validation_status must be passed")
+    if review.get("implementation_review_status") not in {"complete", "pending", "in_progress"}:
+        errors.append("manifest.review.implementation_review_status is invalid")
+    if review.get("human_review_status") not in {"approved", "pending_sneha_review", "pending_human_review"}:
+        errors.append("manifest.review.human_review_status is invalid")
+    if review.get("review_queue_status") not in {"approved", "pending_sneha_review", "pending_human_review"}:
+        errors.append("manifest.review.review_queue_status is invalid")
+
+    human_approved = review.get("human_review_status") == "approved"
+    queue_approved = review.get("review_queue_status") == "approved"
+    if human_approved:
+        if not isinstance(review.get("reviewed_by"), str) or not review["reviewed_by"].strip():
+            errors.append("manifest.review.reviewed_by is required after human review approval")
+        if review.get("reviewed_dataset_sha256") != current_hash:
+            errors.append("manifest.review.reviewed_dataset_sha256 must match current reviewed dataset hash")
+        _date_or_timestamp(review.get("approved_on"), "manifest.review.approved_on", errors)
+    if queue_approved and not human_approved:
+        errors.append("manifest.review.review_queue_status cannot be approved before human_review_status")
 
 
 def _case_common(case: Mapping[str, Any], task: str, location: str, errors: list[str]) -> None:
