@@ -12,7 +12,7 @@ from typing import Mapping, Sequence
 from conflicts.candidates import CandidateRequest, ConflictCandidateService
 from conflicts.classifier import CLASSIFIER_VERSION, ClassificationRequest, ConflictClassifier
 from conflicts.relations import ConflictRelationService
-from conflicts.resolution import BeliefResolutionService
+from conflicts.resolution import BeliefResolutionConflict, BeliefResolutionService
 from conflicts.resolver import RESOLVER_VERSION, ResolutionRequest
 from extraction.phase4_input import Phase4InputClaim, build_phase4_source_claims
 from extraction.predicate_registry import load_predicate_registry
@@ -170,9 +170,10 @@ def materialize_qwen_contexts(
     )
     _drop_index_snapshots(connection)
 
-    # B6 is a separate ablation snapshot. Rebuild the same extraction state, then
-    # let the Phase 5 resolver own pair lifecycle changes before applying the
-    # Phase 4 policy to claims that remain candidates.
+    # B6 is a separate ablation snapshot. Rebuild the same extraction state,
+    # apply the ordinary temporal lifecycle pass, then let Phase 5 resolve
+    # remaining same-topic conflicts. This keeps resolver actions inside the
+    # lifecycle matrix even when the extractor produces dense conflict graphs.
     _reset_materialization_database(connection, root)
     claim_ids_by_user, _ = _materialize_extraction(
         connection,
@@ -183,8 +184,8 @@ def materialize_qwen_contexts(
         sources,
         extraction_rows,
     )
-    failures.extend(_apply_conflicts(connection, root, claim_ids_by_user, temporal_at, as_of, series_id))
-    _apply_temporal_lifecycle(connection, claim_ids_by_user, as_of, conflict_at, series_id)
+    _apply_temporal_lifecycle(connection, claim_ids_by_user, as_of, temporal_at, series_id)
+    failures.extend(_apply_conflicts(connection, root, claim_ids_by_user, conflict_at, as_of, series_id))
     _rebuild_summaries(connection, tuple(claim_ids_by_user), conflict_index_at)
     _build_index(connection, root, series_id, tuple(claim_ids_by_user), conflict_index_at, "conflict")
     b6_contexts = _retrieved_contexts(
@@ -906,7 +907,7 @@ def _apply_conflicts(
     classifier = ConflictClassifier(repo_root=root)
     relation_service = ConflictRelationService(connection, repo_root=root)
     resolver = BeliefResolutionService(connection, repo_root=root)
-    decisions: list[tuple[str, str]] = []
+    decisions: list[tuple[str, str, date | datetime | None]] = []
     temporal = TemporalService(connection)
     for user_id in sorted(claim_ids_by_user):
         incoming = tuple(sorted(set(claim_ids_by_user[user_id])))
@@ -942,8 +943,8 @@ def _apply_conflicts(
             )
             decision = classifier.classify(request)
             relation_service.persist(request, decision, conflict_at)
-            decisions.append((user_id, decision.decision_id))
-    for index, (user_id, decision_id) in enumerate(decisions, 1):
+            decisions.append((user_id, decision.decision_id, _resolution_valid_at(left, right, as_of)))
+    for index, (user_id, decision_id, valid_at) in enumerate(decisions, 1):
         resolved_at = conflict_at + timedelta(microseconds=index)
         if resolved_at >= as_of:
             raise QwenMaterializationError("conflict resolution crossed case as_of")
@@ -953,10 +954,21 @@ def _apply_conflicts(
                     user_id,
                     decision_id,
                     conflict_at,
-                    None,
+                    valid_at,
                     resolved_at,
                     f"{series_id}:resolution:{decision_id}",
                     RESOLVER_VERSION,
+                )
+            )
+        except BeliefResolutionConflict as error:
+            if error.code == "open_version_drift":
+                continue
+            failures.append(
+                MaterializationFailure(
+                    "belief_resolution",
+                    user_id,
+                    decision_id,
+                    error.code,
                 )
             )
         except Exception as error:
@@ -969,6 +981,15 @@ def _apply_conflicts(
                 )
             )
     return tuple(failures)
+
+
+def _resolution_valid_at(left: object, right: object, as_of: datetime) -> date | datetime | None:
+    precisions = {left.version.time_precision, right.version.time_precision}
+    if "timestamp" in precisions:
+        return as_of
+    if any(value not in {"unknown", "approximate"} for value in precisions):
+        return as_of.date()
+    return None
 
 
 def _explicit_target(left: object, right: object) -> str | None:

@@ -1,0 +1,13 @@
+{
+  "context_count": 912,
+  "contexts_sha256": "cf630d9931c5cbfed6ad9b71852f6948c9067d25a140bc6ea63fbaec038df6c6",
+  "gold_opened_after_context_seal": true,
+  "metric_count": 120,
+  "metrics_sha256": "e1dff45e9deaafdefcc182ea23c756c6292fd9956f3a8df3931b9193cd0584d6",
+  "oracle_opened": false,
+  "provider_request_count": 0,
+  "review_opened": false,
+  "schema_version": "qwen_context_evidence_audit_v1",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development"
+}

@@ -876,6 +876,8 @@ def _time_appropriate_status(
             or (representation == "timestamp" and isinstance(valid_at, datetime))
         ) and end < valid_at:
             return "historical"
+    if version.lifecycle_status in {"confirmed", "current", "historical"}:
+        return version.lifecycle_status
     return "confirmed"
 
 

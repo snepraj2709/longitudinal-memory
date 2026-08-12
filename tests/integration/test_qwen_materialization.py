@@ -37,13 +37,20 @@ def _source(user_id: str, number: int, when: str, text: str) -> dict[str, object
     }
 
 
-def _claim(source: dict[str, object], value: str, start: str, end: str) -> dict[str, object]:
+def _claim(
+    source: dict[str, object],
+    value: str,
+    start: str | None,
+    end: str | None,
+    *,
+    predicate: str = "lives_in",
+) -> dict[str, object]:
     message = source["messages"][0]
     return {
         "claim_id": f"model_claim_{value.casefold()}",
         "subject_id": source["user_id"],
         "speaker_id": source["user_id"],
-        "predicate": "lives_in",
+        "predicate": predicate,
         "object": value,
         "polarity": "positive",
         "epistemic_status": "asserted",
@@ -102,6 +109,46 @@ def _runtime() -> tuple[dict[str, list[dict[str, object]]], list[dict[str, objec
         {"record_id": delhi["source_id"], "user_id": "user_001", "valid": True, "claims": [_claim(delhi, "Delhi", "2026-01-01", "2026-03-31")]},
         {"record_id": mumbai["source_id"], "user_id": "user_001", "valid": True, "claims": [_claim(mumbai, "Mumbai", "2026-04-01", "2026-12-31")]},
         {"record_id": boston["source_id"], "user_id": "user_002", "valid": True, "claims": [_claim(boston, "Boston", "2026-02-01", "2026-12-31")]},
+    ]
+    return runtime, extraction
+
+
+def _overlapping_conflict_runtime() -> tuple[dict[str, list[dict[str, object]]], list[dict[str, object]]]:
+    pune = _source("user_001", 1, "2026-01-01T09:00:00+00:00", "My office base is Pune.")
+    mumbai = _source("user_001", 2, "2026-01-02T09:00:00+00:00", "My office base is Mumbai.")
+    delhi = _source("user_001", 3, "2026-01-03T09:00:00+00:00", "My office base is Delhi.")
+    case = {
+        "as_of": AS_OF,
+        "split": "development",
+        "user_id": "user_001",
+    }
+    runtime = {
+        "users": [{"display_name": "Asha", "split": "development", "user_id": "user_001"}],
+        "sources": [pune, mumbai, delhi],
+        "qa": [{**case, "case_id": "qwen_dev_qa_001", "question": "Where is my office base?"}],
+        "summary": [{
+            **case,
+            "case_id": "qwen_dev_summary_001",
+            "instruction": "Summarize office-base conflicts.",
+            "task": "summarization",
+        }],
+        "interactive": [{
+            **case,
+            "allowed_turns": 3,
+            "case_id": "qwen_dev_interactive_001",
+            "initial_user_message": "Where is my office base?",
+            "scenario": "Use current memory.",
+            "task": "interactive",
+        }],
+    }
+    extraction = [
+        {
+            "record_id": source["source_id"],
+            "user_id": "user_001",
+            "valid": True,
+            "claims": [_claim(source, value, None, None, predicate="office_base")],
+        }
+        for source, value in ((pune, "Pune"), (mumbai, "Mumbai"), (delhi, "Delhi"))
     ]
     return runtime, extraction
 
@@ -171,6 +218,20 @@ class QwenMaterializationIntegrationTests(unittest.TestCase):
             write_materialization(second, second_output)
             second_bytes = {path.name: path.read_bytes() for path in second_output.iterdir()}
             self.assertEqual(first_bytes, second_bytes)
+
+    def test_overlapping_conflict_decisions_do_not_become_materialization_failures(self) -> None:
+        runtime, extraction = _overlapping_conflict_runtime()
+
+        result = materialize_qwen_contexts(
+            self.connection,
+            repo_root=ROOT,
+            split="development",
+            runtime=runtime,
+            extraction_rows=extraction,
+        )
+
+        self.assertFalse(result.failures)
+        self.assertTrue(any(item.baseline_id == "B6" for item in result.contexts))
 
 
 if __name__ == "__main__":

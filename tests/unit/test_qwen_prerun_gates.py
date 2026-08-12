@@ -29,7 +29,7 @@ class QwenPreRunGateTests(unittest.TestCase):
         self.assertEqual(checks["scaled_evidence_integrity"]["status"], "passed")
         self.assertEqual(checks["qwen_extraction_primary_gate"]["status"], "blocked")
         self.assertEqual(checks["qwen_extraction_holdout_gate"]["status"], "blocked")
-        self.assertEqual(checks["qwen_context_evidence_audit"]["status"], "blocked")
+        self.assertEqual(checks["qwen_context_evidence_audit"]["status"], "passed")
         self.assertEqual(checks["qwen_materialization_clean"]["status"], "blocked")
 
     def test_assertion_raises_for_blockers(self) -> None:

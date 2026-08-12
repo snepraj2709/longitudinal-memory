@@ -212,8 +212,6 @@ def audit_context_evidence_release(
         rows,
         key=lambda row: (row.metric_group, row.metric, row.baseline_id, row.task),
     ))
-    output_dir.mkdir(parents=True, exist_ok=False)
-    (output_dir / "metrics.jsonl").write_bytes(payload)
     audit = {
         "schema_version": "qwen_context_evidence_audit_v1",
         "series_id": series_id,
@@ -227,9 +225,11 @@ def audit_context_evidence_release(
         "oracle_opened": False,
         "review_opened": False,
     }
-    (output_dir / "audit.json").write_text(
-        json.dumps(audit, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
+    _prepare_verifiable_output_dir(output_dir, {"metrics.jsonl", "audit.json"})
+    _write_or_verify(output_dir / "metrics.jsonl", payload)
+    _write_or_verify(
+        output_dir / "audit.json",
+        json.dumps(audit, indent=2, sort_keys=True).encode("utf-8") + b"\n",
     )
     return audit
 
@@ -983,6 +983,14 @@ def _canonical(value):
 
 def _file_sha(path):
     return sha256(path.read_bytes()).hexdigest()
+
+
+def _prepare_verifiable_output_dir(path: Path, expected_files: set[str]) -> None:
+    if path.exists():
+        if not path.is_dir() or {item.name for item in path.iterdir()} - expected_files:
+            raise QwenScoringError("context audit output file set changed")
+    else:
+        path.mkdir(parents=True, exist_ok=False)
 
 
 def main() -> None:

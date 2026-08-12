@@ -483,6 +483,18 @@ class BeliefResolverTests(unittest.TestCase):
                 self.assertEqual(plan.selected_current_claim_id, None)
                 self.assertEqual(plan.actions[-1].target_status, "confirmed")
 
+    def test_existing_current_status_is_preserved_without_valid_at(self) -> None:
+        replacement = _claim("claim_b", object_json="Mumbai", status="current")
+
+        plan = self.plan(
+            "explicit_correction",
+            request=_request(valid_at=None),
+            persisted=_persisted("explicit_correction", right=replacement),
+        )
+
+        self.assertNotIn("claim_b", [value.claim_id for value in plan.actions])
+        self.assertEqual(plan.selected_current_claim_id, "claim_b")
+
     def test_terminal_claims_are_never_reopened(self) -> None:
         left = _claim("claim_a", status="superseded")
         plan = self.plan(
