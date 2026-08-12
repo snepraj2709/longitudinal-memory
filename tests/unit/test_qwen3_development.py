@@ -15,6 +15,7 @@ from evaluation.qwen3_development import (
     run_development,
 )
 from evaluation.qwen_execution import ExecutionJob
+from evaluation.qwen_prerun_gates import QwenPreRunGateError
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -120,6 +121,10 @@ class Qwen3DevelopmentTests(unittest.TestCase):
                 patch("evaluation.qwen3_development.seal_logical_predictions", return_value={"failure_count": 0}),
                 patch("evaluation.qwen3_development.run_judge", return_value=judge) as run_judge,
                 patch("evaluation.qwen3_development.score_sealed_release", return_value=scorecard) as score,
+                patch(
+                    "evaluation.qwen3_development.assert_qwen_pre_run_gates",
+                    return_value={"schema_version": "qwen_pre_run_gates_v1", "status": "passed"},
+                ) as pre_run_gates,
                 patch("evaluation.qwen_execution.VLLMClient.complete_with_metadata", return_value=("{}", metadata)),
             ):
                 result = run_development(
@@ -135,6 +140,7 @@ class Qwen3DevelopmentTests(unittest.TestCase):
                 )
 
         extraction_jobs.assert_called_once()
+        pre_run_gates.assert_called_once_with(ROOT.resolve())
         self.assertEqual(extraction_jobs.call_args.kwargs["series_id"], "qwen3-8b-vllm-dev-v1")
         self.assertEqual(answer_jobs.call_args.kwargs["series_id"], "qwen3-8b-vllm-dev-v1")
         self.assertEqual(execute.call_args_list[0].kwargs["workers"], 1)
@@ -152,6 +158,34 @@ class Qwen3DevelopmentTests(unittest.TestCase):
         self.assertEqual(run_judge.call_args.kwargs["temperature"], 0.0)
         self.assertEqual(score.call_args.kwargs["series_id"], "qwen3-8b-vllm-dev-v1")
         self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["pre_run_gates"]["status"], "passed")
+
+    def test_runner_blocks_before_provider_when_pre_run_gates_fail(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "run"
+            with (
+                patch(
+                    "evaluation.qwen3_development.assert_qwen_pre_run_gates",
+                    side_effect=QwenPreRunGateError("qwen gates blocked"),
+                ) as pre_run_gates,
+                patch("evaluation.qwen3_development.execute_jobs") as execute,
+            ):
+                with self.assertRaisesRegex(QwenPreRunGateError, "qwen gates blocked"):
+                    run_development(
+                        repo_root=ROOT,
+                        output_root=output,
+                        base_url="https://example.test/v1",
+                        model="qwen3-8b-vllm",
+                        api_key="secret",
+                        database_url="postgresql://example",
+                        hourly_rate_inr=1,
+                        setup_seconds=0,
+                        paid_run_confirmation=PAID_RUN_CONFIRMATION,
+                    )
+
+        pre_run_gates.assert_called_once_with(ROOT.resolve())
+        execute.assert_not_called()
+        self.assertFalse(output.exists())
 
 
 if __name__ == "__main__":

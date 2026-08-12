@@ -1,7 +1,7 @@
 PYTHON ?= python3
 DEMO_PYTHON ?= .venv-demo/bin/python
 
-.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization test-grounded-summaries test-durative-claims test-retrieval-index test-retrieval-planning test-retrieval-baselines test-qwen-materialization test-qwen-v2 validate-benchmark-v1 validate-scaled-benchmark scaled-review-packets validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety demo demo-data demo-build test-demo
+.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization test-grounded-summaries test-durative-claims test-retrieval-index test-retrieval-planning test-retrieval-baselines test-qwen-materialization test-qwen-v2 qwen-prerun-gates validate-benchmark-v1 validate-scaled-benchmark scaled-review-packets validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety demo demo-data demo-build test-demo
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -176,6 +176,9 @@ test-qwen-v2:
 		tests.unit.test_qwen_serverless_pilot \
 		tests.unit.test_vllm_client -v
 	$(MAKE) test-qwen-materialization PYTHON=$(PYTHON)
+
+qwen-prerun-gates:
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m evaluation.qwen_prerun_gates --repo-root .
 
 test-ingestion:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest \

@@ -22,6 +22,7 @@ from .qwen_execution import (
     write_derived_b7,
 )
 from .qwen_materialization import materialize_qwen_contexts, write_materialization
+from .qwen_prerun_gates import assert_qwen_pre_run_gates
 from .qwen_scoring import run_judge, score_sealed_release, seal_logical_predictions
 from .qwen_serverless_pilot import _normalize_base_url, read_api_key
 
@@ -64,6 +65,7 @@ def run_development(
     series_id = str(config["series_id"])
     if model != config["model"]["model_alias"]:
         raise Qwen3DevelopmentError("served model alias does not match the Qwen3 config")
+    pre_run_gates = assert_qwen_pre_run_gates(root)
     output = output_root if output_root.is_absolute() else root / output_root
     if output.exists() and not resume:
         raise FileExistsError(f"output exists; pass --resume to reuse checkpoints: {output}")
@@ -176,6 +178,7 @@ def run_development(
         "series_id": series_id,
         "split": "development",
         "status": "completed" if scorecard["execution_failure_count"] == 0 else "completed_with_execution_failures",
+        "pre_run_gates": pre_run_gates,
         "provider": config["provider"],
         "model": config["model"],
         "runtime": {**config["runtime"], "base_url": base},
