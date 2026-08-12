@@ -1,0 +1,73 @@
+{
+  "schema_version": "qwen3_8b_extraction_gate_config_v1",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "status": "configured_not_run",
+  "provider": "openai_compatible_vllm",
+  "split": "development",
+  "model": {
+    "context_length": 8192,
+    "enable_thinking": false,
+    "hugging_face_id": "Qwen/Qwen3-8B",
+    "model_alias": "qwen3-8b-vllm"
+  },
+  "runtime": {
+    "client_concurrency": 1,
+    "temperature": 0,
+    "retryable_http_statuses": [408, 429, 502, 503, 504, 520],
+    "maximum_transport_retries": 10
+  },
+  "extraction_profile": {
+    "profile_id": "scaled-v1-qwen-extraction-profile-v1",
+    "base_prompt_version": "atomic-extraction-v3",
+    "include_speaker_name": true
+  },
+  "primary_gate": {
+    "user_id": "user_001",
+    "source_ids": [
+      "scaled_user_001_conversation_001",
+      "scaled_user_001_email_001",
+      "scaled_user_001_chat_001",
+      "scaled_user_001_calendar_001",
+      "scaled_user_001_conversation_002",
+      "scaled_user_001_email_002",
+      "scaled_user_001_chat_002",
+      "scaled_user_001_calendar_002",
+      "scaled_user_001_conversation_003",
+      "scaled_user_001_conversation_004"
+    ],
+    "acceptance": {
+      "structurally_valid_sources": 1.0,
+      "proposition_precision": 0.75,
+      "proposition_recall": 0.65,
+      "proposition_f1": 0.7,
+      "unsupported_memory_rate_max": 0.1,
+      "exact_quote_precision": 0.9,
+      "exact_quote_recall": 0.7,
+      "wrong_person_claim_count_max": 0,
+      "known_bad_overlap_predicate_uses_max": 0
+    }
+  },
+  "holdout_gate": {
+    "user_id": "user_002",
+    "source_ids": [
+      "scaled_user_002_conversation_001",
+      "scaled_user_002_email_001",
+      "scaled_user_002_chat_001",
+      "scaled_user_002_calendar_001",
+      "scaled_user_002_conversation_002",
+      "scaled_user_002_email_002",
+      "scaled_user_002_chat_002",
+      "scaled_user_002_calendar_002",
+      "scaled_user_002_conversation_003",
+      "scaled_user_002_conversation_004"
+    ],
+    "acceptance": {
+      "structurally_valid_sources": 1.0,
+      "proposition_f1": 0.6,
+      "wrong_person_claim_count_max": 0
+    }
+  },
+  "output": {
+    "root": "results/evaluation/qwen3-8b-vllm-extraction-gate-v1"
+  }
+}
