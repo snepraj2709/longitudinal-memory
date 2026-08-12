@@ -266,6 +266,26 @@ class QwenExecutionTests(unittest.TestCase):
             "Care Map review is scheduled for 2026-08-11.",
         )
 
+    def test_evidence_index_accepts_citation_evidence_pack(self) -> None:
+        index = _evidence_index([{
+            "record_kind": "atomic",
+            "evidence": [{
+                "source_id": "source_1",
+                "message_id": "message_1",
+                "quote": "Short span.",
+            }],
+            "citation_evidence": [{
+                "source_id": "source_1",
+                "message_id": "message_1",
+                "quote": "Full source message with the short span.",
+            }],
+        }])
+
+        self.assertIn(
+            ("source_1", "message_1", "Full source message with the short span."),
+            index,
+        )
+
     def test_summary_answers_have_larger_output_budget(self) -> None:
         self.assertEqual(_answer_max_output_tokens("summary"), 1600)
         self.assertEqual(_answer_max_output_tokens("qa"), 1000)

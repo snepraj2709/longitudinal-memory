@@ -747,9 +747,7 @@ def _evidence_index(
 ) -> Mapping[tuple[str, str | None, str], Mapping[str, object]]:
     result = {}
     for record in records:
-        evidence = record.get("evidence", [])
-        if not isinstance(evidence, list):
-            raise QwenExecutionError("context evidence is malformed")
+        evidence = _record_evidence_items(record)
         if not evidence and record.get("record_kind") == "source":
             source_id = record.get("source_id")
             content = record.get("content")
@@ -769,6 +767,18 @@ def _evidence_index(
                 raise QwenExecutionError("context evidence message ID is malformed")
             result[(source_id, message_id, quote)] = item
     return result
+
+
+def _record_evidence_items(record: Mapping[str, object]) -> list[object]:
+    evidence = record.get("evidence", [])
+    if not isinstance(evidence, list):
+        raise QwenExecutionError("context evidence is malformed")
+    citation_evidence = record.get("citation_evidence", [])
+    if citation_evidence is None:
+        citation_evidence = []
+    if not isinstance(citation_evidence, list):
+        raise QwenExecutionError("context citation evidence is malformed")
+    return [*evidence, *citation_evidence]
 
 
 def _load_terminal_records(

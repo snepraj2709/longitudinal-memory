@@ -106,12 +106,14 @@ def materialize_qwen_contexts(
     if config_path is None:
         load_qwen_v2_config(root)
     context_record_limit = _context_record_limit(root, config_path)
+    citation_evidence_limit = _citation_evidence_limit(root, config_path)
     _validate_runtime(split, runtime, extraction_rows)
     _require_clean_database(connection)
     apply_migrations(connection, root / "migrations")
 
     users = tuple(runtime["users"])
     sources = tuple(sorted(runtime["sources"], key=_source_order))
+    source_citations = _source_citation_index(sources)
     as_of = _shared_as_of(runtime)
     candidate_cutoff = as_of - timedelta(seconds=3)
     temporal_at = as_of - timedelta(seconds=2)
@@ -143,6 +145,8 @@ def materialize_qwen_contexts(
             "candidate_extraction",
             series_id,
             context_record_limit=context_record_limit,
+            citation_evidence_limit=citation_evidence_limit,
+            source_citations=source_citations,
         )
     )
     _drop_index_snapshots(connection)
@@ -160,6 +164,8 @@ def materialize_qwen_contexts(
             "persisted_temporal_lifecycle",
             series_id,
             context_record_limit=context_record_limit,
+            citation_evidence_limit=citation_evidence_limit,
+            source_citations=source_citations,
         )
     )
     _drop_index_snapshots(connection)
@@ -190,6 +196,8 @@ def materialize_qwen_contexts(
         "persisted_conflict_resolution",
         series_id,
         context_record_limit=context_record_limit,
+        citation_evidence_limit=citation_evidence_limit,
+        source_citations=source_citations,
     )
     contexts.extend(b6_contexts)
     contexts.extend(_b7_contexts(b6_contexts))
@@ -590,6 +598,8 @@ def _retrieved_contexts(
     snapshot: str,
     series_id: str = SERIES_ID,
     context_record_limit: int | None = None,
+    citation_evidence_limit: int | None = None,
+    source_citations: Mapping[tuple[str, str | None], Mapping[str, object]] | None = None,
 ) -> tuple[ContextPackage, ...]:
     repository = RetrievalSearchRepository(connection)
     baseline_config = load_baseline_config(root / BASELINE_CONFIG_PATH)
@@ -617,7 +627,12 @@ def _retrieved_contexts(
                     retrieval_baseline,
                     baseline_config=baseline_config,
                 )
-                records = _hydrate_context_records(connection, result)
+                records = _hydrate_context_records(
+                    connection,
+                    result,
+                    source_citations=source_citations or {},
+                    citation_evidence_limit=citation_evidence_limit,
+                )
                 if context_record_limit is not None:
                     records = records[:context_record_limit]
                 contexts.append(
@@ -636,19 +651,33 @@ def _retrieved_contexts(
 
 
 def _context_record_limit(root: Path, config_path: Path | None) -> int | None:
+    return _positive_optional_config_value(root, config_path, "answer_context_record_limit")
+
+
+def _citation_evidence_limit(root: Path, config_path: Path | None) -> int | None:
+    return _positive_optional_config_value(root, config_path, "answer_citation_evidence_limit")
+
+
+def _positive_optional_config_value(root: Path, config_path: Path | None, name: str) -> int | None:
     if config_path is None:
         return None
     config = json.loads((root / config_path).read_text(encoding="utf-8"))
     runtime = config.get("runtime")
-    if not isinstance(runtime, Mapping) or "answer_context_record_limit" not in runtime:
+    if not isinstance(runtime, Mapping) or name not in runtime:
         return None
-    value = runtime["answer_context_record_limit"]
+    value = runtime[name]
     if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
-        raise QwenMaterializationError("answer_context_record_limit must be a positive integer")
+        raise QwenMaterializationError(f"{name} must be a positive integer")
     return value
 
 
-def _hydrate_context_records(connection: object, result: object) -> tuple[dict[str, object], ...]:
+def _hydrate_context_records(
+    connection: object,
+    result: object,
+    *,
+    source_citations: Mapping[tuple[str, str | None], Mapping[str, object]],
+    citation_evidence_limit: int | None = None,
+) -> tuple[dict[str, object], ...]:
     records = []
     for item in result.accepted:
         content = connection.execute(
@@ -683,6 +712,13 @@ def _hydrate_context_records(connection: object, result: object) -> tuple[dict[s
             """,
             (result.user_id, item.index_record_id),
         ).fetchall()
+        citation_evidence = _citation_evidence_for_record(
+            result.user_id,
+            item.rank,
+            evidence_rows,
+            source_citations,
+            citation_evidence_limit,
+        )
         records.append(
             {
                 "rank": item.rank,
@@ -705,6 +741,7 @@ def _hydrate_context_records(connection: object, result: object) -> tuple[dict[s
                     }
                     for row in evidence_rows
                 ],
+                "citation_evidence": citation_evidence,
                 "relations": [
                     {
                         "relation_id": row[0],
@@ -719,6 +756,98 @@ def _hydrate_context_records(connection: object, result: object) -> tuple[dict[s
             }
         )
     return tuple(records)
+
+
+def _source_citation_index(
+    sources: Sequence[Mapping[str, object]],
+) -> Mapping[tuple[str, str | None], Mapping[str, object]]:
+    citations: dict[tuple[str, str | None], Mapping[str, object]] = {}
+    for source in sources:
+        source_id = str(source["source_id"])
+        source_type = str(source["source_type"])
+        created_at = str(source["created_at"])
+        messages = source.get("messages")
+        if isinstance(messages, list) and messages:
+            for message in messages:
+                message_id = str(message["message_id"])
+                citations[(source_id, message_id)] = {
+                    "user_id": str(source["user_id"]),
+                    "source_id": source_id,
+                    "message_id": message_id,
+                    "speaker_id": str(message["speaker_id"]),
+                    "source_type": source_type,
+                    "created_at": created_at,
+                    "quote": str(message["text"]),
+                }
+        else:
+            citations[(source_id, None)] = {
+                "user_id": str(source["user_id"]),
+                "source_id": source_id,
+                "message_id": None,
+                "speaker_id": str(source["user_id"]),
+                "source_type": source_type,
+                "created_at": created_at,
+                "quote": str(source["content"]),
+            }
+    return citations
+
+
+def _citation_evidence_for_record(
+    user_id: str,
+    rank: int,
+    evidence_rows: Sequence[Sequence[object]],
+    source_citations: Mapping[tuple[str, str | None], Mapping[str, object]],
+    limit: int | None,
+) -> list[dict[str, object]]:
+    grouped: dict[tuple[str, str | None], dict[str, object]] = {}
+    for row in evidence_rows:
+        source_id = str(row[2])
+        message_id = row[3] if row[3] is None else str(row[3])
+        base = source_citations.get((source_id, message_id))
+        if base is None:
+            base = {
+                "user_id": user_id,
+                "source_id": source_id,
+                "message_id": message_id,
+                "speaker_id": str(row[4]),
+                "source_type": "unknown",
+                "created_at": "",
+                "quote": str(row[5]),
+            }
+        if base.get("source_id") != source_id or base.get("message_id") != message_id:
+            raise QwenMaterializationError("source citation identity changed")
+        if base.get("user_id") != user_id:
+            raise QwenMaterializationError("source citation crossed the user boundary")
+        key = (source_id, message_id)
+        item = grouped.setdefault(
+            key,
+            {
+                **dict(base),
+                "linked_claim_ids": [],
+                "support_types": [],
+                "originating_record_rank": rank,
+            },
+        )
+        claim_id = str(row[0])
+        support_type = str(row[6])
+        if claim_id not in item["linked_claim_ids"]:
+            item["linked_claim_ids"].append(claim_id)
+        if support_type not in item["support_types"]:
+            item["support_types"].append(support_type)
+    ordered = sorted(
+        grouped.values(),
+        key=lambda value: (
+            int(value["originating_record_rank"]),
+            str(value.get("created_at", "")),
+            str(value["source_id"]),
+            "" if value.get("message_id") is None else str(value["message_id"]),
+        ),
+    )
+    if any(not str(item.get("quote", "")).strip() for item in ordered):
+        raise QwenMaterializationError("citation evidence has an empty quote")
+    if limit is not None:
+        ordered = ordered[:limit]
+    return [dict(item) for item in ordered]
 
 
 def _apply_temporal_lifecycle(
@@ -897,13 +1026,54 @@ def _context(
 
 def _source_context_record(source: Mapping[str, object]) -> dict[str, object]:
     evidence = []
+    citation_evidence = []
     for message in source["messages"]:
-        evidence.append({
+        citation = {
+            "user_id": source["user_id"],
             "source_id": source["source_id"],
             "message_id": message["message_id"],
             "speaker_id": message["speaker_id"],
+            "source_type": source["source_type"],
+            "created_at": source["created_at"],
             "quote": message["text"],
             "support_type": "source_history",
+        }
+        evidence.append({
+            "source_id": citation["source_id"],
+            "message_id": citation["message_id"],
+            "speaker_id": citation["speaker_id"],
+            "quote": citation["quote"],
+            "support_type": citation["support_type"],
+        })
+        citation_evidence.append({
+            **citation,
+            "linked_claim_ids": [],
+            "support_types": ["source_history"],
+            "originating_record_rank": 0,
+        })
+    if not source["messages"]:
+        citation = {
+            "user_id": source["user_id"],
+            "source_id": source["source_id"],
+            "message_id": None,
+            "speaker_id": source["user_id"],
+            "source_type": source["source_type"],
+            "created_at": source["created_at"],
+            "quote": source["content"],
+            "support_type": "source_history",
+        }
+        evidence.append({
+            "source_id": citation["source_id"],
+            "message_id": citation["message_id"],
+            "speaker_id": citation["speaker_id"],
+            "quote": citation["quote"],
+            "support_type": citation["support_type"],
+        })
+        citation_evidence.append({
+            **citation,
+            "linked_claim_ids": [],
+            "support_types": ["source_history"],
+            "originating_record_rank": 0,
         })
     return {
         "record_kind": "source",
@@ -914,6 +1084,7 @@ def _source_context_record(source: Mapping[str, object]) -> dict[str, object]:
         "content": source["content"],
         "messages": source["messages"],
         "evidence": evidence,
+        "citation_evidence": citation_evidence,
     }
 
 

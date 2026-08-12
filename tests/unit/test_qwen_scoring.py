@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import asdict
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -11,6 +12,7 @@ from evaluation.qwen_materialization import ContextPackage
 from evaluation.qwen_scoring import (
     QwenScoringError,
     _validate_judge_output,
+    audit_context_evidence_release,
     build_judge_jobs,
     score_records,
 )
@@ -129,6 +131,154 @@ class QwenScoringTests(unittest.TestCase):
         self.assertTrue(any(row.metric == "strict_correctness" and row.value == 1 for row in qa_b7))
         self.assertTrue(any(row.metric == "gpu_cost_inr" and row.value == 10 for row in rows))
         self.assertFalse(any(row.metric == "composite" for row in rows))
+
+    def test_scorecard_reports_context_citation_evidence_ceiling(self) -> None:
+        output = _answer()
+        context = ContextPackage(
+            "qwen3-8b-vllm-dev-v1", "development", "qa", "case_1", "user_001",
+            "2026-12-01T00:00:00+00:00", "B2", True, "test", ({
+                "lifecycle_statuses": ["current"],
+                "claim_ids": ["claim_1"],
+                "evidence": [{
+                    "source_id": "source_1",
+                    "message_id": "message_1",
+                    "quote": "Mumbai",
+                }],
+                "citation_evidence": [{
+                    "user_id": "user_001",
+                    "source_id": "source_1",
+                    "message_id": "message_1",
+                    "speaker_id": "user_001",
+                    "source_type": "chat",
+                    "created_at": "2026-01-01T00:00:00+00:00",
+                    "quote": "Asha's office base is Mumbai.",
+                    "linked_claim_ids": ["claim_1"],
+                    "support_types": ["supports"],
+                    "originating_record_rank": 1,
+                }],
+            },), "a" * 64,
+        )
+        references = {
+            "claims": [{
+                "claim_id": "claim_1", "user_id": "user_001", "subject_id": "user_001",
+                "speaker_id": "user_001", "predicate": "office_base", "object": "Mumbai",
+                "polarity": "positive", "epistemic_status": "asserted", "valid_from": None,
+                "valid_to": None, "time_precision": "unknown", "status": "current",
+                "evidence": [{
+                    "source_id": "source_1",
+                    "message_id": "message_1",
+                    "quote": "Asha's office base is Mumbai.",
+                }],
+            }],
+            "qa": [{
+                "case_id": "case_1", "reference_answer": "Mumbai", "acceptable_answers": [],
+                "should_abstain": False, "required_claim_ids": ["claim_1"],
+                "evidence": [{
+                    "source_id": "source_1",
+                    "message_id": "message_1",
+                    "quote": "Asha's office base is Mumbai.",
+                }],
+            }],
+            "summary": [], "interactive": [],
+        }
+
+        rows = score_records(
+            split="development",
+            predictions=[{
+                "baseline_id": "B2", "task": "qa", "record_id": "case_1",
+                "user_id": "user_001", "status": "succeeded", "output": output,
+                "context_sha256": "a" * 64, "underlying_answer_sha256": None,
+            }],
+            contexts=[context],
+            extraction_records=[],
+            references=references,
+            execution_metadata={},
+            series_id="qwen3-8b-vllm-dev-v1",
+        )
+
+        self.assertTrue(any(
+            row.baseline_id == "B2"
+            and row.task == "qa"
+            and row.metric_group == "context_evidence"
+            and row.metric == "source_message_recall_ceiling"
+            and row.value == 1
+            for row in rows
+        ))
+        self.assertTrue(any(
+            row.baseline_id == "B2"
+            and row.task == "qa"
+            and row.metric == "exact_quote_recall_ceiling"
+            and row.value == 1
+            for row in rows
+        ))
+
+    def test_context_evidence_audit_writes_zero_provider_manifest(self) -> None:
+        context = ContextPackage(
+            "qwen3-8b-vllm-dev-v1", "development", "qa", "case_1", "user_001",
+            "2026-12-01T00:00:00+00:00", "B2", True, "test", ({
+                "citation_evidence": [{
+                    "user_id": "user_001",
+                    "source_id": "source_1",
+                    "message_id": "message_1",
+                    "quote": "Asha's office base is Mumbai.",
+                }],
+            },), "a" * 64,
+        )
+        references = {
+            "claims": [],
+            "qa": [{
+                "case_id": "case_1", "reference_answer": "Mumbai", "acceptable_answers": [],
+                "should_abstain": False, "required_claim_ids": [],
+                "evidence": [{
+                    "source_id": "source_1",
+                    "message_id": "message_1",
+                    "quote": "Asha's office base is Mumbai.",
+                }],
+                "split": "development",
+                "user_id": "user_001",
+            }, {
+                "case_id": "test_case_1", "reference_answer": "Delhi", "acceptable_answers": [],
+                "should_abstain": False, "required_claim_ids": [],
+                "evidence": [],
+                "split": "test",
+                "user_id": "user_010",
+            }],
+            "summary": [],
+            "interactive": [],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            contexts_path = root / "contexts"
+            contexts_path.mkdir()
+            contexts_payload = (
+                json.dumps(asdict(context), sort_keys=True, separators=(",", ":")).encode()
+                + b"\n"
+            )
+            failures_payload = b""
+            (contexts_path / "contexts.jsonl").write_bytes(contexts_payload)
+            (contexts_path / "failures.jsonl").write_bytes(failures_payload)
+            (contexts_path / "manifest.json").write_text(json.dumps({
+                "schema_version": "qwen_context_materialization_v2",
+                "series_id": "qwen3-8b-vllm-dev-v1",
+                "split": "development",
+                "status": "sealed",
+                "context_count": 1,
+                "failure_count": 0,
+                "contexts_sha256": sha256(contexts_payload).hexdigest(),
+                "failures_sha256": sha256(failures_payload).hexdigest(),
+                "b6_b7_context_identity": True,
+            }))
+
+            audit = audit_context_evidence_release(
+                contexts_path=contexts_path / "contexts.jsonl",
+                references=references,
+                output_dir=root / "audit",
+                series_id="qwen3-8b-vllm-dev-v1",
+            )
+
+            self.assertEqual(audit["provider_request_count"], 0)
+            self.assertTrue((root / "audit" / "metrics.jsonl").exists())
+            self.assertTrue((root / "audit" / "audit.json").exists())
 
     def test_judge_validation_requires_exact_candidate_coverage(self) -> None:
         valid = {"judgments": [{"candidate_id": "a", "label": "correct", "reason_codes": []}]}

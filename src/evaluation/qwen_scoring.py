@@ -138,7 +138,7 @@ def score_sealed_release(
     if extraction_manifest["split"] != split:
         raise QwenScoringError("extraction and prediction splits differ")
     extraction = _jsonl(extraction_dir / "responses.jsonl")
-    references = reference_loader()
+    references = _references_for_split(split, reference_loader())
     _validate_references(split, references)
     rows = score_records(
         split=split,
@@ -170,6 +170,68 @@ def score_sealed_release(
         json.dumps(scorecard, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     return scorecard
+
+
+def audit_context_evidence_release(
+    *,
+    contexts_path: Path,
+    references: Mapping[str, Sequence[Mapping[str, object]]],
+    output_dir: Path,
+    series_id: str | None = None,
+) -> Mapping[str, object]:
+    """Score source-message evidence availability before any answer-model calls."""
+
+    context_manifest = _verify_context_release(contexts_path)
+    series_id = series_id or str(context_manifest["series_id"])
+    contexts = _load_contexts(contexts_path)
+    splits = {item.split for item in contexts}
+    if len(splits) != 1:
+        raise QwenScoringError("context audit cannot mix splits")
+    split = splits.pop()
+    references = _references_for_split(split, references)
+    _validate_references(split, references)
+    task_gold = {
+        task: {str(row["case_id"]): row for row in references[task]}
+        for task in TASK_KEYS
+    }
+    context_index = {(item.baseline_id, item.task, item.case_id): item for item in contexts}
+    rows: list[MetricRow] = []
+    for baseline in BASELINES:
+        for task in TASK_KEYS:
+            cases = [
+                (
+                    case_id,
+                    None,
+                    context_index.get((baseline, task, case_id)),
+                    value,
+                )
+                for case_id, value in sorted(task_gold[task].items())
+            ]
+            rows.extend(_context_evidence_metrics(split, baseline, task, cases, series_id))
+    payload = b"".join(_canonical(asdict(row)) + b"\n" for row in sorted(
+        rows,
+        key=lambda row: (row.metric_group, row.metric, row.baseline_id, row.task),
+    ))
+    output_dir.mkdir(parents=True, exist_ok=False)
+    (output_dir / "metrics.jsonl").write_bytes(payload)
+    audit = {
+        "schema_version": "qwen_context_evidence_audit_v1",
+        "series_id": series_id,
+        "split": split,
+        "context_count": len(contexts),
+        "metric_count": len(rows),
+        "contexts_sha256": _file_sha(contexts_path),
+        "metrics_sha256": sha256(payload).hexdigest(),
+        "provider_request_count": 0,
+        "gold_opened_after_context_seal": True,
+        "oracle_opened": False,
+        "review_opened": False,
+    }
+    (output_dir / "audit.json").write_text(
+        json.dumps(audit, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return audit
 
 
 def verify_prediction_seal(
@@ -237,6 +299,7 @@ def score_records(
             ]
             rows.extend(_execution_metrics(split, baseline, task, cases, series_id))
             rows.extend(_answer_metrics(split, baseline, task, cases, series_id))
+            rows.extend(_context_evidence_metrics(split, baseline, task, cases, series_id))
             rows.extend(_retrieval_metrics(split, baseline, task, cases, series_id))
             rows.extend(_lifecycle_metrics(split, baseline, task, cases, references["claims"], series_id))
     rows.extend(_run_metrics(split, execution_metadata, series_id))
@@ -550,6 +613,39 @@ def _answer_metrics(split, baseline, task, cases, series_id):
     return rows
 
 
+def _context_evidence_metrics(split, baseline, task, cases, series_id):
+    recall_values = []
+    exact_values = []
+    record_counts = []
+    citation_counts = []
+    cross_user = 0
+    checked = 0
+    for _, _prediction, context, gold in cases:
+        if context is None:
+            continue
+        checked += 1
+        record_counts.append(len(context.context_records))
+        citations = _context_citation_items(context)
+        citation_counts.append(len(citations))
+        cross_user += sum(1 for item in citations if item.get("user_id") not in {None, context.user_id})
+        relevant = {(item["source_id"], item.get("message_id")) for item in gold.get("evidence", [])}
+        exact = {(item["source_id"], item.get("message_id"), item["quote"]) for item in gold.get("evidence", [])}
+        if relevant:
+            available = {(item["source_id"], item.get("message_id")) for item in citations}
+            recall_values.append(len(available & relevant) / len(relevant))
+        if exact:
+            available_exact = {(item["source_id"], item.get("message_id"), item["quote"]) for item in citations}
+            exact_values.append(len(available_exact & exact) / len(exact))
+    return [
+        _average_metric(split, baseline, task, "context_evidence", "source_message_recall_ceiling", recall_values, series_id=series_id),
+        _average_metric(split, baseline, task, "context_evidence", "exact_quote_recall_ceiling", exact_values, series_id=series_id),
+        _average_metric(split, baseline, task, "context_evidence", "context_record_count", record_counts, series_id=series_id),
+        _average_metric(split, baseline, task, "context_evidence", "citation_evidence_count", citation_counts, series_id=series_id),
+        _count_metric(split, baseline, task, "context_evidence", "cross_user_citation_evidence", cross_user, series_id=series_id)
+        if checked else _metric(split, baseline, task, "context_evidence", "cross_user_citation_evidence", 0, 0, "no_contexts", series_id=series_id),
+    ]
+
+
 def _retrieval_metrics(split, baseline, task, cases, series_id):
     if baseline in {"B0", "B1"}:
         return [_metric(split, baseline, task, "retrieval", "recall_at_10", 0, 0, "retrieval_not_applicable", series_id=series_id)]
@@ -566,7 +662,7 @@ def _retrieval_metrics(split, baseline, task, cases, series_id):
         ranked = []
         ranked_refs = []
         for record in context.context_records:
-            refs = {(item["source_id"], item.get("message_id")) for item in record.get("evidence", [])}
+            refs = _record_source_message_refs(record)
             ranked_refs.append(refs & relevant)
             ranked.append(bool(refs & relevant))
         retrieved5 = set().union(*ranked_refs[:5]) if ranked_refs[:5] else set()
@@ -613,6 +709,44 @@ def _conflict_metrics(split, contexts, references, series_id):
     if not references:
         return [_metric(split, "B6", "all", "conflict", "relation_accuracy", 0, 0, "no_conflict_relation_reference", series_id=series_id)]
     return [_metric(split, "B6", "all", "conflict", "relation_accuracy", 0, 0, "conflict_reference_adapter_not_available", series_id=series_id)]
+
+
+def _context_citation_items(context: ContextPackage) -> tuple[Mapping[str, object], ...]:
+    items = []
+    seen = set()
+    for record in context.context_records:
+        values = record.get("citation_evidence")
+        if not isinstance(values, list):
+            values = record.get("evidence", [])
+        if not isinstance(values, list):
+            raise QwenScoringError("context evidence fields changed")
+        for item in values:
+            if not isinstance(item, Mapping):
+                raise QwenScoringError("context citation evidence item changed")
+            source_id = item.get("source_id")
+            quote = item.get("quote")
+            message_id = item.get("message_id")
+            if not isinstance(source_id, str) or not isinstance(quote, str):
+                raise QwenScoringError("context citation evidence identity changed")
+            key = (source_id, message_id, quote)
+            if key in seen:
+                continue
+            seen.add(key)
+            items.append(item)
+    return tuple(items)
+
+
+def _record_source_message_refs(record: Mapping[str, object]) -> set[tuple[str, object]]:
+    values = record.get("citation_evidence")
+    if not isinstance(values, list):
+        values = record.get("evidence", [])
+    if not isinstance(values, list):
+        raise QwenScoringError("context evidence fields changed")
+    return {
+        (item["source_id"], item.get("message_id"))
+        for item in values
+        if isinstance(item, Mapping) and isinstance(item.get("source_id"), str)
+    }
 
 
 def _run_metrics(split, metadata, series_id):
@@ -690,11 +824,38 @@ def _validate_references(
             user_id = row.get("user_id")
             if isinstance(user_id, str):
                 user_ids.add(user_id)
-    expected = {"user_001", "user_002"} if split == "development" else {
-        f"user_{index:03d}" for index in range(3, 11)
-    }
+    expected = _expected_user_ids(split)
     if user_ids and not user_ids.issubset(expected):
         raise QwenScoringError("reference crosses the user boundary")
+
+
+def _references_for_split(
+    split: str,
+    references: Mapping[str, Sequence[Mapping[str, object]]],
+) -> Mapping[str, tuple[Mapping[str, object], ...]]:
+    expected_users = _expected_user_ids(split)
+    return {
+        name: tuple(row for row in rows if _reference_row_matches_split(row, split, expected_users))
+        for name, rows in references.items()
+    }
+
+
+def _reference_row_matches_split(
+    row: Mapping[str, object],
+    split: str,
+    expected_users: set[str],
+) -> bool:
+    row_split = row.get("split")
+    if row_split is not None:
+        return row_split == split
+    user_id = row.get("user_id")
+    return not isinstance(user_id, str) or user_id in expected_users
+
+
+def _expected_user_ids(split: str) -> set[str]:
+    if split == "development":
+        return {"user_001", "user_002"}
+    return {f"user_{index:03d}" for index in range(3, 11)}
 
 
 def _verify_b6_b7_identity(rows):
@@ -842,6 +1003,10 @@ def main() -> None:
     score.add_argument("--extraction", required=True)
     score.add_argument("--execution-metadata", required=True)
     score.add_argument("--output", required=True)
+    audit = subparsers.add_parser("audit-contexts")
+    _reference_arguments(audit, include_claims=True)
+    audit.add_argument("--contexts", required=True)
+    audit.add_argument("--output", required=True)
     judge = subparsers.add_parser("judge")
     _reference_arguments(judge, include_claims=False)
     judge.add_argument("--repo-root", default=".")
@@ -863,6 +1028,12 @@ def main() -> None:
             extraction_dir=Path(args.extraction),
             reference_loader=lambda: _load_reference_args(args, include_claims=True),
             execution_metadata=json.loads(Path(args.execution_metadata).read_text(encoding="utf-8")),
+            output_dir=Path(args.output),
+        )
+    elif args.command == "audit-contexts":
+        result = audit_context_evidence_release(
+            contexts_path=Path(args.contexts),
+            references=_load_reference_args(args, include_claims=True),
             output_dir=Path(args.output),
         )
     else:

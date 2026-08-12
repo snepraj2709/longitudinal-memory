@@ -76,9 +76,11 @@ def _render_answer_prompt(task: str, case: Mapping[str, object], records: Iterab
         "interactive": ("case_id", "user_id", "as_of", "scenario", "initial_user_message"),
     }[task]
     body = TASK_BODY[task]
+    context_records = list(records)
     payload = {
         "runtime_case": {name: case[name] for name in fields},
-        "context_records": list(records),
+        "context_records": context_records,
+        "allowed_citations": _allowed_citations(context_records),
         "response_format": "JSON object",
         "output_contract": {
             "exact_fields": ["status", body, "confidence", "statements", "citations", "unresolved_parts", "abstention_reason"],
@@ -88,6 +90,33 @@ def _render_answer_prompt(task: str, case: Mapping[str, object], records: Iterab
         },
     }
     return json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _allowed_citations(records: Iterable[Mapping[str, object]]) -> list[dict[str, object]]:
+    citations: dict[tuple[str, str | None, str], dict[str, object]] = {}
+    for record in records:
+        values = record.get("citation_evidence")
+        if not isinstance(values, list):
+            values = record.get("evidence")
+        if not isinstance(values, list):
+            continue
+        for item in values:
+            if not isinstance(item, Mapping):
+                continue
+            source_id = item.get("source_id")
+            message_id = item.get("message_id")
+            quote = item.get("quote")
+            if not isinstance(source_id, str) or not isinstance(quote, str):
+                continue
+            if message_id is not None and not isinstance(message_id, str):
+                continue
+            key = (source_id, message_id, quote)
+            citations.setdefault(key, {
+                "source_id": source_id,
+                "message_id": message_id,
+                "quote": quote,
+            })
+    return list(citations.values())
 
 
 def _existing_records(output_dir: Path) -> dict[str, dict[str, object]]:
