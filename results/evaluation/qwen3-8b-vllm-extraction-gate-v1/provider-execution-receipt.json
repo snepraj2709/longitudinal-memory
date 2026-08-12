@@ -1,0 +1,55 @@
+{
+  "schema_version": "qwen_provider_execution_receipt_v1",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "run_date": "2026-08-12",
+  "provider": "openai_compatible_vllm",
+  "model": {
+    "hugging_face_id": "Qwen/Qwen3-8B",
+    "model_alias": "qwen3-8b-vllm",
+    "context_length": 8192,
+    "temperature": 0,
+    "worker_count": 1
+  },
+  "jarvislabs": {
+    "machine_id": 468940,
+    "gpu": "L4 24GB",
+    "region": "IN2",
+    "final_cost_before_destroy_inr": 595.43,
+    "destroy_confirmed": true,
+    "resources_after_destroy": []
+  },
+  "primary_gate": {
+    "execution_status": "completed",
+    "provider_request_count": 10,
+    "successful_count": 10,
+    "failure_count": 0,
+    "transport_retry_count": 0,
+    "input_tokens": 37546,
+    "output_tokens": 3370,
+    "responses_sha256": "e8d4747d3256ea1b5b3a0f3852e5ed391903a056de0cea6e0042e330208f1ab9",
+    "quality_status": "failed_quality_gate",
+    "metrics": {
+      "structurally_valid_sources": 1.0,
+      "proposition_precision": 0.5,
+      "proposition_recall": 0.5625,
+      "proposition_f1": 0.5294117647058824,
+      "unsupported_memory_rate": 0.5,
+      "exact_quote_precision": 0.3333333333333333,
+      "exact_quote_recall": 0.375,
+      "valid_time_accuracy": 0.1111111111111111,
+      "wrong_person_claim_count": 0,
+      "known_bad_overlap_predicate_uses": 3
+    }
+  },
+  "holdout_gate": {
+    "execution_status": "not_run",
+    "reason": "primary quality gate failed"
+  },
+  "raw_artifact_archive": "results/evaluation/_ignored_failed_runs/qwen3-8b-vllm-extraction-gate-v1-primary-quality-failed-2026-08-12/",
+  "commit_policy": {
+    "raw_requests_committed": false,
+    "raw_responses_committed": false,
+    "failed_quality_manifest_committed": false,
+    "receipt_committed": true
+  }
+}
