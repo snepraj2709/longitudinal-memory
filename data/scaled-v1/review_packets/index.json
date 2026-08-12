@@ -1,0 +1,82 @@
+{
+  "files": [
+    {
+      "name": "gold_claims",
+      "path": "data/scaled-v1/review_packets/gold_claims.jsonl",
+      "pending_review": 160,
+      "records": 160
+    },
+    {
+      "name": "gold_interactive",
+      "path": "data/scaled-v1/review_packets/gold_interactive.jsonl",
+      "pending_review": 20,
+      "records": 20
+    },
+    {
+      "name": "gold_qa",
+      "path": "data/scaled-v1/review_packets/gold_qa.jsonl",
+      "pending_review": 500,
+      "records": 500
+    },
+    {
+      "name": "gold_summaries",
+      "path": "data/scaled-v1/review_packets/gold_summaries.jsonl",
+      "pending_review": 50,
+      "records": 50
+    },
+    {
+      "name": "oracle_events",
+      "path": "data/scaled-v1/review_packets/oracle_events.jsonl",
+      "pending_review": 120,
+      "records": 120
+    },
+    {
+      "name": "review_abstentions",
+      "path": "data/scaled-v1/review_packets/review_abstentions.jsonl",
+      "pending_review": 100,
+      "records": 100
+    },
+    {
+      "name": "review_conflicts",
+      "path": "data/scaled-v1/review_packets/review_conflicts.jsonl",
+      "pending_review": 10,
+      "records": 10
+    },
+    {
+      "name": "review_corrections",
+      "path": "data/scaled-v1/review_packets/review_corrections.jsonl",
+      "pending_review": 10,
+      "records": 10
+    },
+    {
+      "name": "review_evidence",
+      "path": "data/scaled-v1/review_packets/review_evidence.jsonl",
+      "pending_review": 730,
+      "records": 730
+    },
+    {
+      "name": "review_interactive_expectations",
+      "path": "data/scaled-v1/review_packets/review_interactive_expectations.jsonl",
+      "pending_review": 20,
+      "records": 20
+    },
+    {
+      "name": "review_summaries",
+      "path": "data/scaled-v1/review_packets/review_summaries.jsonl",
+      "pending_review": 50,
+      "records": 50
+    },
+    {
+      "name": "review_timelines",
+      "path": "data/scaled-v1/review_packets/review_timelines.jsonl",
+      "pending_review": 10,
+      "records": 10
+    }
+  ],
+  "output_root": "data/scaled-v1/review_packets",
+  "review_instruction": "Review each packet against the cited source text, then patch the source data and statuses explicitly. These packets do not approve any row.",
+  "schema_version": "scaled_review_packet_v1",
+  "source_dataset": "data/scaled-v1",
+  "status": "pending_manual_review",
+  "total_packets": 1780
+}
