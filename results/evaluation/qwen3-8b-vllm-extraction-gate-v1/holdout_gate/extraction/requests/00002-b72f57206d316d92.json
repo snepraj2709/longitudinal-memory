@@ -1,0 +1,49 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3866,
+  "latency_ms": 13302,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 0.95,
+        "epistemic_status": "reported_by_other",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_email_001_message_001",
+            "quote": "Our onboarding sheet records Mateo's start date as 2026-02-04.",
+            "source_id": "scaled_user_002_email_001"
+          }
+        ],
+        "object": "2026-02-04",
+        "polarity": "positive",
+        "predicate": "job_start_date",
+        "speaker_id": "recruiting",
+        "subject_id": "user_002",
+        "valid_from": "2026-02-04T00:00:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 208,
+  "position": 2,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_email_001",
+  "request_id": "extraction:scaled_user_002_email_001",
+  "request_sha256": "1fd10edbceab20c40af7cdb7e938be54b59a8733e585098ed8629d8fddbe2039",
+  "response_id": "chatcmpl-bbde4d6bc60732bd",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

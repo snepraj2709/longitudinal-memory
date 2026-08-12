@@ -1,0 +1,49 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3850,
+  "latency_ms": 11232,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 1,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": null,
+            "quote": "Care Map review is scheduled for 2026-08-11.",
+            "source_id": "scaled_user_001_calendar_002"
+          }
+        ],
+        "object": "2026-08-11",
+        "polarity": "positive",
+        "predicate": "project_review_date",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-08-11T00:00:00+00:00",
+        "valid_to": "2026-08-11T23:59:59+00:00"
+      }
+    ]
+  },
+  "output_tokens": 175,
+  "position": 8,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_calendar_002",
+  "request_id": "extraction:scaled_user_001_calendar_002",
+  "request_sha256": "4019d51450e816dd5cd1982ccf6b0dafcde7030393c85816cd4437b13ddb3787",
+  "response_id": "chatcmpl-a72bc9485fea73f4",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

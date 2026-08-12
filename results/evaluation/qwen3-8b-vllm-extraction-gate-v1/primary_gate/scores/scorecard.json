@@ -1,0 +1,9 @@
+{
+  "gate_name": "primary_gate",
+  "gold_opened_after_extraction_seal": true,
+  "metric_count": 14,
+  "metrics_sha256": "4bf83865ea3a48920084d4a654b47da29f949ff41e41ed0421b90bb733d36f30",
+  "schema_version": "qwen_extraction_gate_scorecard_v1",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "status": "passed"
+}

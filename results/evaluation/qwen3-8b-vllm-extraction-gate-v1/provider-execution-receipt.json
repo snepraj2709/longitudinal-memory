@@ -11,45 +11,74 @@
     "worker_count": 1
   },
   "jarvislabs": {
-    "machine_id": 468940,
+    "machine_id": 469595,
     "gpu": "L4 24GB",
     "region": "IN2",
-    "final_cost_before_destroy_inr": 595.43,
+    "spot": true,
+    "final_cost_before_destroy_inr": 7.70,
     "destroy_confirmed": true,
     "resources_after_destroy": []
   },
+  "remote_setup": {
+    "vllm_version": "0.27.1",
+    "flashinfer_python310_patch_applied": true,
+    "secret_env_uploaded_with_user_approval": true,
+    "remote_instance_destroyed_after_run": true
+  },
   "primary_gate": {
     "execution_status": "completed",
+    "quality_status": "passed",
     "provider_request_count": 10,
     "successful_count": 10,
     "failure_count": 0,
     "transport_retry_count": 0,
-    "input_tokens": 37546,
-    "output_tokens": 3370,
-    "responses_sha256": "e8d4747d3256ea1b5b3a0f3852e5ed391903a056de0cea6e0042e330208f1ab9",
-    "quality_status": "failed_quality_gate",
+    "input_tokens": 38746,
+    "output_tokens": 3346,
+    "responses_sha256": "f95a367a64f8d3fe117c2d6f81441737af739f50f8d4f4b9d93c3965960015a1",
     "metrics": {
       "structurally_valid_sources": 1.0,
-      "proposition_precision": 0.5,
-      "proposition_recall": 0.5625,
-      "proposition_f1": 0.5294117647058824,
-      "unsupported_memory_rate": 0.5,
-      "exact_quote_precision": 0.3333333333333333,
-      "exact_quote_recall": 0.375,
-      "valid_time_accuracy": 0.1111111111111111,
+      "proposition_precision": 0.9375,
+      "proposition_recall": 0.9375,
+      "proposition_f1": 0.9375,
+      "unsupported_memory_rate": 0.0625,
+      "exact_quote_precision": 1.0,
+      "exact_quote_recall": 1.0,
+      "valid_time_accuracy": 0.9333333333333333,
       "wrong_person_claim_count": 0,
-      "known_bad_overlap_predicate_uses": 3
+      "known_bad_overlap_predicate_uses": 0
     }
   },
   "holdout_gate": {
-    "execution_status": "not_run",
-    "reason": "primary quality gate failed"
+    "execution_status": "completed",
+    "quality_status": "passed",
+    "provider_request_count": 10,
+    "successful_count": 10,
+    "failure_count": 0,
+    "transport_retry_count": 0,
+    "input_tokens": 38759,
+    "output_tokens": 3288,
+    "responses_sha256": "12161b85c33440444f930b0ca93b82bc7a8e75e6938edf07524203476c973c4a",
+    "metrics": {
+      "structurally_valid_sources": 1.0,
+      "proposition_precision": 0.8125,
+      "proposition_recall": 0.8125,
+      "proposition_f1": 0.8125,
+      "unsupported_memory_rate": 0.1875,
+      "exact_quote_precision": 1.0,
+      "exact_quote_recall": 1.0,
+      "valid_time_accuracy": 0.6923076923076923,
+      "wrong_person_claim_count": 0,
+      "known_bad_overlap_predicate_uses": 0
+    }
   },
-  "raw_artifact_archive": "results/evaluation/_ignored_failed_runs/qwen3-8b-vllm-extraction-gate-v1-primary-quality-failed-2026-08-12/",
+  "pre_run_gates_after_execution": {
+    "status": "passed",
+    "blocker_count": 0,
+    "next_action": "provider_run_allowed"
+  },
   "commit_policy": {
-    "raw_requests_committed": false,
-    "raw_responses_committed": false,
-    "failed_quality_manifest_committed": false,
-    "receipt_committed": true
+    "successful_artifacts_committed": true,
+    "failed_quality_artifacts_committed": false,
+    "secrets_committed": false
   }
 }

@@ -1,0 +1,68 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3868,
+  "latency_ms": 21404,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 0.9,
+        "epistemic_status": "reported_by_other",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_email_002_message_001",
+            "quote": "Asha will lead Care Map. Leena will mentor Asha on the work.",
+            "source_id": "scaled_user_001_email_002"
+          }
+        ],
+        "object": "Care Map",
+        "polarity": "positive",
+        "predicate": "leads_project",
+        "speaker_id": "nikhil",
+        "subject_id": "user_001",
+        "valid_from": "2026-06-20T10:30:00+00:00",
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 0.9,
+        "epistemic_status": "reported_by_other",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_email_002_message_001",
+            "quote": "Asha will lead Care Map. Leena will mentor Asha on the work.",
+            "source_id": "scaled_user_001_email_002"
+          }
+        ],
+        "object": "Leena",
+        "polarity": "positive",
+        "predicate": "has_mentor",
+        "speaker_id": "nikhil",
+        "subject_id": "user_001",
+        "valid_from": "2026-06-20T10:30:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 336,
+  "position": 6,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_email_002",
+  "request_id": "extraction:scaled_user_001_email_002",
+  "request_sha256": "702dcaa9072a0f00d6e2b574755ea70172c5bdc8a81b31f04e305db14853f304",
+  "response_id": "chatcmpl-a3f74f07acbe7421",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

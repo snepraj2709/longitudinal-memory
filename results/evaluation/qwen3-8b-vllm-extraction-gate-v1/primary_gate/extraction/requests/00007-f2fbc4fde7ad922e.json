@@ -1,0 +1,68 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3944,
+  "latency_ms": 21847,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 0.8,
+        "epistemic_status": "reported_by_other",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_chat_002_message_001",
+            "quote": "I heard Asha's office base is Pune.",
+            "source_id": "scaled_user_001_chat_002"
+          }
+        ],
+        "object": "Pune",
+        "polarity": "positive",
+        "predicate": "office_base",
+        "speaker_id": "teammate",
+        "subject_id": "user_001",
+        "valid_from": "2026-07-22T11:30:00+00:00",
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 0.6,
+        "epistemic_status": "reported_by_other",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_chat_002_message_002",
+            "quote": "My roster lists Asha in Mumbai, but it may be stale.",
+            "source_id": "scaled_user_001_chat_002"
+          }
+        ],
+        "object": "Mumbai",
+        "polarity": "positive",
+        "predicate": "office_base",
+        "speaker_id": "nikhil",
+        "subject_id": "user_001",
+        "valid_from": "2026-07-22T11:30:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 343,
+  "position": 7,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_chat_002",
+  "request_id": "extraction:scaled_user_001_chat_002",
+  "request_sha256": "83d66edaaa0fa2be9c4d0c9f82319b77fd5f3e559e80d643ef3dcebe8ff0ed4d",
+  "response_id": "chatcmpl-993901868a708664",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

@@ -1,0 +1,49 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3893,
+  "latency_ms": 25133,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 1.0,
+        "epistemic_status": "corrected",
+        "evidence": [
+          {
+            "message_id": "scaled_user_002_conversation_003_message_001",
+            "quote": "I need to correct the start date. I began on 2026-01-12, not 2026-02-04. My current goal is still to improve public-service research.",
+            "source_id": "scaled_user_002_conversation_003"
+          }
+        ],
+        "object": "2026-01-12",
+        "polarity": "positive",
+        "predicate": "job_start_date",
+        "speaker_id": "user_002",
+        "subject_id": "user_002",
+        "valid_from": "2026-01-12T00:00:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 395,
+  "position": 9,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_002_conversation_003",
+  "request_id": "extraction:scaled_user_002_conversation_003",
+  "request_sha256": "b626bf59f1ed042772a27c6a35acfcebcee4d34e23816a92fdcdee458e37fd0e",
+  "response_id": "chatcmpl-a68d6492ca5d4a9c",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_002"
+}

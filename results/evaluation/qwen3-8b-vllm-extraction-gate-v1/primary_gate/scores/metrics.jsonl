@@ -1,0 +1,14 @@
+{"denominator":10,"gate_name":"primary_gate","metric":"structurally_valid_sources","null_reason":null,"numerator":10,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":1.0}
+{"denominator":16,"gate_name":"primary_gate","metric":"proposition_precision","null_reason":null,"numerator":15,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.9375}
+{"denominator":16,"gate_name":"primary_gate","metric":"proposition_recall","null_reason":null,"numerator":15,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.9375}
+{"denominator":1,"gate_name":"primary_gate","metric":"proposition_f1","null_reason":null,"numerator":0.9375,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.9375}
+{"denominator":16,"gate_name":"primary_gate","metric":"strict_claim_precision","null_reason":null,"numerator":13,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.8125}
+{"denominator":16,"gate_name":"primary_gate","metric":"strict_claim_recall","null_reason":null,"numerator":13,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.8125}
+{"denominator":16,"gate_name":"primary_gate","metric":"unsupported_memory_rate","null_reason":null,"numerator":1,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.0625}
+{"denominator":15,"gate_name":"primary_gate","metric":"speaker_accuracy","null_reason":null,"numerator":15,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":1.0}
+{"denominator":15,"gate_name":"primary_gate","metric":"epistemic_status_accuracy","null_reason":null,"numerator":14,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.9333333333333333}
+{"denominator":15,"gate_name":"primary_gate","metric":"valid_time_accuracy","null_reason":null,"numerator":14,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.9333333333333333}
+{"denominator":16,"gate_name":"primary_gate","metric":"exact_quote_precision","null_reason":null,"numerator":16,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":1.0}
+{"denominator":16,"gate_name":"primary_gate","metric":"exact_quote_recall","null_reason":null,"numerator":16,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":1.0}
+{"denominator":1,"gate_name":"primary_gate","metric":"wrong_person_claim_count","null_reason":null,"numerator":0,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.0}
+{"denominator":1,"gate_name":"primary_gate","metric":"known_bad_overlap_predicate_uses","null_reason":null,"numerator":0,"series_id":"qwen3-8b-vllm-extraction-gate-v1","value":0.0}

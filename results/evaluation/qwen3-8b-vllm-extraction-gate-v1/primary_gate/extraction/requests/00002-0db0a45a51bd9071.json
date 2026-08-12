@@ -1,0 +1,49 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3866,
+  "latency_ms": 13524,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 0.95,
+        "epistemic_status": "reported_by_other",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_email_001_message_001",
+            "quote": "Our onboarding sheet records Asha's start date as 2026-02-03.",
+            "source_id": "scaled_user_001_email_001"
+          }
+        ],
+        "object": "2026-02-03",
+        "polarity": "positive",
+        "predicate": "job_start_date",
+        "speaker_id": "recruiting",
+        "subject_id": "user_001",
+        "valid_from": "2026-02-03T00:00:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 208,
+  "position": 2,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_email_001",
+  "request_id": "extraction:scaled_user_001_email_001",
+  "request_sha256": "9cd81f37ac348f8b4d249512e8456d541ad1b003dbe3ad60370e3f4768a3033e",
+  "response_id": "chatcmpl-82b1d10797800625",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

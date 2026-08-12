@@ -1,0 +1,21 @@
+{
+  "failure_count": 0,
+  "failures_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "gold_opened": false,
+  "input_tokens": 38759,
+  "oracle_opened": false,
+  "output_tokens": 3288,
+  "planned_request_count": 10,
+  "provider_request_count": 10,
+  "raw_invalid_output_persisted": false,
+  "responses_sha256": "12161b85c33440444f930b0ca93b82bc7a8e75e6938edf07524203476c973c4a",
+  "review_opened": false,
+  "schema_version": "qwen_execution_batch_v2",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "split": "development",
+  "status": "completed",
+  "successful_count": 10,
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "worker_count": 1
+}

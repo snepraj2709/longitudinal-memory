@@ -1,0 +1,61 @@
+{
+  "config_sha256": "eed9e823f994686a34bb46ce73abc0001219c63df23e0b7aa2d46919dee497b9",
+  "extraction": {
+    "failure_count": 0,
+    "failures_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gold_opened": false,
+    "input_tokens": 38759,
+    "oracle_opened": false,
+    "output_tokens": 3288,
+    "planned_request_count": 10,
+    "provider_request_count": 10,
+    "raw_invalid_output_persisted": false,
+    "responses_sha256": "12161b85c33440444f930b0ca93b82bc7a8e75e6938edf07524203476c973c4a",
+    "review_opened": false,
+    "schema_version": "qwen_execution_batch_v2",
+    "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+    "split": "development",
+    "status": "completed",
+    "successful_count": 10,
+    "task": "extraction",
+    "transport_retry_count": 0,
+    "worker_count": 1
+  },
+  "gate_name": "holdout_gate",
+  "gold_opened_after_extraction_seal": true,
+  "model": {
+    "context_length": 8192,
+    "enable_thinking": false,
+    "hugging_face_id": "Qwen/Qwen3-8B",
+    "model_alias": "qwen3-8b-vllm"
+  },
+  "oracle_opened": false,
+  "provider": "openai_compatible_vllm",
+  "review_opened": false,
+  "runtime": {
+    "base_url": "https://8cf25d4695951.notebooksn.jarvislabs.net",
+    "client_concurrency": 1,
+    "maximum_transport_retries": 10,
+    "retryable_http_statuses": [
+      408,
+      429,
+      502,
+      503,
+      504,
+      520
+    ],
+    "temperature": 0
+  },
+  "schema_version": "qwen_extraction_gate_run_v1",
+  "scores": {
+    "gate_name": "holdout_gate",
+    "gold_opened_after_extraction_seal": true,
+    "metric_count": 14,
+    "metrics_sha256": "2caa55d8307e139ae6952d3fe89d21fabdbfb799bf05e364636434cf33d41c54",
+    "schema_version": "qwen_extraction_gate_scorecard_v1",
+    "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+    "status": "passed"
+  },
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "status": "completed"
+}

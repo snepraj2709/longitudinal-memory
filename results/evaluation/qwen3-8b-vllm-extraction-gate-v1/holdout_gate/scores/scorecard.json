@@ -1,0 +1,9 @@
+{
+  "gate_name": "holdout_gate",
+  "gold_opened_after_extraction_seal": true,
+  "metric_count": 14,
+  "metrics_sha256": "2caa55d8307e139ae6952d3fe89d21fabdbfb799bf05e364636434cf33d41c54",
+  "schema_version": "qwen_extraction_gate_scorecard_v1",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "status": "passed"
+}

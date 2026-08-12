@@ -1,0 +1,68 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3890,
+  "latency_ms": 33993,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 0.95,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_004_message_001",
+            "quote": "Remote work has suited me throughout the year. I might move to Mumbai someday, but I have made no plan. The deadline may be 2026-12-06, though I need to confirm it.",
+            "source_id": "scaled_user_001_conversation_004"
+          }
+        ],
+        "object": "remote",
+        "polarity": "positive",
+        "predicate": "work_preference",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-11-14T09:00:00+00:00",
+        "valid_to": null
+      },
+      {
+        "claim_id": "claim_003",
+        "confidence": 0.75,
+        "epistemic_status": "hypothetical",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_004_message_001",
+            "quote": "Remote work has suited me throughout the year. I might move to Mumbai someday, but I have made no plan. The deadline may be 2026-12-06, though I need to confirm it.",
+            "source_id": "scaled_user_001_conversation_004"
+          }
+        ],
+        "object": "2026-12-06",
+        "polarity": "positive",
+        "predicate": "project_deadline",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-12-06T00:00:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 536,
+  "position": 10,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_conversation_004",
+  "request_id": "extraction:scaled_user_001_conversation_004",
+  "request_sha256": "ef056258fe0ad492c14e767b989672e5e39b59f42f0eb71c3544b840f907509e",
+  "response_id": "chatcmpl-a6429a4782e6e1e7",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}

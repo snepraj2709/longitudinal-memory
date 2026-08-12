@@ -1,0 +1,68 @@
+{
+  "baseline_id": null,
+  "context_count": 0,
+  "context_sha256": null,
+  "failure_code": null,
+  "failure_stage": null,
+  "generation_mode": "provider",
+  "input_tokens": 3866,
+  "latency_ms": 25091,
+  "output": {
+    "claims": [
+      {
+        "claim_id": "claim_001",
+        "confidence": 0.95,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_002_message_001",
+            "quote": "This month I feel exhausted after the launch. My goal has shifted: I want to build reliable health tools.",
+            "source_id": "scaled_user_001_conversation_002"
+          }
+        ],
+        "object": true,
+        "polarity": "positive",
+        "predicate": "feels_exhausted",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-05-18T09:30:00+00:00",
+        "valid_to": "2026-05-31T23:59:59+00:00"
+      },
+      {
+        "claim_id": "claim_002",
+        "confidence": 0.95,
+        "epistemic_status": "asserted",
+        "evidence": [
+          {
+            "message_id": "scaled_user_001_conversation_002_message_001",
+            "quote": "This month I feel exhausted after the launch. My goal has shifted: I want to build reliable health tools.",
+            "source_id": "scaled_user_001_conversation_002"
+          }
+        ],
+        "object": "build reliable health tools",
+        "polarity": "positive",
+        "predicate": "career_goal",
+        "speaker_id": "user_001",
+        "subject_id": "user_001",
+        "valid_from": "2026-05-18T09:30:00+00:00",
+        "valid_to": null
+      }
+    ]
+  },
+  "output_tokens": 394,
+  "position": 5,
+  "provider_attempt_count": 1,
+  "record_id": "scaled_user_001_conversation_002",
+  "request_id": "extraction:scaled_user_001_conversation_002",
+  "request_sha256": "f9cdf28bfbb3c10af35365b52cb967ecd9ad64b99528e00ddbdb5121b84c4254",
+  "response_id": "chatcmpl-9cd03c9273c252ae",
+  "returned_model": "qwen3-8b-vllm",
+  "schema_version": "qwen_execution_record_v2",
+  "series_id": "qwen3-8b-vllm-extraction-gate-v1",
+  "split": "development",
+  "status": "succeeded",
+  "task": "extraction",
+  "transport_retry_count": 0,
+  "underlying_answer_sha256": null,
+  "user_id": "user_001"
+}
