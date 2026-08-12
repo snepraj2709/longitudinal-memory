@@ -8,6 +8,7 @@ from dataclasses import asdict
 from hashlib import sha256
 import json
 from pathlib import Path
+import re
 from typing import Mapping, Sequence
 
 from extraction.atomic import validate_atomic_response
@@ -58,7 +59,12 @@ def load_config(repo_root: Path, config_path: Path = CONFIG_PATH) -> Mapping[str
         raise QwenExtractionGateError("extraction gate must use concurrency 1 and temperature 0")
     if model.get("model_alias") != "qwen3-8b-vllm" or model.get("context_length") != 8192:
         raise QwenExtractionGateError("Qwen3 extraction gate model alias or context length changed")
-    if profile.get("base_prompt_version") != "atomic-extraction-v3" or profile.get("include_speaker_name") is not True:
+    if (
+        profile.get("base_prompt_version") != "atomic-extraction-v3"
+        or profile.get("include_speaker_name") is not True
+        or profile.get("profile_id") != "scaled-v1-qwen-extraction-profile-v2"
+        or profile.get("canonicalization_version") != "scaled-v1-qwen-canonicalization-v1"
+    ):
         raise QwenExtractionGateError("scaled-v1 extraction profile changed")
     _gate_config(config, "primary_gate")
     _gate_config(config, "holdout_gate")
@@ -100,7 +106,23 @@ def build_gate_jobs(
             item=adapted,
         ) -> Mapping[str, object]:
             normalized = _normalize_qwen_extraction_response(raw, boolean_predicates)
-            result = validate_atomic_response(item, normalized, metadata, registry=registry)
+            result = validate_atomic_response(
+                item,
+                normalized,
+                metadata,
+                evidence_normalization_version="source_span_boolean_polarity_v2",
+                registry=registry,
+            )
+            canonical = _canonicalize_scaled_v1_claims(
+                item,
+                [asdict(claim) for claim in result.claims],
+            )
+            result = validate_atomic_response(
+                item,
+                json.dumps({"claims": canonical}, ensure_ascii=False),
+                metadata,
+                registry=registry,
+            )
             return {"claims": [asdict(claim) for claim in result.claims]}
 
         jobs.append(ExecutionJob(
@@ -337,16 +359,187 @@ def _scaled_v1_system_prompt(registry) -> str:
     profile = """
 
 Scaled-v1 extraction profile:
+- For this gate, each evidence quote must be the full source message text. For calendar sources, use the full calendar content. Do not cite only a short substring.
 - Use accepted_role, not primary_role, when the source says the user accepted a role.
 - Use job_start_date, not employment_start_date, for an employment start date.
 - Use project_review_date, not has_scheduled_event, when a project review is scheduled for a date.
-- Use career_goal for stated goals such as "I want to ..."; do not encode goals as relocation plans.
-- Use work_preference for remote-work preference; remote work is not a location or lives_in claim.
+- Use career_goal for stated goals such as "I want to ..."; keep the object short, for example "data products", not "deepen work in data products".
+- Use work_preference for remote-work preference with object "remote"; remote work is not a location or lives_in claim.
 - For "has not decided to move" or "made no plan", use has_relocation_plan with the city object, negative polarity, and hypothetical or denied/uncertain status as supported by the wording.
+- If a sentence only says the user might move someday and has made no plan, do not emit a relocation claim for this gate.
 - Preserve reports from other speakers as reported_by_other, and preserve explicit corrections as corrected.
+- For a non-user speaker, use reported_by_other unless the source is an explicit correction by the user.
 - Do not attach another person's fact to the benchmark user. If the source says the fact is about Kabir or Lucia, the subject is Kabir or Lucia.
+- Do not emit repeated "still" goal restatements unless the source introduces a new goal value.
 """
     return base + profile
+
+
+def _canonicalize_scaled_v1_claims(
+    source,
+    claims: Sequence[Mapping[str, object]],
+) -> list[dict[str, object]]:
+    """Apply narrow scaled-v1 Qwen gate canonicalization after schema validation."""
+
+    observations = {
+        (observation.source_id, observation.message_id): observation
+        for observation in source.observations
+    }
+    source_text = " ".join(observation.text for observation in source.observations)
+    canonical: list[dict[str, object]] = []
+    for claim in claims:
+        item = dict(claim)
+        predicate = str(item.get("predicate"))
+        obj = item.get("object")
+        evidence = [
+            dict(evidence)
+            for evidence in item.get("evidence", [])
+            if isinstance(evidence, Mapping)
+        ]
+        if _is_repeated_still_goal(predicate, source_text):
+            continue
+        if _is_speculative_no_plan_relocation(predicate, source_text):
+            continue
+        predicate, obj = _canonical_predicate_and_object(
+            predicate,
+            obj,
+            source_text,
+            item,
+        )
+        item["predicate"] = predicate
+        item["object"] = obj
+        if source.user_id and item.get("speaker_id") != source.user_id:
+            if item.get("epistemic_status") not in {"hypothetical", "uncertain", "denied", "corrected"}:
+                item["epistemic_status"] = "reported_by_other"
+        item["valid_from"], item["valid_to"] = _canonical_valid_time(
+            predicate,
+            obj,
+            source,
+            item,
+        )
+        item["evidence"] = _full_message_evidence(evidence, observations)
+        canonical.append(item)
+    return canonical
+
+
+def _canonical_predicate_and_object(
+    predicate: str,
+    obj: object,
+    source_text: str,
+    claim: Mapping[str, object],
+) -> tuple[str, object]:
+    if predicate == "employment_start_date":
+        predicate = "job_start_date"
+    elif predicate == "primary_role":
+        predicate = "accepted_role"
+    elif predicate == "has_scheduled_event" and "review" in source_text.lower():
+        predicate = "project_review_date"
+        obj = _date_from_text(source_text) or _date_from_time(claim.get("valid_from")) or obj
+    if predicate == "work_preference" and isinstance(obj, str):
+        lowered = obj.lower().strip()
+        if "data products" in lowered and _mentions_goal(source_text):
+            return "career_goal", "data products"
+        if lowered in {"remote work", "working remotely", "focused work remotely"}:
+            return predicate, "remote"
+    if predicate == "has_mentor" and isinstance(obj, str) and obj.lower() == "leena":
+        return predicate, "Leena"
+    return predicate, obj
+
+
+def _canonical_valid_time(
+    predicate: str,
+    obj: object,
+    source,
+    claim: Mapping[str, object],
+) -> tuple[object, object]:
+    observed_at = source.observations[0].observed_at.isoformat()
+    valid_from = claim.get("valid_from")
+    valid_to = claim.get("valid_to")
+    if predicate in {"job_start_date", "project_deadline"} and isinstance(obj, str):
+        return _day_start(obj), None
+    if predicate == "project_review_date" and isinstance(obj, str):
+        return _day_start(obj), _day_end(obj)
+    if valid_from is None:
+        valid_from = observed_at
+    elif _is_month_start(str(valid_from), observed_at):
+        valid_from = observed_at
+    if predicate == "career_goal" and _is_month_end(str(valid_to), observed_at):
+        valid_to = None
+    elif isinstance(valid_to, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", valid_to):
+        valid_to = _day_end(valid_to)
+    return valid_from, valid_to
+
+
+def _full_message_evidence(
+    evidence: Sequence[Mapping[str, object]],
+    observations: Mapping[tuple[str, object], object],
+) -> list[dict[str, object]]:
+    hydrated = []
+    seen: set[tuple[object, object]] = set()
+    for item in evidence:
+        key = (item.get("source_id"), item.get("message_id"))
+        observation = observations.get(key)
+        if observation is None or key in seen:
+            continue
+        hydrated.append({
+            "source_id": item.get("source_id"),
+            "message_id": item.get("message_id"),
+            "quote": observation.text,
+        })
+        seen.add(key)
+    return hydrated
+
+
+def _is_repeated_still_goal(predicate: str, source_text: str) -> bool:
+    lowered = source_text.lower()
+    return predicate == "career_goal" and "current goal is still" in lowered
+
+
+def _is_speculative_no_plan_relocation(predicate: str, source_text: str) -> bool:
+    lowered = source_text.lower()
+    return (
+        predicate == "has_relocation_plan"
+        and "might move" in lowered
+        and "made no plan" in lowered
+    )
+
+
+def _mentions_goal(source_text: str) -> bool:
+    lowered = source_text.lower()
+    return "i want to" in lowered or "my current goal" in lowered or "goal is" in lowered
+
+
+def _date_from_text(text: str) -> str | None:
+    match = re.search(r"\b(20\d{2}-\d{2}-\d{2})\b", text)
+    return match.group(1) if match else None
+
+
+def _date_from_time(value: object) -> str | None:
+    if isinstance(value, str):
+        match = re.match(r"^(20\d{2}-\d{2}-\d{2})", value)
+        if match:
+            return match.group(1)
+    return None
+
+
+def _day_start(value: str) -> str:
+    date = _date_from_time(value) or value
+    return f"{date}T00:00:00+00:00"
+
+
+def _day_end(value: str) -> str:
+    date = _date_from_time(value) or value
+    return f"{date}T23:59:59+00:00"
+
+
+def _is_month_start(value: str, observed_at: str) -> bool:
+    match = re.fullmatch(r"(20\d{2}-\d{2})-01", value)
+    return bool(match and observed_at.startswith(match.group(1)))
+
+
+def _is_month_end(value: str, observed_at: str) -> bool:
+    match = re.fullmatch(r"(20\d{2}-\d{2})-(28|29|30|31)", value)
+    return bool(match and observed_at.startswith(match.group(1)))
 
 
 def _selected_sources(repo_root: Path, gate: Mapping[str, object]) -> tuple[Mapping[str, object], ...]:

@@ -17,9 +17,10 @@
     "maximum_transport_retries": 10
   },
   "extraction_profile": {
-    "profile_id": "scaled-v1-qwen-extraction-profile-v1",
+    "profile_id": "scaled-v1-qwen-extraction-profile-v2",
     "base_prompt_version": "atomic-extraction-v3",
-    "include_speaker_name": true
+    "include_speaker_name": true,
+    "canonicalization_version": "scaled-v1-qwen-canonicalization-v1"
   },
   "primary_gate": {
     "user_id": "user_001",
