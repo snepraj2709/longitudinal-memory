@@ -52,10 +52,11 @@ def build_readiness_audit(repo_root: str | Path) -> Mapping[str, object]:
     qwen = _qwen_section(root)
     flags = _flags(benchmark, scaled, qwen)
     layers = _layers(pilot, benchmark, scaled, qwen)
+    review_repaired = not scaled["manifest_row_review_mismatch"]
     return {
         "schema_version": "data_foundation_readiness_audit_v1",
         "status": "blocked" if any(flag["severity"] == "blocker" for flag in flags) else "ready",
-        "overall_score": 5.5,
+        "overall_score": 6.5 if review_repaired else 5.5,
         "layers": [asdict(layer) for layer in layers],
         "pilot": pilot,
         "benchmark_v1": benchmark,
@@ -63,7 +64,7 @@ def build_readiness_audit(repo_root: str | Path) -> Mapping[str, object]:
         "qwen_downstream_risk": qwen,
         "flags": flags,
         "manual_review_hotspots": _manual_review_hotspots(),
-        "next_stage": "stage_2_scaled_validator_false_approval_gate",
+        "next_stage": "stage_5_pre_run_data_gates" if review_repaired else "stage_2_scaled_validator_false_approval_gate",
     }
 
 
@@ -182,8 +183,8 @@ def _scaled_section(root: Path) -> Mapping[str, object]:
             and (pending_gold > 0 or pending_review > 0)
         ),
         "runtime_synthetic_score": 7,
-        "scored_qa_gold_score": 5,
-        "oracle_review_score": 4,
+        "scored_qa_gold_score": 7 if report is not None and pending_gold == 0 else 5,
+        "oracle_review_score": 7 if report is not None and pending_review == 0 else 4,
         "counts": {
             "users": report.users if report else None,
             "sources": report.sources if report else None,
@@ -326,20 +327,28 @@ def _layers(
         ReadinessLayer("scaled_runtime_synthetic_data", 7, "Counts, splits, source refs, and exact evidence links validate."),
         ReadinessLayer(
             "scaled_scored_qa_gold",
-            5,
-            f"{scaled['pending_gold_rows']} gold rows are still pending human review.",
+            float(scaled["scored_qa_gold_score"]),
+            (
+                "Gold rows are approved with no content fixes applied."
+                if not scaled["pending_gold_rows"]
+                else f"{scaled['pending_gold_rows']} gold rows are still pending human review."
+            ),
             blocking=bool(scaled["pending_gold_rows"]),
         ),
         ReadinessLayer(
             "scaled_oracle_review_foundation",
-            4,
-            f"{scaled['pending_review_queue_rows']} review queue rows are still pending while the manifest claims approval.",
+            float(scaled["oracle_review_score"]),
+            (
+                "Review queues are approved; oracle packet approval is recorded in the decision ledger."
+                if not scaled["pending_review_queue_rows"]
+                else f"{scaled['pending_review_queue_rows']} review queue rows are still pending while the manifest claims approval."
+            ),
             blocking=bool(scaled["pending_review_queue_rows"]),
         ),
         ReadinessLayer(
             "overall_b0_b7_readiness",
-            5.5,
-            "Structure exists, but review truth, extraction quality, and materialization failures block another full run.",
+            6.5 if not scaled["manifest_row_review_mismatch"] else 5.5,
+            "Review truth is repaired, but extraction quality and materialization failures still block another full run.",
             blocking=bool(scaled["pending_gold_rows"] or scaled["pending_review_queue_rows"] or qwen["context_materialization_failures"]),
         ),
     )

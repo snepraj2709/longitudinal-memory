@@ -36,6 +36,8 @@ def build_review_packets(repo_root: str | Path) -> Mapping[str, list[dict[str, A
     """Return review packets grouped by output name without changing files."""
 
     root = Path(repo_root).resolve()
+    review_decision = _review_decision(root)
+    oracle_review_status = _oracle_review_status(review_decision)
     runtime_sources = _jsonl(root / SCALED_ROOT / "runtime/sources.jsonl")
     source_index = _source_index(runtime_sources)
     rows = {name: _jsonl(root / path) for name, path in PACKET_INPUTS}
@@ -48,7 +50,7 @@ def build_review_packets(repo_root: str | Path) -> Mapping[str, list[dict[str, A
         ]
     for name, relative_path in ORACLE_INPUTS:
         packets[name] = [
-            _oracle_packet(relative_path, row, index)
+            _oracle_packet(relative_path, row, index, oracle_review_status)
             for index, row in enumerate(rows[name], 1)
         ]
     for name, relative_path in REVIEW_INPUTS:
@@ -70,6 +72,7 @@ def write_review_packets(
     destination = root / (output_root or DEFAULT_OUTPUT_ROOT)
     destination.mkdir(parents=True, exist_ok=True)
     packets = build_review_packets(root)
+    review_decision = _review_decision(root)
     files: list[dict[str, Any]] = []
     for name in sorted(packets):
         path = destination / f"{name}.jsonl"
@@ -80,15 +83,24 @@ def write_review_packets(
             "records": len(packets[name]),
             "pending_review": sum(1 for packet in packets[name] if packet["current_status"] == "pending_human_review"),
         })
+    pending_packets = sum(item["pending_review"] for item in files)
     index = {
         "schema_version": PACKET_SCHEMA_VERSION,
-        "status": "pending_manual_review",
+        "status": "pending_manual_review" if pending_packets else "approved",
         "source_dataset": str(SCALED_ROOT),
         "output_root": _display_path(destination, root),
         "total_packets": sum(item["records"] for item in files),
         "files": files,
-        "review_instruction": "Review each packet against the cited source text, then patch the source data and statuses explicitly. These packets do not approve any row.",
+        "review_instruction": (
+            "Review each packet against the cited source text, then patch the source data and statuses explicitly. These packets do not approve any row."
+            if pending_packets
+            else "All packets are approved from the recorded review decision ledger."
+        ),
     }
+    if not pending_packets and review_decision:
+        index["approved_by"] = review_decision.get("approved_by")
+        index["approved_on"] = review_decision.get("approved_on")
+        index["approval_scope"] = "all scaled-v1 review packets approved with no data fixes"
     (destination / "index.json").write_text(json.dumps(index, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return index
 
@@ -114,9 +126,14 @@ def _gold_packet(
     return packet
 
 
-def _oracle_packet(source_path: Path, row: Mapping[str, Any], line_number: int) -> dict[str, Any]:
+def _oracle_packet(
+    source_path: Path,
+    row: Mapping[str, Any],
+    line_number: int,
+    current_status: str,
+) -> dict[str, Any]:
     event_id = str(row.get("event_id"))
-    packet = _base_packet(source_path, line_number, "oracle_event", event_id, row.get("user_id"), "pending_human_review")
+    packet = _base_packet(source_path, line_number, "oracle_event", event_id, row.get("user_id"), current_status)
     packet.update({
         "review_action": "verify_event_facts_time_links_and_disclosure_status",
         "risk_tags": _oracle_risk_tags(row),
@@ -206,6 +223,23 @@ def _source_index(sources: Sequence[Mapping[str, Any]]) -> dict[tuple[str, str |
                 "source_text": source.get("content"),
             }
     return index
+
+
+def _review_decision(root: Path) -> Mapping[str, Any]:
+    ledger_path = root / SCALED_ROOT / "review_decision_ledger.json"
+    if not ledger_path.is_file():
+        return {}
+    try:
+        ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    return ledger if isinstance(ledger, dict) else {}
+
+
+def _oracle_review_status(ledger: Mapping[str, Any]) -> str:
+    if ledger.get("decision") == "approve_all_scaled_v1_review_packets_with_no_data_fixes":
+        return "approved"
+    return "pending_human_review"
 
 
 def _target_index(rows: Mapping[str, Sequence[Mapping[str, Any]]]) -> Mapping[str, Any]:

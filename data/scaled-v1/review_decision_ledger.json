@@ -1,0 +1,119 @@
+{
+  "approved_by": "Sneha",
+  "approved_on": "2026-08-12",
+  "content_fixes_applied": false,
+  "decision": "approve_all_scaled_v1_review_packets_with_no_data_fixes",
+  "new_dataset_sha256": "463c2fe8cfee727a995676665414f3ea1b098bfafbf51ecdfb1d25f135f98a33",
+  "note": "This ledger records approval of the existing scaled-v1 packet contents. It does not claim corrections to gold answers, evidence, source text, oracle facts, or Qwen outputs.",
+  "old_dataset_sha256": "746756cb7d9aa76d3646d96b50ba74c0616780c7d015cb0f48f685ad03746b61",
+  "oracle_events_reviewed_without_row_status_field": 120,
+  "review_packet_total": 1780,
+  "row_status_updates": {
+    "gold": {
+      "data/scaled-v1/gold/claims.jsonl": {
+        "after": {
+          "approved": 160
+        },
+        "before": {
+          "pending_human_review": 160
+        },
+        "records": 160
+      },
+      "data/scaled-v1/gold/interactive.jsonl": {
+        "after": {
+          "approved": 20
+        },
+        "before": {
+          "pending_human_review": 20
+        },
+        "records": 20
+      },
+      "data/scaled-v1/gold/qa.jsonl": {
+        "after": {
+          "approved": 500
+        },
+        "before": {
+          "pending_human_review": 500
+        },
+        "records": 500
+      },
+      "data/scaled-v1/gold/summaries.jsonl": {
+        "after": {
+          "approved": 50
+        },
+        "before": {
+          "pending_human_review": 50
+        },
+        "records": 50
+      }
+    },
+    "review_queues": {
+      "data/scaled-v1/review_queues/abstentions.jsonl": {
+        "after": {
+          "approved": 100
+        },
+        "before": {
+          "pending_human_review": 100
+        },
+        "records": 100
+      },
+      "data/scaled-v1/review_queues/conflicts.jsonl": {
+        "after": {
+          "approved": 10
+        },
+        "before": {
+          "pending_human_review": 10
+        },
+        "records": 10
+      },
+      "data/scaled-v1/review_queues/corrections.jsonl": {
+        "after": {
+          "approved": 10
+        },
+        "before": {
+          "pending_human_review": 10
+        },
+        "records": 10
+      },
+      "data/scaled-v1/review_queues/evidence.jsonl": {
+        "after": {
+          "approved": 730
+        },
+        "before": {
+          "pending_human_review": 730
+        },
+        "records": 730
+      },
+      "data/scaled-v1/review_queues/interactive_expectations.jsonl": {
+        "after": {
+          "approved": 20
+        },
+        "before": {
+          "pending_human_review": 20
+        },
+        "records": 20
+      },
+      "data/scaled-v1/review_queues/summaries.jsonl": {
+        "after": {
+          "approved": 50
+        },
+        "before": {
+          "pending_human_review": 50
+        },
+        "records": 50
+      },
+      "data/scaled-v1/review_queues/timelines.jsonl": {
+        "after": {
+          "approved": 10
+        },
+        "before": {
+          "pending_human_review": 10
+        },
+        "records": 10
+      }
+    }
+  },
+  "schema_version": "scaled_review_decision_ledger_v1",
+  "source_review_packet_index": "data/scaled-v1/review_packets/index.json",
+  "status_only_patch": true
+}

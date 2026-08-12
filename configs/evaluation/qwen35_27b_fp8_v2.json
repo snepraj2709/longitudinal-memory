@@ -10,7 +10,7 @@
   "authority_bindings": [
     {
       "path": "data/scaled-v1/manifest.json",
-      "sha256": "e3b4386b7063b3c2d65b45574b2e5665fc5094a8330ffd16ea83781744b9a5d3"
+      "sha256": "dcab6c93bf5aea5616455392f283588c07cd1223d8ee53d27fc75f87b6b7772e"
     },
     {
       "path": "configs/evaluation/frozen_prompts_v1.json",

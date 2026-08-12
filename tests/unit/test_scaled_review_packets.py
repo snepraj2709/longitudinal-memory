@@ -27,9 +27,10 @@ class ScaledReviewPacketTests(unittest.TestCase):
         packet = build_review_packets(ROOT)["gold_claims"][0]
 
         self.assertEqual(packet["target_id"], "scaled_user_001_claim_001")
-        self.assertEqual(packet["current_status"], "pending_human_review")
-        self.assertIn("pending_review", packet["risk_tags"])
+        self.assertEqual(packet["current_status"], "approved")
+        self.assertNotIn("pending_review", packet["risk_tags"])
         self.assertEqual(packet["expected"]["predicate"], "accepted_role")
+        self.assertEqual(packet["expected"]["review_status"], "approved")
         evidence = packet["source_evidence"][0]
         self.assertEqual(evidence["source_id"], "scaled_user_001_conversation_001")
         self.assertEqual(evidence["speaker_id"], "user_001")
@@ -40,7 +41,7 @@ class ScaledReviewPacketTests(unittest.TestCase):
         packet = build_review_packets(ROOT)["review_evidence"][0]
 
         self.assertEqual(packet["packet_type"], "review_queue_evidence")
-        self.assertEqual(packet["current_status"], "pending_human_review")
+        self.assertEqual(packet["current_status"], "approved")
         self.assertEqual(packet["review_action"], "resolve_review_queue_item_then_patch_source_row")
         self.assertIn("requires_patch", packet["allowed_statuses_after_review"])
         self.assertEqual(packet["target_records"][0]["claim_id"], "scaled_user_001_claim_001")
@@ -52,13 +53,14 @@ class ScaledReviewPacketTests(unittest.TestCase):
             output_root = Path(directory)
 
             self.assertEqual(index["total_packets"], 1780)
-            self.assertEqual(index["status"], "pending_manual_review")
+            self.assertEqual(index["status"], "approved")
+            self.assertEqual(index["approved_by"], "Sneha")
             self.assertTrue((output_root / "index.json").is_file())
             claims_path = output_root / "gold_claims.jsonl"
             self.assertTrue(claims_path.is_file())
             first = json.loads(claims_path.read_text(encoding="utf-8").splitlines()[0])
             self.assertEqual(first["schema_version"], "scaled_review_packet_v1")
-            self.assertEqual(first["current_status"], "pending_human_review")
+            self.assertEqual(first["current_status"], "approved")
 
 
 if __name__ == "__main__":

@@ -17,24 +17,25 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class DataFoundationReadinessTests(unittest.TestCase):
-    def test_audit_flags_scaled_false_review_approval(self) -> None:
+    def test_audit_reports_scaled_review_repair_and_remaining_qwen_blocker(self) -> None:
         audit = build_readiness_audit(ROOT)
 
         self.assertEqual(audit["schema_version"], "data_foundation_readiness_audit_v1")
         self.assertEqual(audit["status"], "blocked")
-        self.assertEqual(audit["overall_score"], 5.5)
+        self.assertEqual(audit["overall_score"], 6.5)
         scaled = audit["scaled_v1"]
-        self.assertFalse(scaled["validator_passed"])
-        self.assertTrue(scaled["validator_errors"])
-        self.assertTrue(scaled["manifest_row_review_mismatch"])
-        self.assertEqual(scaled["pending_gold_rows"], 730)
-        self.assertEqual(scaled["pending_review_queue_rows"], 930)
+        self.assertTrue(scaled["validator_passed"])
+        self.assertFalse(scaled["validator_errors"])
+        self.assertFalse(scaled["manifest_row_review_mismatch"])
+        self.assertEqual(scaled["pending_gold_rows"], 0)
+        self.assertEqual(scaled["pending_review_queue_rows"], 0)
         self.assertEqual(
             scaled["row_level_gold_status_counts"]["qa"],
-            {"pending_human_review": 500},
+            {"approved": 500},
         )
         flag_ids = {flag["id"] for flag in audit["flags"]}
-        self.assertIn("scaled_manifest_false_review_approval", flag_ids)
+        self.assertNotIn("scaled_manifest_false_review_approval", flag_ids)
+        self.assertIn("qwen_context_materialization_failures", flag_ids)
 
     def test_audit_reports_evidence_reference_and_qwen_risk_counts(self) -> None:
         audit = build_readiness_audit(ROOT)
@@ -70,7 +71,7 @@ class DataFoundationReadinessTests(unittest.TestCase):
             markdown = markdown_path.read_text(encoding="utf-8")
             self.assertIn("# Data foundation readiness", markdown)
             self.assertIn("Status: **blocked**", markdown)
-            self.assertIn("scaled_manifest_false_review_approval", markdown)
+            self.assertIn("qwen_context_materialization_failures", markdown)
             self.assertIn("data/scaled-v1/review_queues/evidence.jsonl", markdown)
 
 
