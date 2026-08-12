@@ -1,7 +1,7 @@
 PYTHON ?= python3
 DEMO_PYTHON ?= .venv-demo/bin/python
 
-.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization test-grounded-summaries test-durative-claims test-retrieval-index test-retrieval-planning test-retrieval-baselines test-qwen-materialization test-qwen-v2 qwen-context-evidence-audit qwen-prerun-gates validate-benchmark-v1 validate-scaled-benchmark scaled-review-packets validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety demo demo-data demo-build test-demo
+.PHONY: test test-storage test-ingestion test-temporal test-temporal-eval test-conflict-candidates test-conflict-relations test-belief-resolution test-conflict-eval test-sessionization test-grounded-summaries test-durative-claims test-retrieval-index test-retrieval-planning test-retrieval-baselines test-qwen-materialization test-qwen-v2 qwen-context-evidence-audit qwen-materialization-dry-run qwen-extraction-gate-dry-runs qwen-prerun-gates validate-benchmark-v1 validate-scaled-benchmark scaled-review-packets validate-load-corpus analyze-atomic-v2 dry-run-atomic-safety demo demo-data demo-build test-demo
 test:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m unittest discover -s tests -v
 
@@ -185,6 +185,19 @@ qwen-context-evidence-audit:
 		--gold-summary data/scaled-v1/gold/summaries.jsonl \
 		--gold-interactive data/scaled-v1/gold/interactive.jsonl \
 		--output results/evaluation/qwen3-8b-vllm-dev-v1/context-evidence-audit
+
+qwen-materialization-dry-run:
+	@set -eu; \
+	trap 'docker compose down -v >/dev/null' EXIT; \
+	docker compose up -d --wait storage-db; \
+	STORAGE_DATABASE_URL=postgresql://storage_test:storage_test@127.0.0.1:55432/longitudinal_memory \
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m evaluation.qwen_materialization_dry_run \
+		--repo-root . \
+		--allow-reset-db
+
+qwen-extraction-gate-dry-runs:
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m evaluation.qwen_extraction_quality_gate --repo-root . --gate primary_gate --dry-run
+	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m evaluation.qwen_extraction_quality_gate --repo-root . --gate holdout_gate --dry-run
 
 qwen-prerun-gates:
 	PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src $(PYTHON) -m evaluation.qwen_prerun_gates --repo-root .

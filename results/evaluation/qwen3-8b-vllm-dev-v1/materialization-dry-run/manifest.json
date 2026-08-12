@@ -1,0 +1,15 @@
+{
+  "b6_b7_context_identity": true,
+  "config_sha256": "9db2679592a16af6b3518a3a33b460c4adf2c63bc5dc87a72becef53514051fc",
+  "context_count": 912,
+  "database_reset": true,
+  "extraction_responses_sha256": "a33f9d7eff94f53eacbbf7dfd8d3318b3feec93bd6979e5ac58c8cf8a0b3b8e7",
+  "failure_codes": [],
+  "failure_count": 0,
+  "failure_stages": [],
+  "provider_request_count": 0,
+  "schema_version": "qwen_materialization_dry_run_v1",
+  "series_id": "qwen3-8b-vllm-dev-v1",
+  "split": "development",
+  "status": "passed"
+}

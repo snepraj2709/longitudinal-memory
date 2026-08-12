@@ -16,6 +16,7 @@ from .scaled_release import ScaledReleaseError, validate_scaled_release
 DEFAULT_EXTRACTION_GATE_ROOT = Path("results/evaluation/qwen3-8b-vllm-extraction-gate-v1")
 DEFAULT_CONTEXT_AUDIT_ROOT = Path("results/evaluation/qwen3-8b-vllm-dev-v1/context-evidence-audit")
 DEFAULT_CONTEXTS_PATH = Path("results/evaluation/qwen3-8b-vllm-dev-v1/contexts/contexts.jsonl")
+DEFAULT_MATERIALIZATION_DRY_RUN = Path("results/evaluation/qwen3-8b-vllm-dev-v1/materialization-dry-run/manifest.json")
 DEFAULT_MATERIALIZATION_EXCLUSIONS = Path("results/evaluation/qwen3-8b-vllm-dev-v1/contexts/exclusions.json")
 GATE_NAMES = ("primary_gate", "holdout_gate")
 
@@ -39,6 +40,7 @@ def build_pre_run_gate_report(
     extraction_gate_root: str | Path = DEFAULT_EXTRACTION_GATE_ROOT,
     context_audit_root: str | Path = DEFAULT_CONTEXT_AUDIT_ROOT,
     contexts_path: str | Path = DEFAULT_CONTEXTS_PATH,
+    materialization_dry_run: str | Path = DEFAULT_MATERIALIZATION_DRY_RUN,
     materialization_exclusions: str | Path = DEFAULT_MATERIALIZATION_EXCLUSIONS,
 ) -> Mapping[str, object]:
     """Return a provider-independent readiness report for Qwen B0-B7 execution."""
@@ -50,7 +52,7 @@ def build_pre_run_gate_report(
         _scaled_evidence_check(root),
         *_extraction_gate_checks(root, Path(extraction_gate_root)),
         _context_audit_check(root, Path(context_audit_root)),
-        _materialization_check(root, Path(contexts_path), Path(materialization_exclusions)),
+        _materialization_check(root, Path(contexts_path), Path(materialization_dry_run), Path(materialization_exclusions)),
     ]
     blockers = [check for check in checks if check.severity == "blocker" and check.status != "passed"]
     return {
@@ -215,7 +217,37 @@ def _context_audit_check(root: Path, context_audit_root: Path) -> GateCheck:
     )
 
 
-def _materialization_check(root: Path, contexts_path: Path, exclusions_path: Path) -> GateCheck:
+def _materialization_check(
+    root: Path,
+    contexts_path: Path,
+    dry_run_path: Path,
+    exclusions_path: Path,
+) -> GateCheck:
+    dry_run = root / dry_run_path
+    if dry_run.is_file():
+        manifest = _json(dry_run)
+        passed = (
+            manifest.get("schema_version") == "qwen_materialization_dry_run_v1"
+            and manifest.get("status") == "passed"
+            and manifest.get("provider_request_count") == 0
+            and manifest.get("context_count") == 912
+            and manifest.get("failure_count") == 0
+            and manifest.get("b6_b7_context_identity") is True
+        )
+        return _check(
+            "qwen_materialization_clean",
+            passed,
+            "materialization dry run must pass with zero failures",
+            {
+                "dry_run_path": str(dry_run),
+                "status": manifest.get("status"),
+                "provider_request_count": manifest.get("provider_request_count"),
+                "context_count": manifest.get("context_count"),
+                "failure_count": manifest.get("failure_count"),
+                "failure_codes": manifest.get("failure_codes"),
+                "b6_b7_context_identity": manifest.get("b6_b7_context_identity"),
+            },
+        )
     context_path = root / contexts_path
     manifest_path = context_path.parent / "manifest.json"
     failures_path = context_path.parent / "failures.jsonl"

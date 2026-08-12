@@ -30,7 +30,7 @@ class QwenPreRunGateTests(unittest.TestCase):
         self.assertEqual(checks["qwen_extraction_primary_gate"]["status"], "blocked")
         self.assertEqual(checks["qwen_extraction_holdout_gate"]["status"], "blocked")
         self.assertEqual(checks["qwen_context_evidence_audit"]["status"], "passed")
-        self.assertEqual(checks["qwen_materialization_clean"]["status"], "blocked")
+        self.assertEqual(checks["qwen_materialization_clean"]["status"], "passed")
 
     def test_assertion_raises_for_blockers(self) -> None:
         with self.assertRaisesRegex(QwenPreRunGateError, "qwen_extraction_primary_gate"):
@@ -70,23 +70,26 @@ class QwenPreRunGateTests(unittest.TestCase):
             )
 
             contexts_path = tmp / "contexts" / "contexts.jsonl"
-            _write_jsonl(contexts_path, [])
+            dry_run_path = tmp / "materialization-dry-run" / "manifest.json"
             _write_json(
-                contexts_path.parent / "manifest.json",
+                dry_run_path,
                 {
-                    "schema_version": "qwen_context_materialization_v2",
-                    "status": "completed",
-                    "b6_b7_context_identity": True,
+                    "schema_version": "qwen_materialization_dry_run_v1",
+                    "status": "passed",
+                    "provider_request_count": 0,
+                    "context_count": 912,
                     "failure_count": 0,
+                    "failure_codes": [],
+                    "b6_b7_context_identity": True,
                 },
             )
-            _write_jsonl(contexts_path.parent / "failures.jsonl", [])
 
             report = build_pre_run_gate_report(
                 ROOT,
                 extraction_gate_root=extraction_root,
                 context_audit_root=context_audit_root,
                 contexts_path=contexts_path,
+                materialization_dry_run=dry_run_path,
             )
 
         self.assertEqual(report["status"], "passed")
