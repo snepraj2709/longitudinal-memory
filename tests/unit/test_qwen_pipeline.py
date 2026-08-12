@@ -14,6 +14,7 @@ from evaluation.qwen_pipeline import (
     _require_paid_execution_confirmation,
     build_compatibility_jobs,
 )
+from evaluation.qwen_benchmark import _answer_system_prompt, _render_answer_prompt
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -61,6 +62,8 @@ class QwenPipelineTests(unittest.TestCase):
         b6_prompt = json.loads(b6_qa.user_prompt)
         self.assertGreater(len(b6_prompt["output_contract"]["allowed_citations"]), 0)
         self.assertIn("grounded_example", b6_prompt["output_contract"])
+        self.assertIn("minimal sufficient citation set", b6_prompt["output_contract"]["rules"])
+        self.assertIn("Do not abstain merely", b6_qa.system_prompt)
         citation = b6_prompt["output_contract"]["allowed_citations"][0]
         self.assertEqual(set(citation), {"source_id", "message_id", "quote"})
         b6_schema = b6_qa.response_format["json_schema"]["schema"]["properties"]
@@ -71,6 +74,39 @@ class QwenPipelineTests(unittest.TestCase):
         summary_schema = b6_summary.response_format["json_schema"]["schema"]["properties"]
         self.assertEqual(summary_schema["status"]["enum"], ["abstained"])
         self.assertEqual(summary_schema["unresolved_parts"]["maxItems"], 0)
+
+    def test_qwen_answer_prompt_uses_sufficient_evidence_before_abstaining(self) -> None:
+        case = {
+            "case_id": "case_1",
+            "user_id": "user_001",
+            "as_of": "2026-12-01T12:00:00+00:00",
+            "question": "What role did Asha accept?",
+        }
+        citation = {
+            "source_id": "source_1",
+            "message_id": "message_1",
+            "quote": "I accepted the product engineer role at Riverstone Labs.",
+        }
+        prompt = json.loads(_render_answer_prompt("qa", case, ({
+            "record_kind": "atomic",
+            "citation_evidence": [citation],
+        },)))
+
+        self.assertEqual(prompt["allowed_citations"], [citation])
+        policy = prompt["answer_policy"]
+        self.assertIn("Missing perfect evidence", policy["sufficiency_standard"])
+        self.assertIn("not a reason to abstain", policy["sufficiency_standard"])
+        self.assertIn("Use answered when the core request is supported", policy["status_policy"])
+        self.assertIn("Apply answer_policy before abstaining", prompt["output_contract"]["rules"])
+        self.assertIn("do not refuse because evidence is not perfect", prompt["output_contract"]["rules"])
+        self.assertNotIn("reference_answer", json.dumps(prompt).casefold())
+
+    def test_qwen_system_prompt_separates_citation_validation_from_answerability(self) -> None:
+        tuned = _answer_system_prompt("Base prompt.")
+
+        self.assertIn("exact citations are a validation requirement", tuned)
+        self.assertIn("not an answerability threshold", tuned)
+        self.assertIn("Do not abstain merely", tuned)
 
     def test_server_command_matches_pinned_vllm_cli(self) -> None:
         script = (ROOT / "scripts/run_qwen_vllm.sh").read_text(encoding="utf-8")

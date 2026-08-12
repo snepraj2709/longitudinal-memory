@@ -29,6 +29,40 @@ TASKS = ("qa", "summary", "interactive")
 SAMPLING = {"temperature": 0.7, "top_p": 0.8, "top_k": 20, "presence_penalty": 1.5, "seed": 42}
 
 
+ANSWER_SUFFICIENCY_POLICY = {
+    "sufficiency_standard": (
+        "A direct allowed citation is sufficient for an answered factual claim. "
+        "Missing perfect evidence, duplicate confirmation, or complete source coverage "
+        "is not a reason to abstain when the supplied citation supports the requested fact."
+    ),
+    "citation_policy": (
+        "Copy citations from allowed_citations exactly. Cite the minimal sufficient set; "
+        "do not cite every allowed item by default."
+    ),
+    "status_policy": (
+        "Use answered when the core request is supported. Use partially_answered when "
+        "some requested parts are supported and some are not. Use disputed when supplied "
+        "evidence supports incompatible answers. Abstain only when no supplied citation "
+        "supports the core requested fact, the evidence is about another person, the "
+        "available evidence is stale for a current-state question, or the request asks "
+        "for an unsupported broad inference."
+    ),
+}
+
+
+def _answer_system_prompt(base_prompt: str) -> str:
+    return (
+        f"{base_prompt}\n\n"
+        "Qwen answerability policy: exact citations are a validation requirement, "
+        "not an answerability threshold. Do not abstain merely because evidence is "
+        "incomplete relative to perfect coverage. If at least one supplied allowed "
+        "citation directly supports the case user's requested fact at the as_of "
+        "cutoff, answer with that citation. Use partial or disputed statuses for "
+        "supported-but-incomplete or conflicting evidence instead of defaulting to "
+        "abstention."
+    )
+
+
 def _jsonl(path: Path) -> list[dict[str, object]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
 
@@ -81,12 +115,18 @@ def _render_answer_prompt(task: str, case: Mapping[str, object], records: Iterab
         "runtime_case": {name: case[name] for name in fields},
         "context_records": context_records,
         "allowed_citations": _allowed_citations(context_records),
+        "answer_policy": ANSWER_SUFFICIENCY_POLICY,
         "response_format": "JSON object",
         "output_contract": {
             "exact_fields": ["status", body, "confidence", "statements", "citations", "unresolved_parts", "abstention_reason"],
             "statuses": ["answered", "abstained", "disputed", "partially_answered"],
             "citation_fields": ["source_id", "message_id", "quote"],
-            "rules": "Citations must exactly match context evidence. Abstain rather than infer missing facts.",
+            "rules": (
+                "Apply answer_policy before abstaining. Citations must exactly match "
+                "allowed_citations. Answer from sufficient cited evidence; do not "
+                "refuse because evidence is not perfect. Abstain rather than infer "
+                "unsupported core facts."
+            ),
         },
     }
     return json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))

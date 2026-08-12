@@ -13,7 +13,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from .frozen_answer_contracts import validate_answer_output
-from .qwen_benchmark import PROMPTS, REGISTRY, _render_answer_prompt, select_runtime
+from .qwen_benchmark import PROMPTS, REGISTRY, _answer_system_prompt, _render_answer_prompt, select_runtime
 from .qwen_compatibility import _answer_schema, _response_format
 from .qwen_execution import (
     ExecutionJob,
@@ -97,7 +97,7 @@ def build_compatibility_jobs(repo_root: Path) -> tuple[ExecutionJob, ...]:
                 baseline_id=baseline,
                 context_sha256=None,
                 context_count=len(records),
-                system_prompt=prompts[task],
+                system_prompt=_answer_system_prompt(prompts[task]),
                 user_prompt=_render_compatibility_answer_prompt(task, case, records),
                 response_format=_compatibility_answer_response_format(task, baseline),
                 max_output_tokens=1000,
@@ -514,21 +514,14 @@ def _render_compatibility_answer_prompt(task, case, records):
         "unresolved_parts": [],
         "abstention_reason": "insufficient_evidence",
     }
-    allowed_citations = [
-        {
-            "source_id": evidence["source_id"],
-            "message_id": evidence["message_id"],
-            "quote": evidence["quote"],
-        }
-        for record in payload["context_records"]
-        for evidence in record.get("evidence", [])
-    ]
+    allowed_citations = payload["allowed_citations"]
     payload["output_contract"]["rules"] = (
         "Return only the exact fields listed. If context_records is empty, or if "
         "the supplied evidence does not answer the runtime case, return the "
-        "abstention_template exactly. For non-abstained outputs, copy every "
-        "citation from allowed_citations without changing source_id, message_id, "
-        "or quote, and make every statement an exact substring of the answer body."
+        "abstention_template exactly. For non-abstained outputs, copy citations "
+        "from allowed_citations without changing source_id, message_id, or quote. "
+        "Use the minimal sufficient citation set; do not require perfect evidence "
+        "coverage before answering."
     )
     payload["output_contract"]["allowed_citations"] = allowed_citations
     payload["output_contract"]["abstention_template"] = abstention

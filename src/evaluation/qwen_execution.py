@@ -23,7 +23,14 @@ from extraction.schema import atomic_extraction_text_format
 from .frozen_answer_contracts import TASK_BODY, validate_answer_output
 from .frozen_run_contracts import FrozenRunError
 from .openai_client import OpenAIResponseMetadata
-from .qwen_benchmark import PROMPTS, REGISTRY, SAMPLING, _render_answer_prompt, select_runtime
+from .qwen_benchmark import (
+    PROMPTS,
+    REGISTRY,
+    SAMPLING,
+    _answer_system_prompt,
+    _render_answer_prompt,
+    select_runtime,
+)
 from .qwen_compatibility import _answer_schema, _response_format
 from .qwen_materialization import ContextPackage, TASK_KEYS
 from .qwen_v2_contract import SERIES_ID, load_qwen_v2_config
@@ -244,7 +251,7 @@ def build_answer_jobs(
             baseline_id=context.baseline_id,
             context_sha256=context.context_sha256,
             context_count=len(context.context_records),
-            system_prompt=prompts[context.task],
+            system_prompt=_answer_system_prompt(prompts[context.task]),
             user_prompt=_render_answer_prompt(context.task, case, context.context_records),
             response_format=_response_format(
                 f"qwen_v2_{context.task}", _answer_schema(context.task)
